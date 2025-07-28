@@ -1,26 +1,114 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #000000;
+  --gold: #d4af37;
+  --green: #0f7938;
+  --light-gray: #f5f5f5;
+  --font-inter: 'Inter', sans-serif;
+  --font-noto-thai: 'Noto Sans Thai', sans-serif;
+  --font-fciconic: 'FCIconic', sans-serif;
+  --font-playfair: 'Playfair Display', serif;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-gold: #d4af37;
+  --color-green: #0f7938;
+  --color-light-gray: #f5f5f5;
+  --font-sans: var(--font-inter);
+  --font-thai: var(--font-noto-thai);
+  --font-fciconic: var(--font-fciconic);
+  --font-playfair: var(--font-playfair);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--light-gray);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--green);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gold);
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.6s ease-out;
+}
+
+/* Button hover effects */
+.group:hover .group-hover\:scale-105 {
+  transform: scale(1.05);
+}
+
+/* Thai text styles */
+.font-thai {
+  font-family: var(--font-noto-thai), var(--font-inter), sans-serif;
+}
+
+/* FCIconic font styles */
+.font-fciconic {
+  font-family: var(--font-fciconic), var(--font-inter), sans-serif;
+}
+
+/* Playfair Display font styles */
+.font-playfair {
+  font-family: var(--font-playfair), serif;
+}
+
+/* Custom utility classes */
+.text-shadow {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Parallax performance optimization */
+.will-change-transform {
+  will-change: transform;
+}
+
+/* Smooth parallax transitions */
+@media (prefers-reduced-motion: no-preference) {
+  .parallax-smooth {
+    transition: transform 0.1s ease-out;
+  }
+}
+
+/* Disable parallax for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .will-change-transform {
+    transform: none !important;
+  }
 }
