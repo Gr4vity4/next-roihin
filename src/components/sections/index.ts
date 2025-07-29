@@ -1,0 +1,7 @@
+export { default as HeroSection } from './HeroSection'
+export { default as AboutSection } from './AboutSection'
+export { default as SignatureCharmSection } from './SignatureCharmSection'
+export { default as TestimonialsSection } from './TestimonialsSection'
+export { default as GallerySection } from './GallerySection'
+export { default as VibrantDestinySection } from './VibrantDestinySection'
+export { default as Footer } from './Footer'
