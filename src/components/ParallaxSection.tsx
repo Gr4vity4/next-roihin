@@ -36,7 +36,7 @@ export default function ParallaxSection({
       }
 
       rafId.current = requestAnimationFrame(() => {
-        if (!parallaxRef.current || !imageRef.current) return
+        if (!parallaxRef.current) return
 
         const scrolled = window.scrollY
         const sectionTop = parallaxRef.current.offsetTop
@@ -48,7 +48,7 @@ export default function ParallaxSection({
           scrolled + windowHeight >= sectionTop && scrolled <= sectionTop + sectionHeight
         setIsInView(inView)
 
-        if (inView) {
+        if (inView && imageRef.current) {
           // Calculate relative position within viewport
           const sectionBottom = sectionTop + sectionHeight
           const scrollProgress =
@@ -77,31 +77,38 @@ export default function ParallaxSection({
 
   return (
     <section ref={parallaxRef} className={`relative overflow-hidden ${className}`}>
-      {/* Parallax Background Image */}
-      <div
-        ref={imageRef}
-        className="absolute z-0 will-change-transform"
-        style={{
-          left: 0,
-          right: 0,
-          top: 0,
-          height: `${100 + parallaxSpeed * 100}%`,
-        }}
-      >
-        <Image
-          src={imageUrl}
-          alt={imageAlt}
-          fill
-          className="object-cover"
-          priority={isInView}
-          quality={90}
-          sizes="100vw"
-        />
+      {/* Parallax Background Image or Black Background */}
+      {imageUrl && imageUrl.trim() !== '' ? (
         <div
-          className="absolute inset-0"
-          style={{ backgroundColor: `rgba(0, 0, 0, ${overlayOpacity})` }}
-        />
-      </div>
+          ref={imageRef}
+          className="absolute z-0 will-change-transform"
+          style={{
+            left: 0,
+            right: 0,
+            top: 0,
+            height: `${100 + parallaxSpeed * 100}%`,
+          }}
+        >
+          <Image
+            src={imageUrl}
+            alt={imageAlt}
+            fill
+            className="object-cover"
+            priority={isInView}
+            quality={90}
+            sizes="100vw"
+          />
+          <div
+            className="absolute inset-0"
+            style={{ backgroundColor: `rgba(0, 0, 0, ${overlayOpacity})` }}
+          />
+        </div>
+      ) : (
+        <>
+          {/* Black background when no image is provided */}
+          <div className="absolute inset-0 z-0 bg-black" />
+        </>
+      )}
 
       {/* Content */}
       <div className="relative z-10">{children}</div>

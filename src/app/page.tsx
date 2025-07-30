@@ -1,16 +1,17 @@
 import ChatWidget from '@/components/ChatWidget'
 import Navigation from '@/components/Navigation'
 import {
-  HeroSection,
   AboutSection,
+  Footer,
+  FullWidthBackgroundSection,
+  GallerySection,
+  HeroSection,
   SignatureCharmSection,
   TestimonialsSection,
-  GallerySection,
   VibrantDestinySection,
-  Footer,
 } from '@/components/sections'
-import { siteConfig } from '@/config/site.config'
 import { contentConfig } from '@/config/content.config'
+import { siteConfig } from '@/config/site.config'
 
 export default function Home() {
   return (
@@ -54,9 +55,17 @@ export default function Home() {
         ctaButton={contentConfig.testimonials.cta}
       />
 
+      {/* Full Width Background Section */}
+      <FullWidthBackgroundSection
+        backgroundImage="/images/357c3a_449b1b790747456cb742616cdedb4af0~mv2.avif"
+        backgroundAlt="Beautiful handcrafted jewelry showcasing natural stone bracelets"
+        overlayOpacity={0}
+        parallaxSpeed={0}
+      />
+
       {/* Gallery Section */}
       <GallerySection
-        backgroundImage={contentConfig.gallery.background.image}
+        backgroundImage=""
         backgroundAlt={contentConfig.gallery.background.alt}
         title={contentConfig.gallery.title}
         subtitle={contentConfig.gallery.subtitle}
