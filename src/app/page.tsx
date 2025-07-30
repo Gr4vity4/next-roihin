@@ -18,15 +18,16 @@ export default function Home() {
     <>
       <Navigation />
 
-      {/* Main content wrapper with padding to account for fixed navigation */}
-      <main className="pt-20 lg:pt-[230px]">
-        {/* Hero Section */}
+      {/* Main content wrapper - no padding needed, hero section will handle spacing */}
+      <main>
+        {/* Hero Section - starts at top of page, content positioned to account for nav */}
         <HeroSection
           backgroundImage={contentConfig.hero.background.image}
           backgroundAlt={contentConfig.hero.background.alt}
           title={contentConfig.hero.title}
           subtitle={contentConfig.hero.subtitle}
           ctaButton={contentConfig.hero.cta}
+          className="pt-20 lg:pt-[230px]"
         />
 
       {/* About Section */}

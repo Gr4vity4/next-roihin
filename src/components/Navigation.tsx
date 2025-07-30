@@ -33,7 +33,7 @@ export default function Navigation() {
     <nav
       className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-        isScrolled ? 'bg-white shadow-lg' : '',
+        isScrolled ? 'bg-white shadow-lg' : 'bg-transparent',
       )}
     >
       {/* Desktop Navigation with Video Background */}
@@ -43,25 +43,26 @@ export default function Navigation() {
           isScrolled ? 'h-20' : 'h-[230px]',
         )}
       >
-        {/* Video Background - only visible when not scrolled */}
-        {!isScrolled && (
-          <div className="absolute inset-0 w-full h-full">
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="absolute top-0 left-0 w-full h-full object-cover object-top"
-              ref={(el) => {
-                if (el) el.playbackRate = 0.5
-              }}
-            >
-              <source src="/videos/main.mp4" type="video/mp4" />
-            </video>
-            {/* Dark overlay with blur for better text visibility */}
-            <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" />
-          </div>
-        )}
+        {/* Video Background - always present but fades out when scrolled */}
+        <div className={cn(
+          "absolute inset-0 w-full h-full transition-opacity duration-300",
+          isScrolled ? "opacity-0 pointer-events-none" : "opacity-100"
+        )}>
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute top-0 left-0 w-full h-full object-cover object-top"
+            ref={(el) => {
+              if (el) el.playbackRate = 0.5
+            }}
+          >
+            <source src="/videos/main.mp4" type="video/mp4" />
+          </video>
+          {/* Dark overlay with blur for better text visibility */}
+          <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" />
+        </div>
 
         {/* Navigation Content */}
         <div className="relative z-10 container mx-auto px-4 h-full">
@@ -128,7 +129,7 @@ export default function Navigation() {
       <div className="lg:hidden">
         <div
           className={cn(
-            'flex items-center justify-between h-20 px-4',
+            'flex items-center justify-between h-20 px-4 transition-all duration-300',
             isScrolled ? 'bg-white' : 'bg-black/80',
           )}
         >
