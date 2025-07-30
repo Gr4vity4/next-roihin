@@ -33,14 +33,109 @@ export default function Navigation() {
     <nav
       className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-        isScrolled ? 'bg-white shadow-lg' : 'bg-transparent',
+        isScrolled ? 'bg-white shadow-lg' : '',
       )}
     >
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-20">
+      {/* Desktop Navigation with Video Background */}
+      <div
+        className={cn(
+          'hidden lg:block relative overflow-hidden transition-all duration-300',
+          isScrolled ? 'h-20' : 'h-[230px]',
+        )}
+      >
+        {/* Video Background - only visible when not scrolled */}
+        {!isScrolled && (
+          <div className="absolute inset-0 w-full h-full">
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="absolute top-0 left-0 w-full h-full object-cover"
+            >
+              <source src="/videos/main.mp4" type="video/mp4" />
+            </video>
+            {/* Dark overlay for better text visibility */}
+            <div className="absolute inset-0 bg-black/70" />
+          </div>
+        )}
+
+        {/* Navigation Content */}
+        <div className="relative z-10 container mx-auto px-4 h-full">
+          {isScrolled ? (
+            // Scrolled state - horizontal layout
+            <div className="flex items-center justify-between h-full">
+              <Link href="/" className="flex items-center">
+                <div className="relative w-16 h-16">
+                  <Image
+                    src="https://static.wixstatic.com/media/357c3a_24a0cf97ecf347f7a7382d3fc0b33314~mv2.png/v1/fill/w_157,h_143,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Logo.png"
+                    alt="Roihin Logo"
+                    fill
+                    className="object-contain"
+                    priority
+                  />
+                </div>
+              </Link>
+              <div className="flex items-center space-x-3">
+                {navItems.map((item, index) => (
+                  <React.Fragment key={item.name}>
+                    {index > 0 && <span className="text-sm text-gray-400">|</span>}
+                    <Link
+                      href={item.href}
+                      className="font-thai font-medium text-sm text-gray-700 transition-colors hover:text-gold"
+                    >
+                      {item.name}
+                    </Link>
+                  </React.Fragment>
+                ))}
+              </div>
+            </div>
+          ) : (
+            // Default state - vertical centered layout
+            <div className="flex flex-col items-center justify-center h-full">
+              {/* Logo */}
+              <Link href="/" className="mb-8">
+                <div className="relative w-32 h-32">
+                  <Image
+                    src="https://static.wixstatic.com/media/357c3a_24a0cf97ecf347f7a7382d3fc0b33314~mv2.png/v1/fill/w_157,h_143,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Logo.png"
+                    alt="Roihin Logo"
+                    fill
+                    className="object-contain"
+                    priority
+                  />
+                </div>
+              </Link>
+
+              {/* Menu Items */}
+              <div className="flex items-center space-x-4">
+                {navItems.map((item, index) => (
+                  <React.Fragment key={item.name}>
+                    {index > 0 && <span className="text-sm text-white/60">|</span>}
+                    <Link
+                      href={item.href}
+                      className="font-thai font-medium text-base text-white transition-colors hover:text-gold"
+                    >
+                      {item.name}
+                    </Link>
+                  </React.Fragment>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Mobile Navigation */}
+      <div className="lg:hidden">
+        <div
+          className={cn(
+            'flex items-center justify-between h-20 px-4',
+            isScrolled ? 'bg-white' : 'bg-black/80',
+          )}
+        >
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-3">
-            <div className="relative w-24 h-24">
+          <Link href="/" className="flex items-center">
+            <div className="relative w-20 h-20">
               <Image
                 src="https://static.wixstatic.com/media/357c3a_24a0cf97ecf347f7a7382d3fc0b33314~mv2.png/v1/fill/w_157,h_143,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Logo.png"
                 alt="Roihin Logo"
@@ -51,35 +146,13 @@ export default function Navigation() {
             </div>
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-3">
-            {navItems.map((item, index) => (
-              <React.Fragment key={item.name}>
-                {index > 0 && (
-                  <span className={cn('text-sm', isScrolled ? 'text-gray-400' : 'text-white/60')}>
-                    |
-                  </span>
-                )}
-                <Link
-                  href={item.href}
-                  className={cn(
-                    'font-thai font-medium text-sm transition-colors hover:text-gold',
-                    isScrolled ? 'text-gray-700' : 'text-white',
-                  )}
-                >
-                  {item.name}
-                </Link>
-              </React.Fragment>
-            ))}
-          </div>
-
           {/* Mobile Menu Toggle */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className={cn(
-              'lg:hidden p-2 transition-all',
+              'p-2 transition-all',
               'focus:outline-none focus:ring-2 focus:ring-gold-400 focus:ring-offset-2',
-              isScrolled ? 'text-black hover:bg-gray-100' : 'text-white hover:bg-white/10'
+              isScrolled ? 'text-black hover:bg-gray-100' : 'text-white hover:bg-white/10',
             )}
             aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={isMobileMenuOpen}
@@ -87,25 +160,25 @@ export default function Navigation() {
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
-      </div>
 
-      {/* Mobile Menu */}
-      {isMobileMenuOpen && (
-        <div className="lg:hidden bg-white border-t shadow-lg">
-          <div className="container mx-auto px-4 py-4">
-            {navItems.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="block py-3 font-thai text-black hover:text-gold transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                {item.name}
-              </Link>
-            ))}
+        {/* Mobile Menu */}
+        {isMobileMenuOpen && (
+          <div className="bg-white border-t shadow-lg">
+            <div className="px-4 py-4">
+              {navItems.map((item) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className="block py-3 font-thai text-black hover:text-gold transition-colors"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {item.name}
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </nav>
   )
 }
