@@ -33,7 +33,7 @@ export default function Navigation() {
     <nav
       className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-        isScrolled ? 'bg-white shadow-lg' : 'bg-transparent',
+        isScrolled ? 'bg-black shadow-[0_8px_32px_rgba(0,0,0,0.5)]' : 'bg-transparent',
       )}
     >
       {/* Desktop Navigation with Video Background */}
@@ -85,7 +85,7 @@ export default function Navigation() {
                   <Link
                     key={item.name}
                     href={item.href}
-                    className="font-thai font-medium text-sm text-gray-700 transition-colors hover:text-gold"
+                    className="font-thai font-medium text-sm text-white transition-colors hover:text-gold"
                   >
                     {item.name}
                   </Link>
@@ -130,7 +130,7 @@ export default function Navigation() {
         <div
           className={cn(
             'flex items-center justify-between h-20 px-4 transition-all duration-300',
-            isScrolled ? 'bg-white' : 'bg-black/80',
+            isScrolled ? 'bg-black' : 'bg-black/80',
           )}
         >
           {/* Logo */}
@@ -152,7 +152,7 @@ export default function Navigation() {
             className={cn(
               'p-2 transition-all',
               'focus:outline-none focus:ring-2 focus:ring-gold-400 focus:ring-offset-2',
-              isScrolled ? 'text-black hover:bg-gray-100' : 'text-white hover:bg-white/10',
+              isScrolled ? 'text-white hover:bg-white/10' : 'text-white hover:bg-white/10',
             )}
             aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={isMobileMenuOpen}
@@ -163,13 +163,13 @@ export default function Navigation() {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="bg-white border-t shadow-lg">
+          <div className="bg-black border-t border-gray-800 shadow-lg">
             <div className="px-4 py-4">
               {navItems.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="block py-3 font-thai text-black hover:text-gold transition-colors"
+                  className="block py-3 font-thai text-white hover:text-gold transition-colors"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {item.name}
