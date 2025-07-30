@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils'
 import { Menu, X } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const navItems = [
   { name: 'หน้าแรก', href: '/' },
@@ -79,17 +79,15 @@ export default function Navigation() {
                   />
                 </div>
               </Link>
-              <div className="flex items-center space-x-3">
-                {navItems.map((item, index) => (
-                  <React.Fragment key={item.name}>
-                    {index > 0 && <span className="text-sm text-gray-400">|</span>}
-                    <Link
-                      href={item.href}
-                      className="font-thai font-medium text-sm text-gray-700 transition-colors hover:text-gold"
-                    >
-                      {item.name}
-                    </Link>
-                  </React.Fragment>
+              <div className="flex items-center space-x-6">
+                {navItems.map((item) => (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className="font-thai font-medium text-sm text-gray-700 transition-colors hover:text-gold"
+                  >
+                    {item.name}
+                  </Link>
                 ))}
               </div>
             </div>
@@ -97,7 +95,7 @@ export default function Navigation() {
             // Default state - vertical centered layout
             <div className="flex flex-col items-center justify-center h-full">
               {/* Logo */}
-              <Link href="/" className="mb-8">
+              <Link href="/">
                 <div className="relative w-32 h-32">
                   <Image
                     src="/images/logo.avif"
@@ -110,17 +108,15 @@ export default function Navigation() {
               </Link>
 
               {/* Menu Items */}
-              <div className="flex items-center space-x-4">
-                {navItems.map((item, index) => (
-                  <React.Fragment key={item.name}>
-                    {index > 0 && <span className="text-sm text-white/60">|</span>}
-                    <Link
-                      href={item.href}
-                      className="font-thai font-medium text-base text-white transition-colors hover:text-gold"
-                    >
-                      {item.name}
-                    </Link>
-                  </React.Fragment>
+              <div className="flex items-center space-x-8">
+                {navItems.map((item) => (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className="font-thai font-medium text-base text-white transition-colors hover:text-gold"
+                  >
+                    {item.name}
+                  </Link>
                 ))}
               </div>
             </div>
