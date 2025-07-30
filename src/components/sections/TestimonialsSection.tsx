@@ -1,7 +1,7 @@
-import { Container, Typography } from '../ui'
-import TestimonialCard from '../TestimonialCard'
-import Button from '../Button'
 import { cn } from '@/lib/utils'
+import Button from '../Button'
+import TestimonialCard from '../TestimonialCard'
+import { Container, Typography } from '../ui'
 
 interface TestimonialData {
   id: string
@@ -44,43 +44,22 @@ export default function TestimonialsSection({
   testimonials,
   columns = 2,
   ctaButton,
-  backgroundColor = 'bg-gray-900',
+  backgroundColor = 'bg-black',
   textColor = 'text-white',
   className = '',
 }: TestimonialsSectionProps) {
   return (
-    <section
-      id={id}
-      className={cn(
-        'py-24',
-        backgroundColor,
-        textColor,
-        className
-      )}
-    >
+    <section id={id} className={cn('py-24', backgroundColor, textColor, className)}>
       <Container>
-        <Typography
-          variant="h2"
-          fontFamily="playfair"
-          align="center"
-          className="mb-4"
-        >
+        <Typography variant="h2" fontFamily="playfair" align="center" className="mb-4 text-green">
           {title}
         </Typography>
-        
-        <Typography
-          variant="h3"
-          fontFamily="thai"
-          align="center"
-          className="mb-16 text-gray-300"
-        >
+
+        <Typography variant="h3" fontFamily="thai" align="center" className="mb-16 text-gray-300">
           {subtitle}
         </Typography>
-        
-        <div className={cn(
-          'grid gap-8 mb-12',
-          columnClasses[columns]
-        )}>
+
+        <div className={cn('grid gap-8 mb-12', columnClasses[columns])}>
           {testimonials.map((testimonial) => (
             <TestimonialCard
               key={testimonial.id}
@@ -91,14 +70,10 @@ export default function TestimonialsSection({
             />
           ))}
         </div>
-        
+
         {ctaButton && (
           <div className="text-center">
-            <Button
-              variant={ctaButton.variant}
-              size="lg"
-              onClick={ctaButton.onClick}
-            >
+            <Button variant={ctaButton.variant} size="lg" onClick={ctaButton.onClick}>
               {ctaButton.text}
             </Button>
           </div>
