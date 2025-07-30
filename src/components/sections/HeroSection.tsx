@@ -1,8 +1,8 @@
 'use client'
 
+import Button from '../Button'
 import ParallaxSection from '../ParallaxSection'
 import { Container, Typography } from '../ui'
-import Button from '../Button'
 
 interface HeroSectionProps {
   backgroundImage: string
@@ -48,36 +48,16 @@ export default function HeroSection({
       className={`${minHeight} flex items-center justify-center ${className}`}
     >
       <Container className="text-center text-white">
-        <Typography
-          variant="h1"
-          fontFamily="playfair"
-          textShadow
-          className="mb-2"
-        >
+        <Typography variant="h2" fontFamily="playfair" textShadow className="mb-2">
           {title.line1}
         </Typography>
-        <Typography
-          variant="h2"
-          fontFamily="playfair"
-          textShadow
-          className="mb-6"
-        >
+        <Typography variant="h3" fontFamily="playfair" textShadow className="mb-6">
           {title.line2}
         </Typography>
-        <Typography
-          variant="h3"
-          fontFamily="thai"
-          textShadow
-          className="mb-4 font-light"
-        >
+        <Typography variant="h3" fontFamily="thai" textShadow className="mb-4 font-light">
           {subtitle.thai}
         </Typography>
-        <Typography
-          variant="body"
-          fontFamily="thai"
-          textShadow
-          className="mb-10 max-w-2xl mx-auto"
-        >
+        <Typography variant="body" fontFamily="thai" textShadow className="mb-10 max-w-2xl mx-auto">
           {subtitle.english}
         </Typography>
         <Button
