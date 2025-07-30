@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils'
 
-interface SocialLink {
+export interface SocialLink {
   platform: 'facebook' | 'instagram' | 'twitter' | 'line' | 'youtube'
   href: string
   label?: string

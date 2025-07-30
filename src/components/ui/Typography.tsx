@@ -31,7 +31,7 @@ const variantComponents = {
 }
 
 const fontFamilyClasses = {
-  playfair: '!font-playfair',
+  playfair: 'font-playfair',
   thai: 'font-thai',
   default: '',
 }

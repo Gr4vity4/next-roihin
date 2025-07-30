@@ -1,22 +1,12 @@
 import { cn } from '@/lib/utils'
 import { MapPin } from 'lucide-react'
-import FooterColumn from '../FooterColumn'
-import SocialLinks from '../SocialLinks'
+import FooterColumn, { type FooterLink } from '../FooterColumn'
+import SocialLinks, { type SocialLink } from '../SocialLinks'
 import { Container, Typography } from '../ui'
-
-interface FooterLink {
-  text: string
-  href: string
-}
 
 interface FooterColumnData {
   title: string
   links: FooterLink[]
-}
-
-interface SocialLink {
-  platform: 'facebook' | 'instagram' | 'twitter' | 'line' | 'youtube'
-  href: string
 }
 
 interface FooterProps {

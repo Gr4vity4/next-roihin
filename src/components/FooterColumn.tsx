@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils'
 
-interface FooterLink {
+export interface FooterLink {
   text: string
   href: string
 }

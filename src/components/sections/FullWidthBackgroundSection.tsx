@@ -27,38 +27,39 @@ export default function FullWidthBackgroundSection({
   minHeight = 'min-h-[70vh]',
 }: FullWidthBackgroundSectionProps) {
   return (
-    <ParallaxSection
-      id={id}
-      imageUrl={backgroundImage}
-      imageAlt={backgroundAlt}
-      overlayOpacity={overlayOpacity}
-      parallaxSpeed={parallaxSpeed}
-      className={`${minHeight} flex items-center justify-center ${className}`}
-    >
-      {(title || subtitle) && (
-        <Container className="text-center text-white">
-          {title && (
-            <Typography
-              variant="h2"
-              fontFamily="playfair"
-              textShadow
-              className="mb-4"
-            >
-              {title}
-            </Typography>
-          )}
-          {subtitle && (
-            <Typography
-              variant="body"
-              fontFamily="thai"
-              textShadow
-              className="max-w-3xl mx-auto"
-            >
-              {subtitle}
-            </Typography>
-          )}
-        </Container>
-      )}
-    </ParallaxSection>
+    <section id={id}>
+      <ParallaxSection
+        imageUrl={backgroundImage}
+        imageAlt={backgroundAlt}
+        overlayOpacity={overlayOpacity}
+        parallaxSpeed={parallaxSpeed}
+        className={`${minHeight} flex items-center justify-center ${className}`}
+      >
+        {(title || subtitle) && (
+          <Container className="text-center text-white">
+            {title && (
+              <Typography
+                variant="h2"
+                fontFamily="playfair"
+                textShadow
+                className="mb-4"
+              >
+                {title}
+              </Typography>
+            )}
+            {subtitle && (
+              <Typography
+                variant="body"
+                fontFamily="thai"
+                textShadow
+                className="max-w-3xl mx-auto"
+              >
+                {subtitle}
+              </Typography>
+            )}
+          </Container>
+        )}
+      </ParallaxSection>
+    </section>
   )
 }
