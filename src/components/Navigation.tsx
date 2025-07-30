@@ -51,12 +51,15 @@ export default function Navigation() {
               loop
               muted
               playsInline
-              className="absolute top-0 left-0 w-full h-full object-cover"
+              className="absolute top-0 left-0 w-full h-full object-cover object-top"
+              ref={(el) => {
+                if (el) el.playbackRate = 0.5
+              }}
             >
               <source src="/videos/main.mp4" type="video/mp4" />
             </video>
-            {/* Dark overlay for better text visibility */}
-            <div className="absolute inset-0 bg-black/70" />
+            {/* Dark overlay with blur for better text visibility */}
+            <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" />
           </div>
         )}
 
@@ -68,7 +71,7 @@ export default function Navigation() {
               <Link href="/" className="flex items-center">
                 <div className="relative w-16 h-16">
                   <Image
-                    src="https://static.wixstatic.com/media/357c3a_24a0cf97ecf347f7a7382d3fc0b33314~mv2.png/v1/fill/w_157,h_143,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Logo.png"
+                    src="/images/logo.avif"
                     alt="Roihin Logo"
                     fill
                     className="object-contain"
@@ -97,7 +100,7 @@ export default function Navigation() {
               <Link href="/" className="mb-8">
                 <div className="relative w-32 h-32">
                   <Image
-                    src="https://static.wixstatic.com/media/357c3a_24a0cf97ecf347f7a7382d3fc0b33314~mv2.png/v1/fill/w_157,h_143,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Logo.png"
+                    src="/images/logo.avif"
                     alt="Roihin Logo"
                     fill
                     className="object-contain"
@@ -137,7 +140,7 @@ export default function Navigation() {
           <Link href="/" className="flex items-center">
             <div className="relative w-20 h-20">
               <Image
-                src="https://static.wixstatic.com/media/357c3a_24a0cf97ecf347f7a7382d3fc0b33314~mv2.png/v1/fill/w_157,h_143,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/Logo.png"
+                src="/images/logo.avif"
                 alt="Roihin Logo"
                 fill
                 className="object-contain"
