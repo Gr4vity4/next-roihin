@@ -18,14 +18,16 @@ export default function Home() {
     <>
       <Navigation />
 
-      {/* Hero Section */}
-      <HeroSection
-        backgroundImage={contentConfig.hero.background.image}
-        backgroundAlt={contentConfig.hero.background.alt}
-        title={contentConfig.hero.title}
-        subtitle={contentConfig.hero.subtitle}
-        ctaButton={contentConfig.hero.cta}
-      />
+      {/* Main content wrapper with padding to account for fixed navigation */}
+      <main className="pt-20 lg:pt-[230px]">
+        {/* Hero Section */}
+        <HeroSection
+          backgroundImage={contentConfig.hero.background.image}
+          backgroundAlt={contentConfig.hero.background.alt}
+          title={contentConfig.hero.title}
+          subtitle={contentConfig.hero.subtitle}
+          ctaButton={contentConfig.hero.cta}
+        />
 
       {/* About Section */}
       <AboutSection
@@ -93,6 +95,7 @@ export default function Home() {
       />
 
       <ChatWidget />
+      </main>
     </>
   )
 }
