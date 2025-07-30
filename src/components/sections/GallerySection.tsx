@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
+import Button from '../Button'
 
 interface GallerySectionProps {
   backgroundImage: string
@@ -10,7 +11,7 @@ interface GallerySectionProps {
   subtitle: string
   ctaButtons: Array<{
     text: string
-    variant: 'gold' | 'green'
+    variant: 'primary' | 'gold' | 'green' | 'outline' | 'ghost'
     onClick?: () => void
     href?: string
   }>
@@ -46,27 +47,28 @@ export default function GallerySection({
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             {ctaButtons.map((button, index) => {
-              const buttonClasses = `
-                px-8 py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 font-fciconic
-                ${
-                  button.variant === 'gold'
-                    ? 'bg-[#D4AF37] text-white hover:bg-[#B8941F]'
-                    : 'bg-[#2C5F2D] text-white hover:bg-[#234A24]'
-                }
-              `
-
               if (button.href) {
                 return (
-                  <Link key={index} href={button.href} className={buttonClasses}>
-                    {button.text}
+                  <Link key={index} href={button.href}>
+                    <Button
+                      variant={button.variant}
+                      size="lg"
+                    >
+                      {button.text}
+                    </Button>
                   </Link>
                 )
               }
 
               return (
-                <button key={index} onClick={button.onClick} className={buttonClasses}>
+                <Button
+                  key={index}
+                  variant={button.variant}
+                  size="lg"
+                  onClick={button.onClick}
+                >
                   {button.text}
-                </button>
+                </Button>
               )
             })}
           </div>
@@ -76,7 +78,7 @@ export default function GallerySection({
           {productImages.map((image, index) => (
             <div
               key={index}
-              className="relative aspect-square overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
+              className="relative aspect-square overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300"
             >
               <Image
                 src={image.src}

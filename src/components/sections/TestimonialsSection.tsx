@@ -21,7 +21,7 @@ interface TestimonialsSectionProps {
   columns?: 1 | 2 | 3 | 4
   ctaButton?: {
     text: string
-    variant: 'gold' | 'green'
+    variant: 'primary' | 'gold' | 'green' | 'outline' | 'ghost'
     onClick?: () => void
     href?: string
   }

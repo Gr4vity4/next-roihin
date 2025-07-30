@@ -76,7 +76,13 @@ export default function Navigation() {
           {/* Mobile Menu Toggle */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className={cn('lg:hidden p-2', isScrolled ? 'text-black' : 'text-white')}
+            className={cn(
+              'lg:hidden p-2 transition-all',
+              'focus:outline-none focus:ring-2 focus:ring-gold-400 focus:ring-offset-2',
+              isScrolled ? 'text-black hover:bg-gray-100' : 'text-white hover:bg-white/10'
+            )}
+            aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={isMobileMenuOpen}
           >
             {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>

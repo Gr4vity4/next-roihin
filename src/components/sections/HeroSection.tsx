@@ -19,7 +19,7 @@ interface HeroSectionProps {
   }
   ctaButton: {
     text: string
-    variant: 'gold' | 'green'
+    variant: 'primary' | 'gold' | 'green' | 'outline' | 'ghost'
     onClick?: () => void
     href?: string
     size?: 'sm' | 'md' | 'lg'

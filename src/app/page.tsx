@@ -79,6 +79,7 @@ export default function Home() {
         title={contentConfig.vibrantDestiny.title}
         subtitle={contentConfig.vibrantDestiny.subtitle}
         since={contentConfig.vibrantDestiny.since}
+        overlayOpacity={0.2}
       />
 
       {/* Footer */}

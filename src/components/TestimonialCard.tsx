@@ -28,7 +28,7 @@ export default function TestimonialCard({
   return (
     <div
       className={cn(
-        'rounded-lg p-8 space-y-4',
+        'p-8 space-y-4',
         variantStyles[variant],
         className
       )}

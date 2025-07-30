@@ -35,7 +35,6 @@ html {
 
 ::-webkit-scrollbar-thumb {
   background: var(--green);
-  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
