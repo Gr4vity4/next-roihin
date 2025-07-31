@@ -12,6 +12,7 @@ interface GallerySectionProps {
   ctaButtons: Array<{
     text: string
     variant: 'primary' | 'gold' | 'green' | 'outline' | 'ghost'
+    highlight?: boolean
     onClick?: () => void
     href?: string
   }>
@@ -53,6 +54,7 @@ export default function GallerySection({
                     <Button
                       variant={button.variant}
                       size="lg"
+                      highlight={button.highlight}
                     >
                       {button.text}
                     </Button>
@@ -65,6 +67,7 @@ export default function GallerySection({
                   key={index}
                   variant={button.variant}
                   size="lg"
+                  highlight={button.highlight}
                   onClick={button.onClick}
                 >
                   {button.text}

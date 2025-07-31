@@ -91,6 +91,7 @@ export const contentConfig = {
       {
         text: 'ออกแบบด้วยตัวเอง',
         variant: 'gold' as const,
+        highlight: true,
       },
       {
         text: 'ออกแบบโดยร้อยหิน',
