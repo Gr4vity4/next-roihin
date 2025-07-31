@@ -62,7 +62,7 @@ export default function StarRating({
             className={cn(
               'p-0.5 transition-all',
               'focus:outline-none focus:ring-2 focus:ring-gold-400 focus:ring-offset-1',
-              interactive && 'cursor-pointer hover:scale-110'
+              interactive ? 'cursor-pointer hover:scale-110' : 'cursor-default'
             )}
             type="button"
             role={interactive ? "radio" : undefined}

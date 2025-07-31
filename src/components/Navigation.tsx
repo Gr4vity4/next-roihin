@@ -150,7 +150,7 @@ export default function Navigation() {
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className={cn(
-              'p-2 transition-all',
+              'p-2 transition-all cursor-pointer',
               'focus:outline-none focus:ring-2 focus:ring-gold-400 focus:ring-offset-2',
               isScrolled ? 'text-white hover:bg-white/10' : 'text-white hover:bg-white/10',
             )}
