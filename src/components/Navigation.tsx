@@ -12,7 +12,7 @@ const navItems = [
   { name: 'งานออกแบบเฉพาะบุคคล', href: '#design' },
   { name: 'ชาร์ม/สเปเซอร์', href: '#charms' },
   { name: 'รีวิวจริง', href: '#reviews' },
-  { name: 'บริการลูกค้า', href: '#service' },
+  { name: 'บริการลูกค้า', href: '/customer-service' },
   { name: 'บทความ', href: '#articles' },
 ]
 
