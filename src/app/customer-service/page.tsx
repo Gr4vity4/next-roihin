@@ -5,6 +5,7 @@ import Footer from '@/components/sections/Footer'
 import ChatWidget from '@/components/ChatWidget'
 import { Container, Typography } from '@/components/ui'
 import Image from 'next/image'
+import { siteConfig } from '@/config/site.config'
 
 export default function CustomerServicePage() {
   return (
@@ -190,7 +191,7 @@ export default function CustomerServicePage() {
             { platform: 'line', href: 'https://line.me/roihin', label: 'Line ร้อยหิน' },
           ]
         }}
-        copyright="© 2024 ร้อยหิน Stone & Bracelet. สงวนลิขสิทธิ์."
+        copyright={siteConfig.footer.copyright}
       />
 
       {/* Chat Widget */}

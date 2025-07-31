@@ -61,6 +61,6 @@ export const siteConfig = {
       //   ],
       // },
     ],
-    copyright: '© 2025 All rights is reserved by Roihin Stone and Bracelet',
+    copyright: '© 2021 All rights is reserved by Roihin Stone and Bracelet',
   },
 }
