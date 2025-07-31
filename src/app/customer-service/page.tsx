@@ -39,7 +39,7 @@ export default function CustomerServicePage() {
               <source src="/videos/main.mp4" type="video/mp4" />
             </video>
             {/* Dark overlay with blur for better text visibility */}
-            <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" />
+            <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
           </div>
 
           {/* Content */}
