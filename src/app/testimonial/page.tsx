@@ -7,48 +7,6 @@ import { Typography } from '@/components/ui'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 
-// Footer configuration data
-const footerData = {
-  columns: [
-    {
-      title: 'บริการของเรา',
-      links: [
-        { text: 'ออกแบบสายหิน', href: '/design' },
-        { text: 'คอนซัลติ้งส่วนตัว', href: '/consulting' },
-        { text: 'การดูแลหลังการขาย', href: '/aftercare' },
-        { text: 'วาไรตี้หิน', href: '/stones' },
-      ],
-    },
-    {
-      title: 'เกี่ยวกับเรา',
-      links: [
-        { text: 'เรื่องราวของเรา', href: '/about' },
-        { text: 'คำรับรอง', href: '/testimonial' },
-        { text: 'แกลเลอรี่', href: '/gallery' },
-        { text: 'บล็อก', href: '/blog' },
-      ],
-    },
-    {
-      title: 'ช่วยเหลือ',
-      links: [
-        { text: 'คำถามที่พบบ่อย', href: '/faq' },
-        { text: 'การจัดส่ง', href: '/shipping' },
-        { text: 'การคืนสินค้า', href: '/returns' },
-        { text: 'นโยบายความเป็นส่วนตัว', href: '/privacy' },
-      ],
-    },
-  ],
-  contactInfo: {
-    address: '123 ถนนสุขุมวิท แขวงคลองตัน เขตคลองเตย กรุงเทพมหานคร 10110',
-    socialLinks: [
-      { platform: 'facebook' as const, href: 'https://facebook.com/roihin' },
-      { platform: 'instagram' as const, href: 'https://instagram.com/roihin' },
-      { platform: 'line' as const, href: 'https://line.me/ti/p/@roihin' },
-      { platform: 'youtube' as const, href: 'https://youtube.com/@roihin' },
-    ],
-  },
-  copyright: '© 2024 ร้อยหิน (Roihin). สงวนลิขสิทธิ์.',
-}
 
 // Testimonial data with avatars, dates, and Thai messages
 const testimonialData = [
@@ -259,11 +217,7 @@ export default function TestimonialPage() {
       </main>
 
       {/* Footer */}
-      <Footer
-        columns={footerData.columns}
-        contactInfo={footerData.contactInfo}
-        copyright={footerData.copyright}
-      />
+      <Footer />
 
       {/* Chat Widget */}
       <ChatWidget />

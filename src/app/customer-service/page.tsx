@@ -5,7 +5,6 @@ import Footer from '@/components/sections/Footer'
 import ChatWidget from '@/components/ChatWidget'
 import { Container, Typography } from '@/components/ui'
 import Image from 'next/image'
-import { siteConfig } from '@/config/site.config'
 
 export default function CustomerServicePage() {
   return (
@@ -156,43 +155,7 @@ export default function CustomerServicePage() {
       </main>
 
       {/* Footer */}
-      <Footer
-        columns={[
-          {
-            title: 'เกี่ยวกับเรา',
-            links: [
-              { text: 'เรื่องราวของเรา', href: '/about' },
-              { text: 'วิสัยทัศน์', href: '/vision' },
-              { text: 'พันธกิจ', href: '/mission' },
-            ]
-          },
-          {
-            title: 'สินค้า',
-            links: [
-              { text: 'กำไลหินมงคล', href: '/products' },
-              { text: 'ลายเซ็นประจำตัว', href: '/signature' },
-              { text: 'คอลเลคชั่นพิเศษ', href: '/collections' },
-            ]
-          },
-          {
-            title: 'บริการ',
-            links: [
-              { text: 'ติดต่อสอบถาม', href: '/customer-service' },
-              { text: 'การจัดส่ง', href: '/shipping' },
-              { text: 'การรับประกัน', href: '/warranty' },
-            ]
-          }
-        ]}
-        contactInfo={{
-          address: 'ร้อยหิน Stone & Bracelet 101/54 หมู่บ้าน ภัสสร 70 (เกาะแก้ว) หมู่ที่ 4 ตำบลเกาะแก้ว อำเภอเมืองภูเก็ต จังหวัดภูเก็ต 83000',
-          socialLinks: [
-            { platform: 'facebook', href: 'https://facebook.com/roihin', label: 'Facebook ร้อยหิน' },
-            { platform: 'instagram', href: 'https://instagram.com/roihin', label: 'Instagram ร้อยหิน' },
-            { platform: 'line', href: 'https://line.me/roihin', label: 'Line ร้อยหิน' },
-          ]
-        }}
-        copyright={siteConfig.footer.copyright}
-      />
+      <Footer />
 
       {/* Chat Widget */}
       <ChatWidget />

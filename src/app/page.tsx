@@ -11,7 +11,6 @@ import {
   VibrantDestinySection,
 } from '@/components/sections'
 import { contentConfig } from '@/config/content.config'
-import { siteConfig } from '@/config/site.config'
 
 export default function Home() {
   return (
@@ -86,14 +85,7 @@ export default function Home() {
       />
 
       {/* Footer */}
-      <Footer
-        columns={siteConfig.footer.columns}
-        contactInfo={{
-          address: siteConfig.contact.address,
-          socialLinks: siteConfig.socialLinks,
-        }}
-        copyright={siteConfig.footer.copyright}
-      />
+      <Footer />
 
       <ChatWidget />
       </main>
