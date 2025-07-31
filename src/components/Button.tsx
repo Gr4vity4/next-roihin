@@ -23,10 +23,15 @@ const buttonVariants = cva(
         lg: 'px-8 py-4 text-lg font-semibold gap-3',
         xl: 'px-10 py-5 text-xl font-bold gap-3',
       },
+      highlight: {
+        true: 'bg-black text-[#DCB875] border-2 border-[#DCB875] hover:bg-[#DCB875] hover:text-black focus:ring-[#DCB875] focus:ring-offset-black shadow-lg hover:shadow-xl active:bg-[#DCB875] active:text-black',
+        false: '',
+      },
     },
     defaultVariants: {
       variant: 'primary',
       size: 'md',
+      highlight: false,
     },
   },
 )
@@ -46,6 +51,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       className,
       variant,
       size,
+      highlight,
       isLoading,
       leftIcon,
       rightIcon,
@@ -59,7 +65,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         className={cn(
-          buttonVariants({ variant, size, className }),
+          buttonVariants({ variant, size, highlight, className }),
           fullWidth && 'w-full',
           isLoading && 'cursor-wait',
         )}

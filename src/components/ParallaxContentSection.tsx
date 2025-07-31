@@ -19,9 +19,10 @@ interface ParallaxContentSectionProps {
   content?: ReactNode
   ctaButtons?: Array<{
     text: string
-    variant: 'gold' | 'green'
+    variant: 'primary' | 'gold' | 'green' | 'outline' | 'ghost'
     onClick?: () => void
     href?: string
+    highlight?: boolean
   }>
   
   // Layout
@@ -103,6 +104,7 @@ export default function ParallaxContentSection({
                     key={index}
                     variant={button.variant}
                     size="lg"
+                    highlight={button.highlight}
                     onClick={button.onClick}
                   >
                     {button.text}

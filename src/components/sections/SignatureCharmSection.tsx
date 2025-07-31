@@ -15,6 +15,7 @@ interface SignatureCharmSectionProps {
     variant: 'primary' | 'gold' | 'green' | 'outline' | 'ghost'
     onClick?: () => void
     href?: string
+    highlight?: boolean
   }
   className?: string
 }

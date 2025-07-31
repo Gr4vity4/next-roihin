@@ -12,6 +12,7 @@ export const contentConfig = {
     cta: {
       text: 'สั่งออกแบบ',
       variant: 'gold' as const,
+      highlight: true,
     },
     background: {
       image:

@@ -23,6 +23,7 @@ interface HeroSectionProps {
     onClick?: () => void
     href?: string
     size?: 'sm' | 'md' | 'lg'
+    highlight?: boolean
   }
   className?: string
   minHeight?: string
@@ -63,6 +64,7 @@ export default function HeroSection({
         <Button
           variant={ctaButton.variant}
           size={ctaButton.size || 'lg'}
+          highlight={ctaButton.highlight}
           onClick={ctaButton.onClick}
         >
           {ctaButton.text}
