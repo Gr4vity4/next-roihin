@@ -1,6 +1,9 @@
+'use client'
+
 import Navigation from '@/components/Navigation'
 import { Typography } from '@/components/ui'
 import Image from 'next/image'
+import { useEffect, useState } from 'react'
 
 // Testimonial data with avatars, dates, and Thai messages
 const testimonialData = [
@@ -71,13 +74,28 @@ const testimonialData = [
 ]
 
 export default function TestimonialPage() {
+  const [isScrolled, setIsScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
   return (
     <>
       <Navigation />
 
-      <main className="pt-20 lg:pt-[230px]">
+      <main>
         {/* Full-width image section */}
-        <section className="w-full">
+        <section 
+          className={`w-full transition-all duration-300 ${
+            isScrolled ? 'pt-20' : 'pt-20 lg:pt-[230px]'
+          }`}
+        >
           <div className="relative w-full h-[290px]">
             <Image
               src="/images/357c3a_c78543e690504fdd80ac15754320656b~mv2.avif"
