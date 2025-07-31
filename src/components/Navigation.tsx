@@ -33,7 +33,7 @@ export default function Navigation() {
     <nav
       className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-        isScrolled ? 'bg-black shadow-[0_8px_32px_rgba(0,0,0,0.5)]' : 'bg-transparent',
+        isScrolled ? 'bg-black shadow-[0_8px_32px_rgba(0,0,0,0.5)] border-b border-white/10' : 'bg-transparent',
       )}
     >
       {/* Desktop Navigation with Video Background */}
