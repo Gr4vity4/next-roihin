@@ -46,12 +46,61 @@ export default function CustomerServicePage() {
           <div className="relative z-10 w-full">
             <Container className="py-16 lg:py-24">
               <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 text-white">
-                {/* Left Column */}
+                {/* Left Column - Contact Information */}
                 <div className="space-y-8">
                   <Typography
                     variant="h2"
                     fontFamily="thai"
                     className="text-4xl lg:text-5xl font-bold text-white mb-8"
+                    textShadow
+                  >
+                    ติดต่อสอบถาม
+                  </Typography>
+
+                  <div className="space-y-6">
+                    <Typography
+                      variant="body"
+                      fontFamily="thai"
+                      className="text-lg text-white leading-relaxed"
+                      textShadow
+                    >
+                      <strong className="text-xl">ที่อยู่:</strong>
+                      <br />
+                      ร้อยหิน Stone & Bracelet
+                      <br />
+                      101/54 หมู่บ้าน ภัสสร 70 (เกาะแก้ว) หมู่ที่ 4 ตำบลเกาะแก้ว อำเภอเมืองภูเก็ต จังหวัดภูเก็ต 83000
+                    </Typography>
+
+                    <Typography
+                      variant="body"
+                      fontFamily="thai"
+                      className="text-lg text-white leading-relaxed"
+                      textShadow
+                    >
+                      <strong className="text-xl">โทรศัพท์:</strong>
+                      <br />
+                      +6683 826 5195
+                    </Typography>
+
+                    <Typography
+                      variant="body"
+                      fontFamily="thai"
+                      className="text-lg text-white leading-relaxed"
+                      textShadow
+                    >
+                      <strong className="text-xl">อีเมล์:</strong>
+                      <br />
+                      info.roihin@gmail.com
+                    </Typography>
+                  </div>
+                </div>
+
+                {/* Right Column - After-Sales Service */}
+                <div className="space-y-8">
+                  <Typography
+                    variant="h3"
+                    fontFamily="thai"
+                    className="text-3xl lg:text-4xl font-bold text-white mb-8"
                     textShadow
                   >
                     บริการหลังการขาย
@@ -75,10 +124,7 @@ export default function CustomerServicePage() {
                       className="text-lg text-white leading-relaxed"
                       textShadow
                     >
-                      • กรณีสินค้าชำรุดเสียหายจากการขนส่ง หรือมีข้อบกพร่องจากการผลิต
-                      <br />
-                      • สามารถแลกเปลี่ยนได้หากไม่ถูกใจหรือไม่เหมาะสม
-                      <br />• ลูกค้าต้องแจ้งภายใน 7 วันหลังได้รับสินค้า
+                      กำไลหินมงคลได้รับการออกแบบอย่างปราณีตและตรวจสอบสินค้าก่อนนำส่งลูกค้าทุกครั้ง อนึ่งหากสินค้าเกิดข้อผิดพลาดทั้งที่ตัวของหินที่อาจบิ่น ชำรุดหรือเสียหาย หรือไหมยืดเกิดการขาด ย้วยหรือเสียหายซึ่งเหตุอันมิได้เกิดจากลูกค้า ทางร้านยินดีรับเปลี่ยนหิน ดูแล ดดยไม่เรียกร้องค่าเสียหายใด ๆ จากลูกค้าหรือยินดีคืนเงินเต็มจำนวนในกรณีสเหตุสุดวิสัย (ทั้งนี้ทางร้อยหินขอสงวนสิทธิ์ในการตรวจสอบเหตุอันพิสูจน์แล้วว่ามิใดเป็นการกระทำใด ๆ อันไม่เหมาะสมต่อสินค้าจากลูกค้า จึงดำเนินการคืนเงินภายใน 15 วันหลังได้ทำการตกลงกับลูกค้า)
                     </Typography>
 
                     <Typography
@@ -87,39 +133,7 @@ export default function CustomerServicePage() {
                       className="text-lg text-white leading-relaxed"
                       textShadow
                     >
-                      <strong>เงื่อนไขการรับประกัน:</strong>
-                      <br />
-                      • สินค้าต้องอยู่ในสภาพเดิม ไม่ผ่านการใช้งาน
-                      <br />
-                      • มีบรรจุภัณฑ์และอุปกรณ์ครบถ้วน
-                      <br />• ค่าจัดส่งในการแลกเปลี่ยนลูกค้าเป็นผู้รับผิดชอบ
-                    </Typography>
-                  </div>
-                </div>
-
-                {/* Right Column */}
-                <div className="space-y-8">
-                  <Typography
-                    variant="h3"
-                    fontFamily="thai"
-                    className="text-3xl lg:text-4xl font-bold text-white mb-8"
-                    textShadow
-                  >
-                    เวลาทำการบริการ
-                  </Typography>
-
-                  <div className="space-y-6">
-                    <Typography
-                      variant="body"
-                      fontFamily="thai"
-                      className="text-lg text-white leading-relaxed"
-                      textShadow
-                    >
-                      <strong className="text-xl">งานร้อยใส่หิน และซ่อมแซม</strong>
-                      <br />
-                      วันจันทร์ - วันศุกร์: 09:00 - 18:00 น.
-                      <br />
-                      วันเสาร์ - วันอาทิตย์: 10:00 - 17:00 น.
+                      <strong className="text-xl">ยินดีดูแลสินค้า ตลอดอายุการใช้งาน</strong>
                     </Typography>
 
                     <Typography
@@ -128,43 +142,8 @@ export default function CustomerServicePage() {
                       className="text-lg text-white leading-relaxed"
                       textShadow
                     >
-                      <strong className="text-xl">บริการลูกค้าออนไลน์</strong>
-                      <br />
-                      ตอบข้อความและปรึกษา: 24 ชั่วโมง
-                      <br />
-                      (ตอบกลับภายใน 2-4 ชั่วโมง ในเวลาทำการ)
+                      เมื่อไหมยืดร้อยหินหมดอายุการใช้งาน ทางร้อยหินยินดีให้บริการดูแล ทำความสะอาดหิน เปลี่ยนไหมร้อยให้โดยไม่มีค่าใช้จ่ายใด ๆ เว้นแต่ค่าบริการส่งสินค้าคืนลูกค้า (ค่าบริการจัดส่งในประเทศ 60 บาท หรือ 120 บาทสำหรับพื้นที่ห่างไกล)
                     </Typography>
-
-                    <Typography
-                      variant="body"
-                      fontFamily="thai"
-                      className="text-lg text-white leading-relaxed"
-                      textShadow
-                    >
-                      <strong>หมายเหตุ:</strong>
-                      <br />
-                      • งานฉุกเฉินสามารถติดต่อได้นอกเวลาทำการ
-                      <br />
-                      • ระยะเวลาซ่อมแซมขึ้นอยู่กับความเสียหายของชิ้นงาน
-                      <br />• การรับประกันครอบคลุมเฉพาะข้อบกพร่องจากการผลิตเท่านั้น
-                    </Typography>
-
-                    <div className="mt-8 p-6 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20">
-                      <Typography
-                        variant="body"
-                        fontFamily="thai"
-                        className="text-lg text-white leading-relaxed"
-                        textShadow
-                      >
-                        <strong>ติดต่อเรา:</strong>
-                        <br />
-                        📞 โทรศัพท์: 02-XXX-XXXX
-                        <br />
-                        📧 อีเมล: service@roihin.com
-                        <br />
-                        💬 Line: @roihin-official
-                      </Typography>
-                    </div>
                   </div>
                 </div>
               </div>
