@@ -105,44 +105,45 @@ export default function TestimonialPage() {
             {/* Testimonials grid */}
             <div className="space-y-8 max-w-4xl mx-auto">
               {testimonialData.map((testimonial) => (
-                <div
-                  key={testimonial.id}
-                  className="bg-white/5 backdrop-blur-sm rounded-lg p-6 flex gap-6 items-start"
-                >
-                  {/* Avatar section */}
-                  <div className="flex-shrink-0">
-                    <div className="relative w-16 h-16 rounded-full overflow-hidden">
-                      <Image
-                        src={testimonial.avatar}
-                        alt={`Avatar of ${testimonial.author}`}
-                        fill
-                        className="object-cover"
-                      />
+                <div key={testimonial.id} className="bg-white/5 backdrop-blur-sm rounded-lg p-6">
+                  <div className="flex gap-6 items-start">
+                    {/* Avatar section */}
+                    <div className="flex-shrink-0">
+                      <div className="relative w-16 h-16 rounded-full overflow-hidden">
+                        <Image
+                          src={testimonial.avatar}
+                          alt={`Avatar of ${testimonial.author}`}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
                     </div>
-                    <div className="text-center mt-2">
-                      <Typography variant="caption" className="text-gray-400 text-xs">
-                        {new Date(testimonial.date).toLocaleDateString('th-TH', {
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric',
-                        })}
+
+                    {/* Message section */}
+                    <div className="flex-1">
+                      {/* Date at top left of message section */}
+                      <div className="mb-3">
+                        <Typography variant="caption" className="text-gray-400 text-xs">
+                          {new Date(testimonial.date).toLocaleDateString('th-TH', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                          })}
+                        </Typography>
+                      </div>
+
+                      <Typography
+                        variant="body"
+                        fontFamily="thai"
+                        className="text-gray-300 leading-relaxed mb-4"
+                      >
+                        &ldquo;{testimonial.message}&rdquo;
+                      </Typography>
+
+                      <Typography variant="body" className="text-white font-semibold">
+                        - {testimonial.author}
                       </Typography>
                     </div>
-                  </div>
-
-                  {/* Message section */}
-                  <div className="flex-1">
-                    <Typography
-                      variant="body"
-                      fontFamily="thai"
-                      className="text-gray-300 leading-relaxed mb-4"
-                    >
-                      &ldquo;{testimonial.message}&rdquo;
-                    </Typography>
-
-                    <Typography variant="body" className="text-white font-semibold">
-                      - {testimonial.author}
-                    </Typography>
                   </div>
                 </div>
               ))}
@@ -153,7 +154,7 @@ export default function TestimonialPage() {
               <Typography variant="body" fontFamily="thai" className="text-gray-400 mb-4">
                 พร้อมที่จะเริ่มต้นการเปลี่ยนแปลงชีวิตของคุณแล้วหรือยัง?
               </Typography>
-              <button className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-8 py-3 rounded-full font-semibold hover:from-yellow-500 hover:to-yellow-700 transition-all duration-300">
+              <button className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-8 py-3 rounded-full font-semibold hover:from-yellow-500 hover:to-yellow-700 transition-all duration-300 font-fciconic">
                 สั่งออกแบบสายหินของคุณ
               </button>
             </div>
