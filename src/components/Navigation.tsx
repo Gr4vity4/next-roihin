@@ -11,7 +11,7 @@ const navItems = [
   { name: 'เกี่ยวกับร้อยหิน', href: '#about' },
   { name: 'งานออกแบบเฉพาะบุคคล', href: '#design' },
   { name: 'ชาร์ม/สเปเซอร์', href: '#charms' },
-  { name: 'รีวิวจริง', href: '#reviews' },
+  { name: 'รีวิวจริง', href: '/testimonial' },
   { name: 'บริการลูกค้า', href: '/customer-service' },
   { name: 'บทความ', href: '#articles' },
 ]
