@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Next.js 15.4.4 e-commerce website for ROIHIN STONE & BRACELET, a personalized stone bracelet business. The project uses TypeScript, React 19, Tailwind CSS 4, and implements a bilingual (English/Thai) user interface.
+This is a Next.js 15.4.4 e-commerce website for ROIHIN STONE & BRACELET, a personalized stone bracelet business. The project uses TypeScript, React 19, Tailwind CSS 4, and implements a bilingual (English/Thai) user interface with Turso database integration.
 
 ## Common Development Commands
 
@@ -21,57 +21,91 @@ npm run start
 # Run ESLint
 npm run lint
 
-# TypeScript type checking (no built-in script, use directly)
+# TypeScript type checking
 npx tsc --noEmit
+
+# Database commands
+npm run db:generate  # Generate SQL migrations from schema changes
+npm run db:migrate   # Apply migrations to database
+npm run db:push      # Push schema changes directly to database (dev)
+npm run db:studio    # Open Drizzle Studio GUI for database management
 ```
 
 ## Project Architecture
 
+### Tech Stack
+- **Framework**: Next.js 15.4.4 with App Router
+- **Language**: TypeScript with strict mode
+- **Styling**: Tailwind CSS 4 with custom configuration
+- **Database**: Turso (SQLite edge database) with Drizzle ORM
+- **UI Components**: Custom component library with Radix UI primitives
+- **Fonts**: Inter, Noto Sans Thai, Playfair Display, FCIconic
+
 ### Directory Structure
 - `/src/app/` - Next.js App Router pages and layouts
+  - `/testimonial/` - Database-driven testimonials page
+  - `/customer-service/` - Customer service page
+  - `/button-demo/` - Component demo page
 - `/src/components/` - Reusable React components
   - `/sections/` - Major page sections (Hero, About, Gallery, etc.)
-  - `/ui/` - Base UI components (Typography, Container, BilingualText)
+  - `/ui/` - Base UI components (Typography, Container, BilingualText, StarRating)
+  - `TestimonialsContainer.tsx` - Server component for testimonials with suspense
 - `/src/config/` - Configuration files
   - `content.config.ts` - All website content (bilingual)
   - `site.config.ts` - Site metadata and configuration
+- `/src/lib/` - Utility functions and database
+  - `/db/` - Database configuration and queries
+    - `schema.ts` - Drizzle schema definitions (testimonials, siteMeta)
+    - `config.ts` - Turso client configuration
+    - `testimonials.ts` - Testimonials CRUD operations
 - `/src/fonts/` - Custom font configurations
-- `/src/lib/` - Utility functions
+- `/drizzle/` - Generated SQL migrations
+
+### Database Architecture
+
+The project uses Turso (edge SQLite) with Drizzle ORM:
+
+1. **Tables**:
+   - `testimonials` - Customer reviews with bilingual support
+   - `site_meta` - Key-value store for site configuration (similar to WordPress options)
+
+2. **Environment Variables** (required in `.env.local`):
+   ```
+   TURSO_DATABASE_URL=libsql://your-database.turso.io
+   TURSO_AUTH_TOKEN=your-auth-token
+   ```
+
+3. **Database Operations**:
+   - All database queries are abstracted in `/src/lib/db/`
+   - Uses Drizzle ORM for type-safe queries
+   - Implements soft deletes (isActive flag)
+   - Automatic timestamp management
 
 ### Key Architectural Patterns
 
-1. **Component Organization**: Components are organized by type (sections, ui) with barrel exports (`index.ts`) for clean imports.
+1. **Server Components**: Database queries run directly in React Server Components for optimal performance
 
-2. **Bilingual Support**: The `BilingualText` component and content configuration support English/Thai text throughout the site.
+2. **Suspense Boundaries**: Loading states for database content using React Suspense
 
-3. **Typography System**: Custom `Typography` component with variants (h1-h6, subtitle, body, caption) for consistent text styling.
+3. **Error Handling**: Graceful error states for database operations
 
-4. **Tailwind Configuration**: Extended with custom colors (gold, green), fonts (FCIconic, Playfair Display), and animations.
+4. **Bilingual Database Content**: Language field in tables for Thai/English content separation
 
-5. **Section-Based Layout**: Main page uses composable section components that accept content via props from centralized config.
+5. **Component Organization**: 
+   - Server components for data fetching
+   - Client components for interactivity
+   - Barrel exports (`index.ts`) for clean imports
 
-### Important Files
+6. **Typography System**: Custom `Typography` component with variants (h1-h6, subtitle, body, caption)
 
-- `src/config/content.config.ts` - Central content management for all text/images
-- `src/components/ui/Typography.tsx` - Typography system implementation
-- `src/components/Navigation.tsx` - Main navigation with scroll behavior
-- `src/app/layout.tsx` - Root layout with font configurations
+7. **Section-Based Layout**: Composable section components with centralized content configuration
 
 ### Development Considerations
 
-- The project uses Next.js App Router (not Pages Router)
+- Always run `npm run db:push` after schema changes during development
+- Use `npm run db:generate` and `npm run db:migrate` for production migrations
+- Database queries should handle errors gracefully with try-catch blocks
+- Use TypeScript types generated from Drizzle schema (`Testimonial`, `NewTestimonial`, etc.)
+- Server Components are preferred for database operations (no client-side fetching)
+- Environment variables must be set for database connection
 - Turbopack is enabled for faster development builds
-- All content is centralized in `content.config.ts` for easy updates
-- Components use TypeScript for type safety
-- Path alias `@/` maps to `./src/`
-- Custom fonts include Inter, Noto Sans Thai, Playfair Display, and FCIconic
-
-### Testing
-
-No test runner is currently configured. Consider adding Jest or Vitest for unit testing and Playwright for E2E testing.
-
-### Linting and Code Quality
-
-- ESLint is configured with Next.js recommended rules
-- TypeScript strict mode is enabled
-- cspell is configured for spell checking (includes Thai words)
