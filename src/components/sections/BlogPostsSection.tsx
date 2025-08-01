@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
 import Button from '../Button'
-import { BilingualText, Container, Typography } from '../ui'
+import { Container, Typography } from '../ui'
 
 interface BlogPost {
   id: string
@@ -35,18 +35,15 @@ interface Category {
 
 interface BlogPostsSectionProps {
   title: {
-    english: string
     thai: string
   }
   subtitle: {
     thai: string
-    english: string
   }
   posts: BlogPost[]
   categories: Category[]
   loadMoreButton: {
     text: {
-      english: string
       thai: string
     }
     variant: 'primary' | 'gold' | 'green' | 'outline' | 'ghost'
@@ -93,50 +90,29 @@ function BlogPostCard({ post }: { post: BlogPost }) {
 
         {/* Post Content */}
         <div className="p-6">
-          {/* Category and Read Time */}
-          {/* <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
-            <BilingualText
-              thai={post.category.thai}
-              // english={post.category.english}
-              variant="caption"
-              thaiClassName="text-[#D4AF37] font-medium font-thai"
-              englishClassName="text-[#D4AF37] font-medium"
-              layout="horizontal"
-              gap="sm"
-            />
-            <span className="text-gray-400">{post.readTime} min read</span>
-          </div> */}
-
           {/* Post Title */}
-          <BilingualText
-            thai={post.title.thai}
-            // english={post.title.english}
+          <Typography
             variant="h4"
-            thaiClassName="font-thai mb-2 text-gray-900 group-hover:text-[#006039] transition-colors line-clamp-2"
-            englishClassName="font-semibold mb-2 text-gray-900 group-hover:text-[#006039] transition-colors line-clamp-2"
-            gap="sm"
-          />
+            fontFamily="thai"
+            className="mb-2 text-gray-900 group-hover:text-[#006039] transition-colors line-clamp-2"
+          >
+            {post.title.thai}
+          </Typography>
 
           {/* Post Excerpt */}
-          <BilingualText
-            thai={post.excerpt.thai}
-            // english={post.excerpt.english}
+          <Typography
             variant="body"
-            thaiClassName="text-gray-600 font-thai text-sm line-clamp-3 mb-4"
-            englishClassName="text-gray-600 text-sm line-clamp-3 mb-4"
-            gap="sm"
-          />
+            fontFamily="thai"
+            className="text-gray-600 text-sm line-clamp-3 mb-4"
+          >
+            {post.excerpt.thai}
+          </Typography>
 
           {/* Post Date */}
           <div className="pt-4 border-t border-gray-100">
-            <BilingualText
-              thai={formattedDate.thai}
-              // english={formattedDate.english}
-              variant="caption"
-              thaiClassName="text-gray-500 font-thai"
-              englishClassName="text-gray-500"
-              gap="sm"
-            />
+            <Typography variant="caption" fontFamily="thai" className="text-gray-500">
+              {formattedDate.thai}
+            </Typography>
           </div>
         </div>
       </article>
@@ -179,22 +155,12 @@ export default function BlogPostsSection({
       <Container>
         {/* Section Header */}
         <div className="text-center mb-12">
-          <BilingualText
-            // thai={title.thai}
-            english={title.english}
-            variant="h2"
-            thaiClassName="font-playfair text-[#006039] mb-4"
-            englishClassName="font-playfair text-[#006039] mb-4 tracking-wider"
-            gap="sm"
-          />
-          {/* <BilingualText
-            thai={subtitle.thai}
-            english={subtitle.english}
-            variant="body"
-            thaiClassName="text-gray-600 font-thai max-w-2xl mx-auto"
-            englishClassName="text-gray-600 max-w-2xl mx-auto"
-            gap="sm"
-          /> */}
+          <Typography variant="h2" fontFamily="thai" className="text-[#006039] mb-4">
+            {title.thai}
+          </Typography>
+          <Typography variant="body" fontFamily="thai" className="text-gray-600 max-w-2xl mx-auto">
+            {subtitle.thai}
+          </Typography>
         </div>
 
         {/* Category Filter */}
@@ -212,17 +178,13 @@ export default function BlogPostsSection({
                   : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700'
               }`}
             >
-              <BilingualText
-                thai={category.name.thai}
-                // english={category.name.english}
+              <Typography
                 variant="caption"
-                thaiClassName={`font-thai ${
-                  selectedCategory === category.id ? 'text-white' : 'text-gray-600'
-                }`}
-                englishClassName={selectedCategory === category.id ? 'text-white' : 'text-gray-600'}
-                layout="horizontal"
-                gap="sm"
-              />
+                fontFamily="thai"
+                className={selectedCategory === category.id ? 'text-white' : 'text-gray-600'}
+              >
+                {category.name.thai}
+              </Typography>
             </button>
           ))}
         </div>
@@ -238,14 +200,9 @@ export default function BlogPostsSection({
         {hasMorePosts && (
           <div className="text-center">
             <Button variant={loadMoreButton.variant} size="lg" onClick={handleLoadMore}>
-              <BilingualText
-                thai={loadMoreButton.text.thai}
-                // english={loadMoreButton.text.english}
-                variant="body"
-                thaiClassName="font-thai"
-                layout="horizontal"
-                gap="sm"
-              />
+              <Typography variant="body" fontFamily="thai">
+                {loadMoreButton.text.thai}
+              </Typography>
             </Button>
           </div>
         )}

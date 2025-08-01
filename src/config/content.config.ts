@@ -25,11 +25,7 @@ export const contentConfig = {
   about: {
     title: "More Than Value, it's Spiritual Worth",
     subtitle: '"มากกว่าคุณค่าทางใจคือคุณค่าทางจิตวิญญาณ"',
-    content: {
-      thai: 'ร้อยหิน คือสถานที่สร้างศิลปะแห่งสายหินที่ให้ความหมายเฉพาะตัวคุณ ด้วยการผสมผสานศาสตร์โบราณและความเข้าใจสมัยใหม่ เรานำหินธรรมชาติที่มีพลังแห่งการบำบัดมาร้อยเรียงอย่างพิถีพิถัน เพื่อสร้างเครื่องประดับที่ไม่เพียงสวยงาม แต่ยังช่วยเสริมสร้างพลังชีวิตให้กับผู้สวมใส่',
-      english:
-        'ROIHIN is a place where stone artistry is created with personal meaning for you. By combining ancient wisdom with modern understanding, we carefully string natural stones with healing powers to create jewelry that is not only beautiful but also enhances the life force of the wearer.',
-    },
+    content: 'ร้อยหิน คือสถานที่สร้างศิลปะแห่งสายหินที่ให้ความหมายเฉพาะตัวคุณ ด้วยการผสมผสานศาสตร์โบราณและความเข้าใจสมัยใหม่ เรานำหินธรรมชาติที่มีพลังแห่งการบำบัดมาร้อยเรียงอย่างพิถีพิถัน เพื่อสร้างเครื่องประดับที่ไม่เพียงสวยงาม แต่ยังช่วยเสริมสร้างพลังชีวิตให้กับผู้สวมใส่',
     cta: {
       text: 'เรียนรู้เพิ่มเติม',
       variant: 'primary' as const,
@@ -178,23 +174,15 @@ export const contentConfig = {
   blog: {
     hero: {
       backgroundImage: '/images/357c3a_c78543e690504fdd80ac15754320656b~mv2.avif',
-      title: {
-        english: 'STONE WISDOM',
-        thai: 'BLOG',
-      },
-      subtitle: {
-        thai: 'ความรู้และเรื่องราวแห่งพลังหิน',
-        english: 'Discover the ancient wisdom and modern insights of natural stone healing',
-      },
+      title: 'BLOG',
+      subtitle: 'ความรู้และเรื่องราวแห่งพลังหิน',
     },
     postsSection: {
       title: {
-        english: 'Latest Articles',
         thai: 'บทความล่าสุด',
       },
       subtitle: {
         thai: 'เรียนรู้และสำรวจโลกแห่งพลังงานหิน',
-        english: 'Learn and explore the world of stone energy',
       },
       posts: [
         {

@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { BilingualText } from '.'
+import { Typography } from '.'
 
 interface RelatedArticle {
   id: string
@@ -56,47 +56,39 @@ function RelatedArticleCard({ article }: { article: RelatedArticle }) {
       <article className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 group-hover:scale-[1.02]">
         {/* Article Image */}
         <div className="relative w-full h-48">
-          <Image 
-            src={article.image} 
-            alt={article.title.english} 
-            fill 
-            className="object-cover group-hover:scale-105 transition-transform duration-300" 
+          <Image
+            src={article.image}
+            alt={article.title.thai}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
           />
         </div>
 
         {/* Article Content */}
         <div className="p-6">
           {/* Article Title */}
-          <BilingualText
-            thai={article.title.thai}
-            english={article.title.english}
+          <Typography
             variant="h4"
-            thaiClassName="font-thai mb-2 text-gray-900 group-hover:text-[#006039] transition-colors line-clamp-2"
-            englishClassName="font-semibold mb-2 text-gray-900 group-hover:text-[#006039] transition-colors line-clamp-2"
-            gap="sm"
-          />
+            fontFamily="thai"
+            className="mb-2 text-gray-900 group-hover:text-[#006039] transition-colors line-clamp-2"
+          >
+            {article.title.thai}
+          </Typography>
 
           {/* Article Excerpt */}
-          <BilingualText
-            thai={article.excerpt.thai}
-            english={article.excerpt.english}
+          <Typography
             variant="body"
-            thaiClassName="text-gray-600 font-thai text-sm line-clamp-3 mb-4"
-            englishClassName="text-gray-600 text-sm line-clamp-3 mb-4"
-            gap="sm"
-          />
+            fontFamily="thai"
+            className="text-gray-600 text-sm line-clamp-3 mb-4"
+          >
+            {article.excerpt.thai}
+          </Typography>
 
           {/* Article Meta */}
           <div className="flex items-center justify-between text-sm text-gray-500 pt-4 border-t border-gray-100">
-            <BilingualText
-              thai={formattedDate.thai}
-              english={formattedDate.english}
-              variant="caption"
-              thaiClassName="text-gray-500 font-thai"
-              englishClassName="text-gray-500"
-              gap="sm"
-            />
-            <span className="text-gray-400">{article.readTime} min read</span>
+            <Typography variant="caption" fontFamily="thai" className="text-gray-500">
+              {formattedDate.thai}
+            </Typography>
           </div>
         </div>
       </article>
@@ -104,15 +96,13 @@ function RelatedArticleCard({ article }: { article: RelatedArticle }) {
   )
 }
 
-export default function RelatedArticles({ 
-  articles, 
-  currentArticleId, 
-  className = '' 
+export default function RelatedArticles({
+  articles,
+  currentArticleId,
+  className = '',
 }: RelatedArticlesProps) {
   // Filter out current article and limit to 3 related articles
-  const relatedArticles = articles
-    .filter(article => article.id !== currentArticleId)
-    .slice(0, 3)
+  const relatedArticles = articles.filter((article) => article.id !== currentArticleId).slice(0, 3)
 
   if (relatedArticles.length === 0) {
     return null
@@ -123,22 +113,12 @@ export default function RelatedArticles({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-8">
-          <BilingualText
-            thai="บทความที่เกี่ยวข้อง"
-            english="Related Articles"
-            variant="h3"
-            thaiClassName="font-thai text-[#006039] mb-2"
-            englishClassName="font-playfair text-[#006039] mb-2 tracking-wider"
-            gap="sm"
-          />
-          <BilingualText
-            thai="เรียนรู้เพิ่มเติมเกี่ยวกับพลังงานหิน"
-            english="Learn more about stone energy and wisdom"
-            variant="body"
-            thaiClassName="text-gray-600 font-thai"
-            englishClassName="text-gray-600"
-            gap="sm"
-          />
+          <Typography variant="h3" fontFamily="thai" className="text-[#006039] mb-2">
+            บทความที่เกี่ยวข้อง
+          </Typography>
+          <Typography variant="body" fontFamily="thai" className="text-gray-600">
+            เรียนรู้เพิ่มเติมเกี่ยวกับพลังงานหิน
+          </Typography>
         </div>
 
         {/* Related Articles Grid */}

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { BilingualText, Container, Typography } from '@/components/ui'
+import { Container, Typography } from '@/components/ui'
 
 // Simple SVG icon component
 function ArrowLeftIcon({ className }: { className?: string }) {
@@ -21,23 +21,21 @@ export default function NotFound() {
           </Typography>
           
           {/* Error Message */}
-          <BilingualText
-            thai="ไม่พบบทความที่คุณค้นหา"
-            english="Article Not Found"
+          <Typography
             variant="h2"
-            thaiClassName="font-thai text-[#006039] mb-4"
-            englishClassName="font-playfair text-[#006039] mb-4 tracking-wider"
-            gap="sm"
-          />
+            fontFamily="thai"
+            className="text-[#006039] mb-4"
+          >
+            ไม่พบบทความที่คุณค้นหา
+          </Typography>
           
-          <BilingualText
-            thai="ขออภัย บทความที่คุณกำลังมองหาอาจถูกลบ หรือย้ายไปแล้ว กรุณาตรวจสอบ URL หรือกลับไปที่หน้าบล็อกเพื่อค้นหาบทความอื่นๆ"
-            english="Sorry, the article you're looking for might have been removed or moved. Please check the URL or return to the blog page to find other articles."
+          <Typography
             variant="body"
-            thaiClassName="font-thai text-gray-600 mb-8 max-w-xl mx-auto"
-            englishClassName="text-gray-600 mb-8 max-w-xl mx-auto"
-            gap="md"
-          />
+            fontFamily="thai"
+            className="text-gray-600 mb-8 max-w-xl mx-auto"
+          >
+            ขออภัย บทความที่คุณกำลังมองหาอาจถูกลบ หรือย้ายไปแล้ว กรุณาตรวจสอบ URL หรือกลับไปที่หน้าบล็อกเพื่อค้นหาบทความอื่นๆ
+          </Typography>
 
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
@@ -46,30 +44,24 @@ export default function NotFound() {
               className="inline-flex items-center px-6 py-3 bg-[#006039] text-white rounded-lg hover:bg-[#004D2E] transition-colors duration-200 font-medium"
             >
               <ArrowLeftIcon className="h-5 w-5 mr-2" />
-              <BilingualText
-                thai="กลับไปบล็อก"
-                english="Back to Blog"
+              <Typography
                 variant="body"
-                thaiClassName="font-thai"
-                englishClassName=""
-                layout="horizontal"
-                gap="sm"
-              />
+                fontFamily="thai"
+              >
+                กลับไปบล็อก
+              </Typography>
             </Link>
             
             <Link
               href="/"
               className="inline-flex items-center px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200 font-medium"
             >
-              <BilingualText
-                thai="กลับหน้าแรก"
-                english="Go Home"
+              <Typography
                 variant="body"
-                thaiClassName="font-thai"
-                englishClassName=""
-                layout="horizontal"
-                gap="sm"
-              />
+                fontFamily="thai"
+              >
+                กลับหน้าแรก
+              </Typography>
             </Link>
           </div>
         </div>

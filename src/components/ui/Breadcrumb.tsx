@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { BilingualText } from '.'
+import { Typography } from '.'
 
 // Simple SVG icon component
 function ChevronRightIcon({ className }: { className?: string }) {
@@ -16,10 +16,7 @@ function ChevronRightIcon({ className }: { className?: string }) {
 }
 
 interface BreadcrumbItem {
-  label: {
-    thai: string
-    english: string
-  }
+  label: string
   href?: string
 }
 
@@ -42,26 +39,22 @@ export default function Breadcrumb({ items, className = '' }: BreadcrumbProps) {
                 href={item.href}
                 className="text-gray-600 hover:text-[#006039] transition-colors duration-200"
               >
-                <BilingualText
-                  thai={item.label.thai}
-                  english={item.label.english}
+                <Typography
                   variant="caption"
-                  thaiClassName="font-thai text-sm hover:text-[#006039]"
-                  englishClassName="text-sm hover:text-[#006039]"
-                  layout="horizontal"
-                  gap="sm"
-                />
+                  fontFamily="thai"
+                  className="text-sm hover:text-[#006039]"
+                >
+                  {item.label}
+                </Typography>
               </Link>
             ) : (
-              <BilingualText
-                thai={item.label.thai}
-                english={item.label.english}
+              <Typography
                 variant="caption"
-                thaiClassName="font-thai text-sm text-gray-900"
-                englishClassName="text-sm text-gray-900"
-                layout="horizontal"
-                gap="sm"
-              />
+                fontFamily="thai"
+                className="text-sm text-gray-900"
+              >
+                {item.label}
+              </Typography>
             )}
           </li>
         ))}

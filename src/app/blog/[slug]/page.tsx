@@ -5,7 +5,6 @@ import ChatWidget from '@/components/ChatWidget'
 import Navigation from '@/components/Navigation'
 import { Footer } from '@/components/sections'
 import { 
-  BilingualText, 
   Container, 
   Typography, 
   Breadcrumb, 
@@ -52,8 +51,8 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     }
   }
 
-  const title = `${article.title.english} | ${siteConfig.name}`
-  const description = article.excerpt.english
+  const title = `${article.title.thai} | ${siteConfig.name}`
+  const description = article.excerpt.thai
   const url = `${siteConfig.url}/blog/${encodeURIComponent(article.title.thai)}`
   
   return {
@@ -70,7 +69,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
     ],
     authors: [{ name: article.author.name }],
     openGraph: {
-      title: article.title.english,
+      title: article.title.thai,
       description,
       type: 'article',
       publishedTime: article.date,
@@ -81,13 +80,13 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
           url: article.image,
           width: 1200,
           height: 630,
-          alt: article.title.english,
+          alt: article.title.thai,
         },
       ],
     },
     twitter: {
       card: 'summary_large_image',
-      title: article.title.english,
+      title: article.title.thai,
       description,
       images: [article.image],
     },
@@ -139,24 +138,15 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   // Breadcrumb items
   const breadcrumbItems = [
     {
-      label: {
-        thai: 'หน้าแรก',
-        english: 'Home'
-      },
+      label: 'หน้าแรก',
       href: '/'
     },
     {
-      label: {
-        thai: 'บล็อก',
-        english: 'Blog'
-      },
+      label: 'บล็อก',
       href: '/blog'
     },
     {
-      label: {
-        thai: article.title.thai,
-        english: article.title.english
-      }
+      label: article.title.thai
     }
   ]
 
@@ -171,7 +161,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           <div className="relative w-full h-[400px] lg:h-[500px]">
             <Image
               src={article.image}
-              alt={article.title.english}
+              alt={article.title.thai}
               fill
               className="object-cover"
               priority
@@ -183,38 +173,32 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           <div className="absolute bottom-0 left-0 right-0 p-6 lg:p-8">
             <Container>
               <div className="text-white">
-                <BilingualText
-                  thai={article.title.thai}
-                  english={article.title.english}
+                <Typography
                   variant="h2"
-                  thaiClassName="font-thai text-3xl lg:text-5xl font-bold mb-4 drop-shadow-lg"
-                  englishClassName="font-playfair text-3xl lg:text-5xl font-bold mb-4 drop-shadow-lg tracking-wider"
-                  gap="sm"
-                />
+                  fontFamily="thai"
+                  className="text-3xl lg:text-5xl font-bold mb-4 drop-shadow-lg"
+                >
+                  {article.title.thai}
+                </Typography>
                 
                 {/* Article Meta */}
                 <div className="flex flex-wrap items-center gap-4 text-sm text-gray-200">
-                  <BilingualText
-                    thai={formattedDate.thai}
-                    english={formattedDate.english}
+                  <Typography
                     variant="caption"
-                    thaiClassName="font-thai"
-                    englishClassName=""
-                    layout="horizontal"
-                    gap="sm"
-                  />
+                    fontFamily="thai"
+                  >
+                    {formattedDate.thai}
+                  </Typography>
                   <span className="text-gray-400">•</span>
                   <span>{article.readTime} min read</span>
                   <span className="text-gray-400">•</span>
-                  <BilingualText
-                    thai={article.category.thai}
-                    english={article.category.english}
+                  <Typography
                     variant="caption"
-                    thaiClassName="font-thai text-[#D4AF37]"
-                    englishClassName="text-[#D4AF37]"
-                    layout="horizontal"
-                    gap="sm"
-                  />
+                    fontFamily="thai"
+                    className="text-[#D4AF37]"
+                  >
+                    {article.category.thai}
+                  </Typography>
                 </div>
               </div>
             </Container>
@@ -230,31 +214,21 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
               {/* Article Excerpt */}
               <div className="mb-8 p-6 bg-gray-50 rounded-lg border-l-4 border-[#D4AF37]">
-                <BilingualText
-                  thai={article.excerpt.thai}
-                  english={article.excerpt.english}
+                <Typography
                   variant="body"
-                  thaiClassName="font-thai text-gray-700 text-lg leading-8"
-                  englishClassName="text-gray-700 text-lg leading-8"
-                  gap="md"
-                />
+                  fontFamily="thai"
+                  className="text-gray-700 text-lg leading-8"
+                >
+                  {article.excerpt.thai}
+                </Typography>
               </div>
 
               {/* Article Content */}
               <article className="prose prose-lg max-w-none">
-                <div className="bilingual-content">
-                  {/* Thai Content */}
-                  <div 
-                    className="thai-content font-thai text-gray-800 leading-8 mb-8 [&_h3]:text-2xl [&_h3]:font-bold [&_h3]:text-[#006039] [&_h3]:mt-8 [&_h3]:mb-4 [&_h4]:text-xl [&_h4]:font-semibold [&_h4]:text-[#006039] [&_h4]:mt-6 [&_h4]:mb-3 [&_p]:mb-4 [&_p]:leading-8 [&_ul]:list-disc [&_ul]:list-inside [&_ul]:mb-4 [&_ul]:space-y-2 [&_li]:leading-7 [&_strong]:font-semibold [&_strong]:text-[#006039]"
-                    dangerouslySetInnerHTML={{ __html: article.content.thai }}
-                  />
-                  
-                  {/* English Content */}
-                  <div 
-                    className="english-content text-gray-800 leading-8 [&_h3]:text-2xl [&_h3]:font-bold [&_h3]:text-[#006039] [&_h3]:mt-8 [&_h3]:mb-4 [&_h4]:text-xl [&_h4]:font-semibold [&_h4]:text-[#006039] [&_h4]:mt-6 [&_h4]:mb-3 [&_p]:mb-4 [&_p]:leading-8 [&_ul]:list-disc [&_ul]:list-inside [&_ul]:mb-4 [&_ul]:space-y-2 [&_li]:leading-7 [&_strong]:font-semibold [&_strong]:text-[#006039]"
-                    dangerouslySetInnerHTML={{ __html: article.content.english }}
-                  />
-                </div>
+                <div 
+                  className="font-thai text-gray-800 leading-8 [&_h3]:text-2xl [&_h3]:font-bold [&_h3]:text-[#006039] [&_h3]:mt-8 [&_h3]:mb-4 [&_h4]:text-xl [&_h4]:font-semibold [&_h4]:text-[#006039] [&_h4]:mt-6 [&_h4]:mb-3 [&_p]:mb-4 [&_p]:leading-8 [&_ul]:list-disc [&_ul]:list-inside [&_ul]:mb-4 [&_ul]:space-y-2 [&_li]:leading-7 [&_strong]:font-semibold [&_strong]:text-[#006039]"
+                  dangerouslySetInnerHTML={{ __html: article.content.thai }}
+                />
               </article>
 
               {/* Article Tags */}
@@ -288,14 +262,13 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                     <Typography variant="h4" className="text-gray-900 mb-1">
                       {article.author.name}
                     </Typography>
-                    <BilingualText
-                      thai={article.author.bio.thai}
-                      english={article.author.bio.english}
+                    <Typography
                       variant="caption"
-                      thaiClassName="font-thai text-gray-600"
-                      englishClassName="text-gray-600"
-                      gap="sm"
-                    />
+                      fontFamily="thai"
+                      className="text-gray-600"
+                    >
+                      {article.author.bio.thai}
+                    </Typography>
                   </div>
                 </div>
               </div>
@@ -303,8 +276,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               {/* Social Share */}
               <SocialShare
                 url={currentUrl}
-                title={article.title}
-                description={article.excerpt}
+                title={article.title.thai}
+                description={article.excerpt.thai}
                 className="mt-8"
               />
             </div>

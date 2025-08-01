@@ -1,4 +1,4 @@
-import { Container, Typography, BilingualText } from '../ui'
+import { Container, Typography } from '../ui'
 import Button from '../Button'
 import { cn } from '@/lib/utils'
 
@@ -6,10 +6,7 @@ interface AboutSectionProps {
   id?: string
   title: string
   subtitle?: string
-  content: {
-    thai?: string
-    english?: string
-  }
+  content?: string
   ctaButton?: {
     text: string
     variant: 'primary' | 'gold' | 'green' | 'outline' | 'ghost'
@@ -67,15 +64,14 @@ export default function AboutSection({
             </Typography>
           )}
           
-          {(content.thai || content.english) && (
-            <BilingualText
-              thai={content.thai}
-              english={content.english}
+          {content && (
+            <Typography
               variant="body"
-              gap="lg"
-              thaiClassName="text-gray-600"
-              englishClassName="text-gray-600"
-            />
+              fontFamily="thai"
+              className="text-gray-600"
+            >
+              {content}
+            </Typography>
           )}
           
           {ctaButton && (

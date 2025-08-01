@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { BilingualText } from '.'
+import { Typography } from '.'
 
 // Simple SVG icon components
 function ShareIcon({ className }: { className?: string }) {
@@ -30,14 +30,8 @@ function CheckIcon({ className }: { className?: string }) {
 
 interface SocialShareProps {
   url: string
-  title: {
-    thai: string
-    english: string
-  }
-  description?: {
-    thai: string
-    english: string
-  }
+  title: string
+  description?: string
   className?: string
 }
 
@@ -65,7 +59,7 @@ export default function SocialShare({
   }
 
   const handleTwitterShare = () => {
-    const text = `${title.english} - ${description?.english || ''}`
+    const text = `${title} - ${description || ''}`
     const shareUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`
     window.open(shareUrl, '_blank', 'noopener,noreferrer')
   }
@@ -75,15 +69,13 @@ export default function SocialShare({
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
           <ShareIcon className="h-5 w-5 text-gray-400" />
-          <BilingualText
-            thai="แชร์บทความนี้"
-            english="Share this article"
+          <Typography
             variant="body"
-            thaiClassName="font-thai text-gray-600"
-            englishClassName="text-gray-600"
-            layout="horizontal"
-            gap="sm"
-          />
+            fontFamily="thai"
+            className="text-gray-600"
+          >
+            แชร์บทความนี้
+          </Typography>
         </div>
         
         <div className="flex items-center space-x-3">

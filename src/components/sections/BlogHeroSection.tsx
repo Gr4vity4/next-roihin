@@ -1,16 +1,10 @@
 import Image from 'next/image'
-import { Container, Typography, BilingualText } from '../ui'
+import { Container, Typography } from '../ui'
 
 interface BlogHeroSectionProps {
   backgroundImage: string
-  title: {
-    english: string
-    thai: string
-  }
-  subtitle: {
-    thai: string
-    english: string
-  }
+  title: string
+  subtitle: string
   className?: string
 }
 
@@ -37,23 +31,21 @@ export default function BlogHeroSection({
         {/* Content */}
         <div className="absolute inset-0 flex items-center justify-center">
           <Container className="text-center text-white">
-            <BilingualText
-              thai={title.thai}
-              english={title.english}
+            <Typography
               variant="h2"
-              thaiClassName="font-playfair mb-2"
-              englishClassName="font-playfair tracking-wider"
-              gap="sm"
-            />
+              fontFamily="thai"
+              className="mb-2"
+            >
+              {title}
+            </Typography>
             <div className="mt-6 max-w-2xl mx-auto">
-              <BilingualText
-                thai={subtitle.thai}
-                english={subtitle.english}
+              <Typography
                 variant="body"
-                thaiClassName="font-thai text-gray-200"
-                englishClassName="text-gray-200"
-                gap="sm"
-              />
+                fontFamily="thai"
+                className="text-gray-200"
+              >
+                {subtitle}
+              </Typography>
             </div>
           </Container>
         </div>
