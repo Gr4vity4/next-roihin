@@ -94,7 +94,7 @@ export async function updateSiteMeta(key: string, value: string | object, langua
     })
     
     // If no rows affected, insert new
-    if (result.changes === 0) {
+    if (result.rowsAffected === 0) {
       result = await turso.execute({
         sql: `INSERT INTO site_meta 
               (meta_key, meta_value, meta_value_json, language, is_active, created_at, updated_at) 

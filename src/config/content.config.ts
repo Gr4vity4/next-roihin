@@ -115,4 +115,73 @@ export const contentConfig = {
       alt: 'Vibrant your destiny background',
     },
   },
+
+  // About Page Content
+  aboutPage: {
+    hero: {
+      backgroundImage: '/images/357c3a_ac4bc1a787364c358512be32cc1ffc30~mv2.avif', // Cover.jpg equivalent
+      title: {
+        line1: 'WE AIM TO',
+        line2: 'VIBRANT YOUR DESTINY',
+        line3: 'AMONG LIFE',
+      },
+    },
+    aboutSection: {
+      title: {
+        english: 'About',
+        thai: 'ROIHIN',
+      },
+      subtitle: {
+        thai: 'พลังแห่งการสั่นไหวในระดับจิตวิญญาณ',
+      },
+      content: {
+        english: [
+          'ROIHIN Stone and Bracelet is the art of connecting natural elemental energy, spirit, and desires. It involves connecting gemstones to create narratives that reflect energy, resulting in transformations for those who possess them.',
+          'Natural elements possess powerful energies that can continuously create vibrations both externally and internally. When connected with care by experts, these energies can enhance your destiny, turning misfortune into opportunity, like unlocking a door to rapid success.',
+          'We adhere to ethical principles and embrace the philosophy of nature to cultivate wisdom in living virtuously. We share our knowledge to foster positive changes, both physically and spiritually.',
+          'Let go of ego, open your heart, and explore energies you\'ve never experienced before. We believe that this connection brings us together in meaningful ways. . . .',
+        ],
+        thai: [
+          'ร้อยหินคือศาสตร์แห่งการเชื่อมโยงพลังงานธาตุธรรมชาติ จิตวิญญาณและความปรารถนาเข้าด้วยกัน ถือเป็นศาสตร์แห่งการร้อยเรียงอัญมณีธาตุให้เกิดเป็นเรื่องราว เพื่อสะท้อนพลังงานให้เกิดการสั่นไหวและให้ผลลัพท์แห่งการเปลี่ยนแปลงกับผู้ที่ได้ครอบครอง',
+          'ธาตุธรรมชาติย่อมมีพลังมาก สามารถสร้างแรงสั่นสะเทือนทั้งภายนอกและภายในได้อย่างต่อเนื่อง หากได้รับการเชื่อมโยงพลังงานโดยผู้เชี่ยวชาญอย่างพิถีพิถันแล้ว พลังงานที่เหมาะสมจะช่วยกระตุ้นหนุนดวงชะตา พลิกร้ายกลายเป็นดี ดั่งกุญแจปลดล็อคที่ช่วยให้คุณเปิดโลกสู่ความสำเร็จได้อย่างรวดเร็ว',
+          'เรายึดถือคุณธรรม ยึดมั่นในศีลธรรม สั่งสมปรัชญาแห่งธรรมชาติเพื่อก่อเกิดปัญญาในการใช้ชีวิตอย่างมีจรรยา เราถ่ายทอดแบ่งปันสู่เพื่อนพ้องเพื่อให้เกิดการเปลี่ยนแปลงที่ดีกว่า ทั้งในด้านกายภาพและลึกซึ่งในระดับจิตวิญญาณ',
+          'จงวางอัตตาลงเถิด เปิดหัวใจให้กว้างและลองเรียนรู้สัมผัสกับพลังงานที่ไม่อาจเคยได้สัมผัสจากที่ไหนมาก่อน เราเชื่อว่าสาสนาสัมพันธ์ ทำให้เราได้เจอกัน . . .',
+        ],
+      },
+    },
+    features: [
+      {
+        id: 'unique-design',
+        image: '/images/357c3a_c78543e690504fdd80ac15754320656b~mv2.avif', // IMG_7665.jpeg equivalent
+        title: {
+          english: 'Unique Design',
+          thai: 'รูปแบบอันเป็นอัตลักษณ์เฉพาะ',
+        },
+      },
+      {
+        id: 'natural-purifying',
+        image: '/images/357c3a_2013cc64ddf74b35b6a0d668ae5effb8~mv2.avif', // IMG_5343.JPG equivalent
+        title: {
+          english: 'Natural Purifying',
+          thai: 'บริสุทธิ์ด้วยพลังธรรมชาติ',
+        },
+      },
+      {
+        id: 'premium-care',
+        image: '/images/357c3a_449b1b790747456cb742616cdedb4af0~mv2.avif', // LINE_ALBUM equivalent
+        title: {
+          english: 'Premium Care',
+          thai: 'รักษาด้วยบรรจุภัณฑ์คุณภาพ',
+        },
+      },
+      {
+        id: 'empowering-ritual',
+        image: '/images/357c3a_155e041dcebb4320b8cb23202c8441e8~mv2.avif', // 01011500-01.jpeg equivalent
+        title: {
+          english: 'Empowering Ritual',
+          thai: 'ปลุกพลังด้วยพิธีกรรมขั้นสูง',
+        },
+      },
+    ],
+  },
 }

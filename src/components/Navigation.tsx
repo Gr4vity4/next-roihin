@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react'
 
 const navItems = [
   { name: 'หน้าแรก', href: '/' },
-  { name: 'เกี่ยวกับร้อยหิน', href: '#about' },
+  { name: 'เกี่ยวกับร้อยหิน', href: '/about' },
   { name: 'งานออกแบบเฉพาะบุคคล', href: '#design' },
   { name: 'ชาร์ม/สเปเซอร์', href: '#charms' },
   { name: 'รีวิวจริง', href: '/testimonial' },

@@ -6,3 +6,8 @@ export { default as GallerySection } from './GallerySection'
 export { default as VibrantDestinySection } from './VibrantDestinySection'
 export { default as FullWidthBackgroundSection } from './FullWidthBackgroundSection'
 export { default as Footer } from './Footer'
+
+// About Page Components
+export { default as AboutHeroSection } from './AboutHeroSection'
+export { default as AboutContentSection } from './AboutContentSection'
+export { default as AboutFeaturesSection } from './AboutFeaturesSection'

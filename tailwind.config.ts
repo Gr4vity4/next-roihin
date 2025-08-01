@@ -57,9 +57,28 @@ const config: Config = {
           '100%': { opacity: '1' },
         },
       },
+      textShadow: {
+        'DEFAULT': '0 2px 4px rgba(0, 0, 0, 0.5)',
+        'lg': '0 4px 6px rgba(0, 0, 0, 0.7)',
+      },
     },
   },
-  plugins: [],
+  plugins: [
+    function ({ addUtilities }: any) {
+      const newUtilities = {
+        '.text-shadow': {
+          textShadow: '0 2px 4px rgba(0, 0, 0, 0.5)',
+        },
+        '.text-shadow-lg': {
+          textShadow: '0 4px 6px rgba(0, 0, 0, 0.7)',
+        },
+        '.text-shadow-none': {
+          textShadow: 'none',
+        },
+      }
+      addUtilities(newUtilities)
+    },
+  ],
 }
 
 export default config

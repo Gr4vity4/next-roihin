@@ -1,6 +1,6 @@
 import { eq, and } from 'drizzle-orm'
 import { db } from './index'
-import { siteMeta, type SiteMeta, type NewSiteMeta } from './schema'
+import { siteMeta, type SiteMeta } from './schema'
 
 // Get site meta value by key
 export async function getSiteMetaValue(
@@ -28,7 +28,7 @@ export async function getSiteMetaValue(
 }
 
 // Get site meta JSON value by key
-export async function getSiteMetaJson<T = any>(
+export async function getSiteMetaJson<T = unknown>(
   key: string, 
   language: string = 'th'
 ): Promise<T | null> {
@@ -127,7 +127,7 @@ export async function setSiteMetaValue(
 }
 
 // Set site meta JSON value
-export async function setSiteMetaJson<T = any>(
+export async function setSiteMetaJson<T = unknown>(
   key: string,
   value: T,
   language: string = 'th'
