@@ -119,7 +119,7 @@ export const contentConfig = {
   // About Page Content
   aboutPage: {
     hero: {
-      backgroundImage: '/images/357c3a_ac4bc1a787364c358512be32cc1ffc30~mv2.avif', // Cover.jpg equivalent
+      backgroundImage: '/images/357c3a_39f0c2c0d57f4da1a70dee7117de782f~mv2.jpg', // Cover.jpg equivalent
       title: {
         line1: 'WE AIM TO',
         line2: 'VIBRANT YOUR DESTINY',
@@ -139,7 +139,7 @@ export const contentConfig = {
           'ROIHIN Stone and Bracelet is the art of connecting natural elemental energy, spirit, and desires. It involves connecting gemstones to create narratives that reflect energy, resulting in transformations for those who possess them.',
           'Natural elements possess powerful energies that can continuously create vibrations both externally and internally. When connected with care by experts, these energies can enhance your destiny, turning misfortune into opportunity, like unlocking a door to rapid success.',
           'We adhere to ethical principles and embrace the philosophy of nature to cultivate wisdom in living virtuously. We share our knowledge to foster positive changes, both physically and spiritually.',
-          'Let go of ego, open your heart, and explore energies you\'ve never experienced before. We believe that this connection brings us together in meaningful ways. . . .',
+          "Let go of ego, open your heart, and explore energies you've never experienced before. We believe that this connection brings us together in meaningful ways. . . .",
         ],
         thai: [
           'ร้อยหินคือศาสตร์แห่งการเชื่อมโยงพลังงานธาตุธรรมชาติ จิตวิญญาณและความปรารถนาเข้าด้วยกัน ถือเป็นศาสตร์แห่งการร้อยเรียงอัญมณีธาตุให้เกิดเป็นเรื่องราว เพื่อสะท้อนพลังงานให้เกิดการสั่นไหวและให้ผลลัพท์แห่งการเปลี่ยนแปลงกับผู้ที่ได้ครอบครอง',

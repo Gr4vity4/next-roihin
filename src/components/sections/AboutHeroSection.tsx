@@ -12,7 +12,7 @@ interface AboutHeroSectionProps {
 
 export default function AboutHeroSection({ backgroundImage, title }: AboutHeroSectionProps) {
   return (
-    <section className="relative h-screen w-full overflow-hidden">
+    <section className="relative h-screen w-full overflow-hidden pt-20 lg:pt-[230px]">
       {/* Background Image */}
       <div className="absolute inset-0">
         <Image
@@ -24,14 +24,14 @@ export default function AboutHeroSection({ backgroundImage, title }: AboutHeroSe
           sizes="100vw"
         />
         {/* Dark overlay for better text readability */}
-        <div className="absolute inset-0 bg-black/30" />
+        <div className="absolute inset-0 bg-black/40" />
       </div>
 
       {/* Content */}
       <div className="relative z-10 flex h-full items-center justify-center">
-        <div className="text-center px-4">
+        <div className="text-center px-4 md:flex md:items-center">
           <Typography
-            variant="h1"
+            variant="h3"
             fontFamily="playfair"
             textShadow
             color="text-white"
@@ -40,20 +40,22 @@ export default function AboutHeroSection({ backgroundImage, title }: AboutHeroSe
           >
             {title.line1}
           </Typography>
-          
+
+          <div className="max-w-sm">
+            <Typography
+              variant="h2"
+              fontFamily="playfair"
+              textShadow
+              color="highlight"
+              align="center"
+              className="mb-4 tracking-[0.2em] leading-tight"
+            >
+              {title.line2}
+            </Typography>
+          </div>
+
           <Typography
-            variant="h1"
-            fontFamily="playfair"
-            textShadow
-            color="text-white"
-            align="center"
-            className="mb-4 tracking-[0.2em] leading-tight"
-          >
-            {title.line2}
-          </Typography>
-          
-          <Typography
-            variant="h1"
+            variant="h3"
             fontFamily="playfair"
             textShadow
             color="text-white"
