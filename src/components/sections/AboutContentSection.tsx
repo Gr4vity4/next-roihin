@@ -14,28 +14,27 @@ interface AboutContentSectionProps {
   }
 }
 
-export default function AboutContentSection({ title, subtitle, content }: AboutContentSectionProps) {
+export default function AboutContentSection({
+  title,
+  subtitle,
+  content,
+}: AboutContentSectionProps) {
   return (
     <section className="py-20 bg-white">
       <Container>
         <div className="max-w-4xl mx-auto">
           {/* Title Section */}
           <div className="text-center mb-16">
-            <Typography
-              variant="h2"
-              fontFamily="playfair"
-              align="center"
-              className="mb-4"
-            >
+            <Typography variant="h2" fontFamily="playfair" align="center" className="mb-4">
               <span className="text-gray-800">{title.english}</span>{' '}
               <span className="text-black font-bold">{title.thai}</span>
             </Typography>
-            
+
             <Typography
               variant="h4"
               fontFamily="thai"
               align="center"
-              color="text-gray-600"
+              color="primary"
               className="italic"
             >
               {subtitle.thai}

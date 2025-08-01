@@ -1,6 +1,7 @@
 'use client'
 
 import Button from '@/components/Button'
+import Typography from '@/components/ui/Typography'
 import { ArrowRight, Download, Heart, ShoppingCart } from 'lucide-react'
 
 export default function ButtonDemoPage() {
@@ -9,6 +10,16 @@ export default function ButtonDemoPage() {
       <div className="container mx-auto px-4">
         <h1 className="text-4xl font-playfair font-bold text-center mb-12">Button Component Showcase</h1>
         
+        {/* Typography Color Test */}
+        <section className="mb-12">
+          <h2 className="text-2xl font-semibold mb-6">Typography Color Test</h2>
+          <div className="space-y-4">
+            <Typography variant="h3" color="primary">Primary Color (Green) - This should be green #006039</Typography>
+            <Typography variant="h3" color="highlight">Highlight Color (Gold) - This should be gold #D4AF37</Typography>
+            <Typography variant="body">Normal text without color prop</Typography>
+          </div>
+        </section>
+
         {/* Variants */}
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-6">Button Variants</h2>

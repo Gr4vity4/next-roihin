@@ -8,7 +8,7 @@ interface TypographyProps extends HTMLAttributes<HTMLElement> {
   className?: string
   fontFamily?: 'playfair' | 'thai' | 'default'
   textShadow?: boolean
-  color?: string
+  color?: 'primary' | 'highlight' | string
   align?: 'left' | 'center' | 'right' | 'justify'
 }
 
@@ -43,6 +43,11 @@ const alignmentClasses = {
   justify: 'text-justify',
 }
 
+const colorClasses = {
+  primary: 'text-[#006039]', // Direct hex value for green
+  highlight: 'text-[#D4AF37]', // Direct hex value for gold
+} as const
+
 export default function Typography({
   variant,
   component,
@@ -56,6 +61,17 @@ export default function Typography({
 }: TypographyProps) {
   const Component = component || variantComponents[variant]
   
+  // Handle color: use predefined colors if they match, otherwise treat as Tailwind class
+  const getColorClass = (color?: string) => {
+    if (!color) return undefined
+    if (color in colorClasses) {
+      return colorClasses[color as keyof typeof colorClasses]
+    }
+    return color
+  }
+  
+  const colorClass = getColorClass(color)
+  
   return createElement(
     Component,
     {
@@ -64,7 +80,7 @@ export default function Typography({
         fontFamily && fontFamilyClasses[fontFamily],
         textShadow && 'text-shadow',
         align && alignmentClasses[align],
-        color,
+        colorClass,
         className
       ),
       ...props
