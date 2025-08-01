@@ -229,8 +229,8 @@ export const contentConfig = {
           date: '2024-01-10',
           readTime: 7,
           category: {
-            english: 'Guidance',
-            thai: 'คำแนะนำ',
+            english: 'Stone Knowledge',
+            thai: 'ความรู้เรื่องหิน',
           },
         },
         {
@@ -247,8 +247,8 @@ export const contentConfig = {
           date: '2024-01-05',
           readTime: 6,
           category: {
-            english: 'Care & Maintenance',
-            thai: 'การดูแลรักษา',
+            english: 'Stone Care Tips',
+            thai: 'เคล็ดลับดูแลหินพลังงาน',
           },
         },
         {
@@ -265,8 +265,8 @@ export const contentConfig = {
           date: '2023-12-28',
           readTime: 8,
           category: {
-            english: 'Spiritual Practice',
-            thai: 'การปฏิบัติทางจิตวิญญาณ',
+            english: 'Stone Knowledge',
+            thai: 'ความรู้เรื่องหิน',
           },
         },
         {
@@ -283,8 +283,8 @@ export const contentConfig = {
           date: '2023-12-20',
           readTime: 9,
           category: {
-            english: 'Seasonal Wisdom',
-            thai: 'ปัญญาตามฤดูกาล',
+            english: 'Stone Knowledge',
+            thai: 'ความรู้เรื่องหิน',
           },
         },
         {
@@ -301,8 +301,8 @@ export const contentConfig = {
           date: '2023-12-15',
           readTime: 10,
           category: {
-            english: 'Chakra Healing',
-            thai: 'การรักษาจักระ',
+            english: 'Stone Knowledge',
+            thai: 'ความรู้เรื่องหิน',
           },
         },
       ],
@@ -330,38 +330,10 @@ export const contentConfig = {
         },
       },
       {
-        id: 'guidance',
+        id: 'stone-care-tips',
         name: {
-          english: 'Guidance',
-          thai: 'คำแนะนำ',
-        },
-      },
-      {
-        id: 'care-maintenance',
-        name: {
-          english: 'Care & Maintenance',
-          thai: 'การดูแลรักษา',
-        },
-      },
-      {
-        id: 'spiritual-practice',
-        name: {
-          english: 'Spiritual Practice',
-          thai: 'การปฏิบัติทางจิตวิญญาณ',
-        },
-      },
-      {
-        id: 'seasonal-wisdom',
-        name: {
-          english: 'Seasonal Wisdom',
-          thai: 'ปัญญาตามฤดูกาล',
-        },
-      },
-      {
-        id: 'chakra-healing',
-        name: {
-          english: 'Chakra Healing',
-          thai: 'การรักษาจักระ',
+          english: 'Stone Care Tips',
+          thai: 'เคล็ดลับดูแลหินพลังงาน',
         },
       },
     ],
