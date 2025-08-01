@@ -173,4 +173,197 @@ export const contentConfig = {
       },
     ],
   },
+
+  // Blog Page Content
+  blog: {
+    hero: {
+      backgroundImage: '/images/357c3a_c78543e690504fdd80ac15754320656b~mv2.avif',
+      title: {
+        english: 'STONE WISDOM',
+        thai: 'BLOG',
+      },
+      subtitle: {
+        thai: 'ความรู้และเรื่องราวแห่งพลังหิน',
+        english: 'Discover the ancient wisdom and modern insights of natural stone healing',
+      },
+    },
+    postsSection: {
+      title: {
+        english: 'Latest Articles',
+        thai: 'บทความล่าสุด',
+      },
+      subtitle: {
+        thai: 'เรียนรู้และสำรวจโลกแห่งพลังงานหิน',
+        english: 'Learn and explore the world of stone energy',
+      },
+      posts: [
+        {
+          id: 'understanding-stone-energy',
+          title: {
+            english: 'Understanding Stone Energy',
+            thai: 'ทำความเข้าใจพลังงานหิน',
+          },
+          excerpt: {
+            english: 'Discover how natural stones carry unique vibrational frequencies that can influence our energy fields and promote healing.',
+            thai: 'ค้นพบว่าหินธรรมชาติมีความถี่การสั่นไหวที่เป็นเอกลักษณ์ที่สามารถส่งผลต่อสนามพลังงานของเราและส่งเสริมการรักษา',
+          },
+          image: '/images/357c3a_2013cc64ddf74b35b6a0d668ae5effb8~mv2.avif',
+          date: '2024-01-15',
+          readTime: 5,
+          category: {
+            english: 'Stone Knowledge',
+            thai: 'ความรู้เรื่องหิน',
+          },
+        },
+        {
+          id: 'choosing-right-stones',
+          title: {
+            english: 'Choosing the Right Stones for Your Journey',
+            thai: 'การเลือกหินที่เหมาะสมกับการเดินทางของคุณ',
+          },
+          excerpt: {
+            english: 'Learn how to select stones that align with your personal energy and life goals for maximum spiritual benefit.',
+            thai: 'เรียนรู้วิธีการเลือกหินที่สอดคล้องกับพลังงานส่วนตัวและเป้าหมายชีวิตของคุณเพื่อประโยชน์ทางจิตวิญญาณสูงสุด',
+          },
+          image: '/images/357c3a_449b1b790747456cb742616cdedb4af0~mv2.avif',
+          date: '2024-01-10',
+          readTime: 7,
+          category: {
+            english: 'Guidance',
+            thai: 'คำแนะนำ',
+          },
+        },
+        {
+          id: 'stone-care-cleansing',
+          title: {
+            english: 'Stone Care and Cleansing Rituals',
+            thai: 'การดูแลและพิธีกรรมชำระล้างหิน',
+          },
+          excerpt: {
+            english: 'Proper maintenance and cleansing techniques to keep your stones energetically pure and powerful.',
+            thai: 'เทคนิคการบำรุงรักษาและชำระล้างที่เหมาะสมเพื่อให้หินของคุณบริสุทธิ์และทรงพลังในด้านพลังงาน',
+          },
+          image: '/images/357c3a_155e041dcebb4320b8cb23202c8441e8~mv2.avif',
+          date: '2024-01-05',
+          readTime: 6,
+          category: {
+            english: 'Care & Maintenance',
+            thai: 'การดูแลรักษา',
+          },
+        },
+        {
+          id: 'meditation-with-stones',
+          title: {
+            english: 'Meditation Practices with Sacred Stones',
+            thai: 'การฝึกสมาธิด้วยหินศักดิ์สิทธิ์',
+          },
+          excerpt: {
+            english: 'Enhance your meditation practice by incorporating the healing energies of carefully selected stones.',
+            thai: 'เสริมสร้างการฝึกสมาธิของคุณโดยการรวมพลังงานการรักษาของหินที่คัดสรรมาอย่างดี',
+          },
+          image: '/images/357c3a_c78543e690504fdd80ac15754320656b~mv2.avif',
+          date: '2023-12-28',
+          readTime: 8,
+          category: {
+            english: 'Spiritual Practice',
+            thai: 'การปฏิบัติทางจิตวิญญาณ',
+          },
+        },
+        {
+          id: 'seasonal-stone-guide',
+          title: {
+            english: 'Seasonal Stone Guide: Aligning with Natural Cycles',
+            thai: 'คู่มือหินตามฤดูกาล: การปรับตัวให้เข้ากับรอบธรรมชาติ',
+          },
+          excerpt: {
+            english: 'Discover which stones work best during different seasons and how to harness seasonal energies.',
+            thai: 'ค้นพบว่าหินใดเหมาะสมที่สุดในแต่ละฤดูกาลและวิธีการใช้ประโยชน์จากพลังงานตามฤดูกาล',
+          },
+          image: '/images/357c3a_2013cc64ddf74b35b6a0d668ae5effb8~mv2.avif',
+          date: '2023-12-20',
+          readTime: 9,
+          category: {
+            english: 'Seasonal Wisdom',
+            thai: 'ปัญญาตามฤดูกาล',
+          },
+        },
+        {
+          id: 'chakra-stone-healing',
+          title: {
+            english: 'Chakra Healing with Specific Stones',
+            thai: 'การรักษาจักระด้วยหินเฉพาะ',
+          },
+          excerpt: {
+            english: 'Learn which stones correspond to each chakra and how to use them for energy balance and healing.',
+            thai: 'เรียนรู้ว่าหินใดสอดคล้องกับแต่ละจักระและวิธีการใช้เพื่อสมดุลพลังงานและการรักษา',
+          },
+          image: '/images/357c3a_449b1b790747456cb742616cdedb4af0~mv2.avif',
+          date: '2023-12-15',
+          readTime: 10,
+          category: {
+            english: 'Chakra Healing',
+            thai: 'การรักษาจักระ',
+          },
+        },
+      ],
+      loadMoreButton: {
+        text: {
+          english: 'Load More Articles',
+          thai: 'โหลดบทความเพิ่มเติม',
+        },
+        variant: 'primary' as const,
+      },
+    },
+    categories: [
+      {
+        id: 'all',
+        name: {
+          english: 'All Articles',
+          thai: 'บทความทั้งหมด',
+        },
+      },
+      {
+        id: 'stone-knowledge',
+        name: {
+          english: 'Stone Knowledge',
+          thai: 'ความรู้เรื่องหิน',
+        },
+      },
+      {
+        id: 'guidance',
+        name: {
+          english: 'Guidance',
+          thai: 'คำแนะนำ',
+        },
+      },
+      {
+        id: 'care-maintenance',
+        name: {
+          english: 'Care & Maintenance',
+          thai: 'การดูแลรักษา',
+        },
+      },
+      {
+        id: 'spiritual-practice',
+        name: {
+          english: 'Spiritual Practice',
+          thai: 'การปฏิบัติทางจิตวิญญาณ',
+        },
+      },
+      {
+        id: 'seasonal-wisdom',
+        name: {
+          english: 'Seasonal Wisdom',
+          thai: 'ปัญญาตามฤดูกาล',
+        },
+      },
+      {
+        id: 'chakra-healing',
+        name: {
+          english: 'Chakra Healing',
+          thai: 'การรักษาจักระ',
+        },
+      },
+    ],
+  },
 }

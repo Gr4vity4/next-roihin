@@ -11,3 +11,7 @@ export { default as Footer } from './Footer'
 export { default as AboutHeroSection } from './AboutHeroSection'
 export { default as AboutContentSection } from './AboutContentSection'
 export { default as AboutFeaturesSection } from './AboutFeaturesSection'
+
+// Blog Page Components
+export { default as BlogHeroSection } from './BlogHeroSection'
+export { default as BlogPostsSection } from './BlogPostsSection'
