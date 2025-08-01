@@ -1,7 +1,7 @@
-"use client"
+'use client'
 
-import { MessageCircle } from "lucide-react"
-import Button from "./Button"
+import { MessageCircle } from 'lucide-react'
+import Button from './Button'
 
 export default function ChatWidget() {
   return (
@@ -10,11 +10,9 @@ export default function ChatWidget() {
         variant="primary"
         size="md"
         leftIcon={<MessageCircle size={20} />}
-        className="shadow-xl hover:shadow-2xl animate-fade-in"
+        className="shadow-xl hover:shadow-2xl animate-fade-in p-4"
         aria-label="Open chat - มาแช็ตกัน!"
-      >
-        <span className="font-thai font-medium">มาแช็ตกัน!</span>
-      </Button>
+      />
     </div>
   )
 }
