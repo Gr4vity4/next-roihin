@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils'
 import { Menu, X } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect, useState, useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 const navItems = [
   { name: 'หน้าแรก', href: '/' },
@@ -24,10 +24,11 @@ export default function Navigation() {
   // Calculate the height of the first section (hero section)
   const calculateScrollThreshold = useCallback(() => {
     // Try to find the first main section after navigation
-    const heroSection = document.querySelector('main > section:first-of-type') || 
-                       document.querySelector('[class*="min-h-screen"]') ||
-                       document.querySelector('main > div:first-child')
-    
+    const heroSection =
+      document.querySelector('main > section:first-of-type') ||
+      document.querySelector('[class*="min-h-screen"]') ||
+      document.querySelector('main > div:first-child')
+
     if (heroSection) {
       const rect = heroSection.getBoundingClientRect()
       const heroHeight = rect.height
@@ -54,7 +55,7 @@ export default function Navigation() {
     // Add event listeners
     window.addEventListener('scroll', handleScroll)
     window.addEventListener('resize', handleResize)
-    
+
     // Recalculate after images/content loads
     const handleLoad = () => {
       setTimeout(calculateScrollThreshold, 100) // Small delay to ensure content is rendered
@@ -72,7 +73,9 @@ export default function Navigation() {
     <nav
       className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-        isScrolled ? 'bg-black shadow-[0_8px_32px_rgba(0,0,0,0.5)] border-b border-white/10' : 'bg-transparent',
+        isScrolled
+          ? 'bg-black shadow-[0_8px_32px_rgba(0,0,0,0.5)] border-b border-white/10'
+          : 'bg-transparent',
       )}
     >
       {/* Desktop Navigation with Video Background */}
@@ -83,10 +86,12 @@ export default function Navigation() {
         )}
       >
         {/* Video Background - always present but fades out when scrolled */}
-        <div className={cn(
-          "absolute inset-0 w-full h-full transition-opacity duration-300",
-          isScrolled ? "opacity-0 pointer-events-none" : "opacity-100"
-        )}>
+        <div
+          className={cn(
+            'absolute inset-0 w-full h-full transition-opacity duration-300',
+            isScrolled ? 'opacity-0 pointer-events-none' : 'opacity-100',
+          )}
+        >
           <video
             autoPlay
             loop
@@ -124,7 +129,7 @@ export default function Navigation() {
                   <Link
                     key={item.name}
                     href={item.href}
-                    className="font-thai font-medium text-sm text-white transition-colors hover:text-gold"
+                    className="font-thai font-medium text-sm text-white transition-colors hover:text-gold tracking-widest"
                   >
                     {item.name}
                   </Link>
@@ -153,7 +158,7 @@ export default function Navigation() {
                   <Link
                     key={item.name}
                     href={item.href}
-                    className="font-thai font-medium text-base text-white transition-colors hover:text-gold"
+                    className="font-thai font-medium text-base text-white transition-colors hover:text-gold tracking-wider"
                   >
                     {item.name}
                   </Link>
