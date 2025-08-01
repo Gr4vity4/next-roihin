@@ -68,6 +68,7 @@ export const contentConfig = {
     cta: {
       text: 'อ่านเพิ่มเติม',
       variant: 'primary' as const,
+      href: '/testimonial',
     },
   },
 

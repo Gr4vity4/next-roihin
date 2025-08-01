@@ -1,4 +1,5 @@
 import { cn } from '@/lib/utils'
+import Link from 'next/link'
 import Button from '../Button'
 import TestimonialCard from '../TestimonialCard'
 import { Container, Typography } from '../ui'
@@ -69,9 +70,17 @@ export default function TestimonialsSection({
 
         {ctaButton && (
           <div className="text-center">
-            <Button variant={ctaButton.variant} size="lg" onClick={ctaButton.onClick}>
-              {ctaButton.text}
-            </Button>
+            {ctaButton.href ? (
+              <Link href={ctaButton.href}>
+                <Button variant={ctaButton.variant} size="lg">
+                  {ctaButton.text}
+                </Button>
+              </Link>
+            ) : (
+              <Button variant={ctaButton.variant} size="lg" onClick={ctaButton.onClick}>
+                {ctaButton.text}
+              </Button>
+            )}
           </div>
         )}
       </Container>
