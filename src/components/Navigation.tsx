@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils'
 import { Menu, X } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 
 const navItems = [
   { name: 'หน้าแรก', href: '/' },
@@ -19,15 +19,54 @@ const navItems = [
 export default function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [scrollThreshold, setScrollThreshold] = useState(10) // Default fallback
+
+  // Calculate the height of the first section (hero section)
+  const calculateScrollThreshold = useCallback(() => {
+    // Try to find the first main section after navigation
+    const heroSection = document.querySelector('main > section:first-of-type') || 
+                       document.querySelector('[class*="min-h-screen"]') ||
+                       document.querySelector('main > div:first-child')
+    
+    if (heroSection) {
+      const rect = heroSection.getBoundingClientRect()
+      const heroHeight = rect.height
+      // Set threshold to be when we've scrolled past most of the hero section
+      // Subtract navigation height (230px) to account for the fixed nav overlap
+      const threshold = Math.max(heroHeight - 230, 100) // Minimum 100px fallback
+      setScrollThreshold(threshold)
+    }
+  }, [])
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10)
+      setIsScrolled(window.scrollY > scrollThreshold)
     }
 
+    // Calculate threshold on mount and window resize
+    const handleResize = () => {
+      calculateScrollThreshold()
+    }
+
+    // Initial calculation
+    calculateScrollThreshold()
+
+    // Add event listeners
     window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+    window.addEventListener('resize', handleResize)
+    
+    // Recalculate after images/content loads
+    const handleLoad = () => {
+      setTimeout(calculateScrollThreshold, 100) // Small delay to ensure content is rendered
+    }
+    window.addEventListener('load', handleLoad)
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('resize', handleResize)
+      window.removeEventListener('load', handleLoad)
+    }
+  }, [scrollThreshold, calculateScrollThreshold])
 
   return (
     <nav
