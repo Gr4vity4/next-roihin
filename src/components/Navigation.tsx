@@ -13,7 +13,7 @@ const navItems = [
   { name: 'ชาร์ม/สเปเซอร์', href: '#charms' },
   { name: 'รีวิวจริง', href: '/testimonial' },
   { name: 'บริการลูกค้า', href: '/customer-service' },
-  { name: 'บทความ', href: '#articles' },
+  { name: 'บทความ', href: '/blog' },
 ]
 
 export default function Navigation() {
