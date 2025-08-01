@@ -8,7 +8,7 @@ interface StarRatingProps {
   rating: number
   maxRating?: number
   size?: 'sm' | 'md' | 'lg'
-  color?: string
+  variant?: 'gold' | 'light' | 'dark'
   showEmpty?: boolean
   interactive?: boolean
   onChange?: (rating: number) => void
@@ -20,11 +20,29 @@ const sizeClasses = {
   lg: 'w-6 h-6',
 }
 
+const variantClasses = {
+  gold: {
+    filled: 'text-gold-400 fill-gold-400',
+    empty: 'text-gold-200 opacity-40',
+    hover: 'hover:text-gold-500 hover:fill-gold-500',
+  },
+  light: {
+    filled: 'text-gold-400 fill-gold-400',
+    empty: 'text-gray-300 opacity-40',
+    hover: 'hover:text-gold-500 hover:fill-gold-500',
+  },
+  dark: {
+    filled: 'text-gold-300 fill-gold-300',
+    empty: 'text-gray-500 opacity-40',
+    hover: 'hover:text-gold-400 hover:fill-gold-400',
+  },
+}
+
 export default function StarRating({
   rating,
   maxRating = 5,
   size = 'md',
-  color = 'text-gold-400',
+  variant = 'gold',
   showEmpty = true,
   interactive = false,
   onChange,
@@ -46,11 +64,14 @@ export default function StarRating({
     }
   }
   
+  const variantStyles = variantClasses[variant]
+  
   return (
     <div className="flex items-center space-x-1" role={interactive ? "radiogroup" : "img"} aria-label={`Rating: ${rating} out of ${maxRating} stars`}>
       {stars.map((value) => {
         const isFilled = hoveredRating ? value <= hoveredRating : value <= filledStars
         const isHalf = !hoveredRating && value === filledStars + 1 && hasHalfStar
+        const isEmpty = !isFilled && !isHalf
         
         return (
           <button
@@ -60,9 +81,9 @@ export default function StarRating({
             onMouseLeave={() => setHoveredRating(0)}
             disabled={!interactive}
             className={cn(
-              'p-0.5 transition-all',
-              'focus:outline-none focus:ring-2 focus:ring-gold-400 focus:ring-offset-1',
-              interactive ? 'cursor-pointer hover:scale-110' : 'cursor-default'
+              'p-0.5 transition-all duration-200',
+              'focus:outline-none focus:ring-2 focus:ring-gold-400 focus:ring-offset-1 focus:ring-offset-transparent',
+              interactive ? cn('cursor-pointer hover:scale-110', variantStyles.hover) : 'cursor-default'
             )}
             type="button"
             role={interactive ? "radio" : undefined}
@@ -72,10 +93,11 @@ export default function StarRating({
             <Star
               className={cn(
                 sizeClasses[size],
-                color,
-                isFilled && 'fill-current',
-                isHalf && 'fill-current opacity-50',
-                !isFilled && !isHalf && showEmpty && 'opacity-30'
+                'transition-colors duration-200',
+                isFilled && variantStyles.filled,
+                isHalf && cn(variantStyles.filled, 'opacity-50'),
+                isEmpty && showEmpty && variantStyles.empty,
+                isEmpty && !showEmpty && 'opacity-0'
               )}
             />
           </button>

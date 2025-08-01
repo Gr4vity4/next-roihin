@@ -5,12 +5,8 @@ import { Container, Typography } from '../ui'
 
 interface TestimonialData {
   id: string
-  rating: number
   content: string
-  author: {
-    name: string
-    location: string
-  }
+  rating?: number
 }
 
 interface TestimonialsSectionProps {
@@ -51,7 +47,13 @@ export default function TestimonialsSection({
   return (
     <section id={id} className={cn('py-24', backgroundColor, textColor, className)}>
       <Container>
-        <Typography variant="h2" fontFamily="playfair" align="center" className="mb-4 text-green">
+        <Typography
+          variant="h2"
+          fontFamily="playfair"
+          align="center"
+          className="mb-4"
+          color="primary"
+        >
           {title}
         </Typography>
 
@@ -61,13 +63,7 @@ export default function TestimonialsSection({
 
         <div className={cn('grid gap-8 mb-12', columnClasses[columns])}>
           {testimonials.map((testimonial) => (
-            <TestimonialCard
-              key={testimonial.id}
-              rating={testimonial.rating}
-              content={testimonial.content}
-              author={testimonial.author}
-              variant="dark"
-            />
+            <TestimonialCard key={testimonial.id} content={testimonial.content} variant="dark" />
           ))}
         </div>
 
