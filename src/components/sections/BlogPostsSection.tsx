@@ -1,6 +1,7 @@
 'use client'
 
 import Image from 'next/image'
+import Link from 'next/link'
 import { useState } from 'react'
 import Button from '../Button'
 import { BilingualText, Container, Typography } from '../ui'
@@ -74,62 +75,72 @@ function BlogPostCard({ post }: { post: BlogPost }) {
   }
 
   const formattedDate = formatDate(post.date)
+  // Use article ID as slug for consistency with static generation
+  const slug = post.id
 
   return (
-    <article className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-      {/* Post Image */}
-      <div className="relative w-full h-48">
-        <Image src={post.image} alt={post.title.english} fill className="object-cover" />
-      </div>
-
-      {/* Post Content */}
-      <div className="p-6">
-        {/* Category and Read Time */}
-        {/* <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
-          <BilingualText
-            thai={post.category.thai}
-            // english={post.category.english}
-            variant="caption"
-            thaiClassName="text-[#D4AF37] font-medium"
-            englishClassName="text-[#D4AF37] font-medium"
-            gap="sm"
-          />
-          <span className="text-gray-400">{post.readTime} min read</span>
-        </div> */}
-
-        {/* Post Title */}
-        <BilingualText
-          thai={post.title.thai}
-          // english={post.title.english}
-          variant="h4"
-          thaiClassName="font-thai mb-2 text-gray-900 hover:text-[#006039] transition-colors cursor-pointer"
-          englishClassName="font-semibold mb-2 text-gray-900 hover:text-[#006039] transition-colors cursor-pointer"
-          gap="sm"
-        />
-
-        {/* Post Excerpt */}
-        <BilingualText
-          thai={post.excerpt.thai}
-          // english={post.excerpt.english}
-          variant="body"
-          thaiClassName="text-gray-600 font-thai text-sm line-clamp-3"
-          englishClassName="text-gray-600 text-sm line-clamp-3"
-          gap="sm"
-        />
-
-        {/* Post Date */}
-        <div className="mt-4 pt-4 border-t border-gray-100">
-          <BilingualText
-            thai={formattedDate.thai}
-            // english={formattedDate.english}
-            variant="caption"
-            thaiClassName="text-gray-500 font-thai"
-            englishClassName="text-gray-500"
-            gap="sm"
+    <Link href={`/blog/${slug}`} className="group">
+      <article className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 group-hover:scale-[1.02]">
+        {/* Post Image */}
+        <div className="relative w-full h-48">
+          <Image
+            src={post.image}
+            alt={post.title.english}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
           />
         </div>
-      </div>
-    </article>
+
+        {/* Post Content */}
+        <div className="p-6">
+          {/* Category and Read Time */}
+          {/* <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
+            <BilingualText
+              thai={post.category.thai}
+              // english={post.category.english}
+              variant="caption"
+              thaiClassName="text-[#D4AF37] font-medium font-thai"
+              englishClassName="text-[#D4AF37] font-medium"
+              layout="horizontal"
+              gap="sm"
+            />
+            <span className="text-gray-400">{post.readTime} min read</span>
+          </div> */}
+
+          {/* Post Title */}
+          <BilingualText
+            thai={post.title.thai}
+            // english={post.title.english}
+            variant="h4"
+            thaiClassName="font-thai mb-2 text-gray-900 group-hover:text-[#006039] transition-colors line-clamp-2"
+            englishClassName="font-semibold mb-2 text-gray-900 group-hover:text-[#006039] transition-colors line-clamp-2"
+            gap="sm"
+          />
+
+          {/* Post Excerpt */}
+          <BilingualText
+            thai={post.excerpt.thai}
+            // english={post.excerpt.english}
+            variant="body"
+            thaiClassName="text-gray-600 font-thai text-sm line-clamp-3 mb-4"
+            englishClassName="text-gray-600 text-sm line-clamp-3 mb-4"
+            gap="sm"
+          />
+
+          {/* Post Date */}
+          <div className="pt-4 border-t border-gray-100">
+            <BilingualText
+              thai={formattedDate.thai}
+              // english={formattedDate.english}
+              variant="caption"
+              thaiClassName="text-gray-500 font-thai"
+              englishClassName="text-gray-500"
+              gap="sm"
+            />
+          </div>
+        </div>
+      </article>
+    </Link>
   )
 }
 
