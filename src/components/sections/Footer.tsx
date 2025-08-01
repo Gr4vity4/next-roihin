@@ -1,5 +1,7 @@
 import { cn } from '@/lib/utils'
 import { MapPin } from 'lucide-react'
+import Image from 'next/image'
+import Link from 'next/link'
 import FooterColumn, { type FooterLink } from '../FooterColumn'
 import SocialLinks, { type SocialLink } from '../SocialLinks'
 import { Container, Typography } from '../ui'
@@ -38,10 +40,6 @@ export default function Footer({
         { text: 'การดูแลรักษา', href: '#care' },
       ],
     },
-    {
-      title: '',
-      links: [],
-    },
   ]
 
   const contactInfo = {
@@ -63,10 +61,26 @@ export default function Footer({
     <footer className={cn('py-12', backgroundColor, textColor, className)}>
       <Container>
         <div className="grid md:grid-cols-4 gap-8 mb-8">
+          {/* Logo Column */}
+          <div className="flex justify-center md:justify-start">
+            <Link href="/" className="inline-block">
+              <div className="relative w-24 h-24 md:w-32 md:h-32">
+                <Image
+                  src="/images/logo.avif"
+                  alt="Roihin Logo"
+                  fill
+                  className="object-contain"
+                />
+              </div>
+            </Link>
+          </div>
+
+          {/* Footer Columns */}
           {columns.map((column, index) => (
             <FooterColumn key={index} title={column.title} links={column.links} />
           ))}
 
+          {/* Contact Info Column */}
           <div className="space-y-4">
             <p className="font-fciconic">ติดต่อเรา</p>
             <div className="space-y-2 text-gray-400 text-sm">
