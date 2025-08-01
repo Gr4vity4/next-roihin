@@ -133,7 +133,7 @@ async function seedTestimonials() {
           testimonial.message,
           language,
           1, // is_active
-          0, // sort_order
+          parseInt(testimonial.id), // sort_order matches id
           new Date().toISOString(),
           new Date().toISOString(),
         ]
