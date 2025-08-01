@@ -1,5 +1,5 @@
-import Typography from './Typography'
 import { cn } from '@/lib/utils'
+import Typography from './Typography'
 
 interface BilingualTextProps {
   thai?: string
@@ -33,27 +33,19 @@ export default function BilingualText({
   layout = 'vertical',
 }: BilingualTextProps) {
   if (!thai && !english) return null
-  
-  const containerClass = layout === 'vertical' 
-    ? gapClasses[gap] 
-    : cn('flex', horizontalGapClasses[gap])
-  
+
+  const containerClass =
+    layout === 'vertical' ? gapClasses[gap] : cn('flex', horizontalGapClasses[gap])
+
   return (
     <div className={containerClass}>
       {thai && (
-        <Typography
-          variant={variant}
-          fontFamily="thai"
-          className={thaiClassName}
-        >
+        <Typography variant={variant} fontFamily="thai" className={thaiClassName}>
           {thai}
         </Typography>
       )}
       {english && (
-        <Typography
-          variant={variant}
-          className={englishClassName}
-        >
+        <Typography variant={variant} className={englishClassName}>
           {english}
         </Typography>
       )}

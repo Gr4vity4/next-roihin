@@ -1,9 +1,9 @@
 'use client'
 
-import { useState } from 'react'
 import Image from 'next/image'
+import { useState } from 'react'
 import Button from '../Button'
-import { Container, Typography, BilingualText } from '../ui'
+import { BilingualText, Container, Typography } from '../ui'
 
 interface BlogPost {
   id: string
@@ -66,7 +66,7 @@ function BlogPostCard({ post }: { post: BlogPost }) {
       month: 'long',
       day: 'numeric',
     }
-    
+
     return {
       thai: date.toLocaleDateString('th-TH', thaiOptions),
       english: date.toLocaleDateString('en-US', englishOptions),
@@ -79,14 +79,9 @@ function BlogPostCard({ post }: { post: BlogPost }) {
     <article className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
       {/* Post Image */}
       <div className="relative w-full h-48">
-        <Image
-          src={post.image}
-          alt={post.title.english}
-          fill
-          className="object-cover"
-        />
+        <Image src={post.image} alt={post.title.english} fill className="object-cover" />
       </div>
-      
+
       {/* Post Content */}
       <div className="p-6">
         {/* Category and Read Time */}
@@ -99,11 +94,9 @@ function BlogPostCard({ post }: { post: BlogPost }) {
             englishClassName="text-[#D4AF37] font-medium"
             gap="sm"
           />
-          <span className="text-gray-400">
-            {post.readTime} min read
-          </span>
+          <span className="text-gray-400">{post.readTime} min read</span>
         </div>
-        
+
         {/* Post Title */}
         <BilingualText
           thai={post.title.thai}
@@ -113,7 +106,7 @@ function BlogPostCard({ post }: { post: BlogPost }) {
           englishClassName="font-semibold mb-2 text-gray-900 hover:text-[#006039] transition-colors cursor-pointer"
           gap="sm"
         />
-        
+
         {/* Post Excerpt */}
         <BilingualText
           thai={post.excerpt.thai}
@@ -123,7 +116,7 @@ function BlogPostCard({ post }: { post: BlogPost }) {
           englishClassName="text-gray-600 text-sm line-clamp-3"
           gap="sm"
         />
-        
+
         {/* Post Date */}
         <div className="mt-4 pt-4 border-t border-gray-100">
           <BilingualText
@@ -151,18 +144,23 @@ export default function BlogPostsSection({
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [visiblePosts, setVisiblePosts] = useState(6)
 
-  const filteredPosts = selectedCategory === 'all' 
-    ? posts 
-    : posts.filter(post => {
-        const categoryId = post.category.english.toLowerCase().replace(/\s+/g, '-').replace('&', '').trim()
-        return categoryId === selectedCategory
-      })
+  const filteredPosts =
+    selectedCategory === 'all'
+      ? posts
+      : posts.filter((post) => {
+          const categoryId = post.category.english
+            .toLowerCase()
+            .replace(/\s+/g, '-')
+            .replace('&', '')
+            .trim()
+          return categoryId === selectedCategory
+        })
 
   const displayedPosts = filteredPosts.slice(0, visiblePosts)
   const hasMorePosts = filteredPosts.length > visiblePosts
 
   const handleLoadMore = () => {
-    setVisiblePosts(prev => prev + 6)
+    setVisiblePosts((prev) => prev + 6)
   }
 
   return (
@@ -197,17 +195,20 @@ export default function BlogPostsSection({
                 setSelectedCategory(category.id)
                 setVisiblePosts(6)
               }}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 shadow-sm border ${
                 selectedCategory === category.id
-                  ? 'bg-[#006039] text-white'
-                  : 'bg-white text-gray-600 hover:bg-gray-100'
+                  ? 'bg-[#006039] text-white border-[#006039] shadow-md hover:bg-[#004D2E]'
+                  : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700'
               }`}
             >
               <BilingualText
                 thai={category.name.thai}
                 english={category.name.english}
                 variant="caption"
-                thaiClassName="font-thai"
+                thaiClassName={`font-thai ${
+                  selectedCategory === category.id ? 'text-white' : 'text-gray-600'
+                }`}
+                englishClassName={selectedCategory === category.id ? 'text-white' : 'text-gray-600'}
                 layout="horizontal"
                 gap="sm"
               />
@@ -225,11 +226,7 @@ export default function BlogPostsSection({
         {/* Load More Button */}
         {hasMorePosts && (
           <div className="text-center">
-            <Button
-              variant={loadMoreButton.variant}
-              size="lg"
-              onClick={handleLoadMore}
-            >
+            <Button variant={loadMoreButton.variant} size="lg" onClick={handleLoadMore}>
               <BilingualText
                 thai={loadMoreButton.text.thai}
                 english={loadMoreButton.text.english}
