@@ -41,7 +41,7 @@ export default function NotFound() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link
               href="/blog"
-              className="inline-flex items-center px-6 py-3 bg-[#006039] text-white rounded-lg hover:bg-[#004D2E] transition-colors duration-200 font-medium"
+              className="inline-flex items-center px-6 py-3 bg-[#006039] text-white hover:bg-[#004D2E] transition-colors duration-200 font-medium"
             >
               <ArrowLeftIcon className="h-5 w-5 mr-2" />
               <Typography
@@ -54,7 +54,7 @@ export default function NotFound() {
             
             <Link
               href="/"
-              className="inline-flex items-center px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200 font-medium"
+              className="inline-flex items-center px-6 py-3 border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors duration-200 font-medium"
             >
               <Typography
                 variant="body"

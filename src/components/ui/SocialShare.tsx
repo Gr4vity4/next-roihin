@@ -82,7 +82,7 @@ export default function SocialShare({
           {/* Facebook Share */}
           <button
             onClick={handleFacebookShare}
-            className="flex items-center justify-center w-10 h-10 bg-[#1877F2] text-white rounded-full hover:bg-[#166FE5] transition-colors duration-200"
+            className="flex items-center justify-center w-10 h-10 bg-[#1877F2] text-white hover:bg-[#166FE5] transition-colors duration-200"
             aria-label="Share on Facebook"
           >
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -93,7 +93,7 @@ export default function SocialShare({
           {/* Twitter/X Share */}
           <button
             onClick={handleTwitterShare}
-            className="flex items-center justify-center w-10 h-10 bg-black text-white rounded-full hover:bg-gray-800 transition-colors duration-200"
+            className="flex items-center justify-center w-10 h-10 bg-black text-white hover:bg-gray-800 transition-colors duration-200"
             aria-label="Share on X (Twitter)"
           >
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -104,7 +104,7 @@ export default function SocialShare({
           {/* Copy Link */}
           <button
             onClick={handleCopyLink}
-            className={`flex items-center justify-center w-10 h-10 rounded-full transition-colors duration-200 ${
+            className={`flex items-center justify-center w-10 h-10 transition-colors duration-200 ${
               copied 
                 ? 'bg-green-500 text-white' 
                 : 'bg-gray-100 text-gray-600 hover:bg-gray-200'

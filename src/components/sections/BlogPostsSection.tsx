@@ -77,7 +77,7 @@ function BlogPostCard({ post }: { post: BlogPost }) {
 
   return (
     <Link href={`/blog/${slug}`} className="group">
-      <article className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 group-hover:scale-[1.02]">
+      <article className="bg-white shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 group-hover:scale-[1.02]">
         {/* Post Image */}
         <div className="relative w-full h-48">
           <Image
@@ -172,7 +172,7 @@ export default function BlogPostsSection({
                 setSelectedCategory(category.id)
                 setVisiblePosts(6)
               }}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 shadow-sm border ${
+              className={`px-4 py-2 text-sm font-medium transition-all duration-300 shadow-sm border ${
                 selectedCategory === category.id
                   ? 'bg-[#006039] text-white border-[#006039] shadow-md hover:bg-[#004D2E]'
                   : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700'

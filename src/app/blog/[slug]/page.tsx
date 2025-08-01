@@ -213,7 +213,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               <Breadcrumb items={breadcrumbItems} className="mb-8" />
 
               {/* Article Excerpt */}
-              <div className="mb-8 p-6 bg-gray-50 rounded-lg border-l-4 border-[#D4AF37]">
+              <div className="mb-8 p-6 bg-gray-50 border-l-4 border-[#D4AF37]">
                 <Typography
                   variant="body"
                   fontFamily="thai"
@@ -241,7 +241,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                     {article.tags.map((tag, index) => (
                       <span
                         key={index}
-                        className="px-3 py-1 bg-gray-100 text-gray-700 text-sm rounded-full hover:bg-gray-200 transition-colors"
+                        className="px-3 py-1 bg-gray-100 text-gray-700 text-sm hover:bg-gray-200 transition-colors"
                       >
                         {tag}
                       </span>
@@ -251,9 +251,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               )}
 
               {/* Author Info */}
-              <div className="mt-8 p-6 bg-gray-50 rounded-lg">
+              <div className="mt-8 p-6 bg-gray-50">
                 <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-[#006039] rounded-full flex items-center justify-center">
+                  <div className="w-12 h-12 bg-[#006039] flex items-center justify-center">
                     <span className="text-white font-bold text-lg">
                       {article.author.name.charAt(0)}
                     </span>

@@ -53,7 +53,7 @@ function RelatedArticleCard({ article }: { article: RelatedArticle }) {
 
   return (
     <Link href={`/blog/${slug}`} className="group">
-      <article className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 group-hover:scale-[1.02]">
+      <article className="bg-white shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 group-hover:scale-[1.02]">
         {/* Article Image */}
         <div className="relative w-full h-48">
           <Image
