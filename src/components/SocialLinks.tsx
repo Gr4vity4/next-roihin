@@ -10,7 +10,6 @@ export interface SocialLink {
 interface SocialLinksProps {
   links: SocialLink[]
   size?: 'sm' | 'md' | 'lg'
-  color?: string
   gap?: 'sm' | 'md' | 'lg'
   className?: string
 }
@@ -50,7 +49,6 @@ const getSocialIcon = (platform: SocialLink['platform'], size: 'sm' | 'md' | 'lg
 export default function SocialLinks({
   links,
   size = 'md',
-  color = 'currentColor',
   gap = 'md',
   className = '',
 }: SocialLinksProps) {

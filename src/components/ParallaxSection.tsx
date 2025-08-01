@@ -50,7 +50,6 @@ export default function ParallaxSection({
 
         if (inView && imageRef.current) {
           // Calculate relative position within viewport
-          const sectionBottom = sectionTop + sectionHeight
           const scrollProgress =
             (scrolled + windowHeight - sectionTop) / (windowHeight + sectionHeight)
 

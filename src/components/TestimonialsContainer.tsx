@@ -1,5 +1,5 @@
 import { Suspense } from 'react'
-import { Typography, StarRating } from '@/components/ui'
+import { Typography } from '@/components/ui'
 import Image from 'next/image'
 import { getTestimonials } from '@/lib/db/testimonials'
 
@@ -83,16 +83,11 @@ async function TestimonialsContent() {
 
               {/* Message section */}
               <div className="flex-1">
-                {/* Date and rating */}
-                <div className="mb-3 flex items-center justify-between">
+                {/* Date */}
+                <div className="mb-3">
                   <Typography variant="caption" className="text-gray-400 text-xs">
                     {testimonial.date}
                   </Typography>
-                  <StarRating 
-                    rating={testimonial.rating || 5} 
-                    size="sm" 
-                    variant="dark"
-                  />
                 </div>
 
                 <Typography
