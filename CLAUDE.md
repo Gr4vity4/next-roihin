@@ -109,3 +109,26 @@ The project uses Turso (edge SQLite) with Drizzle ORM:
 - Server Components are preferred for database operations (no client-side fetching)
 - Environment variables must be set for database connection
 - Turbopack is enabled for faster development builds
+
+### Image Handling
+
+The project is configured to handle remote images from:
+- `images.unsplash.com` - Stock photography
+- `static.wixstatic.com` - Legacy content from previous website
+
+### Key Configuration Files
+
+- `drizzle.config.ts` - Database configuration for Drizzle Kit
+- `tailwind.config.ts` - Custom theme with brand colors (gold, green) and fonts
+- `next.config.ts` - Next.js configuration with image domains
+- `eslint.config.mjs` - ESLint configuration extending Next.js standards
+- `postcss.config.mjs` - PostCSS configuration for Tailwind CSS 4
+
+### Path Aliases
+
+The project uses TypeScript path aliases:
+- `@/*` maps to `./src/*` for clean imports
+
+### No Test Framework
+
+Currently, no test framework is configured. Testing would need to be set up if required.
