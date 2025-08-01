@@ -29,7 +29,7 @@ export default function AboutHeroSection({ backgroundImage, title }: AboutHeroSe
 
       {/* Content */}
       <div className="relative z-10 flex h-full items-center justify-center">
-        <div className="text-center px-4 md:flex md:items-center">
+        <div className="text-center px-6 sm:px-8 md:px-12 lg:px-4 md:flex md:items-center">
           <Typography
             variant="h3"
             fontFamily="playfair"

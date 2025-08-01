@@ -20,11 +20,11 @@ export default function AboutContentSection({
   content,
 }: AboutContentSectionProps) {
   return (
-    <section className="py-20 bg-white">
-      <Container>
+    <section className="py-12 sm:py-16 md:py-20 bg-white">
+      <Container padding="lg">
         <div className="max-w-4xl mx-auto">
           {/* Title Section */}
-          <div className="text-center mb-16">
+          <div className="text-center mb-8 sm:mb-12 md:mb-16">
             <Typography variant="h2" fontFamily="playfair" align="center" className="mb-4">
               <span className="text-gray-800">{title.english}</span>{' '}
               <span className="text-black font-bold">{title.thai}</span>
@@ -42,9 +42,9 @@ export default function AboutContentSection({
           </div>
 
           {/* Content Section - Two Columns */}
-          <div className="grid md:grid-cols-2 gap-12">
+          <div className="grid md:grid-cols-2 gap-8 sm:gap-10 md:gap-12">
             {/* English Content */}
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-5 md:space-y-6">
               {content.english.map((paragraph, index) => (
                 <Typography
                   key={`english-${index}`}
@@ -58,7 +58,7 @@ export default function AboutContentSection({
             </div>
 
             {/* Thai Content */}
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-5 md:space-y-6">
               {content.thai.map((paragraph, index) => (
                 <Typography
                   key={`thai-${index}`}

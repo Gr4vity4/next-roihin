@@ -58,9 +58,9 @@ export default function Footer({
 
   const copyright = '© 2021 All rights is reserved by Roihin Stone and Bracelet'
   return (
-    <footer className={cn('py-12', backgroundColor, textColor, className)}>
-      <Container>
-        <div className="grid md:grid-cols-4 gap-8 mb-8">
+    <footer className={cn('py-8 sm:py-10 md:py-12', backgroundColor, textColor, className)}>
+      <Container padding="lg">
+        <div className="grid md:grid-cols-4 gap-6 sm:gap-7 md:gap-8 mb-6 sm:mb-7 md:mb-8">
           {/* Logo Column */}
           <div className="flex justify-center md:justify-start">
             <Link href="/" className="inline-block">
@@ -95,7 +95,7 @@ export default function Footer({
           </div>
         </div>
 
-        <div className="border-t border-gray-800 pt-8 text-center text-gray-400">
+        <div className="border-t border-gray-800 pt-6 sm:pt-7 md:pt-8 text-center text-gray-400">
           <Typography variant="body" className="text-sm">
             {copyright}
           </Typography>
