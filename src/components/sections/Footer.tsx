@@ -45,12 +45,17 @@ export default function Footer({
   ]
 
   const contactInfo = {
-    address: '101/54 หมู่บ้าน ภัสสร 70 (เกาะแก้ว) หมู่ที่ 4 ตำบลเกาะแก้ว อ.เมืองภูเก็ต จ.ภูเก็ต 83000',
+    address:
+      '101/54 หมู่บ้าน ภัสสร 70 (เกาะแก้ว) หมู่ที่ 4 ตำบลเกาะแก้ว อ.เมืองภูเก็ต จ.ภูเก็ต 83000',
     socialLinks: [
-      { platform: 'facebook' as const, href: 'https://facebook.com/roihin' },
-      { platform: 'instagram' as const, href: 'https://instagram.com/roihin' },
-      { platform: 'twitter' as const, href: 'https://twitter.com/roihin' },
-    ] as SocialLink[]
+      { platform: 'facebook' as const, href: 'https://www.facebook.com/roihin42896395' },
+      { platform: 'instagram' as const, href: 'http://instagram.com/roihinstone2489_6395' },
+      { platform: 'youtube' as const, href: 'http://instagram.com/roihinstone2489_6395' },
+      { platform: 'tiktok' as const, href: 'https://vt.tiktok.com/ZSegokjLL/' },
+      { platform: 'pinterest' as const, href: 'https://www.pinterest.com/roihinth/' },
+      { platform: 'line' as const, href: 'https://lin.ee/palYKiG' },
+      { platform: 'whatsapp' as const, href: 'tel:+66838265195' },
+    ] as SocialLink[],
   }
 
   const copyright = '© 2021 All rights is reserved by Roihin Stone and Bracelet'
@@ -63,7 +68,7 @@ export default function Footer({
           ))}
 
           <div className="space-y-4">
-            <p className="font-iconic">ติดต่อเรา</p>
+            <p className="font-fciconic">ติดต่อเรา</p>
             <div className="space-y-2 text-gray-400 text-sm">
               <div className="flex items-start space-x-2">
                 <MapPin size={16} className="mt-1 flex-shrink-0" />
