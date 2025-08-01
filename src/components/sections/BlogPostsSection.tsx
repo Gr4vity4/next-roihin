@@ -85,22 +85,22 @@ function BlogPostCard({ post }: { post: BlogPost }) {
       {/* Post Content */}
       <div className="p-6">
         {/* Category and Read Time */}
-        <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
+        {/* <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
           <BilingualText
             thai={post.category.thai}
-            english={post.category.english}
+            // english={post.category.english}
             variant="caption"
             thaiClassName="text-[#D4AF37] font-medium"
             englishClassName="text-[#D4AF37] font-medium"
             gap="sm"
           />
           <span className="text-gray-400">{post.readTime} min read</span>
-        </div>
+        </div> */}
 
         {/* Post Title */}
         <BilingualText
           thai={post.title.thai}
-          english={post.title.english}
+          // english={post.title.english}
           variant="h4"
           thaiClassName="font-thai mb-2 text-gray-900 hover:text-[#006039] transition-colors cursor-pointer"
           englishClassName="font-semibold mb-2 text-gray-900 hover:text-[#006039] transition-colors cursor-pointer"
@@ -110,7 +110,7 @@ function BlogPostCard({ post }: { post: BlogPost }) {
         {/* Post Excerpt */}
         <BilingualText
           thai={post.excerpt.thai}
-          english={post.excerpt.english}
+          // english={post.excerpt.english}
           variant="body"
           thaiClassName="text-gray-600 font-thai text-sm line-clamp-3"
           englishClassName="text-gray-600 text-sm line-clamp-3"
@@ -121,7 +121,7 @@ function BlogPostCard({ post }: { post: BlogPost }) {
         <div className="mt-4 pt-4 border-t border-gray-100">
           <BilingualText
             thai={formattedDate.thai}
-            english={formattedDate.english}
+            // english={formattedDate.english}
             variant="caption"
             thaiClassName="text-gray-500 font-thai"
             englishClassName="text-gray-500"
@@ -169,21 +169,21 @@ export default function BlogPostsSection({
         {/* Section Header */}
         <div className="text-center mb-12">
           <BilingualText
-            thai={title.thai}
+            // thai={title.thai}
             english={title.english}
             variant="h2"
             thaiClassName="font-playfair text-[#006039] mb-4"
             englishClassName="font-playfair text-[#006039] mb-4 tracking-wider"
             gap="sm"
           />
-          <BilingualText
+          {/* <BilingualText
             thai={subtitle.thai}
             english={subtitle.english}
             variant="body"
             thaiClassName="text-gray-600 font-thai max-w-2xl mx-auto"
             englishClassName="text-gray-600 max-w-2xl mx-auto"
             gap="sm"
-          />
+          /> */}
         </div>
 
         {/* Category Filter */}
@@ -203,7 +203,7 @@ export default function BlogPostsSection({
             >
               <BilingualText
                 thai={category.name.thai}
-                english={category.name.english}
+                // english={category.name.english}
                 variant="caption"
                 thaiClassName={`font-thai ${
                   selectedCategory === category.id ? 'text-white' : 'text-gray-600'
@@ -229,7 +229,7 @@ export default function BlogPostsSection({
             <Button variant={loadMoreButton.variant} size="lg" onClick={handleLoadMore}>
               <BilingualText
                 thai={loadMoreButton.text.thai}
-                english={loadMoreButton.text.english}
+                // english={loadMoreButton.text.english}
                 variant="body"
                 thaiClassName="font-thai"
                 layout="horizontal"

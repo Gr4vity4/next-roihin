@@ -1,12 +1,13 @@
-import type { Metadata } from 'next'
-import Navigation from '@/components/Navigation'
 import ChatWidget from '@/components/ChatWidget'
+import Navigation from '@/components/Navigation'
 import { BlogHeroSection, BlogPostsSection, Footer } from '@/components/sections'
 import { contentConfig } from '@/config/content.config'
+import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Blog - Stone Wisdom | ROIHIN STONE & BRACELET',
-  description: 'Discover the ancient wisdom and modern insights of natural stone healing. Learn about stone energy, spiritual practices, and healing techniques.',
+  description:
+    'Discover the ancient wisdom and modern insights of natural stone healing. Learn about stone energy, spiritual practices, and healing techniques.',
   keywords: [
     'stone healing',
     'crystal therapy',
