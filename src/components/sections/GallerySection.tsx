@@ -38,7 +38,7 @@ export default function GallerySection({
 
   return (
     <section className={`py-16 bg-black ${className}`}>
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-6 md:px-8 lg:px-12">
         <div className="text-center mb-12">
           <h2 className="font-playfair text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4">
             {title}

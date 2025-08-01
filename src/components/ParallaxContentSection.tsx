@@ -60,8 +60,8 @@ export default function ParallaxContentSection({
       parallaxSpeed={parallaxSpeed}
       className={cn('py-24', minHeight, className)}
     >
-      <div className="flex items-center justify-center px-4 h-full">
-        <Container maxWidth={contentMaxWidth} className={alignmentClasses[contentAlign]}>
+      <div className="flex items-center justify-center h-full">
+        <Container maxWidth={contentMaxWidth} className={alignmentClasses[contentAlign]} padding="lg">
           <div className="space-y-6 text-white">
             {title && (
               <Typography
