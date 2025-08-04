@@ -170,7 +170,7 @@ export default function Navigation() {
       </div>
 
       {/* Mobile Navigation */}
-      <div className="lg:hidden">
+      <div className="lg:hidden relative">
         <div
           className={cn(
             'flex items-center justify-between h-20 px-4 transition-all duration-300',
@@ -207,7 +207,7 @@ export default function Navigation() {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="bg-black border-t border-gray-800 shadow-lg">
+          <div className="absolute top-full left-0 right-0 bg-black border-t border-gray-800 shadow-lg w-full">
             <div className="px-4 py-4">
               {navItems.map((item) => (
                 <Link

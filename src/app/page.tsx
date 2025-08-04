@@ -18,7 +18,7 @@ export default function Home() {
       <Navigation />
 
       {/* Main content wrapper - no padding needed, hero section will handle spacing */}
-      <main>
+      <main className="overflow-x-hidden w-full">
         {/* Hero Section - starts at top of page, content positioned to account for nav */}
         <HeroSection
           backgroundImage={contentConfig.hero.background.image}

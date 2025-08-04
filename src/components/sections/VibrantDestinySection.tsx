@@ -32,14 +32,14 @@ export default function VibrantDestinySection({
       parallaxSpeed={parallaxSpeed}
       className={`py-32 ${className}`}
     >
-      <div className="flex flex-col items-center justify-center px-4 text-center text-white min-h-[520px]">
+      <div className="flex flex-col items-center justify-center px-4 sm:px-6 md:px-8 text-center text-white min-h-[520px] max-w-full">
         <Typography variant="h2" fontFamily="playfair" textShadow className="mb-8">
           {title}
         </Typography>
         <Typography variant="h3" className="mb-4 tracking-wide">
           {subtitle}
         </Typography>
-        <Typography variant="body" className="font-light tracking-widest text-xl md:text-2xl">
+        <Typography variant="body" className="font-light tracking-widest text-lg sm:text-xl md:text-2xl">
           {since}
         </Typography>
       </div>

@@ -75,7 +75,7 @@ export default function ParallaxSection({
   }, [parallaxSpeed])
 
   return (
-    <section ref={parallaxRef} className={`relative overflow-hidden ${className}`}>
+    <section ref={parallaxRef} className={`relative overflow-hidden w-full ${className}`}>
       {/* Parallax Background Image or Black Background */}
       {imageUrl && imageUrl.trim() !== '' ? (
         <div

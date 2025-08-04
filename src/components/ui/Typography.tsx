@@ -13,11 +13,11 @@ interface TypographyProps extends HTMLAttributes<HTMLElement> {
 }
 
 const variantStyles = {
-  h1: 'text-6xl md:text-8xl font-bold tracking-wider',
-  h2: 'text-5xl md:text-7xl font-bold tracking-wider',
-  h3: 'text-3xl md:text-4xl font-bold',
-  h4: 'text-2xl md:text-3xl font-semibold',
-  body: 'text-lg leading-relaxed',
+  h1: 'text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-bold tracking-wider',
+  h2: 'text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold tracking-wider',
+  h3: 'text-2xl sm:text-3xl md:text-4xl font-bold',
+  h4: 'text-xl sm:text-2xl md:text-3xl font-semibold',
+  body: 'text-base sm:text-lg leading-relaxed',
   caption: 'text-sm text-gray-600',
 }
 

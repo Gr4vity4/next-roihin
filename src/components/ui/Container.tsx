@@ -19,9 +19,9 @@ const maxWidthClasses = {
 
 const paddingClasses = {
   none: '',
-  sm: 'px-6',
-  md: 'px-6 md:px-8',
-  lg: 'px-6 md:px-8 lg:px-12',
+  sm: 'px-4 sm:px-6',
+  md: 'px-4 sm:px-6 md:px-8',
+  lg: 'px-4 sm:px-6 md:px-8 lg:px-12',
 }
 
 export default function Container({
@@ -35,7 +35,7 @@ export default function Container({
   return (
     <div
       className={cn(
-        'container',
+        'container w-full',
         maxWidthClasses[maxWidth],
         center && 'mx-auto',
         paddingClasses[padding],

@@ -38,12 +38,12 @@ export default function GallerySection({
 
   return (
     <section className={`py-16 bg-black ${className}`}>
-      <div className="container mx-auto px-6 md:px-8 lg:px-12">
+      <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 max-w-full">
         <div className="text-center mb-12">
-          <h2 className="font-playfair text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-4">
+          <h2 className="font-playfair text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-4">
             {title}
           </h2>
-          <p className="text-lg md:text-xl text-white max-w-3xl mx-auto mb-8 font-fciconic">
+          <p className="text-base sm:text-lg md:text-xl text-white max-w-3xl mx-auto mb-8 font-fciconic">
             {subtitle}
           </p>
           <div className="flex flex-wrap justify-center gap-4">
@@ -77,7 +77,7 @@ export default function GallerySection({
           </div>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-3 md:gap-4">
           {productImages.map((image, index) => (
             <div
               key={index}
