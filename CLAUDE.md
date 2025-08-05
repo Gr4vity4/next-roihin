@@ -43,8 +43,12 @@ npm run db:studio    # Open Drizzle Studio GUI for database management
 
 ### Directory Structure
 - `/src/app/` - Next.js App Router pages and layouts
+  - `/about/` - About page
+  - `/blog/` - Blog pages with dynamic routing
   - `/testimonial/` - Database-driven testimonials page
   - `/customer-service/` - Customer service page
+  - `/personalized/` - Personalized products page
+  - `/charmspacer/` - Charm and spacer products page
   - `/button-demo/` - Component demo page
 - `/src/components/` - Reusable React components
   - `/sections/` - Major page sections (Hero, About, Gallery, etc.)
