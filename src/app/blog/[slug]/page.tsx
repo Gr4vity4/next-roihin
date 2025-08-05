@@ -9,7 +9,8 @@ import {
   Typography, 
   Breadcrumb, 
   SocialShare,
-  RelatedArticles 
+  RelatedArticles,
+  SafeHtml 
 } from '@/components/ui'
 import { content } from '@/config/content.config'
 import { siteConfig } from '@/config/site.config'
@@ -225,9 +226,9 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
               {/* Article Content */}
               <article className="prose prose-lg max-w-none">
-                <div 
+                <SafeHtml
+                  html={article.content.thai}
                   className="font-thai text-gray-800 leading-8 [&_h3]:text-2xl [&_h3]:font-bold [&_h3]:text-[#006039] [&_h3]:mt-8 [&_h3]:mb-4 [&_h4]:text-xl [&_h4]:font-semibold [&_h4]:text-[#006039] [&_h4]:mt-6 [&_h4]:mb-3 [&_p]:mb-4 [&_p]:leading-8 [&_ul]:list-disc [&_ul]:list-inside [&_ul]:mb-4 [&_ul]:space-y-2 [&_li]:leading-7 [&_strong]:font-semibold [&_strong]:text-[#006039]"
-                  dangerouslySetInnerHTML={{ __html: article.content.thai }}
                 />
               </article>
 
