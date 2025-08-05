@@ -40,7 +40,7 @@ const config: Config = {
       fontFamily: {
         inter: ['var(--font-inter)', 'sans-serif'],
         thai: ['Noto Sans Thai', 'sans-serif'],
-        fciconic: ['FCIconic', 'sans-serif'],
+        fciconic: ['var(--font-fciconic)', 'sans-serif'],
         playfair: ['Playfair Display', 'serif'],
       },
       animation: {

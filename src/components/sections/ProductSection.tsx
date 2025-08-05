@@ -30,14 +30,14 @@ export default function ProductSection({ id, title, description, images, classNa
               thai={title.thai}
               english={`( ${title.english} )`}
               variant="h3"
-              thaiClassName="text-2xl md:text-3xl lg:text-4xl font-playfair text-white mb-2"
-              englishClassName="text-xl md:text-2xl lg:text-3xl font-playfair text-gray-400"
+              thaiClassName="text-2xl md:text-3xl lg:text-4xl text-white mb-2"
+              englishClassName="text-xl md:text-2xl lg:text-3xl text-gray-400"
             />
           </div>
 
           {/* Description */}
           <div className="max-w-4xl mx-auto text-center">
-            <Typography variant="body" className="text-gray-300 leading-relaxed">
+            <Typography variant="body" fontFamily="fciconic" className="text-gray-300 leading-relaxed">
               {description}
             </Typography>
           </div>

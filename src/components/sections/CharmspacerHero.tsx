@@ -50,10 +50,10 @@ export default function CharmspacerHero({ title, tabs, backgroundImage }: Charms
         <div className="space-y-8">
           {/* Title */}
           <div className="space-y-4">
-            <Typography variant="h1" className="text-4xl md:text-5xl lg:text-6xl font-playfair text-white">
+            <Typography variant="h1" fontFamily="fciconic" className="text-4xl md:text-5xl lg:text-6xl text-white">
               {title.thai}
             </Typography>
-            <Typography variant="h2" className="text-2xl md:text-3xl lg:text-4xl font-playfair text-white">
+            <Typography variant="h2" fontFamily="playfair" className="text-2xl md:text-3xl lg:text-4xl text-white">
               {title.english}
             </Typography>
           </div>
@@ -65,7 +65,7 @@ export default function CharmspacerHero({ title, tabs, backgroundImage }: Charms
                 key={tab.id}
                 onClick={() => handleTabClick(tab.id, tab.href)}
                 className={cn(
-                  'px-6 md:px-8 py-3 font-thai text-base md:text-lg transition-all duration-300',
+                  'px-6 md:px-8 py-3 font-fciconic text-base md:text-lg transition-all duration-300',
                   'border-b-2',
                   activeTab === tab.id
                     ? 'text-green-500 border-green-500'

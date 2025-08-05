@@ -42,12 +42,12 @@ export default function BilingualText({
   return (
     <div className={cn(containerClass, className)}>
       {thai && (
-        <Typography variant={variant} fontFamily="thai" className={thaiClassName}>
+        <Typography variant={variant} fontFamily="fciconic" className={thaiClassName}>
           {thai}
         </Typography>
       )}
       {english && (
-        <Typography variant={variant} className={englishClassName}>
+        <Typography variant={variant} fontFamily="playfair" className={englishClassName}>
           {english}
         </Typography>
       )}
