@@ -25,7 +25,8 @@ export const contentConfig = {
   about: {
     title: "More Than Value, it's Spiritual Worth",
     subtitle: '"มากกว่าคุณค่าทางใจคือคุณค่าทางจิตวิญญาณ"',
-    content: 'ร้อยหิน คือสถานที่สร้างศิลปะแห่งสายหินที่ให้ความหมายเฉพาะตัวคุณ ด้วยการผสมผสานศาสตร์โบราณและความเข้าใจสมัยใหม่ เรานำหินธรรมชาติที่มีพลังแห่งการบำบัดมาร้อยเรียงอย่างพิถีพิถัน เพื่อสร้างเครื่องประดับที่ไม่เพียงสวยงาม แต่ยังช่วยเสริมสร้างพลังชีวิตให้กับผู้สวมใส่',
+    content:
+      'ร้อยหิน คือสถานที่สร้างศิลปะแห่งสายหินที่ให้ความหมายเฉพาะตัวคุณ ด้วยการผสมผสานศาสตร์โบราณและความเข้าใจสมัยใหม่ เรานำหินธรรมชาติที่มีพลังแห่งการบำบัดมาร้อยเรียงอย่างพิถีพิถัน เพื่อสร้างเครื่องประดับที่ไม่เพียงสวยงาม แต่ยังช่วยเสริมสร้างพลังชีวิตให้กับผู้สวมใส่',
     cta: {
       text: 'เรียนรู้เพิ่มเติม',
       variant: 'primary' as const,
@@ -192,7 +193,8 @@ export const contentConfig = {
             thai: 'ทำความเข้าใจพลังงานหิน',
           },
           excerpt: {
-            english: 'Discover how natural stones carry unique vibrational frequencies that can influence our energy fields and promote healing.',
+            english:
+              'Discover how natural stones carry unique vibrational frequencies that can influence our energy fields and promote healing.',
             thai: 'ค้นพบว่าหินธรรมชาติมีความถี่การสั่นไหวที่เป็นเอกลักษณ์ที่สามารถส่งผลต่อสนามพลังงานของเราและส่งเสริมการรักษา',
           },
           image: '/images/357c3a_2013cc64ddf74b35b6a0d668ae5effb8~mv2.avif',
@@ -210,7 +212,8 @@ export const contentConfig = {
             thai: 'การเลือกหินที่เหมาะสมกับการเดินทางของคุณ',
           },
           excerpt: {
-            english: 'Learn how to select stones that align with your personal energy and life goals for maximum spiritual benefit.',
+            english:
+              'Learn how to select stones that align with your personal energy and life goals for maximum spiritual benefit.',
             thai: 'เรียนรู้วิธีการเลือกหินที่สอดคล้องกับพลังงานส่วนตัวและเป้าหมายชีวิตของคุณเพื่อประโยชน์ทางจิตวิญญาณสูงสุด',
           },
           image: '/images/357c3a_449b1b790747456cb742616cdedb4af0~mv2.avif',
@@ -228,7 +231,8 @@ export const contentConfig = {
             thai: 'การดูแลและพิธีกรรมชำระล้างหิน',
           },
           excerpt: {
-            english: 'Proper maintenance and cleansing techniques to keep your stones energetically pure and powerful.',
+            english:
+              'Proper maintenance and cleansing techniques to keep your stones energetically pure and powerful.',
             thai: 'เทคนิคการบำรุงรักษาและชำระล้างที่เหมาะสมเพื่อให้หินของคุณบริสุทธิ์และทรงพลังในด้านพลังงาน',
           },
           image: '/images/357c3a_155e041dcebb4320b8cb23202c8441e8~mv2.avif',
@@ -246,7 +250,8 @@ export const contentConfig = {
             thai: 'การฝึกสมาธิด้วยหินศักดิ์สิทธิ์',
           },
           excerpt: {
-            english: 'Enhance your meditation practice by incorporating the healing energies of carefully selected stones.',
+            english:
+              'Enhance your meditation practice by incorporating the healing energies of carefully selected stones.',
             thai: 'เสริมสร้างการฝึกสมาธิของคุณโดยการรวมพลังงานการรักษาของหินที่คัดสรรมาอย่างดี',
           },
           image: '/images/357c3a_c78543e690504fdd80ac15754320656b~mv2.avif',
@@ -264,7 +269,8 @@ export const contentConfig = {
             thai: 'คู่มือหินตามฤดูกาล: การปรับตัวให้เข้ากับรอบธรรมชาติ',
           },
           excerpt: {
-            english: 'Discover which stones work best during different seasons and how to harness seasonal energies.',
+            english:
+              'Discover which stones work best during different seasons and how to harness seasonal energies.',
             thai: 'ค้นพบว่าหินใดเหมาะสมที่สุดในแต่ละฤดูกาลและวิธีการใช้ประโยชน์จากพลังงานตามฤดูกาล',
           },
           image: '/images/357c3a_2013cc64ddf74b35b6a0d668ae5effb8~mv2.avif',
@@ -282,7 +288,8 @@ export const contentConfig = {
             thai: 'การรักษาจักระด้วยหินเฉพาะ',
           },
           excerpt: {
-            english: 'Learn which stones correspond to each chakra and how to use them for energy balance and healing.',
+            english:
+              'Learn which stones correspond to each chakra and how to use them for energy balance and healing.',
             thai: 'เรียนรู้ว่าหินใดสอดคล้องกับแต่ละจักระและวิธีการใช้เพื่อสมดุลพลังงานและการรักษา',
           },
           image: '/images/357c3a_449b1b790747456cb742616cdedb4af0~mv2.avif',
@@ -334,7 +341,8 @@ export const contentConfig = {
           thai: 'ทำความเข้าใจพลังงานหิน',
         },
         excerpt: {
-          english: 'Discover how natural stones carry unique vibrational frequencies that can influence our energy fields and promote healing.',
+          english:
+            'Discover how natural stones carry unique vibrational frequencies that can influence our energy fields and promote healing.',
           thai: 'ค้นพบว่าหินธรรมชาติมีความถี่การสั่นไหวที่เป็นเอกลักษณ์ที่สามารถส่งผลต่อสนามพลังงานของเราและส่งเสริมการรักษา',
         },
         content: {
@@ -411,7 +419,7 @@ export const contentConfig = {
             </ul>
 
             <p>Understanding stone energy is just the beginning of your journey toward self-discovery and spiritual development. Using stones correctly and consistently can help you experience positive transformations in your life.</p>
-          `
+          `,
         },
         image: '/images/357c3a_2013cc64ddf74b35b6a0d668ae5effb8~mv2.avif',
         date: '2024-01-15',
@@ -424,10 +432,10 @@ export const contentConfig = {
           name: 'ROIHIN Team',
           bio: {
             thai: 'ทีมผู้เชี่ยวชาญด้านหินพลังงานและการบำบัด',
-            english: 'Expert team in energy stones and healing practices'
-          }
+            english: 'Expert team in energy stones and healing practices',
+          },
         },
-        tags: ['พลังงานหิน', 'จักระ', 'การบำบัด', 'Stone Energy', 'Chakra', 'Healing']
+        tags: ['พลังงานหิน', 'จักระ', 'การบำบัด', 'Stone Energy', 'Chakra', 'Healing'],
       },
       'choosing-right-stones': {
         id: 'choosing-right-stones',
@@ -436,7 +444,8 @@ export const contentConfig = {
           thai: 'การเลือกหินที่เหมาะสมกับการเดินทางของคุณ',
         },
         excerpt: {
-          english: 'Learn how to select stones that align with your personal energy and life goals for maximum spiritual benefit.',
+          english:
+            'Learn how to select stones that align with your personal energy and life goals for maximum spiritual benefit.',
           thai: 'เรียนรู้วิธีการเลือกหินที่สอดคล้องกับพลังงานส่วนตัวและเป้าหมายชีวิตของคุณเพื่อประโยชน์ทางจิตวิญญาณสูงสุด',
         },
         content: {
@@ -549,7 +558,7 @@ export const contentConfig = {
             </ul>
 
             <p>Remember that choosing the right stones is a process that takes time, patience, and practice. When you find your perfect match, they become powerful tools for self-development and creating a better life.</p>
-          `
+          `,
         },
         image: '/images/357c3a_449b1b790747456cb742616cdedb4af0~mv2.avif',
         date: '2024-01-10',
@@ -562,11 +571,98 @@ export const contentConfig = {
           name: 'ROIHIN Team',
           bio: {
             thai: 'ทีมผู้เชี่ยวชาญด้านหินพลังงานและการบำบัด',
-            english: 'Expert team in energy stones and healing practices'
-          }
+            english: 'Expert team in energy stones and healing practices',
+          },
         },
-        tags: ['การเลือกหิน', 'สัญชาตญาณ', 'พลังงานส่วนตัว', 'Stone Selection', 'Intuition', 'Personal Energy']
-      }
+        tags: [
+          'การเลือกหิน',
+          'สัญชาตญาณ',
+          'พลังงานส่วนตัว',
+          'Stone Selection',
+          'Intuition',
+          'Personal Energy',
+        ],
+      },
+    },
+  },
+
+  // Personalized Page Content
+  personalizedPage: {
+    hero: {
+      backgroundImage: '/images/357c3a_d82d5da32aa3407ab8bb21e295352b40~mv2.avif', // Landing 1.png equivalent from original site
+      title: {
+        line1: 'PERSONALIZED',
+        line2: 'STONE BRACELET',
+      },
+      subtitle: {
+        thai: 'กำไลหินเฉพาะบุคคล',
+        description: 'เริ่มต้นด้วยการเปิดใจเพื่อให้ตัวเองได้รู้จักพลังที่มิอาจเคยได้สัมผัส',
+      },
+    },
+    aboutSection: {
+      title: {
+        english: 'More Than Value,',
+        highlight: "it's Spiritual Worth",
+      },
+      subtitle: {
+        thai: 'มากกว่าคุณค่าทางใจคือคุณค่าทางจิตวิญญาณ',
+      },
+      content: {
+        thai: [
+          'หลายคนมีคำถาม "อะไรคือกำไลหินเฉพาะบุคคลและมีความสำคัญอย่างไร"',
+          '',
+          'กำไลหินเฉพาะบุคคลเป็นชิ้นงานที่จัดทำออกแบบเฉพาะคนนั้น ๆ โดยเรียบเรียงจากการวิเคราะห์ลักษณะทางกายภาพ จิตวิญญาณ ตรวจดวงชะตา พิจารณาถึงการนำไปใช้เพื่อให้เกิดผลในทางโลกและจิตวิญญาณ หรืออาจจะจัดทำเพื่อให้ส่งผลในลักษณะที่จำเพาะให้เกิดขึ้น เพื่อเป็นตัวช่วยหรือชักนำให้สิ่งที่ปรารถนาเกิดความสำเร็จรวดเร็ว',
+          '',
+          'ปัจจุบันนี้มีร้านจำหน่ายกำไลหินมงคลอยู่มากมาย ทั้งในเว็บไซต์ สื่อโซเชียลมีเดียหรือเว็บช้อปปิ้งออนไลน์ให้ได้เลือกซื้อกันอย่างอิสระ บ้างซื้อเพราะชอบสีของหิน บ้างซื้อเพราะความสวยงามถูกใจ หรืออาจซื้อตามคำแนะนำว่าจากคนใกล้ตัว แต่คุณรู้หรือไม่? เมื่อนำกำไลหินมาสวมขึ้นมือ หินจะมีอิทธิพลกับการใช้ชีวิตของเราเป็นอย่างมาก เกิดการเปลี่ยนแปลงอย่างมีนัยสำคัญโดยเฉพาะด้านจิตใจและจิตวิญญาณ',
+          'การเลือกกำไลหินให้เหมาะสมเพื่อเสริมดวงชะตาได้อย่างถูกต้องนั้น คงไม่ใช่เรื่องง่ายเพราะแต่ละคนมีความเป็นปัจเจกหรือความเป็นบุคคลซึ่งแต่กต่างกัน จึงต้องพิจารณาและวิเคราะห์ในหลาย ๆ ปัจจัย มิใช่ว่าจะเลือกเพียงกลุ่มสีที่ถูกโฉลก แต่มิได้พิจารณาถึงปัจจัยอื่นที่จำเป็นและสำคัญกว่าเช่น พลังงานหลักและพลังงานแฝงของธาตุอัญมณี ดวงดาว ลัคนาราศี อาชีพการงานรวมถึงวัตถุประสงค์ที่ต้องการ ซึ่งทำให้การจัดหินโดยผู้เชี่ยวชาญด้านธาตุ วิญญาณและการออกแบบพลังงานจึงสำคัญมาก สามารถจัดเรียงหินและธาตุในตำแหน่งที่เหมาะสม เข้าใจการส่งเสริมพลังและการทำงานร่วมกันของหินแต่ละชนิด แม้แต่การวางตำแหน่งหินเองก็สำคัญ การเลือกหินธาตุที่ช่วยลดทอนอิทธิพลหรือแก้ทางข่มธาตุอาถรรพ์ของกันและกันได้ก็สำคัญไม่แพ้กัน ชึ่งนั่นเป็นวิชาเฉพาะทางของศาสตร์ร้อยหิน',
+          '',
+          'นอกจากนี้ การประกอบพิธีกรรมทางจิตวิญญาณเพื่อกระตุ้นการทำงานและส่งเสริมอานุภาพของหินเองให้สามารถเชื่อมโยงกับพลังงานธรรมชาติสู่ผู้ครอบครองนั้น ก็ต้องมีความบริสุทธิ์และได้รับการเอาใจใส่ดูแลเป็นพิเศษ ไม่ว่าจะเป็นพิธีการชำระล้างหินธาตุ การดูฤกษ์ยามเพื่อวางแบบ หรือการตั้งมณฑลพิธี เป็นต้น',
+        ],
+      },
+    },
+    gallerySection: {
+      title: {
+        english: 'Recently,',
+        highlight: 'Personalized bracelet design',
+      },
+      subtitle: {
+        thai: 'ผลงานออกแบบกำไลหินเฉพาะบุคคลล่าสุด',
+      },
+      cta: {
+        text: 'ดูแบบเพิ่มเติม',
+        variant: 'primary' as const,
+      },
+    },
+    expertiseSection: {
+      content: {
+        thai: [
+          'ร้อยหิน Stone & Bracelet เป็นหนึ่งในผู้เชี่ยวชาญด้านหินธาตุและออกแบบพลังงานให้เหมาะสมกับบุคคลนั้น ๆ เพื่อให้กำไลหินเฉพาะตัวของคุณ ได้ช่วยให้คุณสามารถก้าวผ่านเรื่องราวต่าง ๆ ได้อย่างมีสติ ดึงดูด ชักนำสิ่งดี ๆ เข้ามาในช่วงจังหวะที่ที่เหมาะสมในช่วงชีวิต ปรับเติมเสริมดวงชะตาของคุณเกิดการเปลี่ยนแปลงในทิศทางที่ดีขึ้น ประกอบกับการให้คำแนะนำต่าง ๆ เพื่อให้เกิดผลสำเร็จรวดเร็ว ซึ่งนั่นได้ผ่านการพิสูจน์แล้วจากลูกค้านับพันราย โดยการแบ่งปันเรื่องราวและได้รับการบอกต่อจากเพื่อนสู่เพื่อน จากคนในครอบครัวสู่คนที่คุณรัก หลายร้อยเรื่องราวที่ประสบผลสำเร็จตามที่ตั้งใจ ได้ถูกเล่าให้เราได้รับฟังกันอย่างน่าชื่นใจอย่างสม่ำเสมอ',
+          '',
+          'หากคุณต้องการมีหินเฉพาะบุคคลของตัวเองก็ทำได้ไม่ยาก สามารถติดต่อเข้ามาได้ผ่านช่องทางต่าง ๆ ครับ ผมเพียงอาศัยข้อมูลทั่วไปตัวของคุณซึ่งได้แก่ วันเดือนปีเกิด เบอร์โทรศัพท์มือถือที่ใช้เพื่อวิเคราะห์ในศาสตร์พลังงานของตัวเลข ความต้องการในการเสริมดวงชะตาแต่ด้านทั้งการงาน การเงิน สุขภาพ ความรัก จิตวิญญาณ รวมถึงสามารถแจ้ง ความชื่นชอบทั้งสีและอัญมณีหินสี ข้อมูลทั้งหมดนี้จะถูกเก็บเป็นความลับของลูกค้า ไม่เปิดเผยในที่ใดรวมถึงบุคคลที่สาม ด้วยจรรยาบรรณของวิชาชีพ',
+          '',
+          'ร้อยหิน Stone & Bracelet มีหินธรรมชาติสำหรับการจัดวางออกแบบมากกว่า 200 ชนิด หลากหลายแหล่งที่มา หลากหลายสี หลากหลายขนาด และมีหินหายาก หินเกรดพรีเมี่ยมและชาร์มตัวคั่นรูปแบบเฉพาะตัวที่มีความหมายต่างกัน ช่วยส่งเสริมพลังงานของอัญมณีหินได้ดีโดยใช้วัสดุที่เป็นประเภทเงินแท้และทองคำแท้เท่านั้น คุณสามารถสั่งทำออกแบบในราคาเริ่มต้นเพียง 1,500 บาท หรือหากต้องการกำหนดงบประมาณในการจัดทำได้ด้วยตัวเองก็สามารถทำได้ทั้งในระดับเริ่มต้น ระดับกลาง หรือหินพิเศษหายากในระดับสูง ผมจะคัดสรร จัดวางหินเพื่อให้เหมาะสมและดีที่สุดสำหรับคุณโดยเฉพาะ',
+        ],
+      },
+    },
+    ctaSection: {
+      buttons: [
+        {
+          text: 'เริ่มต้นออกแบบ',
+          href: '/braceletorder',
+          variant: 'gold' as const,
+          highlight: true,
+        },
+        {
+          text: 'ขอรับคำปรึกษา',
+          href: 'tel:+66838265195',
+          variant: 'primary' as const,
+        },
+        {
+          text: 'LINE : @roihin4289',
+          href: 'https://line.me/R/ti/p/@roihin4289',
+          variant: 'secondary' as const,
+        },
+      ],
     },
   },
 }

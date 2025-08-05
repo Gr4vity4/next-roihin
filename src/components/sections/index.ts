@@ -15,3 +15,10 @@ export { default as AboutFeaturesSection } from './AboutFeaturesSection'
 // Blog Page Components
 export { default as BlogHeroSection } from './BlogHeroSection'
 export { default as BlogPostsSection } from './BlogPostsSection'
+
+// Personalized Page Components
+export { default as PersonalizedHeroSection } from './PersonalizedHeroSection'
+export { default as PersonalizedContentSection } from './PersonalizedContentSection'
+export { default as PersonalizedGallerySection } from './PersonalizedGallerySection'
+export { default as PersonalizedExpertiseSection } from './PersonalizedExpertiseSection'
+export { default as PersonalizedCTASection } from './PersonalizedCTASection'
