@@ -1,4 +1,4 @@
-export const contentConfig = {
+export const content = {
   // Hero Section
   hero: {
     title: {
@@ -663,6 +663,106 @@ export const contentConfig = {
           variant: 'secondary' as const,
         },
       ],
+    },
+  },
+  
+  // Charmspacer Page Content
+  charmspacerPage: {
+    hero: {
+      backgroundImage: '/images/charmspacer/hero.avif',
+      title: {
+        thai: 'ชาร์มและสเปเซอร์',
+        english: 'CHARM / SPACER',
+      },
+      tabs: [
+        { id: 'charm', label: 'ชาร์ม', href: '#charm' },
+        { id: 'spacer', label: 'ตัวคั่น', href: '#spacer' },
+        { id: 'pendant', label: 'ชาร์มจี้', href: '#pendant' },
+      ],
+    },
+    sections: {
+      charm: {
+        id: 'charm',
+        title: {
+          thai: 'ชาร์ม',
+          english: 'Lucky Charm',
+        },
+        description: 'ร้อยหินชาร์ม จัดทำขึ้นเป็นวาระโดยอาศัยตำนานและเรื่องเล่าของครูบาอาจารย์ ชาร์มทุกชิ้นได้ผ่านพิธีกรรมอันเชิญตามต้นกำเนิดเพื่อให้เกิดเทวคุณอันเป็นสิริมงคลสูงสุดต่อผู้ครอบครอง',
+        images: [
+          { src: '/images/charmspacer/charm/charm-01.png', alt: 'Lucky Charm 01' },
+          { src: '/images/charmspacer/charm/charm-02.png', alt: 'Lord Ganesh', href: '/charm-1/ganesha' },
+          { src: '/images/charmspacer/charm/charm-03.png', alt: 'Naga Charm', href: '/charm-1/naga' },
+          { src: '/images/charmspacer/charm/charm-04.png', alt: 'Lucky Charm 04' },
+          { src: '/images/charmspacer/charm/charm-05.png', alt: 'Lucky Charm 05' },
+          { src: '/images/charmspacer/charm/charm-06.png', alt: 'Lucky Charm 06' },
+          { src: '/images/charmspacer/charm/charm-07.png', alt: 'Lucky Charm 07' },
+          { src: '/images/charmspacer/charm/charm-08.png', alt: 'Lucky Charm 08' },
+          { src: '/images/charmspacer/charm/charm-09.png', alt: 'Lucky Charm 09' },
+          { src: '/images/charmspacer/charm/charm-10.png', alt: 'Lucky Charm 10' },
+          { src: '/images/charmspacer/charm/charm-11.png', alt: 'Lucky Charm 11' },
+          { src: '/images/charmspacer/charm/charm-12.png', alt: 'Lucky Charm 12' },
+          { src: '/images/charmspacer/charm/charm-13.png', alt: 'Lucky Charm 13' },
+          { src: '/images/charmspacer/charm/charm-14.png', alt: 'Lucky Charm 14' },
+        ],
+      },
+      spacer: {
+        id: 'spacer',
+        title: {
+          thai: 'ตัวคั่น',
+          english: 'Spacer',
+        },
+        description: 'ร้อยหินชาร์ม จัดทำขึ้นเป็นวาระโดยอาศัยตำนานและเรื่องเล่าของครูบาอาจารย์ ชาร์มทุกชิ้นได้ผ่านพิธีกรรมอันเชิญตามต้นกำเนิดเพื่อให้เกิดเทวคุณอันเป็นสิริมงคลสูงสุดต่อผู้ครอบครอง',
+        images: [
+          { src: '/images/charmspacer/spacer/spacer-01.png', alt: 'Spacer 01' },
+          { src: '/images/charmspacer/spacer/spacer-02.png', alt: 'Spacer 02' },
+          { src: '/images/charmspacer/spacer/spacer-03.png', alt: 'Spacer 03' },
+          { src: '/images/charmspacer/spacer/spacer-04.png', alt: 'Spacer 04' },
+          { src: '/images/charmspacer/spacer/spacer-05.png', alt: 'Spacer 05' },
+          { src: '/images/charmspacer/spacer/spacer-06.png', alt: 'Spacer 06' },
+          { src: '/images/charmspacer/spacer/spacer-07.png', alt: 'Spacer 07' },
+          { src: '/images/charmspacer/spacer/spacer-08.png', alt: 'Spacer 08' },
+          { src: '/images/charmspacer/spacer/spacer-09.png', alt: 'Spacer 09' },
+          { src: '/images/charmspacer/spacer/spacer-10.png', alt: 'Spacer 10' },
+          { src: '/images/charmspacer/spacer/spacer-11.png', alt: 'Spacer 11' },
+          { src: '/images/charmspacer/spacer/spacer-12.png', alt: 'Spacer 12' },
+          { src: '/images/charmspacer/spacer/spacer-13.png', alt: 'Spacer 13' },
+          { src: '/images/charmspacer/spacer/spacer-14.png', alt: 'Spacer 14' },
+          { src: '/images/charmspacer/spacer/spacer-15.png', alt: 'Spacer 15' },
+          { src: '/images/charmspacer/spacer/spacer-16.png', alt: 'Spacer 16' },
+          { src: '/images/charmspacer/spacer/spacer-17.png', alt: 'Spacer 17' },
+          { src: '/images/charmspacer/spacer/spacer-18.png', alt: 'Spacer 18' },
+          { src: '/images/charmspacer/spacer/spacer-19.png', alt: 'Spacer 19' },
+          { src: '/images/charmspacer/spacer/spacer-20.png', alt: 'Spacer 20' },
+          { src: '/images/charmspacer/spacer/spacer-21.png', alt: 'Spacer 21' },
+          { src: '/images/charmspacer/spacer/spacer-22.png', alt: 'Spacer 22' },
+          { src: '/images/charmspacer/spacer/spacer-23.png', alt: 'Spacer 23' },
+          { src: '/images/charmspacer/spacer/spacer-24.png', alt: 'Spacer 24' },
+        ],
+      },
+      pendant: {
+        id: 'pendant',
+        title: {
+          thai: 'ชาร์มจี้',
+          english: 'Pendant Charm',
+        },
+        description: 'ร้อยหินชาร์ม จัดทำขึ้นเป็นวาระโดยอาศัยตำนานและเรื่องเล่าของครูบาอาจารย์ ชาร์มทุกชิ้นได้ผ่านพิธีกรรมอันเชิญตามต้นกำเนิดเพื่อให้เกิดเทวคุณอันเป็นสิริมงคลสูงสุดต่อผู้ครอบครอง',
+        images: [
+          { src: '/images/charmspacer/pendant/pendant-01.png', alt: 'Pendant Charm 01' },
+          { src: '/images/charmspacer/pendant/pendant-02.png', alt: 'Pendant Charm 02' },
+          { src: '/images/charmspacer/pendant/pendant-03.png', alt: 'Pendant Charm 03' },
+          { src: '/images/charmspacer/pendant/pendant-04.png', alt: 'Pendant Charm 04' },
+          { src: '/images/charmspacer/pendant/pendant-05.png', alt: 'Pendant Charm 05' },
+          { src: '/images/charmspacer/pendant/pendant-06.png', alt: 'Pendant Charm 06' },
+          { src: '/images/charmspacer/pendant/pendant-07.png', alt: 'Pendant Charm 07' },
+          { src: '/images/charmspacer/pendant/pendant-08.png', alt: 'Pendant Charm 08' },
+          { src: '/images/charmspacer/pendant/pendant-09.png', alt: 'Pendant Charm 09' },
+          { src: '/images/charmspacer/pendant/pendant-10.png', alt: 'Pendant Charm 10' },
+          { src: '/images/charmspacer/pendant/pendant-11.png', alt: 'Pendant Charm 11' },
+          { src: '/images/charmspacer/pendant/pendant-12.png', alt: 'Pendant Charm 12' },
+          { src: '/images/charmspacer/pendant/pendant-13.png', alt: 'Pendant Charm 13' },
+          { src: '/images/charmspacer/pendant/pendant-14.png', alt: 'Pendant Charm 14' },
+        ],
+      },
     },
   },
 }

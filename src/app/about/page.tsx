@@ -5,7 +5,7 @@ import { Footer } from '@/components/sections'
 import AboutHeroSection from '@/components/sections/AboutHeroSection'
 import AboutContentSection from '@/components/sections/AboutContentSection'
 import AboutFeaturesSection from '@/components/sections/AboutFeaturesSection'
-import { contentConfig } from '@/config/content.config'
+import { content } from '@/config/content.config'
 
 export const metadata: Metadata = {
   title: 'เกี่ยวกับร้อยหิน - ROIHIN STONE & BRACELET',
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 }
 
 export default function AboutPage() {
-  const { aboutPage } = contentConfig
+  const { aboutPage } = content
 
   return (
     <main className="min-h-screen">

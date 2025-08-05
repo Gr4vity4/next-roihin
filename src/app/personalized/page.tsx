@@ -6,7 +6,7 @@ import PersonalizedCTASection from '@/components/sections/PersonalizedCTASection
 import PersonalizedExpertiseSection from '@/components/sections/PersonalizedExpertiseSection'
 import PersonalizedGallerySection from '@/components/sections/PersonalizedGallerySection'
 import PersonalizedHeroSection from '@/components/sections/PersonalizedHeroSection'
-import { contentConfig } from '@/config/content.config'
+import { content } from '@/config/content.config'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
 }
 
 export default function PersonalizedPage() {
-  const { personalizedPage } = contentConfig
+  const { personalizedPage } = content
 
   return (
     <main className="min-h-screen">

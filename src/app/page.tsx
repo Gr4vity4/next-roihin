@@ -10,7 +10,7 @@ import {
   TestimonialsSection,
   VibrantDestinySection,
 } from '@/components/sections'
-import { contentConfig } from '@/config/content.config'
+import { content } from '@/config/content.config'
 
 export default function Home() {
   return (
@@ -21,40 +21,40 @@ export default function Home() {
       <main className="overflow-x-hidden w-full">
         {/* Hero Section - starts at top of page, content positioned to account for nav */}
         <HeroSection
-          backgroundImage={contentConfig.hero.background.image}
-          backgroundAlt={contentConfig.hero.background.alt}
-          title={contentConfig.hero.title}
-          subtitle={contentConfig.hero.subtitle}
-          ctaButton={contentConfig.hero.cta}
+          backgroundImage={content.hero.background.image}
+          backgroundAlt={content.hero.background.alt}
+          title={content.hero.title}
+          subtitle={content.hero.subtitle}
+          ctaButton={content.hero.cta}
           className="pt-20 lg:pt-[230px]"
         />
 
       {/* About Section */}
       <AboutSection
         id="about"
-        title={contentConfig.about.title}
-        subtitle={contentConfig.about.subtitle}
-        content={contentConfig.about.content}
-        ctaButton={contentConfig.about.cta}
+        title={content.about.title}
+        subtitle={content.about.subtitle}
+        content={content.about.content}
+        ctaButton={content.about.cta}
       />
 
       {/* Signature Charm Section */}
       <SignatureCharmSection
         id="charms"
-        backgroundImage={contentConfig.signatureCharm.background.image}
-        backgroundAlt={contentConfig.signatureCharm.background.alt}
-        title={contentConfig.signatureCharm.title}
-        subtitle={contentConfig.signatureCharm.subtitle}
-        ctaButton={contentConfig.signatureCharm.cta}
+        backgroundImage={content.signatureCharm.background.image}
+        backgroundAlt={content.signatureCharm.background.alt}
+        title={content.signatureCharm.title}
+        subtitle={content.signatureCharm.subtitle}
+        ctaButton={content.signatureCharm.cta}
       />
 
       {/* Testimonials Section */}
       <TestimonialsSection
         id="reviews"
-        title={contentConfig.testimonials.title}
-        subtitle={contentConfig.testimonials.subtitle}
-        testimonials={contentConfig.testimonials.items}
-        ctaButton={contentConfig.testimonials.cta}
+        title={content.testimonials.title}
+        subtitle={content.testimonials.subtitle}
+        testimonials={content.testimonials.items}
+        ctaButton={content.testimonials.cta}
       />
 
       {/* Full Width Background Section */}
@@ -68,19 +68,19 @@ export default function Home() {
       {/* Gallery Section */}
       <GallerySection
         backgroundImage=""
-        backgroundAlt={contentConfig.gallery.background.alt}
-        title={contentConfig.gallery.title}
-        subtitle={contentConfig.gallery.subtitle}
-        ctaButtons={contentConfig.gallery.ctaButtons}
+        backgroundAlt={content.gallery.background.alt}
+        title={content.gallery.title}
+        subtitle={content.gallery.subtitle}
+        ctaButtons={content.gallery.ctaButtons}
       />
 
       {/* Vibrant Destiny Section */}
       <VibrantDestinySection
-        backgroundImage={contentConfig.vibrantDestiny.background.image}
-        backgroundAlt={contentConfig.vibrantDestiny.background.alt}
-        title={contentConfig.vibrantDestiny.title}
-        subtitle={contentConfig.vibrantDestiny.subtitle}
-        since={contentConfig.vibrantDestiny.since}
+        backgroundImage={content.vibrantDestiny.background.image}
+        backgroundAlt={content.vibrantDestiny.background.alt}
+        title={content.vibrantDestiny.title}
+        subtitle={content.vibrantDestiny.subtitle}
+        since={content.vibrantDestiny.since}
         overlayOpacity={0.2}
       />
 

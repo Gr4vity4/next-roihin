@@ -5,6 +5,7 @@ interface BilingualTextProps {
   thai?: string
   english?: string
   variant?: 'h1' | 'h2' | 'h3' | 'h4' | 'body' | 'caption'
+  className?: string
   thaiClassName?: string
   englishClassName?: string
   gap?: 'sm' | 'md' | 'lg'
@@ -27,6 +28,7 @@ export default function BilingualText({
   thai,
   english,
   variant = 'body',
+  className = '',
   thaiClassName = '',
   englishClassName = '',
   gap = 'md',
@@ -38,7 +40,7 @@ export default function BilingualText({
     layout === 'vertical' ? gapClasses[gap] : cn('flex', horizontalGapClasses[gap])
 
   return (
-    <div className={containerClass}>
+    <div className={cn(containerClass, className)}>
       {thai && (
         <Typography variant={variant} fontFamily="thai" className={thaiClassName}>
           {thai}

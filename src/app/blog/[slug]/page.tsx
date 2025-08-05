@@ -11,7 +11,7 @@ import {
   SocialShare,
   RelatedArticles 
 } from '@/components/ui'
-import { contentConfig } from '@/config/content.config'
+import { content } from '@/config/content.config'
 import { siteConfig } from '@/config/site.config'
 
 interface ArticlePageProps {
@@ -25,12 +25,12 @@ function getArticleBySlug(slug: string) {
   const decodedSlug = decodeURIComponent(slug)
   
   // Check if it's a direct article ID match first
-  if (contentConfig.blog.articles[decodedSlug as keyof typeof contentConfig.blog.articles]) {
-    return contentConfig.blog.articles[decodedSlug as keyof typeof contentConfig.blog.articles]
+  if (content.blog.articles[decodedSlug as keyof typeof content.blog.articles]) {
+    return content.blog.articles[decodedSlug as keyof typeof content.blog.articles]
   }
   
   // Search by Thai title match
-  const articles = Object.values(contentConfig.blog.articles)
+  const articles = Object.values(content.blog.articles)
   const foundArticle = articles.find(article => 
     article.title.thai === decodedSlug || 
     encodeURIComponent(article.title.thai) === slug
@@ -98,7 +98,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
 
 // Generate static params for known articles (optional - for static generation)
 export async function generateStaticParams() {
-  const articles = Object.values(contentConfig.blog.articles)
+  const articles = Object.values(content.blog.articles)
   
   return articles.map((article) => ({
     slug: article.id, // Use article ID instead of Thai title for static generation
@@ -286,7 +286,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
         {/* Related Articles */}
         <RelatedArticles
-          articles={Object.values(contentConfig.blog.articles)}
+          articles={Object.values(content.blog.articles)}
           currentArticleId={article.id}
         />
       </main>

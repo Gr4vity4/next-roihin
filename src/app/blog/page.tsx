@@ -1,7 +1,7 @@
 import ChatWidget from '@/components/ChatWidget'
 import Navigation from '@/components/Navigation'
 import { BlogHeroSection, BlogPostsSection, Footer } from '@/components/sections'
-import { contentConfig } from '@/config/content.config'
+import { content } from '@/config/content.config'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: contentConfig.blog.hero.backgroundImage,
+        url: content.blog.hero.backgroundImage,
         width: 1200,
         height: 630,
         alt: 'Stone Wisdom Blog - ROIHIN STONE & BRACELET',
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Blog - Stone Wisdom | ROIHIN STONE & BRACELET',
     description: 'Discover the ancient wisdom and modern insights of natural stone healing.',
-    images: [contentConfig.blog.hero.backgroundImage],
+    images: [content.blog.hero.backgroundImage],
   },
 }
 
@@ -51,18 +51,18 @@ export default function BlogPage() {
       <main>
         {/* Blog Hero Section */}
         <BlogHeroSection
-          backgroundImage={contentConfig.blog.hero.backgroundImage}
-          title={contentConfig.blog.hero.title}
-          subtitle={contentConfig.blog.hero.subtitle}
+          backgroundImage={content.blog.hero.backgroundImage}
+          title={content.blog.hero.title}
+          subtitle={content.blog.hero.subtitle}
         />
 
         {/* Blog Posts Section */}
         <BlogPostsSection
-          title={contentConfig.blog.postsSection.title}
-          subtitle={contentConfig.blog.postsSection.subtitle}
-          posts={contentConfig.blog.postsSection.posts}
-          categories={contentConfig.blog.categories}
-          loadMoreButton={contentConfig.blog.postsSection.loadMoreButton}
+          title={content.blog.postsSection.title}
+          subtitle={content.blog.postsSection.subtitle}
+          posts={content.blog.postsSection.posts}
+          categories={content.blog.categories}
+          loadMoreButton={content.blog.postsSection.loadMoreButton}
         />
       </main>
 
