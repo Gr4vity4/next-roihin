@@ -1,12 +1,17 @@
 'use client'
 
+import type {
+  BlogCategoriesResponse,
+  BlogCategory,
+  BlogPost,
+  BlogPostsResponse,
+} from '@/lib/types/wordpress'
+import { formatThaiDate } from '@/lib/utils'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Button from '../Button'
 import { Container, Typography } from '../ui'
-import { formatThaiDate } from '@/lib/utils'
-import type { BlogPost, BlogCategory, BlogPostsResponse, BlogCategoriesResponse } from '@/lib/types/wordpress'
 
 interface BlogPostsSectionProps {
   title: {
@@ -28,7 +33,7 @@ function BlogPostCard({ post }: { post: BlogPost }) {
   const formattedDate = formatThaiDate(post.date)
 
   return (
-    <Link href={`/blog/${post.slug}`} className="group">
+    <Link href={`/blog/${post.title.thai}`} className="group">
       <article className="bg-white shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 group-hover:scale-[1.02]">
         {/* Post Image */}
         <div className="relative w-full h-48">
@@ -93,7 +98,7 @@ export default function BlogPostsSection({
       try {
         const response = await fetch('/api/blog/categories')
         if (!response.ok) throw new Error('Failed to fetch categories')
-        
+
         const data: BlogCategoriesResponse = await response.json()
         setCategories(data.categories)
       } catch (err) {
@@ -137,18 +142,17 @@ export default function BlogPostsSection({
 
         const response = await fetch(`/api/blog/posts?${params.toString()}`)
         if (!response.ok) throw new Error('Failed to fetch posts')
-        
+
         const data: BlogPostsResponse = await response.json()
-        
+
         if (reset) {
           setPosts(data.posts)
         } else {
-          setPosts(prev => [...prev, ...data.posts])
+          setPosts((prev) => [...prev, ...data.posts])
         }
-        
+
         setTotalPages(data.totalPages)
         setError(null)
-
       } catch (err) {
         console.error('Error fetching posts:', err)
         setError('Unable to load posts. Please try again later.')
@@ -167,7 +171,7 @@ export default function BlogPostsSection({
   }
 
   const handleLoadMore = () => {
-    setCurrentPage(prev => prev + 1)
+    setCurrentPage((prev) => prev + 1)
   }
 
   const hasMorePosts = totalPages ? currentPage < totalPages : false
@@ -215,10 +219,7 @@ export default function BlogPostsSection({
             <Typography variant="body" className="text-red-600 mb-4">
               {error}
             </Typography>
-            <Button 
-              variant="outline" 
-              onClick={() => window.location.reload()}
-            >
+            <Button variant="outline" onClick={() => window.location.reload()}>
               <Typography variant="body" fontFamily="thai">
                 ลองอีกครั้ง
               </Typography>
@@ -255,9 +256,9 @@ export default function BlogPostsSection({
         {/* Load More Button */}
         {!loading && !error && hasMorePosts && (
           <div className="text-center">
-            <Button 
-              variant={loadMoreButton.variant} 
-              size="lg" 
+            <Button
+              variant={loadMoreButton.variant}
+              size="lg"
               onClick={handleLoadMore}
               disabled={loadingMore}
             >
