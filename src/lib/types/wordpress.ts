@@ -39,7 +39,35 @@ export const WordPressTitleSchema = z.object({
 })
 
 /**
- * WordPress API Post Schema
+ * WordPress API ACF Fields Schema
+ */
+export const WordPressACFSchema = z.object({
+  hero_image: z.string().optional(),
+}).optional()
+
+/**
+ * WordPress API Author Schema
+ */
+export const WordPressAuthorSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  slug: z.string(),
+  description: z.string().optional(),
+  avatar_urls: z.object({}).passthrough().optional(),
+})
+
+/**
+ * WordPress API Term Schema
+ */
+export const WordPressTermSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  slug: z.string(),
+  taxonomy: z.string(),
+})
+
+/**
+ * WordPress API Post Schema (for lists)
  */
 export const WordPressPostSchema = z.object({
   id: z.number(),
@@ -55,7 +83,28 @@ export const WordPressPostSchema = z.object({
   }).optional(),
 })
 
+/**
+ * WordPress API Single Post Schema (with ACF and full embedded data)
+ */
+export const WordPressSinglePostSchema = z.object({
+  id: z.number(),
+  slug: z.string(),
+  title: WordPressTitleSchema,
+  content: WordPressContentSchema,
+  excerpt: WordPressContentSchema,
+  date: z.string(),
+  categories: z.array(z.number()),
+  acf: WordPressACFSchema,
+  _links: z.object({}).passthrough().optional(),
+  _embedded: z.object({
+    author: z.array(WordPressAuthorSchema).optional(),
+    'wp:featuredmedia': z.array(WordPressFeaturedMediaSchema).optional(),
+    'wp:term': z.array(z.array(WordPressTermSchema)).optional(),
+  }).optional(),
+})
+
 export type WordPressPost = z.infer<typeof WordPressPostSchema>
+export type WordPressSinglePost = z.infer<typeof WordPressSinglePostSchema>
 
 /**
  * WordPress API Categories Response Schema
@@ -79,7 +128,7 @@ export interface BlogCategory {
 }
 
 /**
- * Processed Blog Post for Frontend
+ * Processed Blog Post for Frontend (list view)
  */
 export interface BlogPost {
   id: string
@@ -89,6 +138,32 @@ export interface BlogPost {
   image: string
   date: string
   categories: number[]
+}
+
+/**
+ * Processed Single Blog Post for Frontend (detail view)
+ */
+export interface BlogPostDetails {
+  id: string
+  slug: string
+  title: string
+  content: string
+  excerpt: string
+  heroImage: string
+  featuredImage?: string
+  date: string
+  categories: number[]
+  author?: {
+    id: number
+    name: string
+    description?: string
+  }
+  terms?: Array<{
+    id: number
+    name: string
+    slug: string
+    taxonomy: string
+  }>
 }
 
 /**
@@ -102,6 +177,10 @@ export interface BlogPostsResponse {
   posts: BlogPost[]
   totalPages?: number
   currentPage?: number
+}
+
+export interface BlogPostDetailsResponse {
+  post: BlogPostDetails
 }
 
 /**
