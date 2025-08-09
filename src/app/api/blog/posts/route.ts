@@ -62,14 +62,8 @@ export async function GET(request: NextRequest) {
       return {
         id: post.id.toString(),
         slug: post.slug,
-        title: {
-          english: post.title.rendered,
-          thai: post.title.rendered, // For now, using same title. This could be enhanced with translations
-        },
-        excerpt: {
-          english: excerpt,
-          thai: excerpt, // For now, using same excerpt. This could be enhanced with translations
-        },
+        title: post.title.rendered,
+        excerpt: excerpt,
         image: featuredImage,
         date: post.date,
         categories: post.categories,

@@ -84,14 +84,8 @@ export interface BlogCategory {
 export interface BlogPost {
   id: string
   slug: string
-  title: {
-    english: string
-    thai: string
-  }
-  excerpt: {
-    english: string
-    thai: string
-  }
+  title: string
+  excerpt: string
   image: string
   date: string
   categories: number[]

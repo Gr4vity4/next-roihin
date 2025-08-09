@@ -33,13 +33,13 @@ function BlogPostCard({ post }: { post: BlogPost }) {
   const formattedDate = formatThaiDate(post.date)
 
   return (
-    <Link href={`/blog/${post.title.thai}`} className="group">
+    <Link href={`/blog/${post.title}`} className="group">
       <article className="bg-white shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 group-hover:scale-[1.02]">
         {/* Post Image */}
         <div className="relative w-full h-48">
           <Image
             src={post.image}
-            alt={post.title.thai}
+            alt={post.title}
             fill
             className="object-cover group-hover:scale-105 transition-transform duration-300"
           />
@@ -53,7 +53,7 @@ function BlogPostCard({ post }: { post: BlogPost }) {
             fontFamily="thai"
             className="mb-2 text-gray-900 group-hover:text-[#006039] transition-colors line-clamp-2"
           >
-            {post.title.thai}
+            {post.title}
           </Typography>
 
           {/* Post Excerpt */}
@@ -62,7 +62,7 @@ function BlogPostCard({ post }: { post: BlogPost }) {
             fontFamily="thai"
             className="text-gray-600 text-sm line-clamp-3 mb-4"
           >
-            {post.excerpt.thai}
+            {post.excerpt}
           </Typography>
 
           {/* Post Date */}
