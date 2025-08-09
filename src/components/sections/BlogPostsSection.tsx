@@ -2,36 +2,11 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Button from '../Button'
 import { Container, Typography } from '../ui'
-
-interface BlogPost {
-  id: string
-  title: {
-    english: string
-    thai: string
-  }
-  excerpt: {
-    english: string
-    thai: string
-  }
-  image: string
-  date: string
-  readTime: number
-  category: {
-    english: string
-    thai: string
-  }
-}
-
-interface Category {
-  id: string
-  name: {
-    english: string
-    thai: string
-  }
-}
+import { formatThaiDate } from '@/lib/utils'
+import type { BlogPost, BlogCategory, BlogPostsResponse, BlogCategoriesResponse } from '@/lib/types/wordpress'
 
 interface BlogPostsSectionProps {
   title: {
@@ -40,8 +15,6 @@ interface BlogPostsSectionProps {
   subtitle: {
     thai: string
   }
-  posts: BlogPost[]
-  categories: Category[]
   loadMoreButton: {
     text: {
       thai: string
@@ -52,37 +25,16 @@ interface BlogPostsSectionProps {
 }
 
 function BlogPostCard({ post }: { post: BlogPost }) {
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
-    const thaiOptions: Intl.DateTimeFormatOptions = {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    }
-    const englishOptions: Intl.DateTimeFormatOptions = {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    }
-
-    return {
-      thai: date.toLocaleDateString('th-TH', thaiOptions),
-      english: date.toLocaleDateString('en-US', englishOptions),
-    }
-  }
-
-  const formattedDate = formatDate(post.date)
-  // Use article ID as slug for consistency with static generation
-  const slug = post.id
+  const formattedDate = formatThaiDate(post.date)
 
   return (
-    <Link href={`/blog/${slug}`} className="group">
+    <Link href={`/blog/${post.slug}`} className="group">
       <article className="bg-white shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 group-hover:scale-[1.02]">
         {/* Post Image */}
         <div className="relative w-full h-48">
           <Image
             src={post.image}
-            alt={post.title.english}
+            alt={post.title.thai}
             fill
             className="object-cover group-hover:scale-105 transition-transform duration-300"
           />
@@ -111,7 +63,7 @@ function BlogPostCard({ post }: { post: BlogPost }) {
           {/* Post Date */}
           <div className="pt-4 border-t border-gray-100">
             <Typography variant="caption" fontFamily="thai" className="text-gray-500">
-              {formattedDate.thai}
+              {formattedDate}
             </Typography>
           </div>
         </div>
@@ -123,32 +75,102 @@ function BlogPostCard({ post }: { post: BlogPost }) {
 export default function BlogPostsSection({
   title,
   subtitle,
-  posts,
-  categories,
   loadMoreButton,
   className = '',
 }: BlogPostsSectionProps) {
   const [selectedCategory, setSelectedCategory] = useState('all')
-  const [visiblePosts, setVisiblePosts] = useState(6)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [posts, setPosts] = useState<BlogPost[]>([])
+  const [categories, setCategories] = useState<BlogCategory[]>([])
+  const [loading, setLoading] = useState(true)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [totalPages, setTotalPages] = useState<number | undefined>(undefined)
 
-  const filteredPosts =
-    selectedCategory === 'all'
-      ? posts
-      : posts.filter((post) => {
-          const categoryId = post.category.english
-            .toLowerCase()
-            .replace(/\s+/g, '-')
-            .replace('&', '')
-            .trim()
-          return categoryId === selectedCategory
+  // Fetch categories on component mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch('/api/blog/categories')
+        if (!response.ok) throw new Error('Failed to fetch categories')
+        
+        const data: BlogCategoriesResponse = await response.json()
+        setCategories(data.categories)
+      } catch (err) {
+        console.error('Error fetching categories:', err)
+        // Set fallback categories
+        setCategories([
+          {
+            id: 'all',
+            name: {
+              english: 'All Articles',
+              thai: 'บทความทั้งหมด',
+            },
+          },
+        ])
+      }
+    }
+
+    fetchCategories()
+  }, [])
+
+  // Fetch posts when category or page changes
+  useEffect(() => {
+    const fetchPosts = async (reset = false) => {
+      try {
+        if (reset) {
+          setLoading(true)
+          setPosts([])
+          setCurrentPage(1)
+        } else {
+          setLoadingMore(true)
+        }
+
+        const params = new URLSearchParams({
+          page: reset ? '1' : currentPage.toString(),
+          per_page: '6',
         })
 
-  const displayedPosts = filteredPosts.slice(0, visiblePosts)
-  const hasMorePosts = filteredPosts.length > visiblePosts
+        if (selectedCategory !== 'all') {
+          params.append('categories', selectedCategory)
+        }
+
+        const response = await fetch(`/api/blog/posts?${params.toString()}`)
+        if (!response.ok) throw new Error('Failed to fetch posts')
+        
+        const data: BlogPostsResponse = await response.json()
+        
+        if (reset) {
+          setPosts(data.posts)
+        } else {
+          setPosts(prev => [...prev, ...data.posts])
+        }
+        
+        setTotalPages(data.totalPages)
+        setError(null)
+
+      } catch (err) {
+        console.error('Error fetching posts:', err)
+        setError('Unable to load posts. Please try again later.')
+      } finally {
+        setLoading(false)
+        setLoadingMore(false)
+      }
+    }
+
+    fetchPosts(currentPage === 1)
+  }, [selectedCategory, currentPage])
+
+  const handleCategoryChange = (categoryId: string) => {
+    setSelectedCategory(categoryId)
+    setCurrentPage(1)
+  }
 
   const handleLoadMore = () => {
-    setVisiblePosts((prev) => prev + 6)
+    setCurrentPage(prev => prev + 1)
   }
+
+  const hasMorePosts = totalPages ? currentPage < totalPages : false
 
   return (
     <section className={`py-16 bg-gray-50 ${className}`}>
@@ -168,15 +190,13 @@ export default function BlogPostsSection({
           {categories.map((category) => (
             <button
               key={category.id}
-              onClick={() => {
-                setSelectedCategory(category.id)
-                setVisiblePosts(6)
-              }}
+              onClick={() => handleCategoryChange(category.id)}
+              disabled={loading}
               className={`px-4 py-2 text-sm font-medium transition-all duration-300 shadow-sm border ${
                 selectedCategory === category.id
                   ? 'bg-[#006039] text-white border-[#006039] shadow-md hover:bg-[#004D2E]'
                   : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700'
-              }`}
+              } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               <Typography
                 variant="caption"
@@ -189,29 +209,70 @@ export default function BlogPostsSection({
           ))}
         </div>
 
+        {/* Error State */}
+        {error && (
+          <div className="text-center py-12">
+            <Typography variant="body" className="text-red-600 mb-4">
+              {error}
+            </Typography>
+            <Button 
+              variant="outline" 
+              onClick={() => window.location.reload()}
+            >
+              <Typography variant="body" fontFamily="thai">
+                ลองอีกครั้ง
+              </Typography>
+            </Button>
+          </div>
+        )}
+
+        {/* Loading State */}
+        {loading && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <div key={index} className="bg-white shadow-md overflow-hidden animate-pulse">
+                <div className="w-full h-48 bg-gray-300" />
+                <div className="p-6">
+                  <div className="h-6 bg-gray-300 rounded mb-2" />
+                  <div className="h-4 bg-gray-300 rounded mb-1" />
+                  <div className="h-4 bg-gray-300 rounded mb-4" />
+                  <div className="h-3 bg-gray-300 rounded w-20" />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
         {/* Blog Posts Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {displayedPosts.map((post) => (
-            <BlogPostCard key={post.id} post={post} />
-          ))}
-        </div>
+        {!loading && !error && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            {posts.map((post) => (
+              <BlogPostCard key={post.id} post={post} />
+            ))}
+          </div>
+        )}
 
         {/* Load More Button */}
-        {hasMorePosts && (
+        {!loading && !error && hasMorePosts && (
           <div className="text-center">
-            <Button variant={loadMoreButton.variant} size="lg" onClick={handleLoadMore}>
+            <Button 
+              variant={loadMoreButton.variant} 
+              size="lg" 
+              onClick={handleLoadMore}
+              disabled={loadingMore}
+            >
               <Typography variant="body" fontFamily="thai">
-                {loadMoreButton.text.thai}
+                {loadingMore ? 'กำลังโหลด...' : loadMoreButton.text.thai}
               </Typography>
             </Button>
           </div>
         )}
 
         {/* No Posts Message */}
-        {filteredPosts.length === 0 && (
+        {!loading && !error && posts.length === 0 && (
           <div className="text-center py-12">
-            <Typography variant="body" className="text-gray-500">
-              No articles found in this category.
+            <Typography variant="body" fontFamily="thai" className="text-gray-500">
+              ไม่พบบทความในหมวดหมู่นี้
             </Typography>
           </div>
         )}

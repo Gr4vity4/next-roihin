@@ -60,8 +60,6 @@ export default function BlogPage() {
         <BlogPostsSection
           title={content.blog.postsSection.title}
           subtitle={content.blog.postsSection.subtitle}
-          posts={content.blog.postsSection.posts}
-          categories={content.blog.categories}
           loadMoreButton={content.blog.postsSection.loadMoreButton}
         />
       </main>
