@@ -46,6 +46,7 @@ export const WordPressPostSchema = z.object({
   slug: z.string(),
   title: WordPressTitleSchema,
   content: WordPressContentSchema,
+  excerpt: WordPressContentSchema,
   date: z.string(),
   categories: z.array(z.number()),
   _links: z.object({}).passthrough().optional(),

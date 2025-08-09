@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server'
+import type { BlogPost, BlogPostsResponse } from '@/lib/types/wordpress'
 import { WordPressPostsResponseSchema } from '@/lib/types/wordpress'
-import type { BlogPostsResponse, BlogPost } from '@/lib/types/wordpress'
 import { extractTextFromHtml } from '@/lib/utils'
+import { NextRequest, NextResponse } from 'next/server'
 
 const WORDPRESS_API_URL = 'https://wp-roihin.precisiondevlab.com/wp-json/wp/v2/posts'
 const DEFAULT_IMAGE = '/images/357c3a_ac4bc1a787364c358512be32cc1ffc30~mv2.avif'
@@ -16,30 +16,30 @@ export async function GET(request: NextRequest) {
     const page = searchParams.get('page') || '1'
     const perPage = searchParams.get('per_page') || '6'
     const categories = searchParams.get('categories') || ''
-    
+
     // Build WordPress API URL with parameters
     const params = new URLSearchParams({
       page,
       per_page: perPage,
       _embed: 'wp:featuredmedia',
-      _fields: 'id,slug,title,content,_links,_embedded,date,categories'
+      _fields: 'id,slug,title,content,_links,_embedded,date,categories,excerpt',
     })
-    
+
     // Add categories filter if specified
     if (categories && categories !== 'all') {
       params.append('categories', categories)
     }
-    
+
     const wpApiUrl = `${WORDPRESS_API_URL}?${params.toString()}`
-    
+
     // Fetch posts from WordPress API
     const response = await fetch(wpApiUrl, {
       headers: {
         'Content-Type': 'application/json',
       },
-      next: { 
-        revalidate: 180 // Cache for 3 minutes (posts change more frequently than categories)
-      }
+      next: {
+        revalidate: 180, // Cache for 3 minutes (posts change more frequently than categories)
+      },
     })
 
     if (!response.ok) {
@@ -47,18 +47,18 @@ export async function GET(request: NextRequest) {
     }
 
     const data = await response.json()
-    
+
     // Validate response data with Zod
     const validatedPosts = WordPressPostsResponseSchema.parse(data)
-    
+
     // Transform WordPress posts to our format
-    const transformedPosts: BlogPost[] = validatedPosts.map(post => {
+    const transformedPosts: BlogPost[] = validatedPosts.map((post) => {
       // Extract featured image
       const featuredImage = post._embedded?.['wp:featuredmedia']?.[0]?.source_url || DEFAULT_IMAGE
-      
-      // Extract text content from HTML and limit length
-      const excerpt = extractTextFromHtml(post.content.rendered, 128)
-      
+
+      // Extract text content from WordPress excerpt field and limit length
+      const excerpt = extractTextFromHtml(post.excerpt.rendered, 128)
+
       return {
         id: post.id.toString(),
         slug: post.slug,
@@ -91,7 +91,6 @@ export async function GET(request: NextRequest) {
         'Cache-Control': 'public, s-maxage=180, stale-while-revalidate=360',
       },
     })
-
   } catch (error) {
     console.error('Posts API error:', error)
 
@@ -105,16 +104,17 @@ export async function GET(request: NextRequest) {
       {
         ...fallbackResponse,
         error: 'Failed to fetch posts',
-        message: process.env.NODE_ENV === 'development' 
-          ? (error as Error).message 
-          : 'Unable to load posts at this time'
+        message:
+          process.env.NODE_ENV === 'development'
+            ? (error as Error).message
+            : 'Unable to load posts at this time',
       },
-      { 
+      {
         status: 500,
         headers: {
           'Cache-Control': 'no-cache',
         },
-      }
+      },
     )
   }
 }
