@@ -2,6 +2,7 @@ import type { BlogPost, BlogPostsResponse } from '@/lib/types/wordpress'
 import { WordPressPostsResponseSchema } from '@/lib/types/wordpress'
 import { extractTextFromHtml } from '@/lib/utils'
 import { NextRequest, NextResponse } from 'next/server'
+import { getFetchConfig, getCacheHeaders } from '@/config/cache.config'
 
 const WORDPRESS_API_URL = 'https://wp-roihin.precisiondevlab.com/wp-json/wp/v2/posts'
 const DEFAULT_IMAGE = '/images/357c3a_ac4bc1a787364c358512be32cc1ffc30~mv2.avif'
@@ -32,14 +33,12 @@ export async function GET(request: NextRequest) {
 
     const wpApiUrl = `${WORDPRESS_API_URL}?${params.toString()}`
 
-    // Fetch posts from WordPress API
+    // Fetch posts from WordPress API with environment-aware caching
     const response = await fetch(wpApiUrl, {
       headers: {
         'Content-Type': 'application/json',
       },
-      next: {
-        revalidate: 180, // Cache for 3 minutes (posts change more frequently than categories)
-      },
+      ...getFetchConfig('blogPosts'),
     })
 
     if (!response.ok) {
@@ -81,9 +80,7 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json(responseData, {
-      headers: {
-        'Cache-Control': 'public, s-maxage=180, stale-while-revalidate=360',
-      },
+      headers: getCacheHeaders('shortTerm'),
     })
   } catch (error) {
     console.error('Posts API error:', error)
@@ -105,9 +102,7 @@ export async function GET(request: NextRequest) {
       },
       {
         status: 500,
-        headers: {
-          'Cache-Control': 'no-cache',
-        },
+        headers: getCacheHeaders('shortTerm'),
       },
     )
   }

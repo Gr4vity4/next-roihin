@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { WordPressCategoriesResponseSchema } from '@/lib/types/wordpress'
 import type { BlogCategoriesResponse } from '@/lib/types/wordpress'
+import { getFetchConfig, getCacheHeaders } from '@/config/cache.config'
 
 const WORDPRESS_API_URL = 'https://wp-roihin.precisiondevlab.com/wp-json/wp/v2/categories'
 
@@ -13,14 +14,12 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams
     const exclude = searchParams.get('exclude') || '1' // Exclude "Uncategorized" by default
     
-    // Fetch categories from WordPress API
+    // Fetch categories from WordPress API with environment-aware caching
     const response = await fetch(`${WORDPRESS_API_URL}?exclude=${exclude}&per_page=100`, {
       headers: {
         'Content-Type': 'application/json',
       },
-      next: { 
-        revalidate: 300 // Cache for 5 minutes
-      }
+      ...getFetchConfig('blogCategories'),
     })
 
     if (!response.ok) {
@@ -55,9 +54,7 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json(responseData, {
-      headers: {
-        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
-      },
+      headers: getCacheHeaders('mediumTerm'),
     })
 
   } catch (error) {
@@ -86,9 +83,7 @@ export async function GET(request: NextRequest) {
       },
       { 
         status: 500,
-        headers: {
-          'Cache-Control': 'no-cache',
-        },
+        headers: getCacheHeaders('mediumTerm'),
       }
     )
   }

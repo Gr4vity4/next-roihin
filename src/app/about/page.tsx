@@ -6,6 +6,10 @@ import AboutHeroSection from '@/components/sections/AboutHeroSection'
 import AboutContentSection from '@/components/sections/AboutContentSection'
 import AboutFeaturesSection from '@/components/sections/AboutFeaturesSection'
 import { content } from '@/config/content.config'
+import { routeConfig } from '@/config/cache.config'
+
+// Configure route segment caching for about page (semi-static content)
+export const revalidate = routeConfig.semiStatic.revalidate
 
 export const metadata: Metadata = {
   title: 'เกี่ยวกับร้อยหิน - ROIHIN STONE & BRACELET',
