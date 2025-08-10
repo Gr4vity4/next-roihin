@@ -28,8 +28,7 @@ npm run lint
 - **Framework**: Next.js 15.4 with App Router
 - **Language**: TypeScript with strict mode
 - **CMS**: WordPress REST API for all content management
-- **Styling**: Tailwind CSS v4 with custom FC Iconic font
-- **CMS**: WordPress REST API integration for blog content
+- **Styling**: Tailwind CSS v4 with custom Mixed Language font system
 - **UI Components**: Radix UI primitives, Heroicons, Lucide icons
 
 ### Project Structure
@@ -91,7 +90,7 @@ Content Security Policy and security headers configured in `next.config.ts`:
 
 ## Performance Optimizations
 
-1. **Font Optimization**: Custom FC Iconic font with subset loading
+1. **Font Optimization**: Mixed Language font system with unicode-range splitting (Bodoni Moda for Latin, Sukhumvit Set for Thai)
 2. **Image Optimization**: Next.js Image component with remote patterns
 3. **Code Splitting**: Automatic with App Router
 4. **Turbopack**: Enabled in development for faster builds
@@ -115,7 +114,10 @@ All API routes follow consistent patterns:
 ## Styling Guidelines
 
 - Use Tailwind CSS utility classes
-- Custom fonts: FC Iconic (Thai), Bodoni Moda with Sukhumvit Set (mixed-language font), Inter (body)
+- Font system: Mixed Language font with automatic unicode-range switching:
+  - Bodoni Moda for Latin/English characters
+  - Sukhumvit Set for Thai characters
+  - Inter as fallback
 - Responsive design with mobile-first approach
 - Dark mode not currently implemented
 
