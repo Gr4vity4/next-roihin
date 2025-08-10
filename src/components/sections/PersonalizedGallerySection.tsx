@@ -106,7 +106,7 @@ export default function PersonalizedGallerySection({
 
           <Typography
             variant="h3"
-            fontFamily="thai"
+            fontFamily="mixed-lang"
             align="center"
             color="primary"
             className="mb-8 sm:mb-12"
@@ -117,7 +117,7 @@ export default function PersonalizedGallerySection({
           {/* CTA Button */}
           <button
             className={`
-              px-8 py-3 font-thai font-medium text-lg transition-all duration-300 rounded-sm
+              px-8 py-3  font-medium text-lg transition-all duration-300 rounded-sm
               ${
                 cta.variant === 'primary'
                   ? 'bg-[#006039] text-white hover:bg-[#004d2e] border-2 border-[#006039] hover:border-[#004d2e]'
@@ -129,10 +129,9 @@ export default function PersonalizedGallerySection({
           >
             {cta.text}
           </button>
-
         </div>
       </Container>
-      
+
       {/* Full-width Gallery Section */}
       <div className="mt-12 sm:mt-16">
         <div className="w-full">
@@ -157,13 +156,13 @@ export default function PersonalizedGallerySection({
                   placeholder="blur"
                   blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkrHB0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyEcVV5DIbTlleEfLDb8TvK1z/2Q=="
                 />
-                
+
                 {/* Overlay with title on hover */}
                 {item.title && (
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                     <Typography
                       variant="body"
-                      fontFamily="thai"
+                      fontFamily="mixed-lang"
                       className="text-white text-center px-2 text-sm sm:text-base"
                     >
                       {item.title}

@@ -140,7 +140,7 @@ export default function ArticleLoading() {
       <div className="text-center py-8">
         <Typography 
           variant="body" 
-          fontFamily="thai" 
+          fontFamily="mixed-lang" 
           className="text-gray-500"
         >
           กำลังโหลดบทความ...

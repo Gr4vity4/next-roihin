@@ -10,17 +10,16 @@ interface PersonalizedCTASectionProps {
   }>
 }
 
-export default function PersonalizedCTASection({
-  buttons,
-}: PersonalizedCTASectionProps) {
+export default function PersonalizedCTASection({ buttons }: PersonalizedCTASectionProps) {
   const getButtonStyles = (variant: string, highlight?: boolean) => {
-    const baseStyles = 'px-8 py-4 font-thai font-medium text-lg transition-all duration-300 rounded-sm border-2 min-w-[200px]'
-    
+    const baseStyles =
+      'px-8 py-4  font-medium text-lg transition-all duration-300 rounded-sm border-2 min-w-[200px]'
+
     switch (variant) {
       case 'gold':
         return `${baseStyles} ${
-          highlight 
-            ? 'bg-[#D4AF37] text-black hover:bg-[#c1a030] border-[#D4AF37] hover:border-[#c1a030] shadow-lg transform hover:scale-105' 
+          highlight
+            ? 'bg-[#D4AF37] text-black hover:bg-[#c1a030] border-[#D4AF37] hover:border-[#c1a030] shadow-lg transform hover:scale-105'
             : 'bg-[#D4AF37] text-black hover:bg-[#c1a030] border-[#D4AF37] hover:border-[#c1a030]'
         }`
       case 'primary':

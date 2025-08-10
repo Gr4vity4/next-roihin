@@ -129,7 +129,7 @@ export default function Navigation() {
                   <Link
                     key={item.name}
                     href={item.href}
-                    className="font-thai font-medium text-sm text-white transition-colors hover:text-gold tracking-widest"
+                    className=" font-medium text-sm text-white transition-colors hover:text-gold tracking-widest"
                   >
                     {item.name}
                   </Link>
@@ -158,7 +158,7 @@ export default function Navigation() {
                   <Link
                     key={item.name}
                     href={item.href}
-                    className="font-thai font-medium text-base text-white transition-colors hover:text-gold tracking-wider"
+                    className=" font-medium text-base text-white transition-colors hover:text-gold tracking-wider"
                   >
                     {item.name}
                   </Link>
@@ -213,7 +213,7 @@ export default function Navigation() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="block py-3 font-thai text-white hover:text-gold transition-colors"
+                  className="block py-3  text-white hover:text-gold transition-colors"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {item.name}

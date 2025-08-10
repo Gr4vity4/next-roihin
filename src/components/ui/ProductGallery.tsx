@@ -13,30 +13,25 @@ interface ProductGalleryProps {
   className?: string
 }
 
-export default function ProductGallery({ 
-  images, 
-  columns = 4, 
+export default function ProductGallery({
+  images,
+  columns = 4,
   spacing = 'normal',
-  className 
+  className,
 }: ProductGalleryProps) {
   const spacingClasses = {
     tight: 'gap-2 md:gap-3',
     normal: 'gap-4 md:gap-6',
-    loose: 'gap-6 md:gap-8'
+    loose: 'gap-6 md:gap-8',
   }
 
   const columnClasses = {
     4: 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4',
-    6: 'grid-cols-2 md:grid-cols-4 lg:grid-cols-6'
+    6: 'grid-cols-2 md:grid-cols-4 lg:grid-cols-6',
   }
 
   return (
-    <div className={cn(
-      'grid',
-      columnClasses[columns],
-      spacingClasses[spacing],
-      className
-    )}>
+    <div className={cn('grid', columnClasses[columns], spacingClasses[spacing], className)}>
       {images.map((image, index) => {
         const imageElement = (
           <div className="relative aspect-square overflow-hidden bg-gray-900 group">
@@ -50,9 +45,7 @@ export default function ProductGallery({
             {/* Watermark overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             <div className="absolute bottom-2 left-2 right-2 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <p className="text-[10px] text-white/80 font-thai">
-                ROIHIN STONE & BRACELET, THAILAND
-              </p>
+              <p className="text-[10px] text-white/80 ">ROIHIN STONE & BRACELET, THAILAND</p>
             </div>
           </div>
         )
@@ -62,9 +55,7 @@ export default function ProductGallery({
             {imageElement}
           </Link>
         ) : (
-          <div key={index}>
-            {imageElement}
-          </div>
+          <div key={index}>{imageElement}</div>
         )
       })}
     </div>

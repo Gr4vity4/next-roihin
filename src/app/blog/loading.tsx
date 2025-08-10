@@ -51,7 +51,7 @@ export default function BlogLoading() {
           <div className="text-center mt-12">
             <Typography 
               variant="body" 
-              fontFamily="thai" 
+              fontFamily="mixed-lang" 
               className="text-gray-500"
             >
               กำลังโหลดบทความ...

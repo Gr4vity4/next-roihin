@@ -37,7 +37,7 @@ export default function PersonalizedContentSection({
 
             <Typography
               variant="h3"
-              fontFamily="thai"
+              fontFamily="mixed-lang"
               align="center"
               color="primary"
               className="italic font-medium"
@@ -58,7 +58,7 @@ export default function PersonalizedContentSection({
                 <Typography
                   key={`content-${index}`}
                   variant="body"
-                  fontFamily="thai"
+                  fontFamily="mixed-lang"
                   className="text-gray-700 leading-relaxed text-justify max-w-4xl mx-auto"
                 >
                   {paragraph}

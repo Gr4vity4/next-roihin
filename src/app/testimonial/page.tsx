@@ -1,9 +1,9 @@
+import ChatWidget from '@/components/ChatWidget'
 import Navigation from '@/components/Navigation'
 import Footer from '@/components/sections/Footer'
-import ChatWidget from '@/components/ChatWidget'
+import TestimonialsContainer from '@/components/TestimonialsContainer'
 import { Typography } from '@/components/ui'
 import Image from 'next/image'
-import TestimonialsContainer from '@/components/TestimonialsContainer'
 // Configure route segment caching for testimonials (dynamic content)
 // Revalidate every 5 minutes
 export const revalidate = 300
@@ -35,7 +35,7 @@ export default function TestimonialPage() {
               <Typography variant="h2" fontFamily="mixed-lang" className="text-white mb-4">
                 TESTIMONIALS
               </Typography>
-              <Typography variant="body" fontFamily="thai" className="text-gray-300">
+              <Typography variant="body" fontFamily="mixed-lang" className="text-gray-300">
                 เสียงตอบรับจากลูกค้าที่ใช้บริการจริง
               </Typography>
             </div>
@@ -45,10 +45,10 @@ export default function TestimonialPage() {
 
             {/* Call to action */}
             <div className="text-center mt-12">
-              <Typography variant="body" fontFamily="thai" className="text-gray-400 mb-4">
+              <Typography variant="body" fontFamily="mixed-lang" className="text-gray-400 mb-4">
                 พร้อมที่จะเริ่มต้นการเปลี่ยนแปลงชีวิตของคุณแล้วหรือยัง?
               </Typography>
-              <button className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-8 py-3 rounded-full font-semibold hover:from-yellow-500 hover:to-yellow-700 transition-all duration-300 font-fciconic">
+              <button className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-8 py-3 rounded-full font-semibold hover:from-yellow-500 hover:to-yellow-700 transition-all duration-300 ">
                 สั่งออกแบบสายหินของคุณ
               </button>
             </div>

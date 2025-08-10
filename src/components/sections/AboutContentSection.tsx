@@ -32,7 +32,7 @@ export default function AboutContentSection({
 
             <Typography
               variant="h4"
-              fontFamily="thai"
+              fontFamily="mixed-lang"
               align="center"
               color="primary"
               className="italic"
@@ -63,7 +63,7 @@ export default function AboutContentSection({
                 <Typography
                   key={`thai-${index}`}
                   variant="body"
-                  fontFamily="thai"
+                  fontFamily="mixed-lang"
                   className="text-gray-700 leading-relaxed"
                   align="justify"
                 >

@@ -77,7 +77,7 @@ export default function ParallaxContentSection({
             {subtitle && (
               <Typography
                 variant="body"
-                fontFamily="thai"
+                fontFamily="mixed-lang"
                 className="text-gray-300"
                 align={contentAlign}
               >

@@ -1,33 +1,35 @@
 @import 'tailwindcss';
 
 /* Mixed Language Font Declarations with Unicode Range */
-/* Bodoni Moda for English/Latin characters */
+/* Bodoni Moda for English/Latin characters - Load first for Latin content */
 @font-face {
   font-family: 'Mixed Language';
   src: url('/fonts/BodoniModa-VariableFont_opsz,wght.ttf') format('truetype');
-  font-weight: 400 700;
+  font-weight: 100 900;
   font-style: normal;
   font-display: swap;
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; /* Latin */
+  unicode-range: U+0000-00FF, U+0100-024F, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, 
+    U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; /* Latin Basic + Extended + Numbers + Punctuation */
 }
 
 @font-face {
   font-family: 'Mixed Language';
   src: url('/fonts/BodoniModa-Italic-VariableFont_opsz,wght.ttf') format('truetype');
-  font-weight: 400 700;
+  font-weight: 100 900;
   font-style: italic;
   font-display: swap;
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; /* Latin */
+  unicode-range: U+0000-00FF, U+0100-024F, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, 
+    U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; /* Latin Basic + Extended + Numbers + Punctuation */
 }
 
-/* Sukhumvit Set for Thai characters */
+/* Sukhumvit Set for Thai characters only */
 @font-face {
   font-family: 'Mixed Language';
   src: url('/fonts/SukhumvitSet.ttc') format('collection');
-  font-weight: 400 700;
+  font-weight: 100 900;
   font-style: normal;
   font-display: swap;
-  unicode-range: U+0E00-0E7F; /* Thai */
+  unicode-range: U+0E00-0E7F; /* Thai Unicode range only */
 }
 
 :root {
@@ -37,16 +39,12 @@
   --green: #006039;
   --light-gray: #f5f5f5;
   --font-inter: 'Inter', sans-serif;
-  --font-noto-thai: 'Noto Sans Thai', sans-serif;
-  --font-fciconic: 'FCIconic', sans-serif;
-  --font-mixed-language: 'Mixed Language', 'Inter', sans-serif;
 }
-
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-mixed-language);
+  font-family: 'Mixed Language', var(--font-inter), system-ui, sans-serif;
   overflow-x: hidden;
 }
 
@@ -73,22 +71,13 @@ html {
   background: var(--gold);
 }
 
-
 /* Button hover effects */
 .group:hover .group-hover\:scale-105 {
   transform: scale(1.05);
 }
 
-/* Thai text styles */
-.font-thai {
-  font-family: var(--font-noto-thai), var(--font-inter), sans-serif;
-}
-
-/* FCIconic font styles */
-.font-fciconic {
-  font-family: var(--font-fciconic), var(--font-inter), sans-serif;
-}
-
+/* Note: Thai text will automatically use Sukhumvit via Mixed Language font unicode ranges */
+/* Latin text will use BodoniModa via Mixed Language font unicode ranges */
 
 /* Custom utility classes */
 .text-shadow {
@@ -99,7 +88,6 @@ html {
 .will-change-transform {
   will-change: transform;
 }
-
 
 /* Disable parallax for users who prefer reduced motion */
 @media (prefers-reduced-motion: reduce) {

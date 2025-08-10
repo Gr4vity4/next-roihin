@@ -33,7 +33,7 @@ export default function BlogHeroSection({
           <Container className="text-center text-white">
             <Typography
               variant="h2"
-              fontFamily="thai"
+              fontFamily="mixed-lang"
               className="mb-2"
             >
               {title}
@@ -41,7 +41,7 @@ export default function BlogHeroSection({
             <div className="mt-6 max-w-2xl mx-auto">
               <Typography
                 variant="body"
-                fontFamily="thai"
+                fontFamily="mixed-lang"
                 className="text-gray-200"
               >
                 {subtitle}

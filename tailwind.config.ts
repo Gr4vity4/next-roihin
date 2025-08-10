@@ -39,11 +39,9 @@ const config: Config = {
       },
       fontFamily: {
         inter: ['var(--font-inter)', 'sans-serif'],
-        thai: ['Noto Sans Thai', 'sans-serif'],
-        fciconic: ['var(--font-fciconic)', 'sans-serif'],
-        'mixed-lang': ['var(--font-mixed-language)', 'Inter', 'sans-serif'],
-        // Alias for easier usage
-        'sans': ['var(--font-mixed-language)', 'Inter', 'sans-serif'],
+        'mixed-lang': ['Mixed Language', 'var(--font-inter)', 'system-ui', 'sans-serif'],
+        // Default sans font now uses Mixed Language with automatic unicode-range switching
+        'sans': ['Mixed Language', 'var(--font-inter)', 'system-ui', 'sans-serif'],
       },
       animation: {
         'scale-in': 'scaleIn 0.2s ease-out',

@@ -52,7 +52,7 @@ export default function CustomerServicePage() {
                 <div className="space-y-8">
                   <Typography
                     variant="h2"
-                    fontFamily="thai"
+                    fontFamily="mixed-lang"
                     className="text-4xl lg:text-5xl font-bold text-white mb-8"
                     textShadow
                   >
@@ -62,7 +62,7 @@ export default function CustomerServicePage() {
                   <div className="space-y-6">
                     <Typography
                       variant="body"
-                      fontFamily="thai"
+                      fontFamily="mixed-lang"
                       className="text-lg text-white leading-relaxed"
                       textShadow
                     >
@@ -75,7 +75,7 @@ export default function CustomerServicePage() {
 
                     <Typography
                       variant="body"
-                      fontFamily="thai"
+                      fontFamily="mixed-lang"
                       className="text-lg text-white leading-relaxed"
                       textShadow
                     >
@@ -86,7 +86,7 @@ export default function CustomerServicePage() {
 
                     <Typography
                       variant="body"
-                      fontFamily="thai"
+                      fontFamily="mixed-lang"
                       className="text-lg text-white leading-relaxed"
                       textShadow
                     >
@@ -101,7 +101,7 @@ export default function CustomerServicePage() {
                 <div className="space-y-8">
                   <Typography
                     variant="h3"
-                    fontFamily="thai"
+                    fontFamily="mixed-lang"
                     className="text-3xl lg:text-4xl font-bold text-white mb-8"
                     textShadow
                   >
@@ -111,7 +111,7 @@ export default function CustomerServicePage() {
                   <div className="space-y-6">
                     <Typography
                       variant="body"
-                      fontFamily="thai"
+                      fontFamily="mixed-lang"
                       className="text-lg text-white leading-relaxed"
                       textShadow
                     >
@@ -122,7 +122,7 @@ export default function CustomerServicePage() {
 
                     <Typography
                       variant="body"
-                      fontFamily="thai"
+                      fontFamily="mixed-lang"
                       className="text-lg text-white leading-relaxed"
                       textShadow
                     >
@@ -131,7 +131,7 @@ export default function CustomerServicePage() {
 
                     <Typography
                       variant="body"
-                      fontFamily="thai"
+                      fontFamily="mixed-lang"
                       className="text-lg text-white leading-relaxed"
                       textShadow
                     >
@@ -140,7 +140,7 @@ export default function CustomerServicePage() {
 
                     <Typography
                       variant="body"
-                      fontFamily="thai"
+                      fontFamily="mixed-lang"
                       className="text-lg text-white leading-relaxed"
                       textShadow
                     >

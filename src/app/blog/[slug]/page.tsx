@@ -162,7 +162,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               <div className="text-white">
                 <Typography
                   variant="h2"
-                  fontFamily="thai"
+                  fontFamily="mixed-lang"
                   className="text-3xl lg:text-5xl font-bold mb-4 drop-shadow-lg"
                 >
                   {article.title}
@@ -170,7 +170,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
                 {/* Article Meta */}
                 <div className="flex flex-wrap items-center gap-4 text-sm text-gray-200">
-                  <Typography variant="caption" fontFamily="thai" className="text-white">
+                  <Typography variant="caption" fontFamily="mixed-lang" className="text-white">
                     {formattedDate}
                   </Typography>
                   {article.author && (
@@ -196,7 +196,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               <div className="mb-8 p-6 bg-gray-50 border-l-4 border-[#D4AF37]">
                 <Typography
                   variant="body"
-                  fontFamily="thai"
+                  fontFamily="mixed-lang"
                   className="text-gray-700 text-lg leading-8"
                 >
                   {article.title}
@@ -207,7 +207,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               <article className="prose prose-lg max-w-none">
                 <SafeHtml
                   html={article.content}
-                  className="font-thai text-gray-800 leading-8 [&_h3]:text-2xl [&_h3]:font-bold [&_h3]:text-[#006039] [&_h3]:mt-8 [&_h3]:mb-4 [&_h4]:text-xl [&_h4]:font-semibold [&_h4]:text-[#006039] [&_h4]:mt-6 [&_h4]:mb-3 [&_p]:mb-4 [&_p]:leading-8 [&_ul]:list-disc [&_ul]:list-inside [&_ul]:mb-4 [&_ul]:space-y-2 [&_li]:leading-7 [&_strong]:font-semibold [&_strong]:text-[#006039]"
+                  className=" text-gray-800 leading-8 [&_h3]:text-2xl [&_h3]:font-bold [&_h3]:text-[#006039] [&_h3]:mt-8 [&_h3]:mb-4 [&_h4]:text-xl [&_h4]:font-semibold [&_h4]:text-[#006039] [&_h4]:mt-6 [&_h4]:mb-3 [&_p]:mb-4 [&_p]:leading-8 [&_ul]:list-disc [&_ul]:list-inside [&_ul]:mb-4 [&_ul]:space-y-2 [&_li]:leading-7 [&_strong]:font-semibold [&_strong]:text-[#006039]"
                 />
               </article>
 
@@ -246,7 +246,11 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                         {article.author.name}
                       </Typography>
                       {article.author.description && (
-                        <Typography variant="caption" fontFamily="thai" className="text-gray-600">
+                        <Typography
+                          variant="caption"
+                          fontFamily="mixed-lang"
+                          className="text-gray-600"
+                        >
                           {article.author.description}
                         </Typography>
                       )}

@@ -55,10 +55,10 @@ export default function HeroSection({
         <Typography variant="h3" fontFamily="mixed-lang" textShadow className="mb-6">
           {title.line2}
         </Typography>
-        <Typography variant="h3" fontFamily="thai" textShadow className="mb-4 font-light">
+        <Typography variant="h3" fontFamily="mixed-lang" textShadow className="mb-4 font-light">
           {subtitle.thai}
         </Typography>
-        <Typography variant="body" fontFamily="thai" textShadow className="mb-10 max-w-2xl mx-auto">
+        <Typography variant="body" fontFamily="mixed-lang" textShadow className="mb-10 max-w-2xl mx-auto">
           {subtitle.english}
         </Typography>
         <Button

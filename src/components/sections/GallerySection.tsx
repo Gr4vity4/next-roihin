@@ -43,7 +43,7 @@ export default function GallerySection({
           <h2 className="font-mixed-lang text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-4">
             {title}
           </h2>
-          <p className="text-base sm:text-lg md:text-xl text-white max-w-3xl mx-auto mb-8 font-fciconic">
+          <p className="text-base sm:text-lg md:text-xl text-white max-w-3xl mx-auto mb-8 ">
             {subtitle}
           </p>
           <div className="flex flex-wrap justify-center gap-4">
@@ -51,11 +51,7 @@ export default function GallerySection({
               if (button.href) {
                 return (
                   <Link key={index} href={button.href}>
-                    <Button
-                      variant={button.variant}
-                      size="lg"
-                      highlight={button.highlight}
-                    >
+                    <Button variant={button.variant} size="lg" highlight={button.highlight}>
                       {button.text}
                     </Button>
                   </Link>

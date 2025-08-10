@@ -92,7 +92,7 @@ async function TestimonialsContent() {
 
                 <Typography
                   variant="body"
-                  fontFamily="thai"
+                  fontFamily="mixed-lang"
                   className="text-gray-300 leading-relaxed"
                 >
                   &ldquo;{testimonial.message}&rdquo;

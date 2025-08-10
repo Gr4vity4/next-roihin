@@ -1,8 +1,8 @@
 'use client'
 
-import { cn } from '@/lib/utils'
 import Container from '@/components/ui/Container'
 import Typography from '@/components/ui/Typography'
+import { cn } from '@/lib/utils'
 import { useState } from 'react'
 
 interface CharmspacerHeroProps {
@@ -37,9 +37,9 @@ export default function CharmspacerHero({ title, tabs, backgroundImage }: Charms
         <div className="absolute inset-0">
           <div
             className="w-full h-full bg-cover bg-center bg-no-repeat"
-            style={{ 
+            style={{
               backgroundImage: `url(${backgroundImage})`,
-              filter: 'brightness(0.3)'
+              filter: 'brightness(0.3)',
             }}
           />
         </div>
@@ -50,10 +50,18 @@ export default function CharmspacerHero({ title, tabs, backgroundImage }: Charms
         <div className="space-y-8">
           {/* Title */}
           <div className="space-y-4">
-            <Typography variant="h1" fontFamily="fciconic" className="text-4xl md:text-5xl lg:text-6xl text-white">
+            <Typography
+              variant="h1"
+              fontFamily="mixed-lang"
+              className="text-4xl md:text-5xl lg:text-6xl text-white"
+            >
               {title.thai}
             </Typography>
-            <Typography variant="h2" fontFamily="mixed-lang" className="text-2xl md:text-3xl lg:text-4xl text-white">
+            <Typography
+              variant="h2"
+              fontFamily="mixed-lang"
+              className="text-2xl md:text-3xl lg:text-4xl text-white"
+            >
               {title.english}
             </Typography>
           </div>
@@ -65,11 +73,11 @@ export default function CharmspacerHero({ title, tabs, backgroundImage }: Charms
                 key={tab.id}
                 onClick={() => handleTabClick(tab.id, tab.href)}
                 className={cn(
-                  'px-6 md:px-8 py-3 font-fciconic text-base md:text-lg transition-all duration-300',
+                  'px-6 md:px-8 py-3  text-base md:text-lg transition-all duration-300',
                   'border-b-2',
                   activeTab === tab.id
                     ? 'text-green-500 border-green-500'
-                    : 'text-white border-transparent hover:text-green-400 hover:border-green-400'
+                    : 'text-white border-transparent hover:text-green-400 hover:border-green-400',
                 )}
               >
                 {tab.label}

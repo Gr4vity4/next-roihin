@@ -57,7 +57,7 @@ export default function AboutSection({
           {subtitle && (
             <Typography
               variant="body"
-              fontFamily="thai"
+              fontFamily="mixed-lang"
               className="mb-10 font-light text-gray-700"
             >
               {subtitle}
@@ -67,7 +67,7 @@ export default function AboutSection({
           {content && (
             <Typography
               variant="body"
-              fontFamily="thai"
+              fontFamily="mixed-lang"
               className="text-gray-600"
             >
               {content}

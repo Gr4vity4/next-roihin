@@ -69,7 +69,7 @@ function RelatedArticleCard({ article }: { article: RelatedArticle }) {
           {/* Article Title */}
           <Typography
             variant="h4"
-            fontFamily="thai"
+            fontFamily="mixed-lang"
             className="mb-2 text-gray-900 group-hover:text-[#006039] transition-colors line-clamp-2"
           >
             {article.title.thai}
@@ -78,7 +78,7 @@ function RelatedArticleCard({ article }: { article: RelatedArticle }) {
           {/* Article Excerpt */}
           <Typography
             variant="body"
-            fontFamily="thai"
+            fontFamily="mixed-lang"
             className="text-gray-600 text-sm line-clamp-3 mb-4"
           >
             {article.excerpt.thai}
@@ -86,7 +86,7 @@ function RelatedArticleCard({ article }: { article: RelatedArticle }) {
 
           {/* Article Meta */}
           <div className="flex items-center justify-between text-sm text-gray-500 pt-4 border-t border-gray-100">
-            <Typography variant="caption" fontFamily="thai" className="text-gray-500">
+            <Typography variant="caption" fontFamily="mixed-lang" className="text-gray-500">
               {formattedDate.thai}
             </Typography>
           </div>
@@ -113,10 +113,10 @@ export default function RelatedArticles({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-8">
-          <Typography variant="h3" fontFamily="thai" className="text-[#006039] mb-2">
+          <Typography variant="h3" fontFamily="mixed-lang" className="text-[#006039] mb-2">
             บทความที่เกี่ยวข้อง
           </Typography>
-          <Typography variant="body" fontFamily="thai" className="text-gray-600">
+          <Typography variant="body" fontFamily="mixed-lang" className="text-gray-600">
             เรียนรู้เพิ่มเติมเกี่ยวกับพลังงานหิน
           </Typography>
         </div>

@@ -71,7 +71,7 @@ export default function SocialShare({
           <ShareIcon className="h-5 w-5 text-gray-400" />
           <Typography
             variant="body"
-            fontFamily="thai"
+            fontFamily="mixed-lang"
             className="text-gray-600"
           >
             แชร์บทความนี้

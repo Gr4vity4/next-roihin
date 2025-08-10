@@ -41,7 +41,7 @@ export default function Breadcrumb({ items, className = '' }: BreadcrumbProps) {
               >
                 <Typography
                   variant="caption"
-                  fontFamily="thai"
+                  fontFamily="mixed-lang"
                   className="text-sm hover:text-[#006039]"
                 >
                   {item.label}
@@ -50,7 +50,7 @@ export default function Breadcrumb({ items, className = '' }: BreadcrumbProps) {
             ) : (
               <Typography
                 variant="caption"
-                fontFamily="thai"
+                fontFamily="mixed-lang"
                 className="text-sm text-gray-900"
               >
                 {item.label}

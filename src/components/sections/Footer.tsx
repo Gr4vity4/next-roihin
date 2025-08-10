@@ -65,12 +65,7 @@ export default function Footer({
           <div className="flex justify-center md:justify-start">
             <Link href="/" className="inline-block">
               <div className="relative w-24 h-24 md:w-32 md:h-32">
-                <Image
-                  src="/images/logo.avif"
-                  alt="Roihin Logo"
-                  fill
-                  className="object-contain"
-                />
+                <Image src="/images/logo.avif" alt="Roihin Logo" fill className="object-contain" />
               </div>
             </Link>
           </div>
@@ -82,11 +77,11 @@ export default function Footer({
 
           {/* Contact Info Column */}
           <div className="space-y-4">
-            <p className="font-fciconic">ติดต่อเรา</p>
+            <p className="">ติดต่อเรา</p>
             <div className="space-y-2 text-gray-400 text-sm">
               <div className="flex items-start space-x-2">
                 <MapPin size={16} className="mt-1 flex-shrink-0" />
-                <span className="font-thai break-words">{contactInfo.address}</span>
+                <span className=" break-words">{contactInfo.address}</span>
               </div>
               <div className="pt-4">
                 <SocialLinks links={contactInfo.socialLinks} size="md" gap="sm" />

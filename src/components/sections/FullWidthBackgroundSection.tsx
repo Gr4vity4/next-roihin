@@ -50,7 +50,7 @@ export default function FullWidthBackgroundSection({
             {subtitle && (
               <Typography
                 variant="body"
-                fontFamily="thai"
+                fontFamily="mixed-lang"
                 textShadow
                 className="max-w-3xl mx-auto"
               >

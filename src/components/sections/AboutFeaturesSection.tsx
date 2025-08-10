@@ -67,7 +67,7 @@ export default function AboutFeaturesSection({ features }: AboutFeaturesSectionP
 
                   <Typography
                     variant="body"
-                    fontFamily="thai"
+                    fontFamily="mixed-lang"
                     align="center"
                     className="text-white/90 text-sm md:text-base leading-relaxed"
                   >
