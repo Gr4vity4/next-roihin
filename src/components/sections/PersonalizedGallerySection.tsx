@@ -98,7 +98,7 @@ export default function PersonalizedGallerySection({
       <Container padding="lg">
         <div className="max-w-4xl mx-auto text-center">
           {/* Title Section */}
-          <Typography variant="h2" fontFamily="playfair" align="center" className="mb-6">
+          <Typography variant="h2" fontFamily="mixed-lang" align="center" className="mb-6">
             <span className="text-gray-800">{title.english}</span>
             <br />
             <span className="text-black font-bold">{title.highlight}</span>

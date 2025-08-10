@@ -41,7 +41,9 @@ const config: Config = {
         inter: ['var(--font-inter)', 'sans-serif'],
         thai: ['Noto Sans Thai', 'sans-serif'],
         fciconic: ['var(--font-fciconic)', 'sans-serif'],
-        playfair: ['Playfair Display', 'serif'],
+        'mixed-lang': ['var(--font-mixed-language)', 'Inter', 'sans-serif'],
+        // Alias for easier usage
+        'sans': ['var(--font-mixed-language)', 'Inter', 'sans-serif'],
       },
       animation: {
         'scale-in': 'scaleIn 0.2s ease-out',

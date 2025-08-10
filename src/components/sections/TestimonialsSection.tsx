@@ -50,7 +50,7 @@ export default function TestimonialsSection({
       <Container>
         <Typography
           variant="h2"
-          fontFamily="playfair"
+          fontFamily="mixed-lang"
           align="center"
           className="mb-4"
           color="primary"

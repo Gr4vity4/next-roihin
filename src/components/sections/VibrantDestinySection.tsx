@@ -33,7 +33,7 @@ export default function VibrantDestinySection({
       className={`py-32 ${className}`}
     >
       <div className="flex flex-col items-center justify-center px-4 sm:px-6 md:px-8 text-center text-white min-h-[520px] max-w-full">
-        <Typography variant="h2" fontFamily="playfair" textShadow className="mb-8">
+        <Typography variant="h2" fontFamily="mixed-lang" textShadow className="mb-8">
           {title}
         </Typography>
         <Typography variant="h3" className="mb-4 tracking-wide">

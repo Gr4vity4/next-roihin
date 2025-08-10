@@ -32,7 +32,7 @@ export default function TestimonialPage() {
           <div className="container mx-auto px-4">
             {/* Section title */}
             <div className="text-center mb-12">
-              <Typography variant="h2" fontFamily="playfair" className="text-white mb-4">
+              <Typography variant="h2" fontFamily="mixed-lang" className="text-white mb-4">
                 TESTIMONIALS
               </Typography>
               <Typography variant="body" fontFamily="thai" className="text-gray-300">

@@ -25,7 +25,7 @@ export default function AboutContentSection({
         <div className="max-w-4xl mx-auto">
           {/* Title Section */}
           <div className="text-center mb-8 sm:mb-12 md:mb-16">
-            <Typography variant="h2" fontFamily="playfair" align="center" className="mb-4">
+            <Typography variant="h2" fontFamily="mixed-lang" align="center" className="mb-4">
               <span className="text-gray-800">{title.english}</span>{' '}
               <span className="text-black font-bold">{title.thai}</span>
             </Typography>

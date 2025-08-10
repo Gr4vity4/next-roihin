@@ -40,7 +40,7 @@ export default function FullWidthBackgroundSection({
             {title && (
               <Typography
                 variant="h2"
-                fontFamily="playfair"
+                fontFamily="mixed-lang"
                 textShadow
                 className="mb-4"
               >

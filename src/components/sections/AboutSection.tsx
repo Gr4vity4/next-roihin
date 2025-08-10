@@ -48,7 +48,7 @@ export default function AboutSection({
         )}>
           <Typography
             variant="h3"
-            fontFamily="playfair"
+            fontFamily="mixed-lang"
             className="mb-4"
           >
             {title}

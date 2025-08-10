@@ -53,7 +53,7 @@ export default function CharmspacerHero({ title, tabs, backgroundImage }: Charms
             <Typography variant="h1" fontFamily="fciconic" className="text-4xl md:text-5xl lg:text-6xl text-white">
               {title.thai}
             </Typography>
-            <Typography variant="h2" fontFamily="playfair" className="text-2xl md:text-3xl lg:text-4xl text-white">
+            <Typography variant="h2" fontFamily="mixed-lang" className="text-2xl md:text-3xl lg:text-4xl text-white">
               {title.english}
             </Typography>
           </div>

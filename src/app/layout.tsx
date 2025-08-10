@@ -1,6 +1,6 @@
 import { fcIconic } from '@/fonts/fciconic'
 import type { Metadata } from 'next'
-import { Inter, Noto_Sans_Thai, Playfair_Display } from 'next/font/google'
+import { Inter, Noto_Sans_Thai } from 'next/font/google'
 import './globals.css'
 
 const inter = Inter({
@@ -14,11 +14,6 @@ const notoSansThai = Noto_Sans_Thai({
   weight: ['300', '400', '500', '600', '700'],
 })
 
-const playfairDisplay = Playfair_Display({
-  subsets: ['latin'],
-  variable: '--font-playfair',
-  weight: ['400', '500', '600', '700', '800', '900'],
-})
 
 export const metadata: Metadata = {
   title: 'ROIHIN STONE & BRACELET - Personalized Stone Bracelet',
@@ -56,7 +51,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.variable} ${notoSansThai.variable} ${fcIconic.variable} ${playfairDisplay.variable} font-sans antialiased`}
+        className={`${inter.variable} ${notoSansThai.variable} ${fcIconic.variable} font-sans antialiased`}
       >
         {children}
       </body>

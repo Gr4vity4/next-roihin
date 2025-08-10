@@ -1,5 +1,35 @@
 @import 'tailwindcss';
 
+/* Mixed Language Font Declarations with Unicode Range */
+/* Bodoni Moda for English/Latin characters */
+@font-face {
+  font-family: 'Mixed Language';
+  src: url('/fonts/BodoniModa-VariableFont_opsz,wght.ttf') format('truetype');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; /* Latin */
+}
+
+@font-face {
+  font-family: 'Mixed Language';
+  src: url('/fonts/BodoniModa-Italic-VariableFont_opsz,wght.ttf') format('truetype');
+  font-weight: 400 700;
+  font-style: italic;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; /* Latin */
+}
+
+/* Sukhumvit Set for Thai characters */
+@font-face {
+  font-family: 'Mixed Language';
+  src: url('/fonts/SukhumvitSet.ttc') format('collection');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0E00-0E7F; /* Thai */
+}
+
 :root {
   --background: #ffffff;
   --foreground: #000000;
@@ -9,14 +39,14 @@
   --font-inter: 'Inter', sans-serif;
   --font-noto-thai: 'Noto Sans Thai', sans-serif;
   --font-fciconic: 'FCIconic', sans-serif;
-  --font-playfair: 'Playfair Display', serif;
+  --font-mixed-language: 'Mixed Language', 'Inter', sans-serif;
 }
 
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-inter);
+  font-family: var(--font-mixed-language);
   overflow-x: hidden;
 }
 
@@ -59,10 +89,6 @@ html {
   font-family: var(--font-fciconic), var(--font-inter), sans-serif;
 }
 
-/* Playfair Display font styles */
-.font-playfair {
-  font-family: var(--font-playfair), serif;
-}
 
 /* Custom utility classes */
 .text-shadow {

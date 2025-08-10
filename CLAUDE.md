@@ -115,7 +115,7 @@ All API routes follow consistent patterns:
 ## Styling Guidelines
 
 - Use Tailwind CSS utility classes
-- Custom fonts: FC Iconic (Thai), Playfair Display (headings), Inter (body)
+- Custom fonts: FC Iconic (Thai), Bodoni Moda with Sukhumvit Set (mixed-language font), Inter (body)
 - Responsive design with mobile-first approach
 - Dark mode not currently implemented
 

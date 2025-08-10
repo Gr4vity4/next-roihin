@@ -8,7 +8,7 @@ export default function ButtonDemoPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="container mx-auto px-4">
-        <h1 className="text-4xl font-playfair font-bold text-center mb-12">Button Component Showcase</h1>
+        <h1 className="text-4xl font-mixed-lang font-bold text-center mb-12">Button Component Showcase</h1>
         
         {/* Typography Color Test */}
         <section className="mb-12">

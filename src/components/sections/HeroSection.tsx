@@ -49,10 +49,10 @@ export default function HeroSection({
       className={`${minHeight} flex items-center justify-center ${className}`}
     >
       <Container className="text-center text-white">
-        <Typography variant="h2" fontFamily="playfair" textShadow className="mb-2">
+        <Typography variant="h2" fontFamily="mixed-lang" textShadow className="mb-2">
           {title.line1}
         </Typography>
-        <Typography variant="h3" fontFamily="playfair" textShadow className="mb-6">
+        <Typography variant="h3" fontFamily="mixed-lang" textShadow className="mb-6">
           {title.line2}
         </Typography>
         <Typography variant="h3" fontFamily="thai" textShadow className="mb-4 font-light">

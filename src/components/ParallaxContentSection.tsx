@@ -66,7 +66,7 @@ export default function ParallaxContentSection({
             {title && (
               <Typography
                 variant="h2"
-                fontFamily="playfair"
+                fontFamily="mixed-lang"
                 textShadow
                 align={contentAlign}
               >

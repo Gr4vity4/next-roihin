@@ -58,7 +58,7 @@ export default function AboutFeaturesSection({ features }: AboutFeaturesSectionP
                 <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5 md:p-6 text-white">
                   <Typography
                     variant="h4"
-                    fontFamily="playfair"
+                    fontFamily="mixed-lang"
                     align="center"
                     className="text-white font-semibold tracking-wide mb-2 text-lg md:text-xl"
                   >

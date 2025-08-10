@@ -6,7 +6,7 @@ interface TypographyProps extends HTMLAttributes<HTMLElement> {
   component?: React.ElementType
   children: ReactNode
   className?: string
-  fontFamily?: 'playfair' | 'thai' | 'fciconic' | 'default'
+  fontFamily?: 'mixed-lang' | 'thai' | 'fciconic' | 'default'
   textShadow?: boolean
   color?: 'primary' | 'highlight' | string
   align?: 'left' | 'center' | 'right' | 'justify'
@@ -31,7 +31,7 @@ const variantComponents = {
 }
 
 const fontFamilyClasses = {
-  playfair: 'font-playfair',
+  'mixed-lang': 'font-mixed-lang',
   thai: 'font-thai',
   fciconic: 'font-fciconic',
   default: '',

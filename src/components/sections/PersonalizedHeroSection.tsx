@@ -40,7 +40,7 @@ export default function PersonalizedHeroSection({
           {/* Main Title */}
           <Typography
             variant="h1"
-            fontFamily="playfair"
+            fontFamily="mixed-lang"
             textShadow
             color="text-white"
             align="center"
@@ -51,7 +51,7 @@ export default function PersonalizedHeroSection({
 
           <Typography
             variant="h4"
-            fontFamily="playfair"
+            fontFamily="mixed-lang"
             textShadow
             color="text-white"
             align="center"
