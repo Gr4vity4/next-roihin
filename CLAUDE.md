@@ -4,135 +4,132 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Next.js 15.4.4 e-commerce website for ROIHIN STONE & BRACELET, a personalized stone bracelet business. The project uses TypeScript, React 19, Tailwind CSS 4, and implements a bilingual (English/Thai) user interface with Turso database integration.
+ROIHIN STONE & BRACELET - A Next.js 15 e-commerce application for personalized stone bracelets with bilingual support (Thai/English) and WordPress CMS integration.
 
-## Common Development Commands
+## Development Commands
 
 ```bash
-# Development (with Turbopack)
+# Development server with Turbopack
 npm run dev
 
-# Production build
+# Build for production
 npm run build
 
 # Start production server
 npm run start
 
-# Run ESLint
+# Lint code
 npm run lint
-
-# TypeScript type checking
-npx tsc --noEmit
-
-# Database commands
-npm run db:generate  # Generate SQL migrations from schema changes
-npm run db:migrate   # Apply migrations to database
-npm run db:push      # Push schema changes directly to database (dev)
-npm run db:studio    # Open Drizzle Studio GUI for database management
 ```
 
-## Project Architecture
+## Architecture
 
 ### Tech Stack
-- **Framework**: Next.js 15.4.4 with App Router
+- **Framework**: Next.js 15.4 with App Router
 - **Language**: TypeScript with strict mode
-- **Styling**: Tailwind CSS 4 with custom configuration
-- **Database**: Turso (SQLite edge database) with Drizzle ORM
-- **UI Components**: Custom component library with Radix UI primitives
-- **Fonts**: Inter, Noto Sans Thai, Playfair Display, FCIconic
+- **CMS**: WordPress REST API for all content management
+- **Styling**: Tailwind CSS v4 with custom FC Iconic font
+- **CMS**: WordPress REST API integration for blog content
+- **UI Components**: Radix UI primitives, Heroicons, Lucide icons
 
-### Directory Structure
-- `/src/app/` - Next.js App Router pages and layouts
-  - `/about/` - About page
-  - `/blog/` - Blog pages with dynamic routing
-  - `/testimonial/` - Database-driven testimonials page
-  - `/customer-service/` - Customer service page
-  - `/personalized/` - Personalized products page
-  - `/charmspacer/` - Charm and spacer products page
-  - `/button-demo/` - Component demo page
+### Project Structure
+- `/src/app/` - Next.js App Router pages and API routes
 - `/src/components/` - Reusable React components
-  - `/sections/` - Major page sections (Hero, About, Gallery, etc.)
-  - `/ui/` - Base UI components (Typography, Container, BilingualText, StarRating)
-  - `TestimonialsContainer.tsx` - Server component for testimonials with suspense
-- `/src/config/` - Configuration files
-  - `content.config.ts` - All website content (bilingual)
-  - `site.config.ts` - Site metadata and configuration
-- `/src/lib/` - Utility functions and database
-  - `/db/` - Database configuration and queries
-    - `schema.ts` - Drizzle schema definitions (testimonials, siteMeta)
-    - `config.ts` - Turso client configuration
-    - `testimonials.ts` - Testimonials CRUD operations
-- `/src/fonts/` - Custom font configurations
-- `/drizzle/` - Generated SQL migrations
-
-### Database Architecture
-
-The project uses Turso (edge SQLite) with Drizzle ORM:
-
-1. **Tables**:
-   - `testimonials` - Customer reviews with bilingual support
-   - `site_meta` - Key-value store for site configuration (similar to WordPress options)
-
-2. **Environment Variables** (required in `.env.local`):
-   ```
-   TURSO_DATABASE_URL=libsql://your-database.turso.io
-   TURSO_AUTH_TOKEN=your-auth-token
-   ```
-
-3. **Database Operations**:
-   - All database queries are abstracted in `/src/lib/db/`
-   - Uses Drizzle ORM for type-safe queries
-   - Implements soft deletes (isActive flag)
-   - Automatic timestamp management
+- `/src/components/sections/` - Page-specific section components
+- `/src/components/ui/` - UI primitives and utilities
+- `/src/lib/api/` - API helper functions for WordPress integration
+- `/src/config/` - Configuration files (cache, content, site)
+- `/public/images/` - Static images organized by feature
 
 ### Key Architectural Patterns
 
-1. **Server Components**: Database queries run directly in React Server Components for optimal performance
+#### 1. Caching Strategy
+The app uses environment-aware caching configured in `/src/config/cache.config.ts`:
+- **Development**: All caching disabled for better DX
+- **Production**: Strategic caching with 5-minute revalidation for dynamic content
 
-2. **Suspense Boundaries**: Loading states for database content using React Suspense
+#### 2. WordPress CMS Integration
+All content managed through WordPress REST API:
+- Testimonials fetched from WordPress custom post type
+- Site settings from WordPress ACF fields
+- Blog posts and categories from WordPress
 
-3. **Error Handling**: Graceful error states for database operations
+#### 3. API Proxy Endpoints
+Content fetched from WordPress REST API at `https://wp-roihin.precisiondevlab.com`:
+- Posts API: `/api/blog/posts`
+- Categories API: `/api/blog/categories`
+- Individual post: `/api/blog/posts/[title]`
+- Site Settings API: `/api/site-settings`
+- Testimonials API: `/api/testimonials`
 
-4. **Bilingual Database Content**: Language field in tables for Thai/English content separation
+#### 4. Component Organization
+- Page components use server components by default
+- Loading states implemented with loading.tsx files
+- Error boundaries for graceful error handling
+- Suspense boundaries for optimal streaming
 
-5. **Component Organization**: 
-   - Server components for data fetching
-   - Client components for interactivity
-   - Barrel exports (`index.ts`) for clean imports
+## Environment Variables
 
-6. **Typography System**: Custom `Typography` component with variants (h1-h6, subtitle, body, caption)
+Required in `.env.local`:
+```env
+WORDPRESS_API_URL=https://wp-roihin.precisiondevlab.com
+WORDPRESS_API_BASE_PATH=/wp-json/wp/v2
+```
 
-7. **Section-Based Layout**: Composable section components with centralized content configuration
+## Path Aliases
 
-### Development Considerations
+TypeScript path alias configured:
+- `@/*` maps to `./src/*`
 
-- Always run `npm run db:push` after schema changes during development
-- Use `npm run db:generate` and `npm run db:migrate` for production migrations
-- Database queries should handle errors gracefully with try-catch blocks
-- Use TypeScript types generated from Drizzle schema (`Testimonial`, `NewTestimonial`, etc.)
-- Server Components are preferred for database operations (no client-side fetching)
-- Environment variables must be set for database connection
-- Turbopack is enabled for faster development builds
+## Security Configuration
 
-### Image Handling
+Content Security Policy and security headers configured in `next.config.ts`:
+- CSP restricts script/style sources
+- X-Frame-Options: DENY
+- Strict CORS policies
+- No sensitive data in code
 
-The project is configured to handle remote images from:
-- `images.unsplash.com` - Stock photography
-- `static.wixstatic.com` - Legacy content from previous website
+## Performance Optimizations
 
-### Key Configuration Files
+1. **Font Optimization**: Custom FC Iconic font with subset loading
+2. **Image Optimization**: Next.js Image component with remote patterns
+3. **Code Splitting**: Automatic with App Router
+4. **Turbopack**: Enabled in development for faster builds
 
-- `drizzle.config.ts` - Database configuration for Drizzle Kit
-- `tailwind.config.ts` - Custom theme with brand colors (gold, green) and fonts
-- `next.config.ts` - Next.js configuration with image domains
-- `eslint.config.mjs` - ESLint configuration extending Next.js standards
-- `postcss.config.mjs` - PostCSS configuration for Tailwind CSS 4
+## API Helpers
 
-### Path Aliases
+### Helper Functions
+- `getTestimonials(language)` - Fetch testimonials from WordPress
+- `getSiteSettings()` - Get site settings from WordPress
+- `siteMetaHelpers.getContactInfo()` - Get contact information
+- `siteMetaHelpers.getSocialLinks()` - Get social media links
 
-The project uses TypeScript path aliases:
-- `@/*` maps to `./src/*` for clean imports
+## API Routes Pattern
 
-### No Test Framework
+All API routes follow consistent patterns:
+1. Use `getFetchConfig()` for cache configuration
+2. Return `getCacheHeaders()` in responses
+3. Validate with Zod schemas
+4. Handle errors gracefully with fallbacks
 
-Currently, no test framework is configured. Testing would need to be set up if required.
+## Styling Guidelines
+
+- Use Tailwind CSS utility classes
+- Custom fonts: FC Iconic (Thai), Playfair Display (headings), Inter (body)
+- Responsive design with mobile-first approach
+- Dark mode not currently implemented
+
+## Testing & Quality
+
+- Run `npm run lint` before committing
+- TypeScript strict mode enforced
+- ESLint with Next.js configuration
+- No dedicated test framework currently configured
+
+## Important Files
+
+- `/src/config/cache.config.ts` - Cache configuration
+- `/src/lib/types/wordpress.ts` - WordPress blog API types
+- `/src/lib/types/wordpress-settings.ts` - WordPress settings & testimonials types
+- `/src/lib/api/` - API helper functions
+- `/next.config.ts` - Next.js configuration with CSP

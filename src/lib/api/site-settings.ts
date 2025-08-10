@@ -1,0 +1,69 @@
+import { getFetchConfig } from '@/config/cache.config'
+import type { SiteSettings } from '@/lib/types/wordpress-settings'
+
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api'
+
+/**
+ * Get site settings from WordPress API
+ * @returns Site settings object
+ */
+export async function getSiteSettings(): Promise<SiteSettings | null> {
+  try {
+    const url = `${API_BASE_URL}/site-settings`
+
+    const response = await fetch(url, {
+      ...getFetchConfig('siteSettings'),
+    })
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch site settings: ${response.status}`)
+    }
+
+    const data = await response.json()
+    return data.settings || null
+  } catch (error) {
+    console.error('Error fetching site settings:', error)
+    // Return fallback settings
+    return {
+      contact: {
+        address: '101/54 หมู่บ้าน ภัสสร 70 (เกาะแก้ว) หมู่ที่ 4 ตำบลเกาะแก้ว อ.เมืองภูเก็ต จ.ภูเก็ต 83000',
+        phone: '083 826 5195',
+        email: 'info.roihin@gmail.com',
+        hours: 'Monday - Saturday | 09:00 - 19:00',
+      },
+      socialLinks: {
+        facebook: 'https://www.facebook.com/roihin42896395',
+        instagram: 'http://instagram.com/roihinstone2489_6395',
+        youtube: 'https://www.youtube.com/@roihinth',
+        tiktok: 'https://vt.tiktok.com/ZSegokjLL/',
+        pinterest: 'https://www.pinterest.com/roihinth/',
+        line: 'https://lin.ee/palYKiG',
+      },
+    }
+  }
+}
+
+/**
+ * Helper functions to match the old siteMetaHelpers interface
+ */
+export const siteMetaHelpers = {
+  /**
+   * Get contact information
+   * @param language - Language (not used in WordPress version)
+   * @returns Contact information
+   */
+  async getContactInfo(language: string = 'th') {
+    const settings = await getSiteSettings()
+    return settings?.contact || null
+  },
+
+  /**
+   * Get social links
+   * @param language - Language (not used in WordPress version)
+   * @returns Social links
+   */
+  async getSocialLinks(language: string = 'th') {
+    const settings = await getSiteSettings()
+    return settings?.socialLinks || null
+  },
+}

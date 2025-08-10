@@ -41,7 +41,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "img-src 'self' data: https: blob:",
               "font-src 'self' https://fonts.gstatic.com",
-              "connect-src 'self' https://api.turso.tech https://*.turso.io",
+              "connect-src 'self' https://wp-roihin.precisiondevlab.com",
               "media-src 'self'",
               "object-src 'none'",
               "base-uri 'self'",

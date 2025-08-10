@@ -5,10 +5,9 @@ import CharmspacerHero from '@/components/sections/CharmspacerHero'
 import ProductSection from '@/components/sections/ProductSection'
 import { Footer } from '@/components/sections'
 import { content } from '@/config/content.config'
-import { routeConfig } from '@/config/cache.config'
-
 // Configure route segment caching for charmspacer page (semi-static content)
-export const revalidate = routeConfig.semiStatic.revalidate
+// Revalidate every 15 minutes
+export const revalidate = 900
 
 export const metadata: Metadata = {
   title: 'ชาร์ม/สเปเซอร์ | Roihin Thailand',

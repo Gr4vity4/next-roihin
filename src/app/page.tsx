@@ -11,10 +11,9 @@ import {
   VibrantDestinySection,
 } from '@/components/sections'
 import { content } from '@/config/content.config'
-import { routeConfig } from '@/config/cache.config'
-
 // Configure route segment caching for home page (dynamic content with testimonials)
-export const revalidate = routeConfig.dynamic.revalidate
+// Revalidate every 5 minutes
+export const revalidate = 300
 
 export default function Home() {
   return (

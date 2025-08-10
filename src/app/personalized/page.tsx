@@ -8,10 +8,9 @@ import PersonalizedGallerySection from '@/components/sections/PersonalizedGaller
 import PersonalizedHeroSection from '@/components/sections/PersonalizedHeroSection'
 import { content } from '@/config/content.config'
 import { Metadata } from 'next'
-import { routeConfig } from '@/config/cache.config'
-
 // Configure route segment caching for personalized page (semi-static content)
-export const revalidate = routeConfig.semiStatic.revalidate
+// Revalidate every 15 minutes
+export const revalidate = 900
 
 export const metadata: Metadata = {
   title: 'งานออกแบบเฉพาะบุคคล - ROIHIN STONE & BRACELET',

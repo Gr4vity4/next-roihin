@@ -4,10 +4,9 @@ import ChatWidget from '@/components/ChatWidget'
 import { Typography } from '@/components/ui'
 import Image from 'next/image'
 import TestimonialsContainer from '@/components/TestimonialsContainer'
-import { routeConfig } from '@/config/cache.config'
-
 // Configure route segment caching for testimonials (dynamic content)
-export const revalidate = routeConfig.dynamic.revalidate
+// Revalidate every 5 minutes
+export const revalidate = 300
 
 export default function TestimonialPage() {
   return (

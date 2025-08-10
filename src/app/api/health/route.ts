@@ -1,40 +1,46 @@
 import { NextResponse } from 'next/server'
-import { db } from '@/lib/db'
 
 /**
  * Health check endpoint for monitoring application status
- * Tests database connectivity and returns system information
+ * Tests WordPress API connectivity and returns system information
  */
 export async function GET() {
   try {
     const startTime = Date.now()
     
-    // Test database connection
-    let dbStatus = 'healthy'
-    let dbLatency = 0
+    // Test WordPress API connection
+    let wpStatus = 'healthy'
+    let wpLatency = 0
     
     try {
-      const dbStartTime = Date.now()
-      // Simple query to test database connectivity
-      await db.$client.execute('SELECT 1')
-      dbLatency = Date.now() - dbStartTime
-    } catch (dbError) {
-      dbStatus = 'unhealthy'
-      console.error('Database health check failed:', dbError)
+      const wpStartTime = Date.now()
+      // Simple query to test WordPress API connectivity
+      const wpApiUrl = process.env.WORDPRESS_API_URL || 'https://wp-roihin.precisiondevlab.com'
+      const response = await fetch(`${wpApiUrl}/wp-json/wp/v2/posts?per_page=1`, {
+        signal: AbortSignal.timeout(5000) // 5 second timeout
+      })
+      wpLatency = Date.now() - wpStartTime
+      
+      if (!response.ok) {
+        wpStatus = 'unhealthy'
+      }
+    } catch (wpError) {
+      wpStatus = 'unhealthy'
+      console.error('WordPress API health check failed:', wpError)
     }
 
     const responseTime = Date.now() - startTime
 
     const healthData = {
-      status: dbStatus === 'healthy' ? 'healthy' : 'degraded',
+      status: wpStatus === 'healthy' ? 'healthy' : 'degraded',
       timestamp: new Date().toISOString(),
       version: process.env.npm_package_version || '1.0.0',
       environment: process.env.NODE_ENV || 'development',
       uptime: process.uptime(),
       checks: {
-        database: {
-          status: dbStatus,
-          latency: `${dbLatency}ms`
+        wordpress: {
+          status: wpStatus,
+          latency: `${wpLatency}ms`
         },
         api: {
           status: 'healthy',
@@ -90,9 +96,14 @@ export async function GET() {
 // Optionally support HEAD requests for simple up/down checks
 export async function HEAD() {
   try {
-    // Quick database connectivity test
-    await db.$client.execute('SELECT 1')
-    return new NextResponse(null, { status: 200 })
+    // Quick WordPress API connectivity test
+    const wpApiUrl = process.env.WORDPRESS_API_URL || 'https://wp-roihin.precisiondevlab.com'
+    const response = await fetch(`${wpApiUrl}/wp-json/wp/v2/posts?per_page=1`, {
+      method: 'HEAD',
+      signal: AbortSignal.timeout(5000) // 5 second timeout
+    })
+    
+    return new NextResponse(null, { status: response.ok ? 200 : 503 })
   } catch (err) {
     console.error('Health check HEAD error:', err)
     return new NextResponse(null, { status: 503 })

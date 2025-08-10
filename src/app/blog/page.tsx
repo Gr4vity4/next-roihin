@@ -3,10 +3,9 @@ import Navigation from '@/components/Navigation'
 import { BlogHeroSection, BlogPostsSection, Footer } from '@/components/sections'
 import { content } from '@/config/content.config'
 import type { Metadata } from 'next'
-import { routeConfig } from '@/config/cache.config'
-
 // Configure route segment caching for blog (dynamic content from WordPress API)
-export const revalidate = routeConfig.dynamic.revalidate
+// Revalidate every 5 minutes
+export const revalidate = 300
 
 export const metadata: Metadata = {
   title: 'Blog - Stone Wisdom | ROIHIN STONE & BRACELET',

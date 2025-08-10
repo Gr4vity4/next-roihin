@@ -1,7 +1,7 @@
 import { Suspense } from 'react'
 import { Typography } from '@/components/ui'
 import Image from 'next/image'
-import { getTestimonials } from '@/lib/db/testimonials'
+import { getTestimonials } from '@/lib/api/testimonials'
 
 // Loading component
 function TestimonialsLoading() {

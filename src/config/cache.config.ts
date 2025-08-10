@@ -67,6 +67,18 @@ export const cacheConfig = {
       revalidate: isDevelopment ? 0 : CACHE_DURATIONS.SHORT, // 5 minutes in production
       tags: ['api'] as string[],
     },
+    
+    // Site settings from WordPress
+    siteSettings: {
+      revalidate: isDevelopment ? 0 : CACHE_DURATIONS.LONG, // 1 hour in production
+      tags: ['site-settings'] as string[],
+    },
+    
+    // Testimonials from WordPress
+    testimonials: {
+      revalidate: isDevelopment ? 0 : CACHE_DURATIONS.MEDIUM, // 15 minutes in production
+      tags: ['testimonials'] as string[],
+    },
   },
   
   // HTTP Cache-Control headers for API routes
@@ -162,3 +174,9 @@ export function withDevCacheOverride<T extends Record<string, unknown>>(
 export type CacheType = keyof typeof cacheConfig.content
 export type CacheDuration = typeof CACHE_DURATIONS[keyof typeof CACHE_DURATIONS]
 export type CacheHeaders = keyof typeof cacheConfig.headers
+
+// Export revalidate values directly for Next.js page configurations
+// Next.js requires these to be static values, not member expressions
+export const REVALIDATE_DYNAMIC = isDevelopment ? 0 : CACHE_DURATIONS.SHORT
+export const REVALIDATE_SEMI_STATIC = isDevelopment ? 0 : CACHE_DURATIONS.MEDIUM
+export const REVALIDATE_STATIC = isDevelopment ? 0 : CACHE_DURATIONS.LONG
