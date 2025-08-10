@@ -13,11 +13,13 @@ const DEFAULT_AVATAR = '/images/default-avatar.jpg'
 /**
  * GET /api/testimonials
  * Proxy endpoint to fetch testimonials from WordPress REST API
+ * 
+ * Uses acf_format=standard to get avatar URLs directly from WordPress API
+ * instead of avatar IDs that need to be converted to URLs
  */
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
-    const language = searchParams.get('language') || 'th'
     const limit = searchParams.get('limit') || '15'
 
     // Build WordPress API URL for testimonials
@@ -27,6 +29,7 @@ export async function GET(request: NextRequest) {
       orderby: 'meta_value_num',
       order: 'asc',
       _fields: 'acf',
+      acf_format: 'standard',
     })
 
     const wpApiUrl = `${WORDPRESS_API_URL}${WORDPRESS_API_BASE_PATH}/testimonial?${params.toString()}`
@@ -54,11 +57,8 @@ export async function GET(request: NextRequest) {
       .map((item, index) => {
         const acf = item.acf
 
-        // Convert avatar ID to URL (you might need to fetch the media URL separately)
-        // For now, we'll use a placeholder pattern
-        const avatarUrl = acf.avatar
-          ? `/images/testimonials/avatar-${acf.avatar}.jpg`
-          : DEFAULT_AVATAR
+        // Use avatar URL directly from WordPress API with acf_format=standard
+        const avatarUrl = acf.avatar || DEFAULT_AVATAR
 
         return {
           id: `testimonial-${index + 1}`,

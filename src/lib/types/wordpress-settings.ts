@@ -46,11 +46,11 @@ export const WordPressPageSettingsResponseSchema = z.array(WordPressPageSettings
  * WordPress Testimonial ACF Schema
  */
 export const WordPressTestimonialACFSchema = z.object({
-  avatar: z.number(),
+  avatar: z.string().url(),
   message: z.string(),
   date: z.string(),
   is_active: z.boolean(),
-  sort_order: z.number(),
+  sort_order: z.coerce.number(), // Convert string to number
 })
 
 /**
