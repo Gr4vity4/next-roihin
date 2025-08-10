@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-ROIHIN STONE & BRACELET - A Next.js 15 e-commerce application for personalized stone bracelets with bilingual support (Thai/English) and WordPress CMS integration.
+ROIHIN STONE & BRACELET - A Next.js 15 e-commerce application for personalized stone bracelets with Thai language support and WordPress CMS integration.
 
 ## Development Commands
 

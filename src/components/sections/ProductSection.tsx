@@ -2,14 +2,10 @@ import { cn } from '@/lib/utils'
 import Container from '@/components/ui/Container'
 import Typography from '@/components/ui/Typography'
 import ProductGallery from '@/components/ui/ProductGallery'
-import BilingualText from '@/components/ui/BilingualText'
 
 interface ProductSectionProps {
   id: string
-  title: {
-    thai: string
-    english: string
-  }
+  title: string
   description: string
   images: {
     src: string
@@ -26,13 +22,13 @@ export default function ProductSection({ id, title, description, images, classNa
         <div className="space-y-8">
           {/* Title */}
           <div className="text-center">
-            <BilingualText
-              thai={title.thai}
-              english={`( ${title.english} )`}
+            <Typography
               variant="h3"
-              thaiClassName="text-2xl md:text-3xl lg:text-4xl text-white mb-2"
-              englishClassName="text-xl md:text-2xl lg:text-3xl text-gray-400"
-            />
+              fontFamily="fciconic"
+              className="text-2xl md:text-3xl lg:text-4xl text-white"
+            >
+              {title}
+            </Typography>
           </div>
 
           {/* Description */}

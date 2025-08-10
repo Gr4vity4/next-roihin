@@ -683,10 +683,7 @@ export const content = {
     sections: {
       charm: {
         id: 'charm',
-        title: {
-          thai: 'ชาร์ม',
-          english: 'Lucky Charm',
-        },
+        title: 'ชาร์ม',
         description: 'ร้อยหินชาร์ม จัดทำขึ้นเป็นวาระโดยอาศัยตำนานและเรื่องเล่าของครูบาอาจารย์ ชาร์มทุกชิ้นได้ผ่านพิธีกรรมอันเชิญตามต้นกำเนิดเพื่อให้เกิดเทวคุณอันเป็นสิริมงคลสูงสุดต่อผู้ครอบครอง',
         images: [
           { src: '/images/charmspacer/charm/charm-01.png', alt: 'Lucky Charm 01' },
@@ -707,10 +704,7 @@ export const content = {
       },
       spacer: {
         id: 'spacer',
-        title: {
-          thai: 'ตัวคั่น',
-          english: 'Spacer',
-        },
+        title: 'ตัวคั่น',
         description: 'ร้อยหินชาร์ม จัดทำขึ้นเป็นวาระโดยอาศัยตำนานและเรื่องเล่าของครูบาอาจารย์ ชาร์มทุกชิ้นได้ผ่านพิธีกรรมอันเชิญตามต้นกำเนิดเพื่อให้เกิดเทวคุณอันเป็นสิริมงคลสูงสุดต่อผู้ครอบครอง',
         images: [
           { src: '/images/charmspacer/spacer/spacer-01.png', alt: 'Spacer 01' },
@@ -741,10 +735,7 @@ export const content = {
       },
       pendant: {
         id: 'pendant',
-        title: {
-          thai: 'ชาร์มจี้',
-          english: 'Pendant Charm',
-        },
+        title: 'ชาร์มจี้',
         description: 'ร้อยหินชาร์ม จัดทำขึ้นเป็นวาระโดยอาศัยตำนานและเรื่องเล่าของครูบาอาจารย์ ชาร์มทุกชิ้นได้ผ่านพิธีกรรมอันเชิญตามต้นกำเนิดเพื่อให้เกิดเทวคุณอันเป็นสิริมงคลสูงสุดต่อผู้ครอบครอง',
         images: [
           { src: '/images/charmspacer/pendant/pendant-01.png', alt: 'Pendant Charm 01' },
