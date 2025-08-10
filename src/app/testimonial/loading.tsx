@@ -82,7 +82,7 @@ export default function TestimonialLoading() {
       <div className="text-center py-8">
         <Typography 
           variant="body" 
-          fontFamily="mixed-lang" 
+           
           className="text-gray-500"
         >
           กำลังโหลดรีวิวจากลูกค้า...

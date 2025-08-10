@@ -52,8 +52,7 @@ export default function CustomerServicePage() {
                 <div className="space-y-8">
                   <Typography
                     variant="h2"
-                    fontFamily="mixed-lang"
-                    className="text-4xl lg:text-5xl font-bold text-white mb-8"
+                              className="text-4xl lg:text-5xl font-bold text-white mb-8"
                     textShadow
                   >
                     ติดต่อสอบถาม
@@ -62,8 +61,7 @@ export default function CustomerServicePage() {
                   <div className="space-y-6">
                     <Typography
                       variant="body"
-                      fontFamily="mixed-lang"
-                      className="text-lg text-white leading-relaxed"
+                                  className="text-lg text-white leading-relaxed"
                       textShadow
                     >
                       <strong className="text-xl">ที่อยู่:</strong>
@@ -75,8 +73,7 @@ export default function CustomerServicePage() {
 
                     <Typography
                       variant="body"
-                      fontFamily="mixed-lang"
-                      className="text-lg text-white leading-relaxed"
+                                  className="text-lg text-white leading-relaxed"
                       textShadow
                     >
                       <strong className="text-xl">โทรศัพท์:</strong>
@@ -86,8 +83,7 @@ export default function CustomerServicePage() {
 
                     <Typography
                       variant="body"
-                      fontFamily="mixed-lang"
-                      className="text-lg text-white leading-relaxed"
+                                  className="text-lg text-white leading-relaxed"
                       textShadow
                     >
                       <strong className="text-xl">อีเมล์:</strong>
@@ -101,8 +97,7 @@ export default function CustomerServicePage() {
                 <div className="space-y-8">
                   <Typography
                     variant="h3"
-                    fontFamily="mixed-lang"
-                    className="text-3xl lg:text-4xl font-bold text-white mb-8"
+                              className="text-3xl lg:text-4xl font-bold text-white mb-8"
                     textShadow
                   >
                     บริการหลังการขาย
@@ -111,8 +106,7 @@ export default function CustomerServicePage() {
                   <div className="space-y-6">
                     <Typography
                       variant="body"
-                      fontFamily="mixed-lang"
-                      className="text-lg text-white leading-relaxed"
+                                  className="text-lg text-white leading-relaxed"
                       textShadow
                     >
                       <strong className="text-xl">รับประกันภายใน 7 วัน</strong>
@@ -122,8 +116,7 @@ export default function CustomerServicePage() {
 
                     <Typography
                       variant="body"
-                      fontFamily="mixed-lang"
-                      className="text-lg text-white leading-relaxed"
+                                  className="text-lg text-white leading-relaxed"
                       textShadow
                     >
                       กำไลหินมงคลได้รับการออกแบบอย่างปราณีตและตรวจสอบสินค้าก่อนนำส่งลูกค้าทุกครั้ง อนึ่งหากสินค้าเกิดข้อผิดพลาดทั้งที่ตัวของหินที่อาจบิ่น ชำรุดหรือเสียหาย หรือไหมยืดเกิดการขาด ย้วยหรือเสียหายซึ่งเหตุอันมิได้เกิดจากลูกค้า ทางร้านยินดีรับเปลี่ยนหิน ดูแล ดดยไม่เรียกร้องค่าเสียหายใด ๆ จากลูกค้าหรือยินดีคืนเงินเต็มจำนวนในกรณีสเหตุสุดวิสัย (ทั้งนี้ทางร้อยหินขอสงวนสิทธิ์ในการตรวจสอบเหตุอันพิสูจน์แล้วว่ามิใดเป็นการกระทำใด ๆ อันไม่เหมาะสมต่อสินค้าจากลูกค้า จึงดำเนินการคืนเงินภายใน 15 วันหลังได้ทำการตกลงกับลูกค้า)
@@ -131,8 +124,7 @@ export default function CustomerServicePage() {
 
                     <Typography
                       variant="body"
-                      fontFamily="mixed-lang"
-                      className="text-lg text-white leading-relaxed"
+                                  className="text-lg text-white leading-relaxed"
                       textShadow
                     >
                       <strong className="text-xl">ยินดีดูแลสินค้า ตลอดอายุการใช้งาน</strong>
@@ -140,8 +132,7 @@ export default function CustomerServicePage() {
 
                     <Typography
                       variant="body"
-                      fontFamily="mixed-lang"
-                      className="text-lg text-white leading-relaxed"
+                                  className="text-lg text-white leading-relaxed"
                       textShadow
                     >
                       เมื่อไหมยืดร้อยหินหมดอายุการใช้งาน ทางร้อยหินยินดีให้บริการดูแล ทำความสะอาดหิน เปลี่ยนไหมร้อยให้โดยไม่มีค่าใช้จ่ายใด ๆ เว้นแต่ค่าบริการส่งสินค้าคืนลูกค้า (ค่าบริการจัดส่งในประเทศ 60 บาท หรือ 120 บาทสำหรับพื้นที่ห่างไกล)

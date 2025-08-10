@@ -25,7 +25,6 @@ export default function NotFound() {
           {/* Error Message */}
           <Typography
             variant="h2"
-            fontFamily="mixed-lang"
             className="text-[#006039] mb-4 text-2xl lg:text-3xl"
           >
             ไม่พบหน้าที่คุณค้นหา
@@ -40,7 +39,6 @@ export default function NotFound() {
           
           <Typography
             variant="body"
-            fontFamily="mixed-lang"
             className="text-gray-600 mb-8 max-w-xl mx-auto leading-relaxed"
           >
             ขออภัย หน้าที่คุณกำลังมองหาอาจถูกลบ ย้ายที่ หรือไม่เคยมีอยู่เลย 
@@ -64,7 +62,6 @@ export default function NotFound() {
               <HomeIcon className="h-5 w-5 mr-2" />
               <Typography
                 variant="body"
-                fontFamily="mixed-lang"
               >
                 กลับหน้าแรก / Go Home
               </Typography>
@@ -76,7 +73,6 @@ export default function NotFound() {
             >
               <Typography
                 variant="body"
-                fontFamily="mixed-lang"
                 className="mr-1"
               >
                 ดูบล็อก
@@ -91,7 +87,6 @@ export default function NotFound() {
           <div className="mt-12 pt-8 border-t border-gray-200">
             <Typography
               variant="caption"
-              fontFamily="mixed-lang"
               className="text-gray-500 mb-4 block"
             >
               หรือคุณอาจสนใจ / Or you might be interested in:

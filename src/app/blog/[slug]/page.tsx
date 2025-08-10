@@ -162,7 +162,6 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               <div className="text-white">
                 <Typography
                   variant="h2"
-                  fontFamily="mixed-lang"
                   className="text-3xl lg:text-5xl font-bold mb-4 drop-shadow-lg"
                 >
                   {article.title}
@@ -170,7 +169,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
                 {/* Article Meta */}
                 <div className="flex flex-wrap items-center gap-4 text-sm text-gray-200">
-                  <Typography variant="caption" fontFamily="mixed-lang" className="text-white">
+                  <Typography variant="caption" className="text-white">
                     {formattedDate}
                   </Typography>
                   {article.author && (
@@ -196,8 +195,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               <div className="mb-8 p-6 bg-gray-50 border-l-4 border-[#D4AF37]">
                 <Typography
                   variant="body"
-                  fontFamily="mixed-lang"
-                  className="text-gray-700 text-lg leading-8"
+                                    className="text-gray-700 text-lg leading-8"
                 >
                   {article.title}
                 </Typography>
@@ -248,8 +246,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                       {article.author.description && (
                         <Typography
                           variant="caption"
-                          fontFamily="mixed-lang"
-                          className="text-gray-600"
+                                                    className="text-gray-600"
                         >
                           {article.author.description}
                         </Typography>

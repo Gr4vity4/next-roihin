@@ -40,7 +40,7 @@ export default function PersonalizedHeroSection({
           {/* Main Title */}
           <Typography
             variant="h1"
-            fontFamily="mixed-lang"
+           
             textShadow
             color="text-white"
             align="center"
@@ -51,7 +51,7 @@ export default function PersonalizedHeroSection({
 
           <Typography
             variant="h4"
-            fontFamily="mixed-lang"
+           
             textShadow
             color="text-white"
             align="center"
@@ -63,7 +63,7 @@ export default function PersonalizedHeroSection({
           {/* Thai Subtitle */}
           <Typography
             variant="h2"
-            fontFamily="mixed-lang"
+           
             textShadow
             color="highlight"
             align="center"
@@ -75,7 +75,7 @@ export default function PersonalizedHeroSection({
           {/* Description */}
           <Typography
             variant="h4"
-            fontFamily="mixed-lang"
+           
             textShadow
             color="text-white"
             align="center"

@@ -26,7 +26,7 @@ export default function PersonalizedContentSection({
           <div className="text-center mb-12 sm:mb-16 md:mb-20">
             <Typography 
               variant="h2" 
-              fontFamily="mixed-lang" 
+              
               align="center" 
               className="mb-6"
             >
@@ -37,7 +37,7 @@ export default function PersonalizedContentSection({
 
             <Typography
               variant="h3"
-              fontFamily="mixed-lang"
+             
               align="center"
               color="primary"
               className="italic font-medium"
@@ -58,7 +58,7 @@ export default function PersonalizedContentSection({
                 <Typography
                   key={`content-${index}`}
                   variant="body"
-                  fontFamily="mixed-lang"
+                 
                   className="text-gray-700 leading-relaxed text-justify max-w-4xl mx-auto"
                 >
                   {paragraph}

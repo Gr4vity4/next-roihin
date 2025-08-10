@@ -98,7 +98,7 @@ export default function PersonalizedGallerySection({
       <Container padding="lg">
         <div className="max-w-4xl mx-auto text-center">
           {/* Title Section */}
-          <Typography variant="h2" fontFamily="mixed-lang" align="center" className="mb-6">
+          <Typography variant="h2" align="center" className="mb-6">
             <span className="text-gray-800">{title.english}</span>
             <br />
             <span className="text-black font-bold">{title.highlight}</span>
@@ -106,7 +106,7 @@ export default function PersonalizedGallerySection({
 
           <Typography
             variant="h3"
-            fontFamily="mixed-lang"
+           
             align="center"
             color="primary"
             className="mb-8 sm:mb-12"
@@ -162,7 +162,7 @@ export default function PersonalizedGallerySection({
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                     <Typography
                       variant="body"
-                      fontFamily="mixed-lang"
+                     
                       className="text-white text-center px-2 text-sm sm:text-base"
                     >
                       {item.title}

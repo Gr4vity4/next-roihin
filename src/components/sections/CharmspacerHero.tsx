@@ -52,14 +52,14 @@ export default function CharmspacerHero({ title, tabs, backgroundImage }: Charms
           <div className="space-y-4">
             <Typography
               variant="h1"
-              fontFamily="mixed-lang"
+             
               className="text-4xl md:text-5xl lg:text-6xl text-white"
             >
               {title.thai}
             </Typography>
             <Typography
               variant="h2"
-              fontFamily="mixed-lang"
+             
               className="text-2xl md:text-3xl lg:text-4xl text-white"
             >
               {title.english}

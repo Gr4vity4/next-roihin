@@ -32,7 +32,7 @@ export default function AboutHeroSection({ backgroundImage, title }: AboutHeroSe
         <div className="text-center px-6 sm:px-8 md:px-12 lg:px-4 md:flex md:items-center">
           <Typography
             variant="h3"
-            fontFamily="mixed-lang"
+           
             textShadow
             color="text-white"
             align="center"
@@ -44,7 +44,7 @@ export default function AboutHeroSection({ backgroundImage, title }: AboutHeroSe
           <div className="max-w-sm">
             <Typography
               variant="h2"
-              fontFamily="mixed-lang"
+             
               textShadow
               color="highlight"
               align="center"
@@ -56,7 +56,7 @@ export default function AboutHeroSection({ backgroundImage, title }: AboutHeroSe
 
           <Typography
             variant="h3"
-            fontFamily="mixed-lang"
+           
             textShadow
             color="text-white"
             align="center"

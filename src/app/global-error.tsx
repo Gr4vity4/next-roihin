@@ -47,7 +47,6 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
                 
                 <Typography 
                   variant="body" 
-                  fontFamily="mixed-lang" 
                   className="text-gray-600 mb-6"
                 >
                   ขออภัยในความไม่สะดวก เกิดข้อผิดพลาดที่ไม่คาดคิด กรุณาลองใหม่อีกครั้ง

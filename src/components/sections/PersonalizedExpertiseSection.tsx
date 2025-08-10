@@ -25,7 +25,7 @@ export default function PersonalizedExpertiseSection({
                 <Typography
                   key={`expertise-${index}`}
                   variant="body"
-                  fontFamily="mixed-lang"
+                 
                   className="text-gray-700 leading-relaxed text-justify"
                 >
                   {paragraph}

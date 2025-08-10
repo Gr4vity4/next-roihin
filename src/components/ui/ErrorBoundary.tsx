@@ -72,7 +72,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               
               <Typography 
                 variant="body" 
-                fontFamily="mixed-lang" 
+                
                 className="text-gray-600 mb-4"
               >
                 ส่วนนี้ไม่สามารถโหลดได้ในขณะนี้ กรุณาลองรีเฟรชหน้าเว็บ

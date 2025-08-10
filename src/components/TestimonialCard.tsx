@@ -21,8 +21,7 @@ export default function TestimonialCard({
     <div className={cn('p-8 space-y-4 rounded-lg', variantStyles[variant], className)}>
       <Typography
         variant="body"
-        fontFamily="mixed-lang"
-        className={variant === 'dark' ? 'text-gray-300' : 'text-gray-700'}
+                className={variant === 'dark' ? 'text-gray-300' : 'text-gray-700'}
       >
         {content}
       </Typography>

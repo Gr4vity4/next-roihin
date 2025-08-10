@@ -6,7 +6,6 @@ interface TypographyProps extends HTMLAttributes<HTMLElement> {
   component?: React.ElementType
   children: ReactNode
   className?: string
-  fontFamily?: 'mixed-lang' | 'default'
   textShadow?: boolean
   color?: 'primary' | 'highlight' | string
   align?: 'left' | 'center' | 'right' | 'justify'
@@ -30,10 +29,6 @@ const variantComponents = {
   caption: 'span',
 }
 
-const fontFamilyClasses = {
-  'mixed-lang': 'font-mixed-lang',
-  default: '',
-}
 
 const alignmentClasses = {
   left: 'text-left',
@@ -52,7 +47,6 @@ export default function Typography({
   component,
   children,
   className = '',
-  fontFamily,
   textShadow = false,
   color,
   align,
@@ -76,7 +70,7 @@ export default function Typography({
     {
       className: cn(
         variantStyles[variant],
-        fontFamily && fontFamilyClasses[fontFamily],
+        'font-mixed-lang', // Always apply mixed-lang as default
         textShadow && 'text-shadow',
         align && alignmentClasses[align],
         colorClass,

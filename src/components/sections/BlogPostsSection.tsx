@@ -50,7 +50,7 @@ function BlogPostCard({ post }: { post: BlogPost }) {
           {/* Post Title */}
           <Typography
             variant="h4"
-            fontFamily="mixed-lang"
+           
             className="mb-2 text-gray-900 group-hover:text-[#006039] transition-colors line-clamp-2"
           >
             {post.title}
@@ -59,7 +59,7 @@ function BlogPostCard({ post }: { post: BlogPost }) {
           {/* Post Excerpt */}
           <Typography
             variant="body"
-            fontFamily="mixed-lang"
+           
             className="text-gray-600 text-sm line-clamp-3 mb-4"
           >
             {post.excerpt}
@@ -67,7 +67,7 @@ function BlogPostCard({ post }: { post: BlogPost }) {
 
           {/* Post Date */}
           <div className="pt-4 border-t border-gray-100">
-            <Typography variant="caption" fontFamily="mixed-lang" className="text-gray-500">
+            <Typography variant="caption" className="text-gray-500">
               {formattedDate}
             </Typography>
           </div>
@@ -181,10 +181,10 @@ export default function BlogPostsSection({
       <Container>
         {/* Section Header */}
         <div className="text-center mb-12">
-          <Typography variant="h2" fontFamily="mixed-lang" className="text-[#006039] mb-4">
+          <Typography variant="h2" className="text-[#006039] mb-4">
             {title.thai}
           </Typography>
-          <Typography variant="body" fontFamily="mixed-lang" className="text-gray-600 max-w-2xl mx-auto">
+          <Typography variant="body" className="text-gray-600 max-w-2xl mx-auto">
             {subtitle.thai}
           </Typography>
         </div>
@@ -204,7 +204,7 @@ export default function BlogPostsSection({
             >
               <Typography
                 variant="caption"
-                fontFamily="mixed-lang"
+               
                 className={selectedCategory === category.id ? 'text-white' : 'text-gray-600'}
               >
                 {category.name.thai}
@@ -220,7 +220,7 @@ export default function BlogPostsSection({
               {error}
             </Typography>
             <Button variant="outline" onClick={() => window.location.reload()}>
-              <Typography variant="body" fontFamily="mixed-lang">
+              <Typography variant="body">
                 ลองอีกครั้ง
               </Typography>
             </Button>
@@ -262,7 +262,7 @@ export default function BlogPostsSection({
               onClick={handleLoadMore}
               disabled={loadingMore}
             >
-              <Typography variant="body" fontFamily="mixed-lang">
+              <Typography variant="body">
                 {loadingMore ? 'กำลังโหลด...' : loadMoreButton.text.thai}
               </Typography>
             </Button>
@@ -272,7 +272,7 @@ export default function BlogPostsSection({
         {/* No Posts Message */}
         {!loading && !error && posts.length === 0 && (
           <div className="text-center py-12">
-            <Typography variant="body" fontFamily="mixed-lang" className="text-gray-500">
+            <Typography variant="body" className="text-gray-500">
               ไม่พบบทความในหมวดหมู่นี้
             </Typography>
           </div>

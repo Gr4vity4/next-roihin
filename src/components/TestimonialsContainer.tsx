@@ -92,8 +92,7 @@ async function TestimonialsContent() {
 
                 <Typography
                   variant="body"
-                  fontFamily="mixed-lang"
-                  className="text-gray-300 leading-relaxed"
+                                    className="text-gray-300 leading-relaxed"
                 >
                   &ldquo;{testimonial.message}&rdquo;
                 </Typography>

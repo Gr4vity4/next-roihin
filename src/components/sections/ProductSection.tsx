@@ -24,7 +24,7 @@ export default function ProductSection({ id, title, description, images, classNa
           <div className="text-center">
             <Typography
               variant="h3"
-              fontFamily="mixed-lang"
+             
               className="text-2xl md:text-3xl lg:text-4xl text-white"
             >
               {title}
@@ -33,7 +33,7 @@ export default function ProductSection({ id, title, description, images, classNa
 
           {/* Description */}
           <div className="max-w-4xl mx-auto text-center">
-            <Typography variant="body" fontFamily="mixed-lang" className="text-gray-300 leading-relaxed">
+            <Typography variant="body" className="text-gray-300 leading-relaxed">
               {description}
             </Typography>
           </div>

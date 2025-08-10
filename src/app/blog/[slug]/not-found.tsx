@@ -23,16 +23,14 @@ export default function NotFound() {
           {/* Error Message */}
           <Typography
             variant="h2"
-            fontFamily="mixed-lang"
-            className="text-[#006039] mb-4"
+                        className="text-[#006039] mb-4"
           >
             ไม่พบบทความที่คุณค้นหา
           </Typography>
           
           <Typography
             variant="body"
-            fontFamily="mixed-lang"
-            className="text-gray-600 mb-8 max-w-xl mx-auto"
+                        className="text-gray-600 mb-8 max-w-xl mx-auto"
           >
             ขออภัย บทความที่คุณกำลังมองหาอาจถูกลบ หรือย้ายไปแล้ว กรุณาตรวจสอบ URL หรือกลับไปที่หน้าบล็อกเพื่อค้นหาบทความอื่นๆ
           </Typography>
@@ -46,8 +44,7 @@ export default function NotFound() {
               <ArrowLeftIcon className="h-5 w-5 mr-2" />
               <Typography
                 variant="body"
-                fontFamily="mixed-lang"
-              >
+                              >
                 กลับไปบล็อก
               </Typography>
             </Link>
@@ -58,8 +55,7 @@ export default function NotFound() {
             >
               <Typography
                 variant="body"
-                fontFamily="mixed-lang"
-              >
+                              >
                 กลับหน้าแรก
               </Typography>
             </Link>

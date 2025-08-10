@@ -60,7 +60,6 @@ export default function Error({ error, reset }: ErrorProps) {
           {/* Error Message */}
           <Typography
             variant="h2"
-            fontFamily="mixed-lang"
             className="text-[#006039] mb-4 text-2xl lg:text-3xl"
           >
             เกิดข้อผิดพลาด
@@ -75,7 +74,6 @@ export default function Error({ error, reset }: ErrorProps) {
           
           <Typography
             variant="body"
-            fontFamily="mixed-lang"
             className="text-gray-600 mb-6 max-w-xl mx-auto leading-relaxed"
           >
             ขออภัยในความไม่สะดวก เกิดข้อผิดพลาดที่ไม่คาดคิด 
@@ -99,7 +97,6 @@ export default function Error({ error, reset }: ErrorProps) {
               <RefreshIcon className="h-5 w-5 mr-2" />
               <Typography
                 variant="body"
-                fontFamily="mixed-lang"
               >
                 ลองใหม่อีกครั้ง / Try Again
               </Typography>
@@ -112,7 +109,6 @@ export default function Error({ error, reset }: ErrorProps) {
               <HomeIcon className="h-5 w-5 mr-2" />
               <Typography
                 variant="body"
-                fontFamily="mixed-lang"
               >
                 กลับหน้าแรก / Go Home
               </Typography>
@@ -123,7 +119,6 @@ export default function Error({ error, reset }: ErrorProps) {
           <div className="bg-gray-50 p-6 rounded-lg">
             <Typography
               variant="h4"
-              fontFamily="mixed-lang"
               className="text-gray-800 mb-3"
             >
               ต้องการความช่วยเหลือ? / Need Help?
@@ -131,7 +126,6 @@ export default function Error({ error, reset }: ErrorProps) {
             
             <Typography
               variant="body"
-              fontFamily="mixed-lang"
               className="text-gray-600 mb-2"
             >
               หากปัญหายังคงอยู่ กรุณาติดต่อเราที่:
