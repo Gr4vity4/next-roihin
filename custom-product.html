@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Beads on a Circle (click to add)</title>
+    <style>
+      :root {
+        --stage: 520px; /* overall stage size */
+        --guide: 380px; /* diameter of the guide (centers path) */
+        --guide-border: 4px; /* black circle width */
+        --line: 3px; /* red line width */
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+        background: #fafafa;
+        color: #222;
+      }
+      header {
+        padding: 18px 22px;
+        font-weight: 600;
+      }
+      .app {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 12px 22px 32px;
+        display: grid;
+        gap: 28px;
+        grid-template-columns: minmax(420px, 1fr) 400px;
+      }
+
+      /* ====== Stage / Guide ====== */
+      .stage {
+        position: relative;
+        width: var(--stage);
+        height: var(--stage);
+        max-width: 90vw;
+        aspect-ratio: 1/1;
+        background: white;
+        border-radius: 24px;
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
+        overflow: hidden;
+      }
+      .guide {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+      }
+      .guide__ring {
+        position: absolute;
+        width: var(--guide);
+        height: var(--guide);
+        border-radius: 50%;
+        border: var(--guide-border) solid #0a0a0a;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+      }
+      .guide__line {
+        position: absolute;
+        top: calc(50% - var(--guide) / 2);
+        bottom: calc(50% - var(--guide) / 2);
+        left: 50%;
+        width: var(--line);
+        transform: translateX(-50%);
+        background: #ff2b2b;
+        border-radius: 2px;
+        z-index: 4;
+        pointer-events: none;
+      }
+      .beads-layer {
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+        pointer-events: none;
+      }
+      .bead {
+        position: absolute;
+        border-radius: 50%;
+        box-shadow: inset 0 10px 18px rgba(255, 255, 255, 0.45),
+          inset 0 -10px 22px rgba(0, 0, 0, 0.25), 0 2px 6px rgba(0, 0, 0, 0.2);
+        transition: top 0.35s ease, left 0.35s ease, transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+        transform: scale(0.6);
+      }
+      .bead.show {
+        transform: scale(1);
+      }
+
+      /* ====== Controls ====== */
+      .panel {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
+        padding: 16px;
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 14px;
+      }
+      .btn {
+        border: 1px solid #ddd;
+        background: #fff;
+        padding: 8px 12px;
+        border-radius: 10px;
+        cursor: pointer;
+      }
+      .btn:hover {
+        background: #f6f6f6;
+      }
+      .tray {
+        display: grid;
+        grid-template-columns: repeat(8, 44px);
+        gap: 10px;
+      }
+      .swatch {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        cursor: pointer;
+        border: 1px solid #dcdcdc;
+        box-shadow: inset 0 10px 16px rgba(255, 255, 255, 0.5),
+          inset 0 -10px 18px rgba(0, 0, 0, 0.22);
+      }
+      .swatch:active {
+        transform: scale(0.95);
+      }
+
+      /* Some gemstone-like fills */
+      .gem-purple {
+        background: radial-gradient(circle at 30% 25%, #c7b1db, #6f4aa0 55%, #402c67);
+      }
+      .gem-amethyst {
+        background: radial-gradient(circle at 35% 30%, #e4d8ff, #9e7ed6 55%, #5e3f9d);
+      }
+      .gem-rose {
+        background: radial-gradient(circle at 40% 35%, #ffe8f1, #f6b8c7 60%, #d37892);
+      }
+      .gem-lapis {
+        background: radial-gradient(circle at 50% 35%, #b0c8ff, #4571c0 58%, #1f3e7a);
+      }
+      .gem-emerald {
+        background: radial-gradient(circle at 40% 35%, #c1f1d5, #2e9a6b 58%, #0f6a43);
+      }
+      .gem-amber {
+        background: radial-gradient(circle at 40% 35%, #fff2b8, #f3b037 60%, #b56b07);
+      }
+      .gem-citrine {
+        background: radial-gradient(circle at 45% 35%, #fff0a4, #f9cf54 60%, #c4971d);
+      }
+      .gem-onyx {
+        background: radial-gradient(circle at 35% 28%, #808080, #343434 60%, #141414);
+      }
+      .gem-quartz {
+        background: radial-gradient(circle at 42% 35%, #ffffff, #e6eef2 60%, #b7c3cc);
+      }
+      .gem-sky {
+        background: radial-gradient(circle at 45% 35%, #e8f7ff, #88c8f0 60%, #3d87c2);
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      Click a bead to add it to the bracelet. First goes to the bottom, then each new bead goes to
+      the left.
+    </header>
+
+    <main class="app">
+      <!-- Stage -->
+      <section class="stage" id="stage">
+        <div class="guide">
+          <div class="guide__ring" id="ring"></div>
+          <div class="guide__line"></div>
+        </div>
+        <div class="beads-layer" id="beadsLayer" aria-hidden="true"></div>
+      </section>
+
+      <!-- Controls -->
+      <aside class="panel">
+        <div class="row">
+          <label for="size">Bead size (mm):</label>
+          <input id="size" type="range" min="6" max="12" step="2" value="10" />
+          <output id="sizeOut" for="size">10mm</output>
+        </div>
+
+        <div class="row" style="justify-content: space-between">
+          <button class="btn" id="undoBtn">Undo</button>
+          <button class="btn" id="clearBtn">Clear</button>
+        </div>
+
+        <p style="margin: 0.5rem 0 0.75rem; font-weight: 600">Bead tray</p>
+        <div class="tray" id="tray">
+          <div class="swatch gem-purple" data-name="Purple" title="Purple"></div>
+          <div class="swatch gem-amethyst" data-name="Amethyst" title="Amethyst"></div>
+          <div class="swatch gem-rose" data-name="Rose" title="Rose"></div>
+          <div class="swatch gem-lapis" data-name="Lapis" title="Lapis"></div>
+          <div class="swatch gem-sky" data-name="Sky" title="Sky"></div>
+          <div class="swatch gem-emerald" data-name="Emerald" title="Emerald"></div>
+          <div class="swatch gem-citrine" data-name="Citrine" title="Citrine"></div>
+          <div class="swatch gem-amber" data-name="Amber" title="Amber"></div>
+          <div class="swatch gem-onyx" data-name="Onyx" title="Onyx"></div>
+          <div class="swatch gem-quartz" data-name="Quartz" title="Quartz"></div>
+          <!-- add more swatches if you like -->
+        </div>
+      </aside>
+    </main>
+
+    <script>
+      ;(() => {
+        const stage = document.getElementById('stage')
+        const ring = document.getElementById('ring')
+        const beadsLayer = document.getElementById('beadsLayer')
+        const tray = document.getElementById('tray')
+        const sizeInput = document.getElementById('size')
+        const sizeOut = document.getElementById('sizeOut')
+        const undoBtn = document.getElementById('undoBtn')
+        const clearBtn = document.getElementById('clearBtn')
+
+        // Visual scale: px per mm (same as before)
+        const mmToPx = (mm) => mm * 3.4
+
+        // Tiny visual breathing room between beads (px)
+        const GAP_PX = 1.0
+
+        // Numerical tolerance (radians) to absorb rounding
+        const EPS = 0.002
+
+        // Geometry/state
+        let beads = [] // { el, r, theta }
+        const START = Math.PI / 2 // bottom
+        let thetaNext // last placed bead's theta (start from bottom)
+        let lastRadius = 0 // radius of last bead (px)
+        let cx, cy, R // circle center & radius for bead centers
+
+        function computeGeometry() {
+          const s = stage.getBoundingClientRect()
+          const rr = ring.getBoundingClientRect()
+          cx = s.width / 2
+          cy = s.height / 2
+          R = rr.width / 2
+        }
+        computeGeometry()
+        addEventListener('resize', computeGeometry)
+
+        function resetLayout() {
+          beads.forEach((b) => b.el.remove())
+          beads = []
+          thetaNext = START
+          lastRadius = 0
+        }
+        resetLayout()
+
+        sizeInput.addEventListener('input', () => {
+          sizeOut.value = `${sizeInput.value}mm`
+        })
+
+        tray.addEventListener('click', (e) => {
+          const sw = e.target.closest('.swatch')
+          if (!sw) return
+          addBead(getComputedStyle(sw).backgroundImage)
+        })
+
+        undoBtn.addEventListener('click', () => {
+          const removed = beads.pop()
+          if (!removed) return
+          removed.el.remove()
+          if (beads.length === 0) {
+            thetaNext = START
+            lastRadius = 0
+          } else {
+            thetaNext = beads[beads.length - 1].theta
+            lastRadius = beads[beads.length - 1].r
+          }
+        })
+
+        clearBtn.addEventListener('click', resetLayout)
+
+        // --- math helpers ---
+        const clamp01m = (x) => Math.min(0.999999, Math.max(0, x))
+        function deltaTheta(rA, rB) {
+          // angular spacing between adjacent bead centers for radii rA, rB
+          const ratio = clamp01m((rA + rB + GAP_PX) / (2 * R))
+          return 2 * Math.asin(ratio)
+        }
+        function remainingArc() {
+          // how much angle is left until we loop back to the start angle
+          return START + 2 * Math.PI - thetaNext
+        }
+        function canPlaceWithRadius(rNext) {
+          if (beads.length === 0) return true
+          const needBetweenPrevAndNext = deltaTheta(lastRadius, rNext)
+          const rFirst = beads[0].r
+          const needNextToFirst = deltaTheta(rNext, rFirst)
+          return remainingArc() >= needBetweenPrevAndNext + needNextToFirst - EPS
+        }
+        function nudgeFull() {
+          stage.animate(
+            [
+              { transform: 'translateX(0)' },
+              { transform: 'translateX(-6px)' },
+              { transform: 'translateX(6px)' },
+              { transform: 'translateX(0)' },
+            ],
+            { duration: 240, easing: 'ease-out' },
+          )
+        }
+        // --------------------
+
+        function addBead(backgroundImage) {
+          const mm = Number(sizeInput.value)
+          const d = mmToPx(mm)
+          const r = d / 2
+
+          // Hard stop if it won't fit
+          if (!canPlaceWithRadius(r)) {
+            nudgeFull()
+            return
+          }
+
+          // Place using exact chord spacing
+          const dTheta = beads.length === 0 ? 0 : deltaTheta(lastRadius, r)
+          const theta = beads.length === 0 ? START : thetaNext + dTheta
+
+          const el = document.createElement('div')
+          el.className = 'bead'
+          el.style.width = d + 'px'
+          el.style.height = d + 'px'
+          el.style.backgroundImage = backgroundImage
+          el.style.left = cx + R * Math.cos(theta) - r + 'px'
+          el.style.top = cy + R * Math.sin(theta) - r + 'px'
+          beadsLayer.appendChild(el)
+          requestAnimationFrame(() => el.classList.add('show'))
+
+          beads.push({ el, r, theta })
+          thetaNext = theta
+          lastRadius = r
+        }
+      })()
+    </script>
+  </body>
+</html>
