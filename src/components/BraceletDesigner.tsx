@@ -11,18 +11,22 @@ import {
 import { ArrowLeft, Check, RefreshCw } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
+type BeadShape = 'circle' | 'square' | 'triangle'
+
 interface Bead {
   id: string
   el: HTMLDivElement | null
   r: number
   theta: number
   backgroundImage: string
+  shape: BeadShape
 }
 
 interface BeadStyle {
   name: string
   className: string
   gradient: string
+  shape?: BeadShape
 }
 
 const beadStyles: BeadStyle[] = [
@@ -75,6 +79,74 @@ const beadStyles: BeadStyle[] = [
     name: 'Quartz',
     className: 'gem-quartz',
     gradient: 'radial-gradient(circle at 42% 35%, #ffffff, #e6eef2 60%, #b7c3cc)',
+  },
+]
+
+// Charm styles (square beads) - ชาร์ม
+const charmStyles: BeadStyle[] = [
+  {
+    name: 'Gold Charm',
+    className: 'charm-gold',
+    gradient: 'linear-gradient(135deg, #ffd700, #ffed4e, #c5a200)',
+    shape: 'square' as BeadShape,
+  },
+  {
+    name: 'Silver Charm',
+    className: 'charm-silver',
+    gradient: 'linear-gradient(135deg, #e8e8e8, #ffffff, #a8a8a8)',
+    shape: 'square' as BeadShape,
+  },
+  {
+    name: 'Rose Gold Charm',
+    className: 'charm-rose-gold',
+    gradient: 'linear-gradient(135deg, #e8b4b8, #ffc0cb, #b76e79)',
+    shape: 'square' as BeadShape,
+  },
+  {
+    name: 'Crystal Charm',
+    className: 'charm-crystal',
+    gradient: 'linear-gradient(135deg, #ffffff, #e6f3ff, #b3d9ff)',
+    shape: 'square' as BeadShape,
+  },
+  {
+    name: 'Black Charm',
+    className: 'charm-black',
+    gradient: 'linear-gradient(135deg, #2c2c2c, #4a4a4a, #1a1a1a)',
+    shape: 'square' as BeadShape,
+  },
+]
+
+// Spacer/Pendant styles (triangle beads) - ตัวคั่น/จี้
+const spacerStyles: BeadStyle[] = [
+  {
+    name: 'Gold Spacer',
+    className: 'spacer-gold',
+    gradient: 'conic-gradient(from 45deg, #ffd700, #ffed4e, #c5a200, #ffd700)',
+    shape: 'triangle' as BeadShape,
+  },
+  {
+    name: 'Silver Spacer',
+    className: 'spacer-silver',
+    gradient: 'conic-gradient(from 45deg, #e8e8e8, #ffffff, #a8a8a8, #e8e8e8)',
+    shape: 'triangle' as BeadShape,
+  },
+  {
+    name: 'Diamond Spacer',
+    className: 'spacer-diamond',
+    gradient: 'conic-gradient(from 45deg, #ffffff, #f0f8ff, #e6f2ff, #ffffff)',
+    shape: 'triangle' as BeadShape,
+  },
+  {
+    name: 'Ruby Spacer',
+    className: 'spacer-ruby',
+    gradient: 'conic-gradient(from 45deg, #e0115f, #ff69b4, #8b0020, #e0115f)',
+    shape: 'triangle' as BeadShape,
+  },
+  {
+    name: 'Sapphire Spacer',
+    className: 'spacer-sapphire',
+    gradient: 'conic-gradient(from 45deg, #0f52ba, #6495ed, #002366, #0f52ba)',
+    shape: 'triangle' as BeadShape,
   },
 ]
 
@@ -161,7 +233,7 @@ export default function BraceletDesigner() {
     )
   }
 
-  const addBead = (backgroundImage: string) => {
+  const addBead = (backgroundImage: string, shape: BeadShape = 'circle') => {
     const d = mmToPx(beadSize)
     const r = d / 2
 
@@ -182,6 +254,15 @@ export default function BraceletDesigner() {
     el.style.backgroundImage = backgroundImage
     el.style.left = geometryRef.current.cx + geometryRef.current.R * Math.cos(theta) - r + 'px'
     el.style.top = geometryRef.current.cy + geometryRef.current.R * Math.sin(theta) - r + 'px'
+    
+    // Apply shape-specific styles
+    if (shape === 'square') {
+      el.style.borderRadius = '15%'
+    } else if (shape === 'triangle') {
+      el.style.clipPath = 'polygon(50% 0%, 0% 100%, 100% 100%)'
+    } else {
+      el.style.borderRadius = '50%'
+    }
 
     if (beadsLayerRef.current) {
       beadsLayerRef.current.appendChild(el)
@@ -194,6 +275,7 @@ export default function BraceletDesigner() {
       r,
       theta,
       backgroundImage,
+      shape,
     }
 
     setBeads((prev) => [...prev, newBead])
@@ -319,15 +401,46 @@ export default function BraceletDesigner() {
         <div className="grid grid-cols-12 w-full mt-10 mb-20">
           <div className="col-span-12 md:col-span-6">
             <p className="mb-3 font-semibold">หิน</p>
-            <div className="grid grid-cols-8 gap-2.5">
+            <div className="grid grid-cols-8 gap-2.5 mb-6">
               {beadStyles.map((style) => (
                 <button
                   key={style.name}
                   className="w-11 h-11 rounded-full cursor-pointer border border-gray-300 shadow-[inset_0_10px_16px_rgba(255,255,255,0.5),inset_0_-10px_18px_rgba(0,0,0,0.22)] active:scale-95 transition-transform"
                   style={{ background: style.gradient }}
                   title={style.name}
-                  onClick={() => addBead(style.gradient)}
+                  onClick={() => addBead(style.gradient, 'circle')}
                   aria-label={`Add ${style.name} bead`}
+                />
+              ))}
+            </div>
+            
+            <p className="mb-3 font-semibold">ชาร์ม</p>
+            <div className="grid grid-cols-8 gap-2.5 mb-6">
+              {charmStyles.map((style) => (
+                <button
+                  key={style.name}
+                  className="w-11 h-11 rounded-[15%] cursor-pointer border border-gray-300 shadow-[inset_0_10px_16px_rgba(255,255,255,0.5),inset_0_-10px_18px_rgba(0,0,0,0.22)] active:scale-95 transition-transform"
+                  style={{ background: style.gradient }}
+                  title={style.name}
+                  onClick={() => addBead(style.gradient, style.shape || 'square')}
+                  aria-label={`Add ${style.name} charm`}
+                />
+              ))}
+            </div>
+            
+            <p className="mb-3 font-semibold">ตัวคั่น/จี้</p>
+            <div className="grid grid-cols-8 gap-2.5">
+              {spacerStyles.map((style) => (
+                <button
+                  key={style.name}
+                  className="w-11 h-11 cursor-pointer border border-gray-300 shadow-[inset_0_10px_16px_rgba(255,255,255,0.5),inset_0_-10px_18px_rgba(0,0,0,0.22)] active:scale-95 transition-transform"
+                  style={{ 
+                    background: style.gradient,
+                    clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)'
+                  }}
+                  title={style.name}
+                  onClick={() => addBead(style.gradient, style.shape || 'triangle')}
+                  aria-label={`Add ${style.name} spacer`}
                 />
               ))}
             </div>
