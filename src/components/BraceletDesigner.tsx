@@ -155,6 +155,7 @@ export default function BraceletDesigner() {
   const [beadSize, setBeadSize] = useState(10)
   const [wristLength, setWristLength] = useState('17')
   const [beads, setBeads] = useState<Bead[]>([])
+  const [lastSelectedBead, setLastSelectedBead] = useState<BeadStyle | null>(null)
   const stageRef = useRef<HTMLDivElement>(null)
   const ringRef = useRef<HTMLDivElement>(null)
   const beadsLayerRef = useRef<HTMLDivElement>(null)
@@ -234,13 +235,18 @@ export default function BraceletDesigner() {
     )
   }
 
-  const addBead = (backgroundImage: string, shape: BeadShape = 'circle') => {
+  const addBead = (backgroundImage: string, shape: BeadShape = 'circle', beadStyle?: BeadStyle) => {
     const d = mmToPx(beadSize)
     const r = d / 2
 
     if (!canPlaceWithRadius(r)) {
       nudgeFull()
       return
+    }
+
+    // Track the last selected bead
+    if (beadStyle) {
+      setLastSelectedBead(beadStyle)
     }
 
     const lastRadius = getLastRadius()
@@ -416,7 +422,7 @@ export default function BraceletDesigner() {
                       className="w-11 h-11 rounded-full cursor-pointer border border-gray-300 shadow-[inset_0_10px_16px_rgba(255,255,255,0.5),inset_0_-10px_18px_rgba(0,0,0,0.22)] active:scale-95 transition-transform"
                       style={{ background: style.gradient }}
                       title={style.name}
-                      onClick={() => addBead(style.gradient, 'circle')}
+                      onClick={() => addBead(style.gradient, 'circle', style)}
                       aria-label={`Add ${style.name} bead`}
                     />
                   ))}
@@ -431,7 +437,7 @@ export default function BraceletDesigner() {
                       className="w-11 h-11 rounded-[15%] cursor-pointer border border-gray-300 shadow-[inset_0_10px_16px_rgba(255,255,255,0.5),inset_0_-10px_18px_rgba(0,0,0,0.22)] active:scale-95 transition-transform"
                       style={{ background: style.gradient }}
                       title={style.name}
-                      onClick={() => addBead(style.gradient, style.shape || 'square')}
+                      onClick={() => addBead(style.gradient, style.shape || 'square', style)}
                       aria-label={`Add ${style.name} charm`}
                     />
                   ))}
@@ -449,7 +455,7 @@ export default function BraceletDesigner() {
                         clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)',
                       }}
                       title={style.name}
-                      onClick={() => addBead(style.gradient, style.shape || 'triangle')}
+                      onClick={() => addBead(style.gradient, style.shape || 'triangle', style)}
                       aria-label={`Add ${style.name} spacer`}
                     />
                   ))}
@@ -460,42 +466,120 @@ export default function BraceletDesigner() {
           <div className="col-span-12 md:col-span-6">
             <div className="grid grid-cols-12">
               {/* preview single bead image */}
-              <div className="col-span-full md:col-span-2">x</div>
+              <div className="col-span-full md:col-span-2 flex items-center justify-center">
+                {lastSelectedBead ? (
+                  <div
+                    className={`w-24 h-24 ${
+                      lastSelectedBead.shape === 'square'
+                        ? 'rounded-lg'
+                        : lastSelectedBead.shape === 'triangle'
+                        ? 'clip-triangle'
+                        : 'rounded-full'
+                    } shadow-lg`}
+                    style={{
+                      backgroundImage: lastSelectedBead.gradient,
+                    }}
+                  />
+                ) : (
+                  <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center text-gray-400">
+                    <span className="text-sm">No bead selected</span>
+                  </div>
+                )}
+              </div>
               {/* preview bead detail */}
               <div className="col-span-full md:col-span-10 flex flex-col gap-6">
-                {/* bead header */}
-                <div className="flex flex-col gap-2">
-                  <span>AMethyst</span>
-                  <span>ความสงบ - ปัญญา - การปกป้อง</span>
-                </div>
-                {/* bead description */}
-                <div>
-                  อะเมทิสต์ (Amethyst) คือหินแห่งความวงบและปัญญาที่ช่วยปรับสมดุลจิตใจให้มั่นคง
-                  ลดความฟุ้งซ่าน ความโกรธ และความเครียด พร้อมทั้งเสริมสมาธิให้จิตนั่งลึก
-                  เชื่อมต่อกับพนังานสูงและสัญชาตญาณภายในอย่างชัดเจน
-                  เป็นเกราะป้องกันพลังงานด้านลบและสิ่งที่รบกวนจิตวิญญาณ
-                  อีกทั้งยังช่วยเปิดประตูสู่การตื่นรู้ทางจิตวิญญาณ
-                  ทำให้ผู้ครอบครองมองเห็นความจริงของเหตุการณ์ด้วยใจที่สงบและตัดสินใจได้อย่างชาญฉลาด
-                </div>
-                {/* bead footer */}
-                <div className="flex flex-col gap-2">
-                  <div className="flex gap-2">
-                    <span className="font-bold text-[#006039]">ธาตุพลังงาน</span>
-                    <span>ลม / วิญญาณ</span>
+                {lastSelectedBead ? (
+                  <>
+                    {/* bead header */}
+                    <div className="flex flex-col gap-2">
+                      <span className="text-xl font-semibold">{lastSelectedBead.name}</span>
+                      <span className="text-gray-600">
+                        {lastSelectedBead.shape === 'triangle'
+                          ? 'ตัวคั่น / Spacer'
+                          : lastSelectedBead.shape === 'square'
+                          ? 'ชาร์ม / Charm'
+                          : 'หินมงคล / Gemstone'}
+                      </span>
+                    </div>
+                    {/* bead description */}
+                    <div className="text-gray-700">
+                      {lastSelectedBead.name.includes('Amethyst') && (
+                        <>
+                          อะเมทิสต์ (Amethyst) คือหินแห่งความสงบและปัญญาที่ช่วยปรับสมดุลจิตใจให้มั่นคง
+                          ลดความฟุ้งซ่าน ความโกรธ และความเครียด พร้อมทั้งเสริมสมาธิให้จิตนิ่งลึก
+                          เชื่อมต่อกับพลังงานสูงและสัญชาตญาณภายในอย่างชัดเจน
+                        </>
+                      )}
+                      {lastSelectedBead.name.includes('Turquoise') && (
+                        <>
+                          เทอร์ควอยส์ (Turquoise) หินแห่งการปกป้องและการสื่อสาร 
+                          ช่วยเสริมความมั่นใจในการแสดงออก พูดจาด้วยความจริงใจ
+                          และสร้างความสมดุลระหว่างจิตใจและอารมณ์
+                        </>
+                      )}
+                      {lastSelectedBead.name.includes('Rose Quartz') && (
+                        <>
+                          โรสควอตซ์ (Rose Quartz) หินแห่งความรักและความเมตตา
+                          ช่วยเปิดหัวใจให้พร้อมรับและให้ความรัก ทั้งต่อตนเองและผู้อื่น
+                          สร้างความสงบและความอ่อนโยนในจิตใจ
+                        </>
+                      )}
+                      {lastSelectedBead.name.includes('Onyx') && (
+                        <>
+                          โอนิกซ์ (Onyx) หินแห่งความแข็งแกร่งและการปกป้อง
+                          ช่วยเสริมสร้างความมั่นคงทางจิตใจ ความอดทน และความมุ่งมั่น
+                          ป้องกันพลังงานลบและสร้างความสมดุลในชีวิต
+                        </>
+                      )}
+                      {lastSelectedBead.name.includes('Lapis') && (
+                        <>
+                          ลาพิส ลาซูลี (Lapis Lazuli) หินแห่งปัญญาและความจริง
+                          ช่วยเปิดจักระคอหอย เสริมการสื่อสารด้วยความจริงใจ
+                          และกระตุ้นการตื่นรู้ทางจิตวิญญาณ
+                        </>
+                      )}
+                      {lastSelectedBead.name.includes('Jade') && (
+                        <>
+                          หยก (Jade) หินแห่งโชคลาภและความสมบูรณ์
+                          ช่วยดึงดูดความมั่งคั่ง ความสำเร็จ และโอกาสดีๆ เข้ามาในชีวิต
+                          พร้อมทั้งสร้างความสงบและความสมดุลในจิตใจ
+                        </>
+                      )}
+                      {lastSelectedBead.name.includes('Tiger') && (
+                        <>
+                          ตาเสือ (Tiger Eye) หินแห่งความกล้าหาญและการปกป้อง
+                          ช่วยเสริมความมั่นใจ ความกล้าตัดสินใจ และสัญชาตญาณที่แม่นยำ
+                          ป้องกันภัยอันตรายและดึงดูดโชคลาภ
+                        </>
+                      )}
+                      {lastSelectedBead.name.includes('Quartz') && !lastSelectedBead.name.includes('Rose') && (
+                        <>
+                          ควอตซ์ใส (Clear Quartz) หินแห่งการขยายพลังงาน
+                          ช่วยเพิ่มพลังของหินอื่นๆ ทำให้จิตใจใสสะอาด
+                          และเสริมสร้างการรับรู้ในระดับที่สูงขึ้น
+                        </>
+                      )}
+                      {(lastSelectedBead.name.includes('Gold') || 
+                        lastSelectedBead.name.includes('Silver') || 
+                        lastSelectedBead.name.includes('Crystal') ||
+                        lastSelectedBead.name.includes('Black') ||
+                        lastSelectedBead.name.includes('Diamond') ||
+                        lastSelectedBead.name.includes('Ruby') ||
+                        lastSelectedBead.name.includes('Sapphire')) && (
+                        <>
+                          {lastSelectedBead.shape === 'square' 
+                            ? 'ชาร์มตกแต่งที่เพิ่มความหรูหราและเอกลักษณ์ให้กับสร้อยข้อมือของคุณ' 
+                            : 'ตัวคั่นที่ช่วยเพิ่มความสวยงามและแบ่งจังหวะให้กับการจัดเรียงหินมงคล'}
+                        </>
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-full text-gray-400">
+                    <span className="text-lg">เลือกหินมงคลเพื่อดูรายละเอียด</span>
+                    <span className="text-sm mt-2">Select a bead to see details</span>
                   </div>
-                  <div className="flex gap-2">
-                    <span className="font-bold text-[#006039]">จักระที่เชื่อมโยง</span>
-                    <span>จักระตาที่สาม (Third Eye) และจักระมงกุฏ (Crown)</span>
-                  </div>
-                  <div className="flex gap-2">
-                    <span className="font-bold text-[#006039]">ลัคนาราศี</span>
-                    <span>กุมภ์ (Aquarius), มีน (Pisces), ธนู (Sagittarius), กันย์ (Virgo)</span>
-                  </div>
-                  <div className="flex gap-2">
-                    <span className="font-bold text-[#006039]">ดวงดาวสัมพันธ์</span>
-                    <span>ดาวพฤหัสบดี (Jupiter) และดาวเนปจูน (Neptune)</span>
-                  </div>
-                </div>
+                )}
               </div>
             </div>
           </div>
