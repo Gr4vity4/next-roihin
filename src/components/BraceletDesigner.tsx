@@ -167,6 +167,37 @@ export default function BraceletDesigner() {
     R: 190,
   })
 
+  // Pricing configuration
+  const SHAPE_PRICES = {
+    circle: 20,    // Circle shape: 20 baht per bead
+    square: 30,    // Square shape: 30 baht per bead
+    triangle: 40,  // Triangle shape: 40 baht per bead
+  }
+
+  const SIZE_PRICES = {
+    6: 5,    // 6mm: 5 baht
+    8: 10,   // 8mm: 10 baht
+    10: 15,  // 10mm: 15 baht
+    12: 20,  // 12mm: 20 baht
+  }
+
+  const BASE_PRICE = 100 // Base price for wrist length 17-20 cm
+
+  // Calculate total price
+  const calculateTotalPrice = () => {
+    let totalPrice = BASE_PRICE
+    
+    // Add size base price
+    totalPrice += SIZE_PRICES[beadSize as keyof typeof SIZE_PRICES] || 0
+    
+    // Add price for each bead based on shape
+    beads.forEach(bead => {
+      totalPrice += SHAPE_PRICES[bead.shape] || 0
+    })
+    
+    return totalPrice
+  }
+
   const mmToPx = (mm: number) => mm * 3.4
   const GAP_PX = 1.0
   const EPS = 0.002
@@ -343,8 +374,8 @@ export default function BraceletDesigner() {
         </div>
         {/* Summary Price */}
         <div className="col-span-12 md:col-span-4 flex justify-center flex-col">
-          <span className="text-[#006039] text-lg">ราคา</span>
-          <span>x</span>
+          <span className="text-[#006039] text-lg">ราคารวม</span>
+          <span className="text-2xl font-bold">฿{calculateTotalPrice()}</span>
         </div>
       </div>
 
