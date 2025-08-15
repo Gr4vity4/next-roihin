@@ -286,7 +286,6 @@ export default function BraceletDesigner() {
                 ref={ringRef}
                 className="absolute w-[380px] h-[380px] rounded-full border-[4px] border-black left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
               />
-              {/* <div className="absolute top-[calc(50%-190px)] bottom-[calc(50%-190px)] left-1/2 w-[3px] -translate-x-1/2 bg-red-500 rounded-sm z-[4] pointer-events-none" /> */}
             </div>
             <div
               ref={beadsLayerRef}
@@ -318,40 +317,7 @@ export default function BraceletDesigner() {
         </div>
 
         <div className="grid grid-cols-12 w-full mt-10 mb-20">
-          {/* Controls */}
           <div className="col-span-12 md:col-span-6">
-            {/* <div className="flex items-center gap-3 flex-wrap mb-4">
-            <label htmlFor="size" className="font-medium">
-              Bead size (mm):
-            </label>
-            <Select value={String(beadSize)} onValueChange={(value) => setBeadSize(Number(value))}>
-              <SelectTrigger className="w-[100px]">
-                <SelectValue placeholder="Select size" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="6">6mm</SelectItem>
-                <SelectItem value="8">8mm</SelectItem>
-                <SelectItem value="10">10mm</SelectItem>
-                <SelectItem value="12">12mm</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="flex justify-between mb-4">
-            <button
-              onClick={undoBead}
-              className="border border-gray-300 bg-white px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors"
-            >
-              Undo
-            </button>
-            <button
-              onClick={clearBeads}
-              className="border border-gray-300 bg-white px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors"
-            >
-              Clear
-            </button>
-          </div> */}
-
             <p className="mb-3 font-semibold">หิน</p>
             <div className="grid grid-cols-8 gap-2.5">
               {beadStyles.map((style) => (
