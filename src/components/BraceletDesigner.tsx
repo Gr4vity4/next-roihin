@@ -8,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ArrowLeft, Check, RefreshCw } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
@@ -254,7 +255,7 @@ export default function BraceletDesigner() {
     el.style.backgroundImage = backgroundImage
     el.style.left = geometryRef.current.cx + geometryRef.current.R * Math.cos(theta) - r + 'px'
     el.style.top = geometryRef.current.cy + geometryRef.current.R * Math.sin(theta) - r + 'px'
-    
+
     // Apply shape-specific styles
     if (shape === 'square') {
       el.style.borderRadius = '15%'
@@ -398,52 +399,63 @@ export default function BraceletDesigner() {
           </div>
         </div>
 
-        <div className="grid grid-cols-12 w-full mt-10 mb-20">
+        <div className="grid grid-cols-12 w-full mt-10 mb-20 gap-8">
           <div className="col-span-12 md:col-span-6">
-            <p className="mb-3 font-semibold">หิน</p>
-            <div className="grid grid-cols-8 gap-2.5 mb-6">
-              {beadStyles.map((style) => (
-                <button
-                  key={style.name}
-                  className="w-11 h-11 rounded-full cursor-pointer border border-gray-300 shadow-[inset_0_10px_16px_rgba(255,255,255,0.5),inset_0_-10px_18px_rgba(0,0,0,0.22)] active:scale-95 transition-transform"
-                  style={{ background: style.gradient }}
-                  title={style.name}
-                  onClick={() => addBead(style.gradient, 'circle')}
-                  aria-label={`Add ${style.name} bead`}
-                />
-              ))}
-            </div>
-            
-            <p className="mb-3 font-semibold">ชาร์ม</p>
-            <div className="grid grid-cols-8 gap-2.5 mb-6">
-              {charmStyles.map((style) => (
-                <button
-                  key={style.name}
-                  className="w-11 h-11 rounded-[15%] cursor-pointer border border-gray-300 shadow-[inset_0_10px_16px_rgba(255,255,255,0.5),inset_0_-10px_18px_rgba(0,0,0,0.22)] active:scale-95 transition-transform"
-                  style={{ background: style.gradient }}
-                  title={style.name}
-                  onClick={() => addBead(style.gradient, style.shape || 'square')}
-                  aria-label={`Add ${style.name} charm`}
-                />
-              ))}
-            </div>
-            
-            <p className="mb-3 font-semibold">ตัวคั่น/จี้</p>
-            <div className="grid grid-cols-8 gap-2.5">
-              {spacerStyles.map((style) => (
-                <button
-                  key={style.name}
-                  className="w-11 h-11 cursor-pointer border border-gray-300 shadow-[inset_0_10px_16px_rgba(255,255,255,0.5),inset_0_-10px_18px_rgba(0,0,0,0.22)] active:scale-95 transition-transform"
-                  style={{ 
-                    background: style.gradient,
-                    clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)'
-                  }}
-                  title={style.name}
-                  onClick={() => addBead(style.gradient, style.shape || 'triangle')}
-                  aria-label={`Add ${style.name} spacer`}
-                />
-              ))}
-            </div>
+            <Tabs defaultValue="beads" className="w-full">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="beads">หิน</TabsTrigger>
+                <TabsTrigger value="charms">ชาร์ม</TabsTrigger>
+                <TabsTrigger value="spacers">ตัวคั่น/จี้</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="beads" className="mt-6">
+                <div className="grid grid-cols-8 gap-2.5">
+                  {beadStyles.map((style) => (
+                    <button
+                      key={style.name}
+                      className="w-11 h-11 rounded-full cursor-pointer border border-gray-300 shadow-[inset_0_10px_16px_rgba(255,255,255,0.5),inset_0_-10px_18px_rgba(0,0,0,0.22)] active:scale-95 transition-transform"
+                      style={{ background: style.gradient }}
+                      title={style.name}
+                      onClick={() => addBead(style.gradient, 'circle')}
+                      aria-label={`Add ${style.name} bead`}
+                    />
+                  ))}
+                </div>
+              </TabsContent>
+
+              <TabsContent value="charms" className="mt-6">
+                <div className="grid grid-cols-8 gap-2.5">
+                  {charmStyles.map((style) => (
+                    <button
+                      key={style.name}
+                      className="w-11 h-11 rounded-[15%] cursor-pointer border border-gray-300 shadow-[inset_0_10px_16px_rgba(255,255,255,0.5),inset_0_-10px_18px_rgba(0,0,0,0.22)] active:scale-95 transition-transform"
+                      style={{ background: style.gradient }}
+                      title={style.name}
+                      onClick={() => addBead(style.gradient, style.shape || 'square')}
+                      aria-label={`Add ${style.name} charm`}
+                    />
+                  ))}
+                </div>
+              </TabsContent>
+
+              <TabsContent value="spacers" className="mt-6">
+                <div className="grid grid-cols-8 gap-2.5">
+                  {spacerStyles.map((style) => (
+                    <button
+                      key={style.name}
+                      className="w-11 h-11 cursor-pointer border border-gray-300 shadow-[inset_0_10px_16px_rgba(255,255,255,0.5),inset_0_-10px_18px_rgba(0,0,0,0.22)] active:scale-95 transition-transform"
+                      style={{
+                        background: style.gradient,
+                        clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)',
+                      }}
+                      title={style.name}
+                      onClick={() => addBead(style.gradient, style.shape || 'triangle')}
+                      aria-label={`Add ${style.name} spacer`}
+                    />
+                  ))}
+                </div>
+              </TabsContent>
+            </Tabs>
           </div>
           <div className="col-span-12 md:col-span-6">
             <div className="grid grid-cols-12">
