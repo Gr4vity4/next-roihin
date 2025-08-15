@@ -1,5 +1,12 @@
 'use client'
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 interface Bead {
@@ -71,6 +78,7 @@ const beadStyles: BeadStyle[] = [
 
 export default function BraceletDesigner() {
   const [beadSize, setBeadSize] = useState(10)
+  const [wristLength, setWristLength] = useState('17')
   const [beads, setBeads] = useState<Bead[]>([])
   const stageRef = useRef<HTMLDivElement>(null)
   const ringRef = useRef<HTMLDivElement>(null)
@@ -189,35 +197,60 @@ export default function BraceletDesigner() {
     setBeads((prev) => [...prev, newBead])
   }
 
-  const undoBead = () => {
-    if (beads.length === 0) return
-
-    const lastBead = beads[beads.length - 1]
-    if (lastBead.el) {
-      lastBead.el.remove()
-    }
-
-    setBeads((prev) => prev.slice(0, -1))
-  }
-
-  const clearBeads = () => {
-    beads.forEach((bead) => {
-      if (bead.el) bead.el.remove()
-    })
-    setBeads([])
-  }
+  // Undo and clear functions - uncomment when UI buttons are needed
+  // const undoBead = () => {
+  //   if (beads.length === 0) return
+  //
+  //   const lastBead = beads[beads.length - 1]
+  //   if (lastBead.el) {
+  //     lastBead.el.remove()
+  //   }
+  //
+  //   setBeads((prev) => prev.slice(0, -1))
+  // }
+  //
+  // const clearBeads = () => {
+  //   beads.forEach((bead) => {
+  //     if (bead.el) bead.el.remove()
+  //   })
+  //   setBeads([])
+  // }
 
   return (
     <>
       <div className="container mx-auto border-2 border-red-300 min-h-32 grid grid-cols-12">
         <div className="col-span-12 md:col-span-4 flex justify-center flex-col">
           <span className="text-[#006039] text-lg">ความยาวรอบข้อมือ</span>
-          <span>x</span>
+          <Select value={wristLength} onValueChange={setWristLength}>
+            <SelectTrigger className="w-[100px]">
+              <SelectValue placeholder="Select length" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="15">15 cm</SelectItem>
+              <SelectItem value="16">16 cm</SelectItem>
+              <SelectItem value="17">17 cm</SelectItem>
+              <SelectItem value="18">18 cm</SelectItem>
+              <SelectItem value="19">19 cm</SelectItem>
+              <SelectItem value="20">20 cm</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
+        {/* Bead Size */}
         <div className="col-span-12 md:col-span-4 flex justify-center flex-col">
           <span className="text-[#006039] text-lg">ขนาดหิน</span>
-          <span>x</span>
+          <Select value={String(beadSize)} onValueChange={(value) => setBeadSize(Number(value))}>
+            <SelectTrigger className="w-[100px]">
+              <SelectValue placeholder="Select size" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="6">6 mm</SelectItem>
+              <SelectItem value="8">8 mm</SelectItem>
+              <SelectItem value="10">10 mm</SelectItem>
+              <SelectItem value="12">12 mm</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
+        {/* Summary Price */}
         <div className="col-span-12 md:col-span-4 flex justify-center flex-col">
           <span className="text-[#006039] text-lg">ราคา</span>
           <span>x</span>
@@ -239,45 +272,46 @@ export default function BraceletDesigner() {
         }
       `}</style>
 
-      <div className="max-w-[1100px] mx-auto px-6 pb-8 grid gap-7 lg:grid-cols-[minmax(420px,1fr)_400px]">
-        {/* Stage */}
-        <section
-          ref={stageRef}
-          className="relative w-[520px] h-[520px] max-w-[90vw] aspect-square bg-white rounded-3xl shadow-lg overflow-hidden"
-        >
-          <div className="absolute inset-0 grid place-items-center">
+      <div className="container mx-auto">
+        <div className="flex items-center justify-center">
+          {/* Stage */}
+          <section
+            ref={stageRef}
+            className="relative w-[520px] h-[520px] max-w-[90vw] aspect-square overflow-hidden"
+          >
+            <div className="absolute inset-0 grid place-items-center">
+              <div
+                ref={ringRef}
+                className="absolute w-[380px] h-[380px] rounded-full border-[4px] border-black left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+              />
+              {/* <div className="absolute top-[calc(50%-190px)] bottom-[calc(50%-190px)] left-1/2 w-[3px] -translate-x-1/2 bg-red-500 rounded-sm z-[4] pointer-events-none" /> */}
+            </div>
             <div
-              ref={ringRef}
-              className="absolute w-[380px] h-[380px] rounded-full border-[4px] border-black left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+              ref={beadsLayerRef}
+              className="absolute inset-0 z-[3] pointer-events-none"
+              aria-hidden="true"
             />
-            <div className="absolute top-[calc(50%-190px)] bottom-[calc(50%-190px)] left-1/2 w-[3px] -translate-x-1/2 bg-red-500 rounded-sm z-[4] pointer-events-none" />
-          </div>
-          <div
-            ref={beadsLayerRef}
-            className="absolute inset-0 z-[3] pointer-events-none"
-            aria-hidden="true"
-          />
-        </section>
+          </section>
+        </div>
 
-        {/* Controls */}
-        <aside className="bg-white rounded-2xl shadow-lg p-4">
-          <div className="flex items-center gap-3 flex-wrap mb-4">
+        <div className="grid grid-cols-12 border w-full">
+          {/* Controls */}
+          <div className="col-span-12 md:col-span-6 border">
+            {/* <div className="flex items-center gap-3 flex-wrap mb-4">
             <label htmlFor="size" className="font-medium">
               Bead size (mm):
             </label>
-            <input
-              id="size"
-              type="range"
-              min="6"
-              max="12"
-              step="2"
-              value={beadSize}
-              onChange={(e) => setBeadSize(Number(e.target.value))}
-              className="flex-1"
-            />
-            <output htmlFor="size" className="font-medium">
-              {beadSize}mm
-            </output>
+            <Select value={String(beadSize)} onValueChange={(value) => setBeadSize(Number(value))}>
+              <SelectTrigger className="w-[100px]">
+                <SelectValue placeholder="Select size" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="6">6mm</SelectItem>
+                <SelectItem value="8">8mm</SelectItem>
+                <SelectItem value="10">10mm</SelectItem>
+                <SelectItem value="12">12mm</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="flex justify-between mb-4">
@@ -293,22 +327,24 @@ export default function BraceletDesigner() {
             >
               Clear
             </button>
-          </div>
+          </div> */}
 
-          <p className="mb-3 font-semibold">Bead tray</p>
-          <div className="grid grid-cols-8 gap-2.5">
-            {beadStyles.map((style) => (
-              <button
-                key={style.name}
-                className="w-11 h-11 rounded-full cursor-pointer border border-gray-300 shadow-[inset_0_10px_16px_rgba(255,255,255,0.5),inset_0_-10px_18px_rgba(0,0,0,0.22)] active:scale-95 transition-transform"
-                style={{ background: style.gradient }}
-                title={style.name}
-                onClick={() => addBead(style.gradient)}
-                aria-label={`Add ${style.name} bead`}
-              />
-            ))}
+            <p className="mb-3 font-semibold">Bead tray</p>
+            <div className="grid grid-cols-8 gap-2.5">
+              {beadStyles.map((style) => (
+                <button
+                  key={style.name}
+                  className="w-11 h-11 rounded-full cursor-pointer border border-gray-300 shadow-[inset_0_10px_16px_rgba(255,255,255,0.5),inset_0_-10px_18px_rgba(0,0,0,0.22)] active:scale-95 transition-transform"
+                  style={{ background: style.gradient }}
+                  title={style.name}
+                  onClick={() => addBead(style.gradient)}
+                  aria-label={`Add ${style.name} bead`}
+                />
+              ))}
+            </div>
           </div>
-        </aside>
+          <div className="col-span-12 md:col-span-6 border">x</div>
+        </div>
       </div>
     </>
   )
