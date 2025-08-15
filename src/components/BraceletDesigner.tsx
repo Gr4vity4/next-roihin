@@ -343,7 +343,48 @@ export default function BraceletDesigner() {
               ))}
             </div>
           </div>
-          <div className="col-span-12 md:col-span-6 border">x</div>
+          <div className="col-span-12 md:col-span-6 border">
+            <div className="grid grid-cols-12">
+              {/* preview single bead image */}
+              <div className="col-span-full md:col-span-2">x</div>
+              {/* preview bead detail */}
+              <div className="col-span-full md:col-span-10 flex flex-col gap-6">
+                {/* bead header */}
+                <div className="flex flex-col gap-2">
+                  <span>AMethyst</span>
+                  <span>ความสงบ - ปัญญา - การปกป้อง</span>
+                </div>
+                {/* bead description */}
+                <div>
+                  อะเมทิสต์ (Amethyst) คือหินแห่งความวงบและปัญญาที่ช่วยปรับสมดุลจิตใจให้มั่นคง
+                  ลดความฟุ้งซ่าน ความโกรธ และความเครียด พร้อมทั้งเสริมสมาธิให้จิตนั่งลึก
+                  เชื่อมต่อกับพนังานสูงและสัญชาตญาณภายในอย่างชัดเจน
+                  เป็นเกราะป้องกันพลังงานด้านลบและสิ่งที่รบกวนจิตวิญญาณ
+                  อีกทั้งยังช่วยเปิดประตูสู่การตื่นรู้ทางจิตวิญญาณ
+                  ทำให้ผู้ครอบครองมองเห็นความจริงของเหตุการณ์ด้วยใจที่สงบและตัดสินใจได้อย่างชาญฉลาด
+                </div>
+                {/* bead footer */}
+                <div className="flex flex-col gap-2">
+                  <div className="flex gap-2">
+                    <span className="font-bold text-[#006039]">ธาตุพลังงาน</span>
+                    <span>ลม / วิญญาณ</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <span className="font-bold text-[#006039]">จักระที่เชื่อมโยง</span>
+                    <span>จักระตาที่สาม (Third Eye) และจักระมงกุฏ (Crown)</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <span className="font-bold text-[#006039]">ลัคนาราศี</span>
+                    <span>กุมภ์ (Aquarius), มีน (Pisces), ธนู (Sagittarius), กันย์ (Virgo)</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <span className="font-bold text-[#006039]">ดวงดาวสัมพันธ์</span>
+                    <span>ดาวพฤหัสบดี (Jupiter) และดาวเนปจูน (Neptune)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </>
