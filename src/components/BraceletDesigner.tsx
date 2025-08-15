@@ -1,5 +1,6 @@
 'use client'
 
+import Button from '@/components/Button'
 import {
   Select,
   SelectContent,
@@ -7,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { ArrowLeft, Check, RefreshCw } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 interface Bead {
@@ -198,27 +200,27 @@ export default function BraceletDesigner() {
   }
 
   // Undo and clear functions - uncomment when UI buttons are needed
-  // const undoBead = () => {
-  //   if (beads.length === 0) return
-  //
-  //   const lastBead = beads[beads.length - 1]
-  //   if (lastBead.el) {
-  //     lastBead.el.remove()
-  //   }
-  //
-  //   setBeads((prev) => prev.slice(0, -1))
-  // }
-  //
-  // const clearBeads = () => {
-  //   beads.forEach((bead) => {
-  //     if (bead.el) bead.el.remove()
-  //   })
-  //   setBeads([])
-  // }
+  const undoBead = () => {
+    if (beads.length === 0) return
+
+    const lastBead = beads[beads.length - 1]
+    if (lastBead.el) {
+      lastBead.el.remove()
+    }
+
+    setBeads((prev) => prev.slice(0, -1))
+  }
+
+  const clearBeads = () => {
+    beads.forEach((bead) => {
+      if (bead.el) bead.el.remove()
+    })
+    setBeads([])
+  }
 
   return (
     <>
-      <div className="container mx-auto border-2 border-red-300 min-h-32 grid grid-cols-12">
+      <div className="container mx-auto min-h-32 grid grid-cols-12">
         <div className="col-span-12 md:col-span-4 flex justify-center flex-col">
           <span className="text-[#006039] text-lg">ความยาวรอบข้อมือ</span>
           <Select value={wristLength} onValueChange={setWristLength}>
@@ -273,7 +275,7 @@ export default function BraceletDesigner() {
       `}</style>
 
       <div className="container mx-auto">
-        <div className="flex items-center justify-center">
+        <div className="flex items-center justify-center flex-col">
           {/* Stage */}
           <section
             ref={stageRef}
@@ -292,11 +294,32 @@ export default function BraceletDesigner() {
               aria-hidden="true"
             />
           </section>
+          <div className="flex gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              leftIcon={<ArrowLeft className="w-4 h-4" />}
+              onClick={undoBead}
+            >
+              ย้อนกลับ
+            </Button>
+            <Button variant="ghost" size="sm" leftIcon={<Check className="w-4 h-4" />}>
+              ยืนยันแบบ
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              leftIcon={<RefreshCw className="w-4 h-4" />}
+              onClick={clearBeads}
+            >
+              เริ่มใหม่
+            </Button>
+          </div>
         </div>
 
-        <div className="grid grid-cols-12 border w-full">
+        <div className="grid grid-cols-12 w-full mt-10 mb-20">
           {/* Controls */}
-          <div className="col-span-12 md:col-span-6 border">
+          <div className="col-span-12 md:col-span-6">
             {/* <div className="flex items-center gap-3 flex-wrap mb-4">
             <label htmlFor="size" className="font-medium">
               Bead size (mm):
@@ -329,7 +352,7 @@ export default function BraceletDesigner() {
             </button>
           </div> */}
 
-            <p className="mb-3 font-semibold">Bead tray</p>
+            <p className="mb-3 font-semibold">หิน</p>
             <div className="grid grid-cols-8 gap-2.5">
               {beadStyles.map((style) => (
                 <button
@@ -343,7 +366,7 @@ export default function BraceletDesigner() {
               ))}
             </div>
           </div>
-          <div className="col-span-12 md:col-span-6 border">
+          <div className="col-span-12 md:col-span-6">
             <div className="grid grid-cols-12">
               {/* preview single bead image */}
               <div className="col-span-full md:col-span-2">x</div>
