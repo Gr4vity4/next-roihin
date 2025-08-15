@@ -13,7 +13,7 @@ export default function CustomPage() {
   return (
     <>
       <Navigation />
-      <main className="min-h-screen pt-20 lg:pt-[230px]">
+      <main className="min-h-screen pt-24 lg:pt-[230px] px-4 md:px-8">
         <BraceletDesigner />
       </main>
       {/* Footer */}
