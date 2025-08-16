@@ -101,11 +101,17 @@ export default function BraceletDesigner() {
     let radiusMultiplier = 1.0
     const wristLengthNum = parseInt(wristLength)
     if (wristLengthNum === 15) {
-      radiusMultiplier = 0.95
+      radiusMultiplier = 0.67 // Decreased by 1.5 times (1/1.5 = 0.67)
     } else if (wristLengthNum === 16) {
+      radiusMultiplier = 0.74 // Progressive increase
+    } else if (wristLengthNum === 17) {
+      radiusMultiplier = 0.81
+    } else if (wristLengthNum === 18) {
+      radiusMultiplier = 0.88
+    } else if (wristLengthNum === 19) {
+      radiusMultiplier = 0.95
+    } else if (wristLengthNum === 20) {
       radiusMultiplier = 1.02
-    } else if (wristLengthNum >= 17 && wristLengthNum <= 20) {
-      radiusMultiplier = 1.0 + (wristLengthNum - 17) * 0.03
     }
 
     geometryRef.current = {
@@ -129,11 +135,17 @@ export default function BraceletDesigner() {
     let scale = 1.0
 
     if (wristLengthNum === 15) {
-      scale = 0.95
+      scale = 0.67 // Decreased by 1.5 times (1/1.5 = 0.67)
     } else if (wristLengthNum === 16) {
+      scale = 0.74 // Progressive increase
+    } else if (wristLengthNum === 17) {
+      scale = 0.81
+    } else if (wristLengthNum === 18) {
+      scale = 0.88
+    } else if (wristLengthNum === 19) {
+      scale = 0.95
+    } else if (wristLengthNum === 20) {
       scale = 1.02
-    } else if (wristLengthNum >= 17 && wristLengthNum <= 20) {
-      scale = 1.0 + (wristLengthNum - 17) * 0.03
     }
 
     const baseSize = 380
