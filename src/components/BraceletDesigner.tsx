@@ -232,7 +232,8 @@ export default function BraceletDesigner() {
       scale = scale / 1.5
     }
 
-    const baseSize = 380
+    // Desktop: decrease default radius by 20% (0.8 times)
+    const baseSize = isMobile ? 380 : 380 * 0.8
     const newSize = baseSize * scale
 
     // Check minimum radius needed for current beads
