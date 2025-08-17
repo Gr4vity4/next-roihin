@@ -2,14 +2,6 @@
 
 import Button from '@/components/Button'
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -19,8 +11,16 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { STONE_CATEGORIES, type StoneSetting } from '@/lib/types/stone-settings'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import type { BankData } from '@/lib/types/bank'
+import { STONE_CATEGORIES, type StoneSetting } from '@/lib/types/stone-settings'
 import { ArrowLeft, Check, RefreshCw, Upload } from 'lucide-react'
 import Image from 'next/image'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -84,10 +84,10 @@ export default function BraceletDesigner() {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768)
     }
-    
+
     // Check on mount
     checkMobile()
-    
+
     // Check on resize
     window.addEventListener('resize', checkMobile)
     return () => window.removeEventListener('resize', checkMobile)
@@ -608,9 +608,9 @@ export default function BraceletDesigner() {
             >
               ย้อนกลับ
             </Button>
-            <Button 
-              variant="ghost" 
-              size="sm" 
+            <Button
+              variant="ghost"
+              size="sm"
               leftIcon={<Check className="w-4 h-4" />}
               onClick={openConfirmDialog}
             >
@@ -674,7 +674,7 @@ export default function BraceletDesigner() {
               )}
             </Tabs>
           </div>
-          <div className="col-span-12 md:col-span-6">
+          <div className="col-span-12 md:col-span-6 border-t-1 border-gray-200 pt-10 md:border-t-0 md:pt-0">
             <div className="grid grid-cols-12 gap-4">
               {/* preview single bead image */}
               <div className="col-span-full md:col-span-3 flex items-center justify-center">
@@ -772,9 +772,7 @@ export default function BraceletDesigner() {
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>ยืนยันการสั่งซื้อ</DialogTitle>
-            <DialogDescription>
-              กรุณาตรวจสอบรายละเอียดและกรอกข้อมูลการติดต่อ
-            </DialogDescription>
+            <DialogDescription>กรุณาตรวจสอบรายละเอียดและกรอกข้อมูลการติดต่อ</DialogDescription>
           </DialogHeader>
 
           <div className="space-y-6">
@@ -830,7 +828,9 @@ export default function BraceletDesigner() {
                             )}
                           </div>
                           <div className="flex-1 text-sm">
-                            <div className="font-medium">{group.stoneSetting?.stone_title || 'Unknown'}</div>
+                            <div className="font-medium">
+                              {group.stoneSetting?.stone_title || 'Unknown'}
+                            </div>
                             <div className="text-xs text-gray-500">{group.size} mm</div>
                           </div>
                           <div className="text-right text-sm">
@@ -918,9 +918,15 @@ export default function BraceletDesigner() {
                         )}
                         <div className="flex-1 space-y-1">
                           <div className="font-medium">{bank.acf.bank_name}</div>
-                          <div className="text-sm text-gray-600">สาขา: {bank.acf.bank_branch_name}</div>
-                          <div className="text-sm text-gray-600">ชื่อบัญชี: {bank.acf.bank_account_name}</div>
-                          <div className="text-sm font-medium">เลขบัญชี: {bank.acf.bank_account_number}</div>
+                          <div className="text-sm text-gray-600">
+                            สาขา: {bank.acf.bank_branch_name}
+                          </div>
+                          <div className="text-sm text-gray-600">
+                            ชื่อบัญชี: {bank.acf.bank_account_name}
+                          </div>
+                          <div className="text-sm font-medium">
+                            เลขบัญชี: {bank.acf.bank_account_number}
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -966,7 +972,9 @@ export default function BraceletDesigner() {
                   <div className="text-center">
                     <Upload className="w-12 h-12 mx-auto text-gray-400 mb-4" />
                     <p className="text-gray-600 mb-2">คลิกเพื่อเลือกไฟล์หรือลากไฟล์มาวางที่นี่</p>
-                    <p className="text-xs text-gray-500">รองรับไฟล์ JPG, PNG, PDF (ขนาดไม่เกิน 5MB)</p>
+                    <p className="text-xs text-gray-500">
+                      รองรับไฟล์ JPG, PNG, PDF (ขนาดไม่เกิน 5MB)
+                    </p>
                     <input
                       ref={fileInputRef}
                       type="file"
@@ -988,10 +996,7 @@ export default function BraceletDesigner() {
           </div>
 
           <DialogFooter className="gap-2">
-            <Button
-              variant="ghost"
-              onClick={() => setShowConfirmDialog(false)}
-            >
+            <Button variant="ghost" onClick={() => setShowConfirmDialog(false)}>
               ยกเลิก
             </Button>
             <Button
