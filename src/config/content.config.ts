@@ -13,6 +13,7 @@ export const content = {
       text: 'สั่งออกแบบ',
       variant: 'gold' as const,
       highlight: true,
+      href: '/custom',
     },
     background: {
       image:
@@ -78,6 +79,7 @@ export const content = {
         text: 'ออกแบบด้วยตัวเอง',
         variant: 'gold' as const,
         highlight: true,
+        href: '/custom',
       },
       {
         text: 'ออกแบบโดยร้อยหิน',
@@ -648,7 +650,7 @@ export const content = {
       buttons: [
         {
           text: 'เริ่มต้นออกแบบ',
-          href: '/braceletorder',
+          href: '/custom',
           variant: 'gold' as const,
           highlight: true,
         },

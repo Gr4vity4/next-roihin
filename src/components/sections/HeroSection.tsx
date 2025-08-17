@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import Button from '../Button'
 import ParallaxSection from '../ParallaxSection'
 import { Container, Typography } from '../ui'
@@ -61,14 +62,26 @@ export default function HeroSection({
         <Typography variant="body" textShadow className="mb-10 max-w-2xl mx-auto">
           {subtitle.english}
         </Typography>
-        <Button
-          variant={ctaButton.variant}
-          size={ctaButton.size || 'lg'}
-          highlight={ctaButton.highlight}
-          onClick={ctaButton.onClick}
-        >
-          {ctaButton.text}
-        </Button>
+        {ctaButton.href ? (
+          <Link href={ctaButton.href}>
+            <Button
+              variant={ctaButton.variant}
+              size={ctaButton.size || 'lg'}
+              highlight={ctaButton.highlight}
+            >
+              {ctaButton.text}
+            </Button>
+          </Link>
+        ) : (
+          <Button
+            variant={ctaButton.variant}
+            size={ctaButton.size || 'lg'}
+            highlight={ctaButton.highlight}
+            onClick={ctaButton.onClick}
+          >
+            {ctaButton.text}
+          </Button>
+        )}
       </Container>
     </ParallaxSection>
   )
