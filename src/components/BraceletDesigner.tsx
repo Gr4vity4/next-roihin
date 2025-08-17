@@ -861,6 +861,7 @@ export default function BraceletDesigner() {
                     onChange={(e) => handleCustomerInfoChange('name', e.target.value)}
                     placeholder="กรอกชื่อ-นามสกุล"
                     required
+                    autoFocus={false}
                   />
                 </div>
                 <div className="space-y-2">
