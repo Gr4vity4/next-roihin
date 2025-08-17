@@ -793,23 +793,49 @@ export default function BraceletDesigner() {
                 </div>
                 <div className="border-t pt-2">
                   <div className="font-semibold mb-2">หินที่เลือก:</div>
-                  <div className="grid grid-cols-4 gap-2">
-                    {beads.map((bead, index) => (
-                      <div key={bead.id} className="text-xs">
-                        <div className="w-10 h-10 rounded-full overflow-hidden mb-1">
-                          {bead.imageUrl && (
-                            <Image
-                              src={bead.imageUrl}
-                              alt={`Bead ${index + 1}`}
-                              width={40}
-                              height={40}
-                              className="w-full h-full object-cover"
-                            />
-                          )}
+                  <div className="space-y-2">
+                    {(() => {
+                      // Group beads by stone title and size
+                      const groupedBeads = beads.reduce((acc, bead) => {
+                        const key = `${bead.stoneSetting?.stone_title || 'Unknown'}_${beadSize}mm`
+                        if (!acc[key]) {
+                          acc[key] = {
+                            stoneSetting: bead.stoneSetting,
+                            imageUrl: bead.imageUrl,
+                            count: 0,
+                            price: bead.price,
+                            totalPrice: 0,
+                          }
+                        }
+                        acc[key].count++
+                        acc[key].totalPrice += bead.price
+                        return acc
+                      }, {} as Record<string, { stoneSetting: StoneSetting['acf']['stone_information'] | undefined; imageUrl?: string; count: number; price: number; totalPrice: number }>)
+
+                      return Object.entries(groupedBeads).map(([key, group]) => (
+                        <div key={key} className="flex items-center gap-3 p-2 bg-white rounded-lg">
+                          <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+                            {group.imageUrl && (
+                              <Image
+                                src={group.imageUrl}
+                                alt={group.stoneSetting?.stone_title || 'Bead'}
+                                width={40}
+                                height={40}
+                                className="w-full h-full object-cover"
+                              />
+                            )}
+                          </div>
+                          <div className="flex-1 text-sm">
+                            <div className="font-medium">{group.stoneSetting?.stone_title || 'Unknown'}</div>
+                            <div className="text-xs text-gray-500">{beadSize} mm</div>
+                          </div>
+                          <div className="text-right text-sm">
+                            <div className="font-medium">x{group.count}</div>
+                            <div className="text-xs text-gray-600">฿{group.totalPrice}</div>
+                          </div>
                         </div>
-                        <div className="text-center">฿{bead.price}</div>
-                      </div>
-                    ))}
+                      ))
+                    })()}
                   </div>
                 </div>
                 <div className="flex justify-between border-t pt-2">
