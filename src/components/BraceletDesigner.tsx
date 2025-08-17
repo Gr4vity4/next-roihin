@@ -320,8 +320,6 @@ export default function BraceletDesigner() {
       <style jsx global>{`
         .bead {
           position: absolute;
-          box-shadow: inset 0 10px 18px rgba(255, 255, 255, 0.45),
-            inset 0 -10px 22px rgba(0, 0, 0, 0.25), 0 2px 6px rgba(0, 0, 0, 0.2);
           transition: top 0.35s ease, left 0.35s ease,
             transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
           transform: scale(0.6);
