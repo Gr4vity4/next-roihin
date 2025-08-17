@@ -37,6 +37,7 @@ interface Bead {
   shape: BeadShape
   stoneSetting?: StoneSetting['acf']['stone_information']
   price: number
+  size: number // Size in mm when the bead was added
 }
 
 interface CustomerInfo {
@@ -392,6 +393,7 @@ export default function BraceletDesigner() {
         stoneSetting: stone,
         price: getStonePrice(stone, beadSize),
         imageUrl: stone.stone_image,
+        size: beadSize, // Store the actual size when bead was added
       },
     ]
     const minRAfterAdd = (() => {
@@ -455,6 +457,7 @@ export default function BraceletDesigner() {
       shape,
       stoneSetting: stone,
       price,
+      size: beadSize, // Store the actual size when bead was added
     }
 
     setBeads((prev) => {
@@ -797,7 +800,7 @@ export default function BraceletDesigner() {
                     {(() => {
                       // Group beads by stone title and size
                       const groupedBeads = beads.reduce((acc, bead) => {
-                        const key = `${bead.stoneSetting?.stone_title || 'Unknown'}_${beadSize}mm`
+                        const key = `${bead.stoneSetting?.stone_title || 'Unknown'}_${bead.size}mm`
                         if (!acc[key]) {
                           acc[key] = {
                             stoneSetting: bead.stoneSetting,
@@ -805,12 +808,13 @@ export default function BraceletDesigner() {
                             count: 0,
                             price: bead.price,
                             totalPrice: 0,
+                            size: bead.size, // Store the size for display
                           }
                         }
                         acc[key].count++
                         acc[key].totalPrice += bead.price
                         return acc
-                      }, {} as Record<string, { stoneSetting: StoneSetting['acf']['stone_information'] | undefined; imageUrl?: string; count: number; price: number; totalPrice: number }>)
+                      }, {} as Record<string, { stoneSetting: StoneSetting['acf']['stone_information'] | undefined; imageUrl?: string; count: number; price: number; totalPrice: number; size: number }>)
 
                       return Object.entries(groupedBeads).map(([key, group]) => (
                         <div key={key} className="flex items-center gap-3 p-2 bg-white rounded-lg">
@@ -827,7 +831,7 @@ export default function BraceletDesigner() {
                           </div>
                           <div className="flex-1 text-sm">
                             <div className="font-medium">{group.stoneSetting?.stone_title || 'Unknown'}</div>
-                            <div className="text-xs text-gray-500">{beadSize} mm</div>
+                            <div className="text-xs text-gray-500">{group.size} mm</div>
                           </div>
                           <div className="text-right text-sm">
                             <div className="font-medium">x{group.count}</div>
