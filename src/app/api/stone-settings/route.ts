@@ -7,7 +7,7 @@ export async function GET() {
   try {
     const response = await fetch(
       `${WORDPRESS_API_URL}/wp-json/wp/v2/stone-setting?_fields=acf`,
-      getFetchConfig()
+      getFetchConfig('siteSettings')
     )
 
     if (!response.ok) {
