@@ -22,13 +22,9 @@ interface GallerySectionProps {
 }
 
 export default function GallerySection({
-  backgroundImage,
-  backgroundAlt,
   title,
   subtitle,
   ctaButtons,
-  overlayOpacity = 0.6,
-  parallaxSpeed = 0.3,
   className = '',
 }: GallerySectionProps) {
   const productImages = Array.from({ length: 10 }, (_, i) => ({

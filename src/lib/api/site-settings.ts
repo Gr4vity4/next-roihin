@@ -49,20 +49,18 @@ export async function getSiteSettings(): Promise<SiteSettings | null> {
 export const siteMetaHelpers = {
   /**
    * Get contact information
-   * @param language - Language (not used in WordPress version)
    * @returns Contact information
    */
-  async getContactInfo(language: string = 'th') {
+  async getContactInfo() {
     const settings = await getSiteSettings()
     return settings?.contact || null
   },
 
   /**
    * Get social links
-   * @param language - Language (not used in WordPress version)
    * @returns Social links
    */
-  async getSocialLinks(language: string = 'th') {
+  async getSocialLinks() {
     const settings = await getSiteSettings()
     return settings?.socialLinks || null
   },
