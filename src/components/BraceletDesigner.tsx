@@ -9,8 +9,19 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { STONE_CATEGORIES, type StoneSetting } from '@/lib/types/stone-settings'
-import { ArrowLeft, Check, RefreshCw } from 'lucide-react'
+import type { BankData } from '@/lib/types/bank'
+import { ArrowLeft, Check, RefreshCw, Upload } from 'lucide-react'
 import Image from 'next/image'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
@@ -28,6 +39,13 @@ interface Bead {
   price: number
 }
 
+interface CustomerInfo {
+  name: string
+  phone: string
+  email: string
+  address: string
+}
+
 export default function BraceletDesigner() {
   const [beadSize, setBeadSize] = useState(6)
   const [wristLength, setWristLength] = useState('15')
@@ -38,9 +56,20 @@ export default function BraceletDesigner() {
   const [stoneSettings, setStoneSettings] = useState<StoneSetting[]>([])
   const [loading, setLoading] = useState(true)
   const [isMobile, setIsMobile] = useState(false)
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false)
+  const [banks, setBanks] = useState<BankData[]>([])
+  const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
+    name: '',
+    phone: '',
+    email: '',
+    address: '',
+  })
+  const [paymentSlip, setPaymentSlip] = useState<File | null>(null)
+  const [paymentSlipPreview, setPaymentSlipPreview] = useState<string>('')
   const stageRef = useRef<HTMLDivElement>(null)
   const ringRef = useRef<HTMLDivElement>(null)
   const beadsLayerRef = useRef<HTMLDivElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Geometry state - adjust radius based on wrist length
   const geometryRef = useRef({
@@ -80,6 +109,24 @@ export default function BraceletDesigner() {
     }
     fetchStoneSettings()
   }, [])
+
+  // Fetch banks when dialog opens
+  useEffect(() => {
+    if (showConfirmDialog && banks.length === 0) {
+      const fetchBanks = async () => {
+        try {
+          const response = await fetch('/api/banks')
+          if (response.ok) {
+            const data = await response.json()
+            setBanks(data)
+          }
+        } catch (error) {
+          console.error('Error fetching banks:', error)
+        }
+      }
+      fetchBanks()
+    }
+  }, [showConfirmDialog, banks.length])
 
   // Get stones by category
   const getStonesByCategory = (category: string) => {
@@ -440,6 +487,43 @@ export default function BraceletDesigner() {
     setLastSelectedBead(null)
   }
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setPaymentSlip(file)
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setPaymentSlipPreview(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const handleCustomerInfoChange = (field: keyof CustomerInfo, value: string) => {
+    setCustomerInfo((prev) => ({ ...prev, [field]: value }))
+  }
+
+  const handleConfirmOrder = () => {
+    // Here you would handle the order submission
+    console.log('Order confirmed:', {
+      customerInfo,
+      beads,
+      wristLength,
+      totalPrice: calculateTotalPrice(),
+      paymentSlip,
+    })
+    // You can add API call to submit the order here
+    setShowConfirmDialog(false)
+  }
+
+  const openConfirmDialog = () => {
+    if (beads.length === 0) {
+      alert('กรุณาเลือกหินอย่างน้อย 1 ชิ้น')
+      return
+    }
+    setShowConfirmDialog(true)
+  }
+
   return (
     <>
       <div className="container mx-auto min-h-32 grid grid-cols-12 gap-4 md:gap-0">
@@ -521,7 +605,12 @@ export default function BraceletDesigner() {
             >
               ย้อนกลับ
             </Button>
-            <Button variant="ghost" size="sm" leftIcon={<Check className="w-4 h-4" />}>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              leftIcon={<Check className="w-4 h-4" />}
+              onClick={openConfirmDialog}
+            >
               ยืนยันแบบ
             </Button>
             <Button
@@ -674,6 +763,215 @@ export default function BraceletDesigner() {
           </div>
         </div>
       </div>
+
+      {/* Confirmation Dialog */}
+      <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>ยืนยันการสั่งซื้อ</DialogTitle>
+            <DialogDescription>
+              กรุณาตรวจสอบรายละเอียดและกรอกข้อมูลการติดต่อ
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-6">
+            {/* Order Summary */}
+            <div className="space-y-2">
+              <h3 className="font-semibold text-lg">รายละเอียดสร้อยข้อมือ</h3>
+              <div className="bg-gray-50 p-4 rounded-lg space-y-2">
+                <div className="flex justify-between">
+                  <span>ความยาวรอบข้อมือ:</span>
+                  <span className="font-medium">{wristLength} cm</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>ขนาดหิน:</span>
+                  <span className="font-medium">{beadSize} mm</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>จำนวนหิน:</span>
+                  <span className="font-medium">{beads.length} ชิ้น</span>
+                </div>
+                <div className="border-t pt-2">
+                  <div className="font-semibold mb-2">หินที่เลือก:</div>
+                  <div className="grid grid-cols-4 gap-2">
+                    {beads.map((bead, index) => (
+                      <div key={bead.id} className="text-xs">
+                        <div className="w-10 h-10 rounded-full overflow-hidden mb-1">
+                          {bead.imageUrl && (
+                            <Image
+                              src={bead.imageUrl}
+                              alt={`Bead ${index + 1}`}
+                              width={40}
+                              height={40}
+                              className="w-full h-full object-cover"
+                            />
+                          )}
+                        </div>
+                        <div className="text-center">฿{bead.price}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex justify-between border-t pt-2">
+                  <span className="font-semibold">ราคารวม:</span>
+                  <span className="font-bold text-lg text-green-600">฿{calculateTotalPrice()}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Customer Information Form */}
+            <div className="space-y-4">
+              <h3 className="font-semibold text-lg">ข้อมูลการติดต่อ</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">ชื่อ-นามสกุล *</Label>
+                  <Input
+                    id="name"
+                    value={customerInfo.name}
+                    onChange={(e) => handleCustomerInfoChange('name', e.target.value)}
+                    placeholder="กรอกชื่อ-นามสกุล"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone">เบอร์โทรศัพท์ *</Label>
+                  <Input
+                    id="phone"
+                    value={customerInfo.phone}
+                    onChange={(e) => handleCustomerInfoChange('phone', e.target.value)}
+                    placeholder="กรอกเบอร์โทรศัพท์"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email">อีเมล</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={customerInfo.email}
+                    onChange={(e) => handleCustomerInfoChange('email', e.target.value)}
+                    placeholder="กรอกอีเมล"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="address">ที่อยู่จัดส่ง *</Label>
+                  <Input
+                    id="address"
+                    value={customerInfo.address}
+                    onChange={(e) => handleCustomerInfoChange('address', e.target.value)}
+                    placeholder="กรอกที่อยู่จัดส่ง"
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Bank Details */}
+            <div className="space-y-4">
+              <h3 className="font-semibold text-lg">ข้อมูลการชำระเงิน</h3>
+              {banks.length > 0 ? (
+                <div className="space-y-3">
+                  {banks.map((bank, index) => (
+                    <div key={index} className="border rounded-lg p-4 bg-gray-50">
+                      <div className="flex items-start gap-4">
+                        {bank.acf.bank_image && (
+                          <div className="w-16 h-16 flex-shrink-0">
+                            <Image
+                              src={bank.acf.bank_image}
+                              alt={bank.acf.bank_name}
+                              width={64}
+                              height={64}
+                              className="w-full h-full object-contain"
+                            />
+                          </div>
+                        )}
+                        <div className="flex-1 space-y-1">
+                          <div className="font-medium">{bank.acf.bank_name}</div>
+                          <div className="text-sm text-gray-600">สาขา: {bank.acf.bank_branch_name}</div>
+                          <div className="text-sm text-gray-600">ชื่อบัญชี: {bank.acf.bank_account_name}</div>
+                          <div className="text-sm font-medium">เลขบัญชี: {bank.acf.bank_account_number}</div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center text-gray-500">กำลังโหลดข้อมูลธนาคาร...</div>
+              )}
+            </div>
+
+            {/* Payment Slip Upload */}
+            <div className="space-y-4">
+              <h3 className="font-semibold text-lg">แนบสลิปการโอนเงิน</h3>
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
+                {paymentSlipPreview ? (
+                  <div className="space-y-4">
+                    <div className="relative w-full max-w-xs mx-auto">
+                      <Image
+                        src={paymentSlipPreview}
+                        alt="Payment slip"
+                        width={300}
+                        height={400}
+                        className="w-full h-auto rounded-lg"
+                      />
+                    </div>
+                    <div className="text-center">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setPaymentSlip(null)
+                          setPaymentSlipPreview('')
+                          if (fileInputRef.current) {
+                            fileInputRef.current.value = ''
+                          }
+                        }}
+                      >
+                        เปลี่ยนรูป
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center">
+                    <Upload className="w-12 h-12 mx-auto text-gray-400 mb-4" />
+                    <p className="text-gray-600 mb-2">คลิกเพื่อเลือกไฟล์หรือลากไฟล์มาวางที่นี่</p>
+                    <p className="text-xs text-gray-500">รองรับไฟล์ JPG, PNG, PDF (ขนาดไม่เกิน 5MB)</p>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*,.pdf"
+                      onChange={handleFileChange}
+                      className="hidden"
+                      id="payment-slip"
+                    />
+                    <Label
+                      htmlFor="payment-slip"
+                      className="inline-block mt-4 px-4 py-2 bg-gray-900 text-white rounded-md cursor-pointer hover:bg-gray-800"
+                    >
+                      เลือกไฟล์
+                    </Label>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2">
+            <Button
+              variant="ghost"
+              onClick={() => setShowConfirmDialog(false)}
+            >
+              ยกเลิก
+            </Button>
+            <Button
+              onClick={handleConfirmOrder}
+              disabled={!customerInfo.name || !customerInfo.phone || !customerInfo.address}
+            >
+              ยืนยันการสั่งซื้อ
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   )
 }
