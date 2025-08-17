@@ -160,9 +160,10 @@ export default function BraceletDesigner() {
 
       // Position first bead
       if (updatedBeads[0].el) {
-        updatedBeads[0].el.style.left =
+        const element = updatedBeads[0].el!
+        element.style.left =
           geometryRef.current.cx + Rnew * Math.cos(theta) - updatedBeads[0].r + 'px'
-        updatedBeads[0].el.style.top =
+        element.style.top =
           geometryRef.current.cy + Rnew * Math.sin(theta) - updatedBeads[0].r + 'px'
       }
 
@@ -172,9 +173,10 @@ export default function BraceletDesigner() {
         updatedBeads[i].theta = theta
 
         if (updatedBeads[i].el) {
-          updatedBeads[i].el.style.left =
+          const element = updatedBeads[i].el!
+          element.style.left =
             geometryRef.current.cx + Rnew * Math.cos(theta) - updatedBeads[i].r + 'px'
-          updatedBeads[i].el.style.top =
+          element.style.top =
             geometryRef.current.cy + Rnew * Math.sin(theta) - updatedBeads[i].r + 'px'
         }
       }
