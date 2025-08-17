@@ -396,7 +396,7 @@ export default function BraceletDesigner() {
                           return (
                             <div key={stoneInfo.stone_title} className="relative group">
                               <button
-                                className="w-11 h-11 cursor-pointer border border-gray-300 shadow-[inset_0_10px_16px_rgba(255,255,255,0.5),inset_0_-10px_18px_rgba(0,0,0,0.22)] active:scale-95 transition-transform overflow-hidden"
+                                className="w-11 h-11 cursor-pointer active:scale-95 transition-transform overflow-hidden"
                                 style={{
                                   backgroundImage: `url(${stoneInfo.stone_image})`,
                                   backgroundSize: 'cover',
@@ -431,7 +431,6 @@ export default function BraceletDesigner() {
                       alt={lastSelectedBead.stone_title}
                       width={96}
                       height={96}
-                      className="object-cover shadow-lg"
                     />
                   </div>
                 ) : (
