@@ -37,6 +37,7 @@ export default function BraceletDesigner() {
   >(null)
   const [stoneSettings, setStoneSettings] = useState<StoneSetting[]>([])
   const [loading, setLoading] = useState(true)
+  const [isMobile, setIsMobile] = useState(false)
   const stageRef = useRef<HTMLDivElement>(null)
   const ringRef = useRef<HTMLDivElement>(null)
   const beadsLayerRef = useRef<HTMLDivElement>(null)
@@ -47,6 +48,20 @@ export default function BraceletDesigner() {
     cy: 260,
     R: 190,
   })
+
+  // Detect mobile device
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    
+    // Check on mount
+    checkMobile()
+    
+    // Check on resize
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
   // Fetch stone settings from API
   useEffect(() => {
@@ -185,25 +200,36 @@ export default function BraceletDesigner() {
     })
   }
 
-  // Update ring size when wrist length changes
+  // Update ring size when wrist length or mobile state changes
   useEffect(() => {
     if (!ringRef.current || !stageRef.current) return
 
     const wristLengthNum = parseInt(wristLength)
     let scale = 1.0
 
-    if (wristLengthNum === 15) {
-      scale = 0.67
-    } else if (wristLengthNum === 16) {
-      scale = 0.74
+    if (wristLengthNum === 16) {
+      // Base scale for 16cm
+      scale = 1.0
     } else if (wristLengthNum === 17) {
-      scale = 0.81
+      // Progressive increase: 0.5% from 16cm base
+      scale = 1.0 * 1.005
     } else if (wristLengthNum === 18) {
-      scale = 0.88
+      // Progressive increase: 1% from 16cm base (2 * 0.5%)
+      scale = 1.0 * 1.01
     } else if (wristLengthNum === 19) {
-      scale = 0.95
+      // Progressive increase: 1.5% from 16cm base (3 * 0.5%)
+      scale = 1.0 * 1.015
     } else if (wristLengthNum === 20) {
-      scale = 1.02
+      // Progressive increase: 2% from 16cm base (4 * 0.5%)
+      scale = 1.0 * 1.02
+    } else if (wristLengthNum === 15) {
+      // Smaller size for 15cm
+      scale = 0.95
+    }
+
+    // Apply mobile scaling (1.5 times smaller)
+    if (isMobile) {
+      scale = scale / 1.5
     }
 
     const baseSize = 380
@@ -228,7 +254,7 @@ export default function BraceletDesigner() {
     // Relayout beads with smooth transition
     relayoutForRadius(targetRadius)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wristLength])
+  }, [wristLength, isMobile])
 
   const clamp01m = (x: number) => Math.min(0.999999, Math.max(0, x))
 
