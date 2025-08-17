@@ -92,34 +92,13 @@ export default function BraceletDesigner() {
   const START = Math.PI / 2
 
   const computeGeometry = useCallback(() => {
-    if (!stageRef.current || !ringRef.current) return
+    if (!stageRef.current) return
 
     const s = stageRef.current.getBoundingClientRect()
-    const rr = ringRef.current.getBoundingClientRect()
-
-    // Adjust radius based on wrist length
-    let radiusMultiplier = 1.0
-    const wristLengthNum = parseInt(wristLength)
-    if (wristLengthNum === 15) {
-      radiusMultiplier = 0.67 // Decreased by 1.5 times (1/1.5 = 0.67)
-    } else if (wristLengthNum === 16) {
-      radiusMultiplier = 0.74 // Progressive increase
-    } else if (wristLengthNum === 17) {
-      radiusMultiplier = 0.81
-    } else if (wristLengthNum === 18) {
-      radiusMultiplier = 0.88
-    } else if (wristLengthNum === 19) {
-      radiusMultiplier = 0.95
-    } else if (wristLengthNum === 20) {
-      radiusMultiplier = 1.02
-    }
-
-    geometryRef.current = {
-      cx: s.width / 2,
-      cy: s.height / 2,
-      R: (rr.width / 2) * radiusMultiplier,
-    }
-  }, [wristLength])
+    geometryRef.current.cx = s.width / 2
+    geometryRef.current.cy = s.height / 2
+    // R will be set separately based on wrist length
+  }, [])
 
   useEffect(() => {
     computeGeometry()
@@ -127,17 +106,94 @@ export default function BraceletDesigner() {
     return () => window.removeEventListener('resize', computeGeometry)
   }, [computeGeometry])
 
+  // Calculate total angles including closing gap
+  const totalAnglesWithClosing = (Rloc: number) => {
+    if (beads.length <= 1) return 0
+    let s = 0
+    for (let i = 1; i < beads.length; i++) {
+      s += deltaTheta(beads[i - 1].r, beads[i].r, Rloc)
+    }
+    s += deltaTheta(beads[beads.length - 1].r, beads[0].r, Rloc) // closing gap
+    return s
+  }
+
+  // Calculate minimum radius that can fit all beads
+  const minRadiusForCurrentBeads = () => {
+    if (beads.length === 0) return 0
+    if (beads.length === 1) {
+      return beads[0].r + GAP_PX
+    }
+
+    // Hard lower bound so asin() is defined for every adjacent pair
+    let lower = 0
+    for (let i = 1; i < beads.length; i++) {
+      lower = Math.max(lower, (beads[i - 1].r + beads[i].r + GAP_PX) / 2)
+    }
+    lower = Math.max(lower, (beads[beads.length - 1].r + beads[0].r + GAP_PX) / 2)
+
+    let upper = 10000 // big number for binary search
+    // if already fits at lower, that's the minimum
+    if (totalAnglesWithClosing(lower + 1e-6) <= 2 * Math.PI) return lower + 1e-6
+
+    // Binary search for minimum radius
+    for (let iter = 0; iter < 40; iter++) {
+      const mid = (lower + upper) / 2
+      const used = totalAnglesWithClosing(mid)
+      if (used > 2 * Math.PI) {
+        lower = mid // too tight -> need larger radius
+      } else {
+        upper = mid // fits -> try smaller
+      }
+    }
+    return upper
+  }
+
+  // Relayout all beads for new radius
+  const relayoutForRadius = (Rnew: number) => {
+    setBeads((prevBeads) => {
+      if (prevBeads.length === 0) return prevBeads
+
+      // Place first bead at START
+      let theta = START
+      const updatedBeads = [...prevBeads]
+      updatedBeads[0].theta = theta
+
+      // Position first bead
+      if (updatedBeads[0].el) {
+        updatedBeads[0].el.style.left =
+          geometryRef.current.cx + Rnew * Math.cos(theta) - updatedBeads[0].r + 'px'
+        updatedBeads[0].el.style.top =
+          geometryRef.current.cy + Rnew * Math.sin(theta) - updatedBeads[0].r + 'px'
+      }
+
+      // Place the rest CCW (left)
+      for (let i = 1; i < updatedBeads.length; i++) {
+        theta += deltaTheta(updatedBeads[i - 1].r, updatedBeads[i].r, Rnew)
+        updatedBeads[i].theta = theta
+
+        if (updatedBeads[i].el) {
+          updatedBeads[i].el.style.left =
+            geometryRef.current.cx + Rnew * Math.cos(theta) - updatedBeads[i].r + 'px'
+          updatedBeads[i].el.style.top =
+            geometryRef.current.cy + Rnew * Math.sin(theta) - updatedBeads[i].r + 'px'
+        }
+      }
+
+      return updatedBeads
+    })
+  }
+
   // Update ring size when wrist length changes
   useEffect(() => {
-    if (!ringRef.current) return
+    if (!ringRef.current || !stageRef.current) return
 
     const wristLengthNum = parseInt(wristLength)
     let scale = 1.0
 
     if (wristLengthNum === 15) {
-      scale = 0.67 // Decreased by 1.5 times (1/1.5 = 0.67)
+      scale = 0.67
     } else if (wristLengthNum === 16) {
-      scale = 0.74 // Progressive increase
+      scale = 0.74
     } else if (wristLengthNum === 17) {
       scale = 0.81
     } else if (wristLengthNum === 18) {
@@ -150,16 +206,32 @@ export default function BraceletDesigner() {
 
     const baseSize = 380
     const newSize = baseSize * scale
-    ringRef.current.style.width = `${newSize}px`
-    ringRef.current.style.height = `${newSize}px`
 
-    computeGeometry()
-  }, [wristLength, computeGeometry])
+    // Check minimum radius needed for current beads
+    const minR = minRadiusForCurrentBeads()
+    const targetRadius = Math.max(newSize / 2, minR)
+    const actualSize = targetRadius * 2
+
+    // If requested size is too small for beads, use minimum size and nudge
+    if (newSize / 2 < minR) {
+      nudgeFull()
+    }
+
+    ringRef.current.style.width = `${actualSize}px`
+    ringRef.current.style.height = `${actualSize}px`
+
+    // Update geometry with new radius
+    geometryRef.current.R = targetRadius
+
+    // Relayout beads with smooth transition
+    relayoutForRadius(targetRadius)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [wristLength])
 
   const clamp01m = (x: number) => Math.min(0.999999, Math.max(0, x))
 
-  const deltaTheta = (rA: number, rB: number) => {
-    const ratio = clamp01m((rA + rB + GAP_PX) / (2 * geometryRef.current.R))
+  const deltaTheta = (rA: number, rB: number, Rloc = geometryRef.current.R) => {
+    const ratio = clamp01m((rA + rB + GAP_PX) / (2 * Rloc))
     return 2 * Math.asin(ratio)
   }
 
@@ -232,6 +304,61 @@ export default function BraceletDesigner() {
       el.style.backgroundPosition = 'center'
     }
 
+    // Check if radius needs to be increased after adding this bead
+    const tempBeads = [
+      ...beads,
+      {
+        id: Date.now().toString(),
+        el: null,
+        r,
+        theta,
+        shape,
+        stoneSetting: stone,
+        price: getStonePrice(stone, beadSize),
+        imageUrl: stone.stone_image,
+      },
+    ]
+    const minRAfterAdd = (() => {
+      if (tempBeads.length <= 1) return 0
+      let lower = 0
+      for (let i = 1; i < tempBeads.length; i++) {
+        lower = Math.max(lower, (tempBeads[i - 1].r + tempBeads[i].r + GAP_PX) / 2)
+      }
+      lower = Math.max(lower, (tempBeads[tempBeads.length - 1].r + tempBeads[0].r + GAP_PX) / 2)
+
+      const calcAngles = (Rloc: number) => {
+        let s = 0
+        for (let i = 1; i < tempBeads.length; i++) {
+          s += deltaTheta(tempBeads[i - 1].r, tempBeads[i].r, Rloc)
+        }
+        s += deltaTheta(tempBeads[tempBeads.length - 1].r, tempBeads[0].r, Rloc)
+        return s
+      }
+
+      if (calcAngles(lower + 1e-6) <= 2 * Math.PI) return lower + 1e-6
+
+      let upper = 10000
+      for (let iter = 0; iter < 40; iter++) {
+        const mid = (lower + upper) / 2
+        if (calcAngles(mid) > 2 * Math.PI) {
+          lower = mid
+        } else {
+          upper = mid
+        }
+      }
+      return upper
+    })()
+
+    // If radius needs to be increased, update ring and geometry
+    if (minRAfterAdd > geometryRef.current.R) {
+      geometryRef.current.R = minRAfterAdd
+      if (ringRef.current) {
+        const newDiameter = minRAfterAdd * 2
+        ringRef.current.style.width = `${newDiameter}px`
+        ringRef.current.style.height = `${newDiameter}px`
+      }
+    }
+
     el.style.left = geometryRef.current.cx + geometryRef.current.R * Math.cos(theta) - r + 'px'
     el.style.top = geometryRef.current.cy + geometryRef.current.R * Math.sin(theta) - r + 'px'
 
@@ -254,7 +381,15 @@ export default function BraceletDesigner() {
       price,
     }
 
-    setBeads((prev) => [...prev, newBead])
+    setBeads((prev) => {
+      const updatedBeads = [...prev, newBead]
+      // If radius was increased, reflow all beads
+      if (minRAfterAdd > geometryRef.current.R - 1) {
+        // Relayout immediately after adding
+        setTimeout(() => relayoutForRadius(geometryRef.current.R), 10)
+      }
+      return updatedBeads
+    })
   }
 
   const undoBead = () => {
@@ -339,7 +474,7 @@ export default function BraceletDesigner() {
             <div className="absolute inset-0 grid place-items-center">
               <div
                 ref={ringRef}
-                className="absolute w-[380px] h-[380px] rounded-full border-[4px] border-black left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none transition-all duration-300"
+                className="absolute w-[380px] h-[380px] rounded-full border-[4px] border-black left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none transition-all duration-[350ms] ease-in-out"
               />
             </div>
             <div

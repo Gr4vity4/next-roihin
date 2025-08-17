@@ -3,11 +3,11 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Beads on a Circle (click to add)</title>
+    <title>Beads on a Circle — Wrist size</title>
     <style>
       :root {
-        --stage: 520px; /* overall stage size */
-        --guide: 380px; /* diameter of the guide (centers path) */
+        --stage: 520px; /* canvas size */
+        --guide: 380px; /* DIAMETER of the centers-path circle (will be changed live) */
         --guide-border: 4px; /* black circle width */
         --line: 3px; /* red line width */
       }
@@ -33,14 +33,14 @@
         grid-template-columns: minmax(420px, 1fr) 400px;
       }
 
-      /* ====== Stage / Guide ====== */
+      /* ===== Stage ===== */
       .stage {
         position: relative;
         width: var(--stage);
         height: var(--stage);
         max-width: 90vw;
         aspect-ratio: 1/1;
-        background: white;
+        background: #fff;
         border-radius: 24px;
         box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
         overflow: hidden;
@@ -61,14 +61,15 @@
         top: 50%;
         transform: translate(-50%, -50%);
         pointer-events: none;
+        transition: width 0.35s ease, height 0.35s ease;
       }
       .guide__line {
         position: absolute;
-        top: calc(50% - var(--guide) / 2);
-        bottom: calc(50% - var(--guide) / 2);
         left: 50%;
         width: var(--line);
         transform: translateX(-50%);
+        top: calc(50% - var(--guide) / 2);
+        bottom: calc(50% - var(--guide) / 2);
         background: #ff2b2b;
         border-radius: 2px;
         z-index: 4;
@@ -92,9 +93,9 @@
         transform: scale(1);
       }
 
-      /* ====== Controls ====== */
+      /* ===== Controls ===== */
       .panel {
-        background: white;
+        background: #fff;
         border-radius: 16px;
         box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
         padding: 16px;
@@ -134,27 +135,9 @@
         transform: scale(0.95);
       }
 
-      /* Some gemstone-like fills */
-      .gem-purple {
-        background: radial-gradient(circle at 30% 25%, #c7b1db, #6f4aa0 55%, #402c67);
-      }
-      .gem-amethyst {
-        background: radial-gradient(circle at 35% 30%, #e4d8ff, #9e7ed6 55%, #5e3f9d);
-      }
+      /* gem looks */
       .gem-rose {
         background: radial-gradient(circle at 40% 35%, #ffe8f1, #f6b8c7 60%, #d37892);
-      }
-      .gem-lapis {
-        background: radial-gradient(circle at 50% 35%, #b0c8ff, #4571c0 58%, #1f3e7a);
-      }
-      .gem-emerald {
-        background: radial-gradient(circle at 40% 35%, #c1f1d5, #2e9a6b 58%, #0f6a43);
-      }
-      .gem-amber {
-        background: radial-gradient(circle at 40% 35%, #fff2b8, #f3b037 60%, #b56b07);
-      }
-      .gem-citrine {
-        background: radial-gradient(circle at 45% 35%, #fff0a4, #f9cf54 60%, #c4971d);
       }
       .gem-onyx {
         background: radial-gradient(circle at 35% 28%, #808080, #343434 60%, #141414);
@@ -162,15 +145,27 @@
       .gem-quartz {
         background: radial-gradient(circle at 42% 35%, #ffffff, #e6eef2 60%, #b7c3cc);
       }
+      .gem-amber {
+        background: radial-gradient(circle at 40% 35%, #fff2b8, #f3b037 60%, #b56b07);
+      }
+      .gem-citrine {
+        background: radial-gradient(circle at 45% 35%, #fff0a4, #f9cf54 60%, #c4971d);
+      }
+      .gem-emerald {
+        background: radial-gradient(circle at 40% 35%, #c1f1d5, #2e9a6b 58%, #0f6a43);
+      }
       .gem-sky {
         background: radial-gradient(circle at 45% 35%, #e8f7ff, #88c8f0 60%, #3d87c2);
+      }
+      .gem-rose2 {
+        background: radial-gradient(circle at 45% 35%, #ffe9f2, #e9b8c9 60%, #c18295);
       }
     </style>
   </head>
   <body>
     <header>
-      Click a bead to add it to the bracelet. First goes to the bottom, then each new bead goes to
-      the left.
+      Click a bead to add. First goes to the bottom; each next goes to the left. Move
+      <b>Wrist size</b> to change the radius — beads reflow smoothly, never overlapping.
     </header>
 
     <main class="app">
@@ -186,9 +181,16 @@
       <!-- Controls -->
       <aside class="panel">
         <div class="row">
+          <label for="wrist">Wrist size (circle Ø):</label>
+          <!-- diameter in px for simplicity; clamped so all beads fit -->
+          <input id="wrist" type="range" min="280" max="480" step="1" value="380" />
+          <output id="wristOut">380 px</output>
+        </div>
+
+        <div class="row">
           <label for="size">Bead size (mm):</label>
           <input id="size" type="range" min="6" max="12" step="2" value="10" />
-          <output id="sizeOut" for="size">10mm</output>
+          <output id="sizeOut">10mm</output>
         </div>
 
         <div class="row" style="justify-content: space-between">
@@ -198,17 +200,14 @@
 
         <p style="margin: 0.5rem 0 0.75rem; font-weight: 600">Bead tray</p>
         <div class="tray" id="tray">
-          <div class="swatch gem-purple" data-name="Purple" title="Purple"></div>
-          <div class="swatch gem-amethyst" data-name="Amethyst" title="Amethyst"></div>
-          <div class="swatch gem-rose" data-name="Rose" title="Rose"></div>
-          <div class="swatch gem-lapis" data-name="Lapis" title="Lapis"></div>
-          <div class="swatch gem-sky" data-name="Sky" title="Sky"></div>
-          <div class="swatch gem-emerald" data-name="Emerald" title="Emerald"></div>
-          <div class="swatch gem-citrine" data-name="Citrine" title="Citrine"></div>
-          <div class="swatch gem-amber" data-name="Amber" title="Amber"></div>
-          <div class="swatch gem-onyx" data-name="Onyx" title="Onyx"></div>
-          <div class="swatch gem-quartz" data-name="Quartz" title="Quartz"></div>
-          <!-- add more swatches if you like -->
+          <div class="swatch gem-rose2" title="Rose"></div>
+          <div class="swatch gem-onyx" title="Onyx"></div>
+          <div class="swatch gem-quartz" title="Quartz"></div>
+          <div class="swatch gem-amber" title="Amber"></div>
+          <div class="swatch gem-citrine" title="Citrine"></div>
+          <div class="swatch gem-emerald" title="Emerald"></div>
+          <div class="swatch gem-sky" title="Sky"></div>
+          <div class="swatch gem-rose" title="Rose 2"></div>
         </div>
       </aside>
     </main>
@@ -223,77 +222,114 @@
         const sizeOut = document.getElementById('sizeOut')
         const undoBtn = document.getElementById('undoBtn')
         const clearBtn = document.getElementById('clearBtn')
+        const wristInput = document.getElementById('wrist')
+        const wristOut = document.getElementById('wristOut')
 
-        // Visual scale: px per mm (same as before)
+        // Visual px-per-mm used only for bead sizes
         const mmToPx = (mm) => mm * 3.4
 
-        // Tiny visual breathing room between beads (px)
+        // Small breathing room between beads (px)
         const GAP_PX = 1.0
+        const EPS = 0.002 // numeric tolerance (radians)
 
-        // Numerical tolerance (radians) to absorb rounding
-        const EPS = 0.002
-
-        // Geometry/state
-        let beads = [] // { el, r, theta }
-        const START = Math.PI / 2 // bottom
-        let thetaNext // last placed bead's theta (start from bottom)
+        // Geometry / state
+        let beads = [] // { el, r(px), theta }
+        const START = Math.PI / 2 // bottom anchor
+        let thetaNext // angle of last placed bead
         let lastRadius = 0 // radius of last bead (px)
-        let cx, cy, R // circle center & radius for bead centers
+        let cx, cy, R // center coords and current centers-path radius (px)
 
-        function computeGeometry() {
-          const s = stage.getBoundingClientRect()
-          const rr = ring.getBoundingClientRect()
-          cx = s.width / 2
-          cy = s.height / 2
-          R = rr.width / 2
+        // --- initial geometry ---
+        function computeCenter() {
+          const rect = stage.getBoundingClientRect()
+          cx = rect.width / 2
+          cy = rect.height / 2
         }
-        computeGeometry()
-        addEventListener('resize', computeGeometry)
+        computeCenter()
+        addEventListener('resize', computeCenter)
 
-        function resetLayout() {
-          beads.forEach((b) => b.el.remove())
-          beads = []
-          thetaNext = START
-          lastRadius = 0
+        // Read initial diameter from CSS var
+        function getGuideDiameterFromCSS() {
+          const v = getComputedStyle(stage).getPropertyValue('--guide').trim()
+          return parseFloat(v)
         }
-        resetLayout()
+        R = getGuideDiameterFromCSS() / 2
 
-        sizeInput.addEventListener('input', () => {
-          sizeOut.value = `${sizeInput.value}mm`
-        })
+        function setGuideDiameter(diamPX) {
+          stage.style.setProperty('--guide', `${diamPX}px`) // updates ring + red line
+          R = diamPX / 2
+        }
 
-        tray.addEventListener('click', (e) => {
-          const sw = e.target.closest('.swatch')
-          if (!sw) return
-          addBead(getComputedStyle(sw).backgroundImage)
-        })
+        // --- layout / math helpers ---
+        const clamp01m = (x) => Math.min(0.999999, Math.max(0, x))
+        function deltaTheta(rA, rB, Rloc = R) {
+          // exact chord spacing so centers are rA+rB (+gap) apart
+          const ratio = clamp01m((rA + rB + GAP_PX) / (2 * Rloc))
+          return 2 * Math.asin(ratio)
+        }
 
-        undoBtn.addEventListener('click', () => {
-          const removed = beads.pop()
-          if (!removed) return
-          removed.el.remove()
+        function totalAnglesWithClosing(Rloc) {
+          if (beads.length <= 1) return 0
+          let s = 0
+          for (let i = 1; i < beads.length; i++) s += deltaTheta(beads[i - 1].r, beads[i].r, Rloc)
+          s += deltaTheta(beads[beads.length - 1].r, beads[0].r, Rloc) // closing gap
+          return s
+        }
+
+        function minRadiusForCurrentBeads() {
+          if (beads.length === 0) return 0
+          if (beads.length === 1) {
+            // At least large enough so red line fits nicely; neighbor bound still applies
+            return beads[0].r + GAP_PX // generous, actual bound handled below
+          }
+          // hard lower bound so asin() is defined for every adjacent pair including closing pair
+          let lower = 0
+          for (let i = 1; i < beads.length; i++)
+            lower = Math.max(lower, (beads[i - 1].r + beads[i].r + GAP_PX) / 2)
+          lower = Math.max(lower, (beads[beads.length - 1].r + beads[0].r + GAP_PX) / 2)
+
+          let upper = 10000 // big number; we'll binary search down to minimum feasible
+          // if already fits at lower, that's the minimum
+          if (totalAnglesWithClosing(lower + 1e-6) <= 2 * Math.PI) return lower + 1e-6
+
+          for (let iter = 0; iter < 40; iter++) {
+            const mid = (lower + upper) / 2
+            const used = totalAnglesWithClosing(mid)
+            if (used > 2 * Math.PI) lower = mid // too tight -> need larger radius
+            else upper = mid // fits -> try smaller
+          }
+          return upper
+        }
+
+        function relayoutForRadius(Rnew) {
           if (beads.length === 0) {
             thetaNext = START
             lastRadius = 0
-          } else {
-            thetaNext = beads[beads.length - 1].theta
-            lastRadius = beads[beads.length - 1].r
+            return
           }
-        })
-
-        clearBtn.addEventListener('click', resetLayout)
-
-        // --- math helpers ---
-        const clamp01m = (x) => Math.min(0.999999, Math.max(0, x))
-        function deltaTheta(rA, rB) {
-          // angular spacing between adjacent bead centers for radii rA, rB
-          const ratio = clamp01m((rA + rB + GAP_PX) / (2 * R))
-          return 2 * Math.asin(ratio)
+          // place first at START
+          let theta = START
+          beads[0].theta = theta
+          setPos(beads[0], Rnew)
+          // place the rest CCW (left)
+          for (let i = 1; i < beads.length; i++) {
+            theta += deltaTheta(beads[i - 1].r, beads[i].r, Rnew)
+            beads[i].theta = theta
+            setPos(beads[i], Rnew)
+          }
+          thetaNext = beads[beads.length - 1].theta
+          lastRadius = beads[beads.length - 1].r
         }
+
+        function setPos(b, Rloc = R) {
+          b.el.style.left = cx + Rloc * Math.cos(b.theta) - b.r + 'px'
+          b.el.style.top = cy + Rloc * Math.sin(b.theta) - b.r + 'px'
+        }
+
         function remainingArc() {
-          // how much angle is left until we loop back to the start angle
           return START + 2 * Math.PI - thetaNext
         }
+
         function canPlaceWithRadius(rNext) {
           if (beads.length === 0) return true
           const needBetweenPrevAndNext = deltaTheta(lastRadius, rNext)
@@ -301,8 +337,9 @@
           const needNextToFirst = deltaTheta(rNext, rFirst)
           return remainingArc() >= needBetweenPrevAndNext + needNextToFirst - EPS
         }
-        function nudgeFull() {
-          stage.animate(
+
+        function nudge(el = stage) {
+          el.animate(
             [
               { transform: 'translateX(0)' },
               { transform: 'translateX(-6px)' },
@@ -312,37 +349,108 @@
             { duration: 240, easing: 'ease-out' },
           )
         }
-        // --------------------
 
+        // --- lifecycle helpers ---
+        function resetLayout() {
+          beads.forEach((b) => b.el.remove())
+          beads = []
+          thetaNext = START
+          lastRadius = 0
+        }
+
+        // ====== Event wiring ======
+        sizeInput.addEventListener('input', () => (sizeOut.value = `${sizeInput.value}mm`))
+
+        tray.addEventListener('click', (e) => {
+          const sw = e.target.closest('.swatch')
+          if (!sw) return
+          addBead(getComputedStyle(sw).backgroundImage)
+        })
+
+        undoBtn.addEventListener('click', () => {
+          const r = beads.pop()
+          if (!r) return
+          r.el.remove()
+          if (beads.length === 0) {
+            thetaNext = START
+            lastRadius = 0
+          } else {
+            thetaNext = beads[beads.length - 1].theta
+            lastRadius = beads[beads.length - 1].r
+            // ensure wrist radius still valid for remaining beads
+            const minR = minRadiusForCurrentBeads()
+            const targetDiam = Math.max(2 * minR, +wristInput.min)
+            if (R < minR) {
+              setGuideDiameter(targetDiam)
+              relayoutForRadius(R)
+              wristInput.value = Math.round(targetDiam)
+              wristOut.value = `${Math.round(targetDiam)} px`
+            }
+          }
+        })
+
+        clearBtn.addEventListener('click', resetLayout)
+
+        // Wrist size slider (diameter in px for simplicity)
+        wristInput.addEventListener('input', () => {
+          let diam = +wristInput.value
+          // Clamp to minimum radius required by current beads
+          const minR = minRadiusForCurrentBeads()
+          if (diam / 2 < minR) {
+            diam = Math.max(2 * minR, +wristInput.min)
+            wristInput.value = Math.round(diam)
+            nudge() // too small for current beads
+          }
+          setGuideDiameter(diam)
+          relayoutForRadius(R) // smooth transition via CSS
+          wristOut.value = `${Math.round(diam)} px`
+        })
+
+        // ====== Add bead ======
         function addBead(backgroundImage) {
           const mm = Number(sizeInput.value)
           const d = mmToPx(mm)
           const r = d / 2
 
-          // Hard stop if it won't fit
+          // Hard stop if it won't fit at current radius
           if (!canPlaceWithRadius(r)) {
-            nudgeFull()
+            nudge()
             return
           }
-
-          // Place using exact chord spacing
-          const dTheta = beads.length === 0 ? 0 : deltaTheta(lastRadius, r)
-          const theta = beads.length === 0 ? START : thetaNext + dTheta
 
           const el = document.createElement('div')
           el.className = 'bead'
           el.style.width = d + 'px'
           el.style.height = d + 'px'
           el.style.backgroundImage = backgroundImage
-          el.style.left = cx + R * Math.cos(theta) - r + 'px'
-          el.style.top = cy + R * Math.sin(theta) - r + 'px'
+
+          // first bead at START, others spaced by exact chord distance
+          const dTheta = beads.length === 0 ? 0 : deltaTheta(lastRadius, r)
+          const theta = beads.length === 0 ? START : thetaNext + dTheta
+
+          const bead = { el, r, theta }
           beadsLayer.appendChild(el)
+          setPos(bead) // initial position
           requestAnimationFrame(() => el.classList.add('show'))
 
-          beads.push({ el, r, theta })
+          beads.push(bead)
           thetaNext = theta
           lastRadius = r
+
+          // After adding, ensure wrist slider can't shrink below the new minimum
+          const minR = minRadiusForCurrentBeads()
+          const minDiam = Math.max(2 * minR, +wristInput.min)
+          if (R < minR) {
+            setGuideDiameter(minDiam)
+            relayoutForRadius(R)
+            wristInput.value = Math.round(minDiam)
+            wristOut.value = `${Math.round(minDiam)} px`
+          }
         }
+
+        // Init outputs
+        sizeOut.value = `${sizeInput.value}mm`
+        wristOut.value = `${wristInput.value} px`
       })()
     </script>
   </body>
