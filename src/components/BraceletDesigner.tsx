@@ -21,7 +21,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import type { BankData } from '@/lib/types/bank'
 import { STONE_CATEGORIES, type StoneSetting } from '@/lib/types/stone-settings'
-import { ArrowLeft, Check, RefreshCw, Upload } from 'lucide-react'
+import { ArrowLeft, Check, GripVertical, RefreshCw, Upload } from 'lucide-react'
 import Image from 'next/image'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
@@ -67,10 +67,13 @@ export default function BraceletDesigner() {
   })
   const [paymentSlip, setPaymentSlip] = useState<File | null>(null)
   const [paymentSlipPreview, setPaymentSlipPreview] = useState<string>('')
+  const [draggedBead, setDraggedBead] = useState<string | null>(null)
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
   const stageRef = useRef<HTMLDivElement>(null)
   const ringRef = useRef<HTMLDivElement>(null)
   const beadsLayerRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const draggedBeadRef = useRef<string | null>(null)
 
   // Geometry state - adjust radius based on wrist length
   const geometryRef = useRef({
@@ -228,6 +231,8 @@ export default function BraceletDesigner() {
           geometryRef.current.cx + Rnew * Math.cos(theta) - updatedBeads[0].r + 'px'
         element.style.top =
           geometryRef.current.cy + Rnew * Math.sin(theta) - updatedBeads[0].r + 'px'
+        // Ensure dataset is set for drag and drop
+        element.dataset.beadId = updatedBeads[0].id
       }
 
       // Place the rest CCW (left)
@@ -241,6 +246,8 @@ export default function BraceletDesigner() {
             geometryRef.current.cx + Rnew * Math.cos(theta) - updatedBeads[i].r + 'px'
           element.style.top =
             geometryRef.current.cy + Rnew * Math.sin(theta) - updatedBeads[i].r + 'px'
+          // Ensure dataset is set for drag and drop
+          element.dataset.beadId = updatedBeads[i].id
         }
       }
 
@@ -349,6 +356,88 @@ export default function BraceletDesigner() {
     )
   }
 
+  const handleDragStart = (e: React.DragEvent, beadId: string) => {
+    setDraggedBead(beadId)
+    e.dataTransfer.effectAllowed = 'move'
+  }
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'move'
+    setDragOverIndex(index)
+  }
+
+  const handleDragEnd = () => {
+    setDraggedBead(null)
+    setDragOverIndex(null)
+  }
+
+  const handleDrop = (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault()
+
+    if (!draggedBead) return
+
+    const draggedIndex = beads.findIndex((b) => b.id === draggedBead)
+    if (draggedIndex === -1 || draggedIndex === dropIndex) {
+      setDraggedBead(null)
+      setDragOverIndex(null)
+      return
+    }
+
+    // Reorder beads
+    const newBeads = [...beads]
+    const [removed] = newBeads.splice(draggedIndex, 1)
+    newBeads.splice(dropIndex, 0, removed)
+
+    // Update beads and trigger relayout
+    setBeads(newBeads)
+    setDraggedBead(null)
+    setDragOverIndex(null)
+
+    // Relayout all beads with new order
+    setTimeout(() => {
+      relayoutBeadsWithNewOrder(newBeads)
+    }, 10)
+  }
+
+  const relayoutBeadsWithNewOrder = (newBeads: Bead[]) => {
+    if (newBeads.length === 0) return
+
+    const R = geometryRef.current.R
+    let theta = START
+
+    // Update first bead position
+    if (newBeads[0].el) {
+      newBeads[0].theta = theta
+      newBeads[0].el.style.left =
+        geometryRef.current.cx + R * Math.cos(theta) - newBeads[0].r + 'px'
+      newBeads[0].el.style.top = geometryRef.current.cy + R * Math.sin(theta) - newBeads[0].r + 'px'
+
+      // Update dataset for drag and drop
+      newBeads[0].el.dataset.beadId = newBeads[0].id
+    }
+
+    // Update remaining beads
+    for (let i = 1; i < newBeads.length; i++) {
+      theta += deltaTheta(newBeads[i - 1].r, newBeads[i].r, R)
+      if (newBeads[i].el) {
+        newBeads[i].theta = theta
+        newBeads[i].el.style.left =
+          geometryRef.current.cx + R * Math.cos(theta) - newBeads[i].r + 'px'
+        newBeads[i].el.style.top =
+          geometryRef.current.cy + R * Math.sin(theta) - newBeads[i].r + 'px'
+
+        // Update dataset for drag and drop
+        newBeads[i].el.dataset.beadId = newBeads[i].id
+      }
+    }
+  }
+
+  // Update the ref whenever draggedBead changes
+  useEffect(() => {
+    draggedBeadRef.current = draggedBead
+  }, [draggedBead])
+
   const addBead = (stone: StoneSetting['acf']['stone_information']) => {
     const d = mmToPx(beadSize)
     const r = d / 2
@@ -369,10 +458,14 @@ export default function BraceletDesigner() {
     // Always use circle shape for all categories
     const shape: BeadShape = 'circle'
 
+    const beadId = Date.now().toString()
     const el = document.createElement('div')
     el.className = 'bead'
     el.style.width = d + 'px'
     el.style.height = d + 'px'
+    el.style.cursor = 'move'
+    el.draggable = true
+    el.dataset.beadId = beadId
 
     // Use image if available
     if (stone.stone_image) {
@@ -380,6 +473,61 @@ export default function BraceletDesigner() {
       el.style.backgroundSize = 'cover'
       el.style.backgroundPosition = 'center'
     }
+
+    // Add drag event listeners to the bead element
+    el.addEventListener('dragstart', (e) => {
+      e.dataTransfer!.effectAllowed = 'move'
+      el.style.opacity = '0.5'
+      setDraggedBead(beadId)
+    })
+
+    el.addEventListener('dragend', () => {
+      el.style.opacity = '1'
+      setDraggedBead(null)
+      setDragOverIndex(null)
+    })
+
+    el.addEventListener('dragover', (e) => {
+      e.preventDefault()
+      e.dataTransfer!.dropEffect = 'move'
+    })
+
+    el.addEventListener('drop', (e) => {
+      e.preventDefault()
+      e.stopPropagation()
+
+      const dropBeadId = el.dataset.beadId
+      const currentDraggedBead = draggedBeadRef.current
+
+      if (!currentDraggedBead || !dropBeadId || currentDraggedBead === dropBeadId) {
+        return
+      }
+
+      // Get current beads state
+      setBeads((currentBeads) => {
+        const draggedIndex = currentBeads.findIndex((b) => b.id === currentDraggedBead)
+        const dropIndex = currentBeads.findIndex((b) => b.id === dropBeadId)
+
+        if (draggedIndex === -1 || dropIndex === -1) {
+          return currentBeads
+        }
+
+        // Reorder beads
+        const newBeads = [...currentBeads]
+        const [removed] = newBeads.splice(draggedIndex, 1)
+        newBeads.splice(dropIndex, 0, removed)
+
+        // Relayout all beads with new order
+        setTimeout(() => {
+          relayoutBeadsWithNewOrder(newBeads)
+        }, 10)
+
+        return newBeads
+      })
+
+      setDraggedBead(null)
+      setDragOverIndex(null)
+    })
 
     // Check if radius needs to be increased after adding this bead
     const tempBeads = [
@@ -449,7 +597,7 @@ export default function BraceletDesigner() {
 
     const price = getStonePrice(stone, beadSize)
     const newBead: Bead = {
-      id: Date.now().toString(),
+      id: beadId,
       el,
       r,
       theta,
@@ -574,9 +722,26 @@ export default function BraceletDesigner() {
           transition: top 0.35s ease, left 0.35s ease,
             transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
           transform: scale(0.6);
+          pointer-events: auto !important;
         }
         .bead.show {
           transform: scale(1);
+        }
+        .bead:hover {
+          filter: brightness(1.1);
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+          z-index: 10;
+        }
+        .bead-list-item {
+          cursor: move;
+          transition: opacity 0.2s, transform 0.2s;
+        }
+        .bead-list-item.dragging {
+          opacity: 0.5;
+        }
+        .bead-list-item.drag-over {
+          transform: translateY(2px);
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
       `}</style>
 
@@ -593,11 +758,7 @@ export default function BraceletDesigner() {
                 className="absolute w-[380px] h-[380px] rounded-full border-[4px] border-black left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none transition-all duration-[350ms] ease-in-out"
               />
             </div>
-            <div
-              ref={beadsLayerRef}
-              className="absolute inset-0 z-[3] pointer-events-none"
-              aria-hidden="true"
-            />
+            <div ref={beadsLayerRef} className="absolute inset-0 z-[3]" aria-hidden="true" />
           </section>
           <div className="flex gap-2">
             <Button
@@ -793,8 +954,48 @@ export default function BraceletDesigner() {
                   <span className="font-medium">{beads.length} ชิ้น</span>
                 </div>
                 <div className="border-t pt-2">
-                  <div className="font-semibold mb-2">หินที่เลือก:</div>
+                  <div className="font-semibold mb-2">หินที่เลือก: (ลากเพื่อจัดเรียงใหม่)</div>
                   <div className="space-y-2">
+                    {beads.map((bead, index) => (
+                      <div
+                        key={bead.id}
+                        className={`bead-list-item flex items-center gap-3 p-2 bg-white rounded-lg ${
+                          draggedBead === bead.id ? 'dragging' : ''
+                        } ${dragOverIndex === index ? 'drag-over' : ''}`}
+                        draggable
+                        onDragStart={(e) => handleDragStart(e, bead.id)}
+                        onDragOver={(e) => handleDragOver(e, index)}
+                        onDragEnd={handleDragEnd}
+                        onDrop={(e) => handleDrop(e, index)}
+                      >
+                        <div className="flex items-center justify-center w-6 h-6 text-gray-400">
+                          <GripVertical className="w-4 h-4" />
+                        </div>
+                        <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+                          {bead.imageUrl && (
+                            <Image
+                              src={bead.imageUrl}
+                              alt={bead.stoneSetting?.stone_title || 'Bead'}
+                              width={40}
+                              height={40}
+                              className="w-full h-full object-cover"
+                            />
+                          )}
+                        </div>
+                        <div className="flex-1 text-sm">
+                          <div className="font-medium">
+                            {bead.stoneSetting?.stone_title || 'Unknown'}
+                          </div>
+                          <div className="text-xs text-gray-500">{bead.size} mm</div>
+                        </div>
+                        <div className="text-right text-sm">
+                          <div className="text-xs text-gray-600">฿{bead.price}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-3 pt-3 border-t">
+                    <div className="text-sm text-gray-600 mb-2">สรุปจำนวนหิน:</div>
                     {(() => {
                       // Group beads by stone title and size
                       const groupedBeads = beads.reduce((acc, bead) => {
@@ -806,7 +1007,7 @@ export default function BraceletDesigner() {
                             count: 0,
                             price: bead.price,
                             totalPrice: 0,
-                            size: bead.size, // Store the size for display
+                            size: bead.size,
                           }
                         }
                         acc[key].count++
@@ -815,28 +1016,16 @@ export default function BraceletDesigner() {
                       }, {} as Record<string, { stoneSetting: StoneSetting['acf']['stone_information'] | undefined; imageUrl?: string; count: number; price: number; totalPrice: number; size: number }>)
 
                       return Object.entries(groupedBeads).map(([key, group]) => (
-                        <div key={key} className="flex items-center gap-3 p-2 bg-white rounded-lg">
-                          <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
-                            {group.imageUrl && (
-                              <Image
-                                src={group.imageUrl}
-                                alt={group.stoneSetting?.stone_title || 'Bead'}
-                                width={40}
-                                height={40}
-                                className="w-full h-full object-cover"
-                              />
-                            )}
-                          </div>
-                          <div className="flex-1 text-sm">
-                            <div className="font-medium">
-                              {group.stoneSetting?.stone_title || 'Unknown'}
-                            </div>
-                            <div className="text-xs text-gray-500">{group.size} mm</div>
-                          </div>
-                          <div className="text-right text-sm">
-                            <div className="font-medium">x{group.count}</div>
-                            <div className="text-xs text-gray-600">฿{group.totalPrice}</div>
-                          </div>
+                        <div
+                          key={key}
+                          className="flex items-center justify-between text-xs text-gray-600 py-1"
+                        >
+                          <span>
+                            {group.stoneSetting?.stone_title || 'Unknown'} ({group.size}mm)
+                          </span>
+                          <span>
+                            x{group.count} = ฿{group.totalPrice}
+                          </span>
                         </div>
                       ))
                     })()}
