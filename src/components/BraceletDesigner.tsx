@@ -407,28 +407,30 @@ export default function BraceletDesigner() {
     let theta = START
 
     // Update first bead position
-    if (newBeads[0].el) {
+    const firstBeadEl = newBeads[0].el
+    if (firstBeadEl) {
       newBeads[0].theta = theta
-      newBeads[0].el.style.left =
+      firstBeadEl.style.left =
         geometryRef.current.cx + R * Math.cos(theta) - newBeads[0].r + 'px'
-      newBeads[0].el.style.top = geometryRef.current.cy + R * Math.sin(theta) - newBeads[0].r + 'px'
+      firstBeadEl.style.top = geometryRef.current.cy + R * Math.sin(theta) - newBeads[0].r + 'px'
 
       // Update dataset for drag and drop
-      newBeads[0].el.dataset.beadId = newBeads[0].id
+      firstBeadEl.dataset.beadId = newBeads[0].id
     }
 
     // Update remaining beads
     for (let i = 1; i < newBeads.length; i++) {
       theta += deltaTheta(newBeads[i - 1].r, newBeads[i].r, R)
-      if (newBeads[i].el) {
+      const beadEl = newBeads[i].el
+      if (beadEl) {
         newBeads[i].theta = theta
-        newBeads[i].el.style.left =
+        beadEl.style.left =
           geometryRef.current.cx + R * Math.cos(theta) - newBeads[i].r + 'px'
-        newBeads[i].el.style.top =
+        beadEl.style.top =
           geometryRef.current.cy + R * Math.sin(theta) - newBeads[i].r + 'px'
 
         // Update dataset for drag and drop
-        newBeads[i].el.dataset.beadId = newBeads[i].id
+        beadEl.dataset.beadId = newBeads[i].id
       }
     }
   }
