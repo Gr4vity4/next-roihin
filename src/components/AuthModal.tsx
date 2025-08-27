@@ -7,7 +7,6 @@ import Button from '@/components/Button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useAuth } from '@/contexts/AuthContext'
-import { cn } from '@/lib/utils'
 
 interface AuthModalProps {
   isOpen: boolean
