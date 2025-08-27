@@ -1,10 +1,13 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { Menu, X } from 'lucide-react'
+import { Menu, X, ChevronDown } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, useRef } from 'react'
+import { useRouter } from 'next/navigation'
+import { useAuth } from '@/contexts/AuthContext'
+import AuthModal from '@/components/AuthModal'
 
 const navItems = [
   { name: 'หน้าแรก', href: '/' },
@@ -16,14 +19,28 @@ const navItems = [
   { name: 'บทความ', href: '/blog' },
 ]
 
+const userMenuItems = [
+  { name: 'แดชบอร์ด', href: '/member' },
+  { name: 'โปรไฟล์', href: '/member/profile' },
+  { name: 'คำสั่งซื้อ', href: '/member/orders' },
+  { name: 'ที่อยู่จัดส่ง', href: '/member/addresses' },
+  { name: 'รายการโปรด', href: '/member/wishlist' },
+  { name: 'ตั้งค่า', href: '/member/settings' },
+]
+
 export default function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [scrollThreshold, setScrollThreshold] = useState(10) // Default fallback
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
+  const [scrollThreshold, setScrollThreshold] = useState(10)
+  const [authModalOpen, setAuthModalOpen] = useState(false)
+  const [authModalMode, setAuthModalMode] = useState<'sign-in' | 'sign-up'>('sign-in')
+  const userMenuRef = useRef<HTMLDivElement>(null)
+  const router = useRouter()
+  const { isLoggedIn, user, logout } = useAuth()
 
   // Calculate the height of the first section (hero section)
   const calculateScrollThreshold = useCallback(() => {
-    // Try to find the first main section after navigation
     const heroSection =
       document.querySelector('main > section:first-of-type') ||
       document.querySelector('[class*="min-h-screen"]') ||
@@ -32,9 +49,7 @@ export default function Navigation() {
     if (heroSection) {
       const rect = heroSection.getBoundingClientRect()
       const heroHeight = rect.height
-      // Set threshold to be when we've scrolled past most of the hero section
-      // Subtract navigation height (230px) to account for the fixed nav overlap
-      const threshold = Math.max(heroHeight - 230, 100) // Minimum 100px fallback
+      const threshold = Math.max(heroHeight - 230, 100)
       setScrollThreshold(threshold)
     }
   }, [])
@@ -44,21 +59,17 @@ export default function Navigation() {
       setIsScrolled(window.scrollY > scrollThreshold)
     }
 
-    // Calculate threshold on mount and window resize
     const handleResize = () => {
       calculateScrollThreshold()
     }
 
-    // Initial calculation
     calculateScrollThreshold()
 
-    // Add event listeners
     window.addEventListener('scroll', handleScroll)
     window.addEventListener('resize', handleResize)
 
-    // Recalculate after images/content loads
     const handleLoad = () => {
-      setTimeout(calculateScrollThreshold, 100) // Small delay to ensure content is rendered
+      setTimeout(calculateScrollThreshold, 100)
     }
     window.addEventListener('load', handleLoad)
 
@@ -68,6 +79,34 @@ export default function Navigation() {
       window.removeEventListener('load', handleLoad)
     }
   }, [scrollThreshold, calculateScrollThreshold])
+
+  // Close user menu when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setIsUserMenuOpen(false)
+      }
+    }
+
+    if (isUserMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside)
+      }
+    }
+  }, [isUserMenuOpen])
+
+  const handleLogout = () => {
+    logout()
+    setIsUserMenuOpen(false)
+    router.push('/')
+  }
+
+  const openAuthModal = (mode: 'sign-in' | 'sign-up') => {
+    setAuthModalMode(mode)
+    setAuthModalOpen(true)
+    setIsMobileMenuOpen(false)
+  }
 
   return (
     <nav
@@ -81,7 +120,7 @@ export default function Navigation() {
       {/* Desktop Navigation with Video Background */}
       <div
         className={cn(
-          'hidden lg:block relative overflow-hidden transition-all duration-300',
+          'hidden lg:block relative transition-all duration-300',
           isScrolled ? 'h-20' : 'h-[230px]',
         )}
       >
@@ -134,6 +173,66 @@ export default function Navigation() {
                     {item.name}
                   </Link>
                 ))}
+                
+                {/* Auth Section */}
+                <div className="flex items-center space-x-3 ml-4 pl-4 border-l border-white/20 relative">
+                  {isLoggedIn ? (
+                    <div className="relative z-[9999]" ref={userMenuRef}>
+                      <button
+                        onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                        className="flex items-center space-x-2 font-medium text-sm text-white transition-colors hover:text-gold"
+                      >
+                        <div className="w-8 h-8 bg-[#005635] rounded-full flex items-center justify-center text-white text-xs font-semibold">
+                          {user?.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'U'}
+                        </div>
+                        <span className="tracking-widest">{user?.name}</span>
+                        <ChevronDown className={cn("w-4 h-4 transition-transform", isUserMenuOpen && "rotate-180")} />
+                      </button>
+                      
+                      {/* Dropdown Menu */}
+                      {isUserMenuOpen && (
+                        <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-2xl border border-gray-100 py-2 z-[10000]">
+                          <div className="px-4 py-3 border-b border-gray-200">
+                            <p className="text-sm font-semibold text-gray-900">{user?.name}</p>
+                            <p className="text-xs text-gray-500">{user?.email}</p>
+                          </div>
+                          {userMenuItems.map((item) => (
+                            <Link
+                              key={item.href}
+                              href={item.href}
+                              onClick={() => setIsUserMenuOpen(false)}
+                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            >
+                              {item.name}
+                            </Link>
+                          ))}
+                          <button
+                            onClick={handleLogout}
+                            className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 border-t border-gray-200"
+                          >
+                            ออกจากระบบ
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => openAuthModal('sign-in')}
+                        className="font-medium text-sm text-white transition-colors hover:text-gold tracking-widest"
+                      >
+                        เข้าสู่ระบบ
+                      </button>
+                      <span className="text-white/40">|</span>
+                      <button
+                        onClick={() => openAuthModal('sign-up')}
+                        className="font-medium text-sm text-white transition-colors hover:text-gold tracking-widest"
+                      >
+                        สมัครสมาชิก
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
           ) : (
@@ -163,6 +262,66 @@ export default function Navigation() {
                     {item.name}
                   </Link>
                 ))}
+                
+                {/* Auth Section */}
+                <div className="flex items-center space-x-3 ml-4 pl-4 border-l border-white/20 relative">
+                  {isLoggedIn ? (
+                    <div className="relative z-[9999]" ref={userMenuRef}>
+                      <button
+                        onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                        className="flex items-center space-x-2 font-medium text-base text-white transition-colors hover:text-gold"
+                      >
+                        <div className="w-8 h-8 bg-[#005635] rounded-full flex items-center justify-center text-white text-xs font-semibold">
+                          {user?.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'U'}
+                        </div>
+                        <span className="tracking-wider">{user?.name}</span>
+                        <ChevronDown className={cn("w-4 h-4 transition-transform", isUserMenuOpen && "rotate-180")} />
+                      </button>
+                      
+                      {/* Dropdown Menu */}
+                      {isUserMenuOpen && (
+                        <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-2xl border border-gray-100 py-2 z-[10000]">
+                          <div className="px-4 py-3 border-b border-gray-200">
+                            <p className="text-sm font-semibold text-gray-900">{user?.name}</p>
+                            <p className="text-xs text-gray-500">{user?.email}</p>
+                          </div>
+                          {userMenuItems.map((item) => (
+                            <Link
+                              key={item.href}
+                              href={item.href}
+                              onClick={() => setIsUserMenuOpen(false)}
+                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            >
+                              {item.name}
+                            </Link>
+                          ))}
+                          <button
+                            onClick={handleLogout}
+                            className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 border-t border-gray-200"
+                          >
+                            ออกจากระบบ
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => openAuthModal('sign-in')}
+                        className="font-medium text-base text-white transition-colors hover:text-gold tracking-wider"
+                      >
+                        เข้าสู่ระบบ
+                      </button>
+                      <span className="text-white/40">|</span>
+                      <button
+                        onClick={() => openAuthModal('sign-up')}
+                        className="font-medium text-base text-white transition-colors hover:text-gold tracking-wider"
+                      >
+                        สมัครสมาชิก
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
           )}
@@ -219,10 +378,66 @@ export default function Navigation() {
                   {item.name}
                 </Link>
               ))}
+              <div className="border-t border-gray-800 mt-3 pt-3">
+                {isLoggedIn ? (
+                  <>
+                    <div className="flex items-center space-x-3 py-3 mb-2">
+                      <div className="w-10 h-10 bg-[#005635] rounded-full flex items-center justify-center text-white font-semibold">
+                        {user?.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'U'}
+                      </div>
+                      <div>
+                        <p className="text-white font-semibold">{user?.name}</p>
+                        <p className="text-gray-400 text-sm">{user?.email}</p>
+                      </div>
+                    </div>
+                    {userMenuItems.map((item) => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className="block py-3 text-white hover:text-gold transition-colors"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        {item.name}
+                      </Link>
+                    ))}
+                    <button
+                      onClick={() => {
+                        handleLogout()
+                        setIsMobileMenuOpen(false)
+                      }}
+                      className="block w-full text-left py-3 text-red-500 hover:text-red-400 transition-colors border-t border-gray-800 mt-3"
+                    >
+                      ออกจากระบบ
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => openAuthModal('sign-in')}
+                      className="block w-full text-left py-3 text-white hover:text-gold transition-colors"
+                    >
+                      เข้าสู่ระบบ
+                    </button>
+                    <button
+                      onClick={() => openAuthModal('sign-up')}
+                      className="block w-full text-left py-3 text-white hover:text-gold transition-colors"
+                    >
+                      สมัครสมาชิก
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         )}
       </div>
+
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        mode={authModalMode}
+        onModeChange={setAuthModalMode}
+      />
     </nav>
   )
 }

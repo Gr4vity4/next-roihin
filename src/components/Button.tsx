@@ -13,7 +13,7 @@ const buttonVariants = cva(
         green:
           'bg-green-600 text-white hover:bg-green-700 focus:ring-green-600 focus:ring-offset-white shadow-lg hover:shadow-xl active:bg-green-800',
         outline:
-          'border-2 border-current hover:bg-current hover:text-white focus:ring-current focus:ring-offset-white transition-colors',
+          'border-2 border-[#005635] text-[#005635] hover:bg-[#005635] hover:text-white focus:ring-[#005635] focus:ring-offset-white transition-colors',
         ghost:
           'hover:bg-gray-100 text-gray-700 hover:text-gray-900 focus:ring-gray-500 focus:ring-offset-white',
       },
