@@ -2,10 +2,10 @@ import Link from 'next/link'
 
 export default function MemberDashboard() {
   const stats = [
-    { label: 'Total Orders', value: '12', icon: '📦' },
-    { label: 'In Progress', value: '2', icon: '⏳' },
-    { label: 'Wishlist Items', value: '5', icon: '❤️' },
-    { label: 'Total Spent', value: '฿15,420', icon: '💰' },
+    { label: 'Total Orders', value: '12' },
+    { label: 'In Progress', value: '2' },
+    { label: 'Wishlist Items', value: '5' },
+    { label: 'Total Spent', value: '฿15,420' },
   ]
 
   const recentOrders = [
@@ -27,7 +27,6 @@ export default function MemberDashboard() {
             {stats.map((stat) => (
               <div key={stat.label} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-2xl">{stat.icon}</span>
                   <span className="text-sm text-gray-500">{stat.label}</span>
                 </div>
                 <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
