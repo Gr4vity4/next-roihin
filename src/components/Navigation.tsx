@@ -5,7 +5,7 @@ import { Menu, X, ChevronDown } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useCallback, useEffect, useState, useRef } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import AuthModal from '@/components/AuthModal'
 
@@ -32,11 +32,15 @@ export default function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
+  const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false)
+  const [currentLanguage, setCurrentLanguage] = useState<'TH' | 'EN'>('TH')
   const [scrollThreshold, setScrollThreshold] = useState(10)
   const [authModalOpen, setAuthModalOpen] = useState(false)
   const [authModalMode, setAuthModalMode] = useState<'sign-in' | 'sign-up'>('sign-in')
   const userMenuRef = useRef<HTMLDivElement>(null)
+  const languageMenuRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
+  const pathname = usePathname()
   const { isLoggedIn, user, logout } = useAuth()
 
   // Calculate the height of the first section (hero section)
@@ -80,21 +84,24 @@ export default function Navigation() {
     }
   }, [scrollThreshold, calculateScrollThreshold])
 
-  // Close user menu when clicking outside
+  // Close menus when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
         setIsUserMenuOpen(false)
       }
+      if (languageMenuRef.current && !languageMenuRef.current.contains(event.target as Node)) {
+        setIsLanguageMenuOpen(false)
+      }
     }
 
-    if (isUserMenuOpen) {
+    if (isUserMenuOpen || isLanguageMenuOpen) {
       document.addEventListener('mousedown', handleClickOutside)
       return () => {
         document.removeEventListener('mousedown', handleClickOutside)
       }
     }
-  }, [isUserMenuOpen])
+  }, [isUserMenuOpen, isLanguageMenuOpen])
 
   const handleLogout = () => {
     logout()
@@ -106,6 +113,13 @@ export default function Navigation() {
     setAuthModalMode(mode)
     setAuthModalOpen(true)
     setIsMobileMenuOpen(false)
+  }
+
+  const handleLanguageSwitch = (lang: 'TH' | 'EN') => {
+    setCurrentLanguage(lang)
+    setIsLanguageMenuOpen(false)
+    // Here you can add logic to handle language change
+    // For example: router.push(pathname, { locale: lang.toLowerCase() })
   }
 
   return (
@@ -173,6 +187,42 @@ export default function Navigation() {
                     {item.name}
                   </Link>
                 ))}
+                
+                {/* Language Switcher */}
+                <div className="relative" ref={languageMenuRef}>
+                  <button
+                    onClick={() => setIsLanguageMenuOpen(!isLanguageMenuOpen)}
+                    className="flex items-center space-x-1 px-3 py-1.5 text-white hover:text-gold transition-colors"
+                  >
+                    <span className="text-sm font-medium tracking-widest">{currentLanguage}</span>
+                    <ChevronDown className={cn("w-3 h-3 transition-transform", isLanguageMenuOpen && "rotate-180")} />
+                  </button>
+                  
+                  {isLanguageMenuOpen && (
+                    <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-2xl border border-gray-100 py-1 z-[10000]">
+                      <button
+                        onClick={() => handleLanguageSwitch('TH')}
+                        className={cn(
+                          "w-full px-4 py-2 text-sm text-left hover:bg-gray-100 flex items-center justify-between",
+                          currentLanguage === 'TH' && "bg-gray-50 font-semibold"
+                        )}
+                      >
+                        ไทย
+                        {currentLanguage === 'TH' && <span className="text-gold">✓</span>}
+                      </button>
+                      <button
+                        onClick={() => handleLanguageSwitch('EN')}
+                        className={cn(
+                          "w-full px-4 py-2 text-sm text-left hover:bg-gray-100 flex items-center justify-between",
+                          currentLanguage === 'EN' && "bg-gray-50 font-semibold"
+                        )}
+                      >
+                        English
+                        {currentLanguage === 'EN' && <span className="text-gold">✓</span>}
+                      </button>
+                    </div>
+                  )}
+                </div>
                 
                 {/* Auth Section */}
                 <div className="flex items-center space-x-3 ml-4 pl-4 border-l border-white/20 relative">
@@ -262,6 +312,42 @@ export default function Navigation() {
                     {item.name}
                   </Link>
                 ))}
+                
+                {/* Language Switcher */}
+                <div className="relative" ref={languageMenuRef}>
+                  <button
+                    onClick={() => setIsLanguageMenuOpen(!isLanguageMenuOpen)}
+                    className="flex items-center space-x-1 px-3 py-1.5 text-white hover:text-gold transition-colors"
+                  >
+                    <span className="text-base font-medium tracking-wider">{currentLanguage}</span>
+                    <ChevronDown className={cn("w-3 h-3 transition-transform", isLanguageMenuOpen && "rotate-180")} />
+                  </button>
+                  
+                  {isLanguageMenuOpen && (
+                    <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-2xl border border-gray-100 py-1 z-[10000]">
+                      <button
+                        onClick={() => handleLanguageSwitch('TH')}
+                        className={cn(
+                          "w-full px-4 py-2 text-sm text-left hover:bg-gray-100 flex items-center justify-between",
+                          currentLanguage === 'TH' && "bg-gray-50 font-semibold"
+                        )}
+                      >
+                        ไทย
+                        {currentLanguage === 'TH' && <span className="text-gold">✓</span>}
+                      </button>
+                      <button
+                        onClick={() => handleLanguageSwitch('EN')}
+                        className={cn(
+                          "w-full px-4 py-2 text-sm text-left hover:bg-gray-100 flex items-center justify-between",
+                          currentLanguage === 'EN' && "bg-gray-50 font-semibold"
+                        )}
+                      >
+                        English
+                        {currentLanguage === 'EN' && <span className="text-gold">✓</span>}
+                      </button>
+                    </div>
+                  )}
+                </div>
                 
                 {/* Auth Section */}
                 <div className="flex items-center space-x-3 ml-4 pl-4 border-l border-white/20 relative">
@@ -378,6 +464,40 @@ export default function Navigation() {
                   {item.name}
                 </Link>
               ))}
+              
+              {/* Language Switcher for Mobile */}
+              <div className="border-t border-gray-800 mt-3 pt-3">
+                <div className="flex items-center justify-between py-3">
+                  <div className="flex items-center space-x-2">
+                    <span className="text-white">ภาษา / Language</span>
+                  </div>
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => handleLanguageSwitch('TH')}
+                      className={cn(
+                        "px-3 py-1 rounded text-sm",
+                        currentLanguage === 'TH' 
+                          ? "bg-gold text-black font-semibold" 
+                          : "bg-gray-800 text-white"
+                      )}
+                    >
+                      ไทย
+                    </button>
+                    <button
+                      onClick={() => handleLanguageSwitch('EN')}
+                      className={cn(
+                        "px-3 py-1 rounded text-sm",
+                        currentLanguage === 'EN' 
+                          ? "bg-gold text-black font-semibold" 
+                          : "bg-gray-800 text-white"
+                      )}
+                    >
+                      EN
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
               <div className="border-t border-gray-800 mt-3 pt-3">
                 {isLoggedIn ? (
                   <>
