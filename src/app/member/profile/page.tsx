@@ -1,31 +1,130 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Button from '@/components/Button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
+interface ProfileData {
+  id: number
+  email: string
+  first_name: string
+  last_name: string
+  phone: string
+  birth_date: string
+  gender: 'male' | 'female' | 'other' | 'prefer_not_to_say'
+  member_since: {
+    raw: string
+    human: string
+  }
+}
+
 export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [isFetching, setIsFetching] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [memberSince, setMemberSince] = useState('January 2024')
   const [formData, setFormData] = useState({
-    firstName: 'John',
-    lastName: 'Doe',
-    email: 'demo@roihin.com',
-    phone: '+66 81 234 5678',
-    birthDate: '1990-01-15',
-    gender: 'male',
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    birthDate: '',
+    gender: 'male' as 'male' | 'female' | 'other' | 'prefer_not_to_say',
   })
+
+  useEffect(() => {
+    fetchProfile()
+  }, [])
+
+  const fetchProfile = async () => {
+    try {
+      setIsFetching(true)
+      setError(null)
+      
+      const response = await fetch('/api/profile')
+      
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to fetch profile')
+      }
+      
+      const data: ProfileData = await response.json()
+      
+      setFormData({
+        firstName: data.first_name,
+        lastName: data.last_name,
+        email: data.email,
+        phone: data.phone,
+        birthDate: data.birth_date,
+        gender: data.gender || 'male',
+      })
+      
+      if (data.member_since) {
+        setMemberSince(data.member_since.human)
+      }
+    } catch (err) {
+      console.error('Failed to fetch profile:', err)
+      setError(err instanceof Error ? err.message : 'Failed to load profile')
+    } finally {
+      setIsFetching(false)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
+    setError(null)
     
-    // Mock save delay
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
-    setIsLoading(false)
-    setIsEditing(false)
+    try {
+      const response = await fetch('/api/profile', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          first_name: formData.firstName,
+          last_name: formData.lastName,
+          email: formData.email,
+          phone: formData.phone,
+          birth_date: formData.birthDate,
+          gender: formData.gender,
+        }),
+      })
+      
+      const data = await response.json()
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to update profile')
+      }
+      
+      setFormData({
+        firstName: data.first_name,
+        lastName: data.last_name,
+        email: data.email,
+        phone: data.phone,
+        birthDate: data.birth_date,
+        gender: data.gender || 'male',
+      })
+      
+      setIsEditing(false)
+    } catch (err) {
+      console.error('Failed to update profile:', err)
+      setError(err instanceof Error ? err.message : 'Failed to update profile')
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  if (isFetching) {
+    return (
+      <div className="max-w-4xl mx-auto pt-8">
+        <div className="flex items-center justify-center py-12">
+          <div className="text-gray-500">Loading profile...</div>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -35,6 +134,12 @@ export default function ProfilePage() {
         <p className="text-gray-600">Manage your account information and preferences</p>
       </div>
 
+      {error && (
+        <div className="mb-4 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg">
+          {error}
+        </div>
+      )}
+
       <div className="bg-white rounded-xl shadow-sm border border-gray-100">
         {/* Profile Header */}
         <div className="p-6 border-b border-gray-200">
@@ -43,7 +148,7 @@ export default function ProfilePage() {
               <h2 className="text-xl font-semibold text-gray-900">
                 {formData.firstName} {formData.lastName}
               </h2>
-              <p className="text-gray-500">Member since January 2024</p>
+              <p className="text-gray-500">Member since {memberSince}</p>
             </div>
             <Button
               onClick={() => isEditing ? setIsEditing(false) : setIsEditing(true)}
@@ -122,13 +227,14 @@ export default function ProfilePage() {
               <select
                 id="gender"
                 value={formData.gender}
-                onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
+                onChange={(e) => setFormData({ ...formData, gender: e.target.value as 'male' | 'female' | 'other' | 'prefer_not_to_say' })}
                 disabled={!isEditing}
                 className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <option value="male">Male</option>
                 <option value="female">Female</option>
                 <option value="other">Other</option>
+                <option value="prefer_not_to_say">Prefer not to say</option>
               </select>
             </div>
           </div>
