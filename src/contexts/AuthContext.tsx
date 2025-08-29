@@ -10,7 +10,6 @@ interface User {
 interface AuthContextType {
   isLoggedIn: boolean
   user: User | null
-  token: string | null
   login: (email: string, password: string) => Promise<void>
   register: (data: RegisterData) => Promise<void>
   logout: () => void
@@ -32,16 +31,13 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [user, setUser] = useState<User | null>(null)
-  const [token, setToken] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('authToken')
     const storedUser = localStorage.getItem('user')
     
-    if (storedToken && storedUser) {
-      setToken(storedToken)
+    if (storedUser) {
       setUser(JSON.parse(storedUser))
       setIsLoggedIn(true)
     }
@@ -57,25 +53,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username: email, password }),
+        body: JSON.stringify({ email, password }),
       })
 
       const data = await response.json()
       
       if (!response.ok) {
-        throw new Error(data.error || 'Login failed')
+        throw new Error(data.error || data.message || 'Login failed')
       }
       
       const userData: User = {
-        name: data.user_display_name || data.user_nicename || email.split('@')[0],
-        email: data.user_email || email,
+        name: data.user?.name || email.split('@')[0],
+        email: data.user?.email || email,
       }
       
-      setToken(data.token)
       setUser(userData)
       setIsLoggedIn(true)
       
-      localStorage.setItem('authToken', data.token)
       localStorage.setItem('user', JSON.stringify(userData))
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed')
@@ -120,20 +114,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  const logout = () => {
+  const logout = async () => {
     setIsLoggedIn(false)
     setUser(null)
-    setToken(null)
     setError(null)
-    localStorage.removeItem('authToken')
     localStorage.removeItem('user')
+    
+    await fetch('/api/auth/logout', {
+      method: 'POST',
+    })
   }
 
   return (
     <AuthContext.Provider value={{ 
       isLoggedIn, 
-      user, 
-      token,
+      user,
       login, 
       register,
       logout,

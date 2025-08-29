@@ -1,33 +1,44 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { cookies } from 'next/headers'
 
 const WORDPRESS_API_URL = process.env.WORDPRESS_API_URL || 'https://wp-roihin.precisiondevlab.com'
 
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
   try {
-    const body = await request.json()
+    const { email, password } = await request.json()
     
     const response = await fetch(`${WORDPRESS_API_URL}/wp-json/jwt-auth/v1/token`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify({ username: email, password }),
     })
 
     const data = await response.json()
 
     if (!response.ok) {
-      return NextResponse.json(
-        { error: data.message || 'Login failed' },
-        { status: response.status }
-      )
+      return new Response(JSON.stringify(data), { status: response.status })
     }
 
-    return NextResponse.json(data)
+    const cookieStore = await cookies()
+    cookieStore.set('wpToken', data.token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7,
+    })
+
+    return Response.json({ 
+      user: { 
+        email: data.user_email, 
+        name: data.user_display_name 
+      } 
+    })
   } catch (error) {
     console.error('Login error:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
+    return new Response(
+      JSON.stringify({ error: 'Internal server error' }),
       { status: 500 }
     )
   }

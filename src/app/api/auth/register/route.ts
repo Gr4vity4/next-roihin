@@ -1,33 +1,31 @@
-import { NextRequest, NextResponse } from 'next/server'
-
 const WORDPRESS_API_URL = process.env.WORDPRESS_API_URL || 'https://wp-roihin.precisiondevlab.com'
 
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
   try {
-    const body = await request.json()
+    const { first_name, last_name, email, phone, password, accept_terms } = await request.json()
     
     const response = await fetch(`${WORDPRESS_API_URL}/wp-json/roihin/v1/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify({ first_name, last_name, email, phone, password, accept_terms }),
     })
 
     const data = await response.json()
 
     if (!response.ok) {
-      return NextResponse.json(
-        { error: data.message || 'Registration failed' },
+      return new Response(
+        JSON.stringify({ error: data.message || 'Registration failed' }),
         { status: response.status }
       )
     }
 
-    return NextResponse.json(data, { status: 201 })
+    return Response.json(data, { status: 201 })
   } catch (error) {
     console.error('Registration error:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
+    return new Response(
+      JSON.stringify({ error: 'Internal server error' }),
       { status: 500 }
     )
   }
