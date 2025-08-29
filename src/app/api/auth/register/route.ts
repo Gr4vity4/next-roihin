@@ -6,7 +6,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     
-    const response = await fetch(`${WORDPRESS_API_URL}/wp-json/roihin/v1/reset-password`, {
+    const response = await fetch(`${WORDPRESS_API_URL}/wp-json/roihin/v1/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -18,14 +18,14 @@ export async function POST(request: NextRequest) {
 
     if (!response.ok) {
       return NextResponse.json(
-        { error: data.message || 'Reset password failed' },
+        { error: data.message || 'Registration failed' },
         { status: response.status }
       )
     }
 
-    return NextResponse.json(data)
+    return NextResponse.json(data, { status: 201 })
   } catch (error) {
-    console.error('Reset password error:', error)
+    console.error('Registration error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

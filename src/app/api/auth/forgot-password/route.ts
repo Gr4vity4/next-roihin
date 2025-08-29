@@ -1,55 +1,34 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+const WORDPRESS_API_URL = process.env.WORDPRESS_API_URL || 'https://wp-roihin.precisiondevlab.com'
+
 export async function POST(request: NextRequest) {
   try {
-    const { email } = await request.json()
+    const body = await request.json()
+    
+    const response = await fetch(`${WORDPRESS_API_URL}/wp-json/roihin/v1/forgot-password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    })
 
-    // Validate email
-    if (!email || !email.includes('@')) {
+    const data = await response.json()
+
+    if (!response.ok) {
       return NextResponse.json(
-        { error: 'Invalid email address' },
-        { status: 400 }
+        { error: data.message || 'Request failed' },
+        { status: response.status }
       )
     }
 
-    // In a real application, you would:
-    // 1. Check if the user exists in the database
-    // 2. Generate a unique reset token
-    // 3. Store the token with an expiration time
-    // 4. Send an email with the reset link
-
-    // For demo purposes, we'll simulate success
-    // In production, you'd integrate with your email service (SendGrid, AWS SES, etc.)
-    
-    const resetToken = generateResetToken()
-    const resetLink = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`
-    
-    // Log for demo purposes (in production, send actual email)
-    console.log('Password reset requested for:', email)
-    console.log('Reset link:', resetLink)
-
-    // Simulate email sending delay
-    await new Promise(resolve => setTimeout(resolve, 1000))
-
-    return NextResponse.json({
-      success: true,
-      message: 'Password reset email sent successfully'
-    })
+    return NextResponse.json(data)
   } catch (error) {
-    console.error('Password reset error:', error)
+    console.error('Forgot password error:', error)
     return NextResponse.json(
-      { error: 'Failed to process password reset request' },
+      { error: 'Internal server error' },
       { status: 500 }
     )
   }
-}
-
-function generateResetToken(): string {
-  // Generate a random token
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-  let token = ''
-  for (let i = 0; i < 32; i++) {
-    token += characters.charAt(Math.floor(Math.random() * characters.length))
-  }
-  return token
 }

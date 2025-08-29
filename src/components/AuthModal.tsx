@@ -18,12 +18,13 @@ interface AuthModalProps {
 
 export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthModalProps) {
   const router = useRouter()
-  const { login } = useAuth()
+  const { login, register } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
   const [showForgotPassword, setShowForgotPassword] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [signInData, setSignInData] = useState({
-    email: 'demo@roihin.com',
-    password: 'password123'
+    email: '',
+    password: ''
   })
   const [signUpData, setSignUpData] = useState({
     firstName: '',
@@ -31,7 +32,8 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
     email: '',
     phone: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    acceptTerms: false
   })
 
   useEffect(() => {
@@ -49,23 +51,52 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
+    setError(null)
     
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
-    login()
-    onClose()
-    router.push('/member')
+    try {
+      await login(signInData.email, signInData.password)
+      onClose()
+      router.push('/member')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'เข้าสู่ระบบไม่สำเร็จ')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
+    setError(null)
     
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    if (signUpData.password !== signUpData.confirmPassword) {
+      setError('รหัสผ่านไม่ตรงกัน')
+      setIsLoading(false)
+      return
+    }
     
-    login()
-    onClose()
-    router.push('/member')
+    if (!signUpData.acceptTerms) {
+      setError('กรุณายอมรับข้อกำหนดการใช้งาน')
+      setIsLoading(false)
+      return
+    }
+    
+    try {
+      await register({
+        firstName: signUpData.firstName,
+        lastName: signUpData.lastName,
+        email: signUpData.email,
+        phone: signUpData.phone,
+        password: signUpData.password,
+        acceptTerms: signUpData.acceptTerms
+      })
+      onClose()
+      router.push('/member')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'สมัครสมาชิกไม่สำเร็จ')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   if (!isOpen) return null
@@ -128,6 +159,12 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
                 />
               </div>
 
+              {error && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-sm text-red-600">{error}</p>
+                </div>
+              )}
+
               <div className="flex items-center">
                 <input
                   id="remember"
@@ -161,11 +198,6 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
               </p>
             </div>
 
-            <div className="mt-6 pt-6 border-t border-gray-200">
-              <p className="text-xs text-gray-500 text-center">
-                ข้อมูลสำหรับทดสอบ: demo@roihin.com / password123
-              </p>
-            </div>
           </div>
         ) : (
           <div className="p-8">
@@ -256,6 +288,8 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
                 <input
                   id="terms"
                   type="checkbox"
+                  checked={signUpData.acceptTerms}
+                  onChange={(e) => setSignUpData({ ...signUpData, acceptTerms: e.target.checked })}
                   required
                   className="h-4 w-4 text-[#005635] focus:ring-[#005635] border-gray-300 rounded mt-0.5"
                 />
@@ -270,6 +304,12 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
                   </a>
                 </Label>
               </div>
+
+              {error && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-sm text-red-600">{error}</p>
+                </div>
+              )}
 
               <Button
                 type="submit"
