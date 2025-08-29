@@ -151,16 +151,6 @@ export default function ProfilePage() {
             </div>
           )}
         </form>
-
-        {/* Additional Sections */}
-        <div className="p-6 border-t border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Security</h3>
-          <div className="space-y-3">
-            <Button variant="outline" fullWidth>
-              Change Password
-            </Button>
-          </div>
-        </div>
       </div>
     </div>
   )
