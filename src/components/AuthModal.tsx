@@ -7,6 +7,7 @@ import Button from '@/components/Button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useAuth } from '@/contexts/AuthContext'
+import ForgotPasswordModal from '@/components/ForgotPasswordModal'
 
 interface AuthModalProps {
   isOpen: boolean
@@ -19,6 +20,7 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
   const router = useRouter()
   const { login } = useAuth()
   const [isLoading, setIsLoading] = useState(false)
+  const [showForgotPassword, setShowForgotPassword] = useState(false)
   const [signInData, setSignInData] = useState({
     email: 'demo@roihin.com',
     password: 'password123'
@@ -109,6 +111,7 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
                   <Label htmlFor="password">รหัสผ่าน</Label>
                   <button 
                     type="button"
+                    onClick={() => setShowForgotPassword(true)}
                     className="text-sm text-[#005635] hover:underline"
                   >
                     ลืมรหัสผ่าน?
@@ -292,6 +295,12 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
           </div>
         )}
       </div>
+      
+      <ForgotPasswordModal
+        isOpen={showForgotPassword}
+        onClose={() => setShowForgotPassword(false)}
+        onBackToSignIn={() => setShowForgotPassword(false)}
+      />
     </div>
   )
 }
