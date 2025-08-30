@@ -22,3 +22,6 @@ export { default as PersonalizedContentSection } from './PersonalizedContentSect
 export { default as PersonalizedGallerySection } from './PersonalizedGallerySection'
 export { default as PersonalizedExpertiseSection } from './PersonalizedExpertiseSection'
 export { default as PersonalizedCTASection } from './PersonalizedCTASection'
+
+// Checkout Page Components
+export { default as ThankYouContent } from './ThankYouContent'

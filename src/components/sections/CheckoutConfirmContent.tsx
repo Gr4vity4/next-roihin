@@ -10,6 +10,8 @@ import { useRouter } from 'next/navigation'
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 import { getBanks } from '@/lib/api/banks'
 import type { BankData } from '@/lib/types/bank'
+import { createOrder, uploadSlipBase64, getBankAccounts } from '@/lib/api/orders'
+import type { OrderCreateRequest, BankAccount } from '@/lib/types/order'
 
 interface ShippingAddress {
   fullName: string
@@ -28,6 +30,8 @@ export default function CheckoutConfirmContent() {
   const [slipPreview, setSlipPreview] = useState<string>('')
   const [banks, setBanks] = useState<BankData[]>([])
   const [selectedBank, setSelectedBank] = useState<string>('')
+  const [, setBankAccounts] = useState<BankAccount[]>([])
+  const [orderError, setOrderError] = useState<string>('')
   const [shippingAddress, setShippingAddress] = useState<ShippingAddress>({
     fullName: '',
     phone: '',
@@ -45,10 +49,21 @@ export default function CheckoutConfirmContent() {
 
   useEffect(() => {
     const fetchBanks = async () => {
+      // Fetch banks from existing API for display
       const banksData = await getBanks()
       setBanks(banksData)
       if (banksData.length > 0) {
         setSelectedBank(banksData[0].acf.bank_account_number)
+      }
+
+      // Also fetch bank accounts from the new REST API
+      try {
+        const bankAccountsResponse = await getBankAccounts()
+        if (bankAccountsResponse.ok) {
+          setBankAccounts(bankAccountsResponse.accounts)
+        }
+      } catch (error) {
+        console.error('Error fetching bank accounts:', error)
       }
     }
     fetchBanks()
@@ -77,44 +92,79 @@ export default function CheckoutConfirmContent() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setIsProcessing(true)
+    setOrderError('')
 
-    const orderSummary = items
-      .map(
-        (item) =>
-          `- ${item.title} ${item.color ? `(${item.color})` : ''} x ${item.quantity} = ฿${(
-            item.price * item.quantity
-          ).toLocaleString('th-TH')}`,
-      )
-      .join('\n')
+    try {
+      // Split full name into first and last name
+      const nameParts = shippingAddress.fullName.trim().split(' ')
+      const firstName = nameParts[0] || ''
+      const lastName = nameParts.slice(1).join(' ') || nameParts[0] || ''
 
-    const addressText = `
-ชื่อ-นามสกุล: ${shippingAddress.fullName}
-เบอร์โทร: ${shippingAddress.phone}
-ที่อยู่: ${shippingAddress.address}
-อำเภอ/เขต: ${shippingAddress.district}
-จังหวัด: ${shippingAddress.province}
-รหัสไปรษณีย์: ${shippingAddress.postalCode}
-    `.trim()
+      // Prepare order data
+      const orderData: OrderCreateRequest = {
+        items: items.map(item => ({
+          product_id: parseInt(item.id),
+          quantity: item.quantity,
+          color: item.color || undefined,
+        })),
+        billing: {
+          first_name: firstName,
+          last_name: lastName,
+          email: `${shippingAddress.phone}@roihin.temp`, // Temporary email based on phone
+          phone: shippingAddress.phone,
+          address_1: shippingAddress.address,
+          address_2: '',
+          city: shippingAddress.district,
+          state: shippingAddress.province,
+          postcode: shippingAddress.postalCode,
+          country: 'TH',
+        },
+        payment_method: 'bacs',
+        shipping_total: 0,
+        note: '',
+        slip_base64: slipPreview || undefined, // Include slip if available
+      }
 
-    const selectedBankDetails = banks.find(bank => bank.acf.bank_account_number === selectedBank)
-    const bankText = selectedBankDetails ? `\n\nโอนเงินไปที่:\n${selectedBankDetails.acf.bank_name}\n${selectedBankDetails.acf.bank_branch_name}\nชื่อบัญชี: ${selectedBankDetails.acf.bank_account_name}\nเลขบัญชี: ${selectedBankDetails.acf.bank_account_number}` : ''
+      // Create order
+      const orderResponse = await createOrder(orderData)
 
-    const message = encodeURIComponent(
-      `สั่งซื้อสินค้า:\n${orderSummary}\n\nรวมทั้งหมด: ฿${totalAmount.toLocaleString(
-        'th-TH',
-      )}\n\nที่อยู่จัดส่ง:\n${addressText}${bankText}\n\n${
-        paymentSlip ? 'ได้แนบสลิปการโอนเงินแล้ว' : 'ยังไม่ได้แนบสลิป'
-      }`,
-    )
+      if (!orderResponse.ok) {
+        throw new Error('Failed to create order')
+      }
 
-    clearCart()
+      // If slip wasn't included in creation and we have one, upload it separately
+      if (!slipPreview && paymentSlip && orderResponse.order) {
+        try {
+          await uploadSlipBase64(
+            orderResponse.order.order_id.toString(),
+            orderResponse.order.order_key,
+            slipPreview
+          )
+        } catch (uploadError) {
+          console.error('Failed to upload slip:', uploadError)
+          // Continue anyway since order was created
+        }
+      }
 
-    window.open(`https://lin.ee/xyzabc?message=${message}`, '_blank')
+      // Clear cart after successful order
+      clearCart()
 
-    setTimeout(() => {
-      router.push('/')
+      // Store order info in sessionStorage for thank you page
+      sessionStorage.setItem('lastOrder', JSON.stringify({
+        orderId: orderResponse.order.order_id,
+        orderKey: orderResponse.order.order_key,
+        orderNumber: orderResponse.order.order_number,
+        total: orderResponse.order.total,
+      }))
+
+      // Redirect to thank you page
+      router.push(`/checkout/thank-you?order=${orderResponse.order.order_id}&key=${orderResponse.order.order_key}`)
+
+    } catch (error) {
+      console.error('Order creation failed:', error)
+      setOrderError('เกิดข้อผิดพลาดในการสร้างคำสั่งซื้อ กรุณาลองใหม่อีกครั้ง')
       setIsProcessing(false)
-    }, 1000)
+    }
   }
 
   const isFormValid = () => {
@@ -426,6 +476,12 @@ export default function CheckoutConfirmContent() {
                   {!isFormValid() && (
                     <p className="text-xs text-red-500 mt-2 text-center">
                       กรุณากรอกข้อมูล เลือกบัญชีธนาคาร และแนบสลิปให้ครบถ้วน
+                    </p>
+                  )}
+
+                  {orderError && (
+                    <p className="text-sm text-red-500 mt-2 text-center">
+                      {orderError}
                     </p>
                   )}
                 </div>
