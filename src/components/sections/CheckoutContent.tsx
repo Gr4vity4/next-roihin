@@ -22,32 +22,9 @@ export default function CheckoutContent() {
 
   const handleCheckout = async () => {
     setIsProcessing(true)
-
-    // Create order summary for LINE message
-    const orderSummary = items
-      .map(
-        (item) =>
-          `- ${item.title} ${item.color ? `(${item.color})` : ''} x ${item.quantity} = ฿${(
-            item.price * item.quantity
-          ).toLocaleString('th-TH')}`,
-      )
-      .join('\n')
-
-    const message = encodeURIComponent(
-      `สั่งซื้อสินค้า:\n${orderSummary}\n\nรวมทั้งหมด: ฿${totalAmount.toLocaleString('th-TH')}`,
-    )
-
-    // Clear cart after processing
-    clearCart()
-
-    // Redirect to LINE with order details
-    window.open(`https://lin.ee/xyzabc?message=${message}`, '_blank')
-
-    // Redirect to thank you page
-    setTimeout(() => {
-      router.push('/')
-      setIsProcessing(false)
-    }, 1000)
+    
+    // Navigate to confirmation page
+    router.push('/checkout/confirm')
   }
 
   if (isLoading) {
@@ -223,7 +200,7 @@ export default function CheckoutContent() {
                       : 'bg-green-600 hover:bg-green-700 text-white'
                   }`}
                 >
-                  {isProcessing ? 'กำลังดำเนินการ...' : 'ดำเนินการสั่งซื้อผ่าน LINE'}
+                  {isProcessing ? 'กำลังดำเนินการ...' : 'ดำเนินการต่อ'}
                 </button>
               </div>
             </div>
