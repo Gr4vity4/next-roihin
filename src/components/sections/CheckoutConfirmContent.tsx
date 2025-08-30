@@ -7,7 +7,7 @@ import { ArrowLeftIcon } from '@heroicons/react/24/outline'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState, ChangeEvent, FormEvent } from 'react'
+import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 
 interface ShippingAddress {
   fullName: string
@@ -41,9 +41,9 @@ export default function CheckoutConfirmContent() {
 
   const handleAddressChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
-    setShippingAddress(prev => ({
+    setShippingAddress((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }))
   }
 
@@ -82,7 +82,11 @@ export default function CheckoutConfirmContent() {
     `.trim()
 
     const message = encodeURIComponent(
-      `สั่งซื้อสินค้า:\n${orderSummary}\n\nรวมทั้งหมด: ฿${totalAmount.toLocaleString('th-TH')}\n\nที่อยู่จัดส่ง:\n${addressText}\n\n${paymentSlip ? 'ได้แนบสลิปการโอนเงินแล้ว' : 'ยังไม่ได้แนบสลิป'}`,
+      `สั่งซื้อสินค้า:\n${orderSummary}\n\nรวมทั้งหมด: ฿${totalAmount.toLocaleString(
+        'th-TH',
+      )}\n\nที่อยู่จัดส่ง:\n${addressText}\n\n${
+        paymentSlip ? 'ได้แนบสลิปการโอนเงินแล้ว' : 'ยังไม่ได้แนบสลิป'
+      }`,
     )
 
     clearCart()
@@ -123,7 +127,7 @@ export default function CheckoutConfirmContent() {
             >
               <ArrowLeftIcon className="w-5 h-5 text-gray-600" />
             </Link>
-            <Typography variant="h2" className="text-gray-900">
+            <Typography variant="h3" className="text-gray-900">
               ยืนยันการสั่งซื้อ
             </Typography>
           </div>
@@ -134,10 +138,13 @@ export default function CheckoutConfirmContent() {
                 {/* Shipping Address */}
                 <div className="bg-white rounded-xl shadow-md p-6">
                   <h3 className="text-xl font-semibold text-gray-900 mb-6">ที่อยู่จัดส่ง</h3>
-                  
+
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="md:col-span-2">
-                      <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">
+                      <label
+                        htmlFor="fullName"
+                        className="block text-sm font-medium text-gray-700 mb-2"
+                      >
                         ชื่อ-นามสกุล *
                       </label>
                       <input
@@ -152,7 +159,10 @@ export default function CheckoutConfirmContent() {
                     </div>
 
                     <div className="md:col-span-2">
-                      <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                      <label
+                        htmlFor="phone"
+                        className="block text-sm font-medium text-gray-700 mb-2"
+                      >
                         เบอร์โทรศัพท์ *
                       </label>
                       <input
@@ -167,7 +177,10 @@ export default function CheckoutConfirmContent() {
                     </div>
 
                     <div className="md:col-span-2">
-                      <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-2">
+                      <label
+                        htmlFor="address"
+                        className="block text-sm font-medium text-gray-700 mb-2"
+                      >
                         ที่อยู่ *
                       </label>
                       <textarea
@@ -182,7 +195,10 @@ export default function CheckoutConfirmContent() {
                     </div>
 
                     <div>
-                      <label htmlFor="district" className="block text-sm font-medium text-gray-700 mb-2">
+                      <label
+                        htmlFor="district"
+                        className="block text-sm font-medium text-gray-700 mb-2"
+                      >
                         อำเภอ/เขต *
                       </label>
                       <input
@@ -197,7 +213,10 @@ export default function CheckoutConfirmContent() {
                     </div>
 
                     <div>
-                      <label htmlFor="province" className="block text-sm font-medium text-gray-700 mb-2">
+                      <label
+                        htmlFor="province"
+                        className="block text-sm font-medium text-gray-700 mb-2"
+                      >
                         จังหวัด *
                       </label>
                       <input
@@ -212,7 +231,10 @@ export default function CheckoutConfirmContent() {
                     </div>
 
                     <div>
-                      <label htmlFor="postalCode" className="block text-sm font-medium text-gray-700 mb-2">
+                      <label
+                        htmlFor="postalCode"
+                        className="block text-sm font-medium text-gray-700 mb-2"
+                      >
                         รหัสไปรษณีย์ *
                       </label>
                       <input
@@ -233,7 +255,7 @@ export default function CheckoutConfirmContent() {
                 {/* Payment Method */}
                 <div className="bg-white rounded-xl shadow-md p-6">
                   <h3 className="text-xl font-semibold text-gray-900 mb-6">วิธีการชำระเงิน</h3>
-                  
+
                   <div className="space-y-4">
                     <div className="p-4 bg-green-50 border-2 border-green-500 rounded-lg">
                       <p className="font-medium text-gray-900 mb-2">โอนเงินผ่านธนาคาร</p>
@@ -241,7 +263,10 @@ export default function CheckoutConfirmContent() {
                     </div>
 
                     <div>
-                      <label htmlFor="paymentSlip" className="block text-sm font-medium text-gray-700 mb-2">
+                      <label
+                        htmlFor="paymentSlip"
+                        className="block text-sm font-medium text-gray-700 mb-2"
+                      >
                         แนบสลิปการโอนเงิน *
                       </label>
                       <input
@@ -252,15 +277,15 @@ export default function CheckoutConfirmContent() {
                         required
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                       />
-                      
+
                       {slipPreview && (
                         <div className="mt-4">
                           <p className="text-sm text-gray-600 mb-2">ตัวอย่างสลิป:</p>
                           <div className="relative w-48 h-64 border border-gray-200 rounded-lg overflow-hidden">
-                            <Image 
-                              src={slipPreview} 
-                              alt="Payment slip preview" 
-                              fill 
+                            <Image
+                              src={slipPreview}
+                              alt="Payment slip preview"
+                              fill
                               className="object-contain"
                             />
                           </div>
@@ -285,9 +310,7 @@ export default function CheckoutConfirmContent() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-gray-900 truncate">{item.title}</p>
-                          {item.color && (
-                            <p className="text-xs text-gray-500">สี: {item.color}</p>
-                          )}
+                          {item.color && <p className="text-xs text-gray-500">สี: {item.color}</p>}
                           <p className="text-xs text-gray-600">
                             {item.quantity} x ฿{item.price.toLocaleString('th-TH')}
                           </p>

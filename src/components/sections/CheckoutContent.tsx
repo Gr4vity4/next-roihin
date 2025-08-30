@@ -22,7 +22,7 @@ export default function CheckoutContent() {
 
   const handleCheckout = async () => {
     setIsProcessing(true)
-    
+
     // Navigate to confirmation page
     router.push('/checkout/confirm')
   }
@@ -71,7 +71,7 @@ export default function CheckoutContent() {
     <section className="pt-24 pb-12 md:pt-32 md:pb-16 min-h-screen bg-gray-50">
       <Container>
         <div className="max-w-7xl mx-auto">
-          <Typography variant="h2" className="text-gray-900 mb-8">
+          <Typography variant="h3" className="text-gray-900 mb-8">
             ตะกร้าสินค้า ({itemCount} ชิ้น)
           </Typography>
 
