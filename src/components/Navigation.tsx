@@ -28,7 +28,11 @@ const userMenuItems = [
   { name: 'ตั้งค่า', href: '/member/settings' },
 ]
 
-export default function Navigation() {
+interface NavigationProps {
+  position?: 'fixed' | 'static'
+}
+
+export default function Navigation({ position = 'fixed' }: NavigationProps = {}) {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
@@ -125,10 +129,11 @@ export default function Navigation() {
   return (
     <nav
       className={cn(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-        isScrolled
+        position === 'fixed' ? 'fixed top-0 left-0 right-0 z-50' : 'static bg-black',
+        'transition-all duration-300',
+        position === 'fixed' && (isScrolled
           ? 'bg-black shadow-[0_8px_32px_rgba(0,0,0,0.5)] border-b border-white/10'
-          : 'bg-transparent',
+          : 'bg-transparent'),
       )}
     >
       {/* Desktop Navigation with Video Background */}

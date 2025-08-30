@@ -11,6 +11,8 @@ interface ProductSectionProps {
     src: string
     alt: string
     href?: string
+    title?: string
+    price?: number
   }[]
   className?: string
 }
