@@ -2,6 +2,7 @@
 
 import Container from '@/components/ui/Container'
 import Typography from '@/components/ui/Typography'
+import WishlistButton from '@/components/ui/WishlistButton'
 import { useCart } from '@/contexts/CartContext'
 import { Category, Product } from '@/lib/types/products'
 import { ChevronLeftIcon, ChevronRightIcon, ShoppingCartIcon } from '@heroicons/react/24/outline'
@@ -128,13 +129,29 @@ export default function ProductDetail({ product, category }: ProductDetailProps)
 
           {/* Product Information */}
           <div className="space-y-6">
-            <div>
-              <Typography variant="h2" className="text-3xl md:text-4xl text-white mb-2">
-                {product.title}
-              </Typography>
-              <p className="text-gray-400 text-sm">
-                หมวดหมู่: {category.name_th || category.name_en}
-              </p>
+            <div className="relative">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1">
+                  <Typography variant="h2" className="text-3xl md:text-4xl text-white mb-2">
+                    {product.title}
+                  </Typography>
+                  <p className="text-gray-400 text-sm">
+                    หมวดหมู่: {category.name_th || category.name_en}
+                  </p>
+                </div>
+                <WishlistButton 
+                  product={{
+                    id: `${product.id}-${selectedColorData?.color || 'default'}`,
+                    slug: product.slug,
+                    title: product.title,
+                    price: selectedPrice || 0,
+                    image: allImages[0] || '/images/placeholder.jpg',
+                    color: selectedColorData?.color,
+                    category: category.name_th || category.name_en,
+                  }}
+                  size="lg"
+                />
+              </div>
             </div>
 
             {/* Price and Color Selection */}
@@ -223,6 +240,22 @@ export default function ProductDetail({ product, category }: ProductDetailProps)
 
             {/* Add to Cart CTA */}
             <div className="border-t border-gray-800 pt-6 space-y-3">
+              <div className="flex gap-3">
+                <WishlistButton 
+                  product={{
+                    id: `${product.id}-${selectedColorData?.color || 'default'}`,
+                    slug: product.slug,
+                    title: product.title,
+                    price: selectedPrice || 0,
+                    image: allImages[0] || '/images/placeholder.jpg',
+                    color: selectedColorData?.color,
+                    category: category.name_th || category.name_en,
+                  }}
+                  showText
+                  className="flex-shrink-0"
+                />
+              </div>
+              
               <button
                 onClick={() => {
                   if (selectedPrice && selectedColorData) {
