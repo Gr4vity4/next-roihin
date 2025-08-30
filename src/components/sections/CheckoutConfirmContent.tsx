@@ -8,6 +8,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
+import { getBanks } from '@/lib/api/banks'
+import type { BankData } from '@/lib/types/bank'
 
 interface ShippingAddress {
   fullName: string
@@ -24,6 +26,8 @@ export default function CheckoutConfirmContent() {
   const [isProcessing, setIsProcessing] = useState(false)
   const [paymentSlip, setPaymentSlip] = useState<File | null>(null)
   const [slipPreview, setSlipPreview] = useState<string>('')
+  const [banks, setBanks] = useState<BankData[]>([])
+  const [selectedBank, setSelectedBank] = useState<string>('')
   const [shippingAddress, setShippingAddress] = useState<ShippingAddress>({
     fullName: '',
     phone: '',
@@ -38,6 +42,17 @@ export default function CheckoutConfirmContent() {
       router.push('/checkout')
     }
   }, [itemCount, router])
+
+  useEffect(() => {
+    const fetchBanks = async () => {
+      const banksData = await getBanks()
+      setBanks(banksData)
+      if (banksData.length > 0) {
+        setSelectedBank(banksData[0].acf.bank_account_number)
+      }
+    }
+    fetchBanks()
+  }, [])
 
   const handleAddressChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -81,10 +96,13 @@ export default function CheckoutConfirmContent() {
 รหัสไปรษณีย์: ${shippingAddress.postalCode}
     `.trim()
 
+    const selectedBankDetails = banks.find(bank => bank.acf.bank_account_number === selectedBank)
+    const bankText = selectedBankDetails ? `\n\nโอนเงินไปที่:\n${selectedBankDetails.acf.bank_name}\n${selectedBankDetails.acf.bank_branch_name}\nชื่อบัญชี: ${selectedBankDetails.acf.bank_account_name}\nเลขบัญชี: ${selectedBankDetails.acf.bank_account_number}` : ''
+
     const message = encodeURIComponent(
       `สั่งซื้อสินค้า:\n${orderSummary}\n\nรวมทั้งหมด: ฿${totalAmount.toLocaleString(
         'th-TH',
-      )}\n\nที่อยู่จัดส่ง:\n${addressText}\n\n${
+      )}\n\nที่อยู่จัดส่ง:\n${addressText}${bankText}\n\n${
         paymentSlip ? 'ได้แนบสลิปการโอนเงินแล้ว' : 'ยังไม่ได้แนบสลิป'
       }`,
     )
@@ -107,6 +125,7 @@ export default function CheckoutConfirmContent() {
       shippingAddress.district &&
       shippingAddress.province &&
       shippingAddress.postalCode &&
+      selectedBank &&
       paymentSlip
     )
   }
@@ -259,8 +278,56 @@ export default function CheckoutConfirmContent() {
                   <div className="space-y-4">
                     <div className="p-4 bg-green-50 border-2 border-green-500 rounded-lg">
                       <p className="font-medium text-gray-900 mb-2">โอนเงินผ่านธนาคาร</p>
-                      <p className="text-sm text-gray-600">กรุณาโอนเงินและแนบสลิปการโอนเงิน</p>
+                      <p className="text-sm text-gray-600">กรุณาเลือกบัญชีธนาคารที่ต้องการโอนเงิน</p>
                     </div>
+
+                    {/* Bank Selection */}
+                    {banks.length > 0 && (
+                      <div className="space-y-3">
+                        <p className="text-sm font-medium text-gray-700">เลือกบัญชีธนาคาร *</p>
+                        {banks.map((bank) => (
+                          <label
+                            key={bank.acf.bank_account_number}
+                            className={`flex items-start gap-3 p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                              selectedBank === bank.acf.bank_account_number
+                                ? 'border-green-500 bg-green-50'
+                                : 'border-gray-200 hover:border-gray-300'
+                            }`}
+                          >
+                            <input
+                              type="radio"
+                              name="bank"
+                              value={bank.acf.bank_account_number}
+                              checked={selectedBank === bank.acf.bank_account_number}
+                              onChange={(e) => setSelectedBank(e.target.value)}
+                              className="mt-1 w-4 h-4 text-green-600 focus:ring-green-500"
+                            />
+                            <div className="flex items-start gap-3 flex-1">
+                              {bank.acf.bank_image && (
+                                <div className="relative w-12 h-12 flex-shrink-0">
+                                  <Image
+                                    src={bank.acf.bank_image}
+                                    alt={bank.acf.bank_name}
+                                    fill
+                                    className="object-contain"
+                                  />
+                                </div>
+                              )}
+                              <div className="flex-1">
+                                <p className="font-medium text-gray-900">{bank.acf.bank_name}</p>
+                                <p className="text-sm text-gray-600">{bank.acf.bank_branch_name}</p>
+                                <p className="text-sm text-gray-700 font-medium mt-1">
+                                  ชื่อบัญชี: {bank.acf.bank_account_name}
+                                </p>
+                                <p className="text-sm text-gray-700">
+                                  เลขบัญชี: {bank.acf.bank_account_number}
+                                </p>
+                              </div>
+                            </div>
+                          </label>
+                        ))}
+                      </div>
+                    )}
 
                     <div>
                       <label
@@ -358,7 +425,7 @@ export default function CheckoutConfirmContent() {
 
                   {!isFormValid() && (
                     <p className="text-xs text-red-500 mt-2 text-center">
-                      กรุณากรอกข้อมูลและแนบสลิปให้ครบถ้วน
+                      กรุณากรอกข้อมูล เลือกบัญชีธนาคาร และแนบสลิปให้ครบถ้วน
                     </p>
                   )}
                 </div>
