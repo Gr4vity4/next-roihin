@@ -15,7 +15,7 @@ if (!API_BASE_URL) {
 export async function getCategories(): Promise<Category[]> {
   const response = await fetch(
     `${API_BASE_URL}/wp-json/roihin/v1/categories`,
-    getFetchConfig()
+    getFetchConfig('api')
   )
   
   if (!response.ok) {
@@ -31,7 +31,7 @@ export async function getProductsByCategory(
 ): Promise<Product[]> {
   const response = await fetch(
     `${API_BASE_URL}/wp-json/roihin/v1/category/${categorySlug}/products?per_page=${perPage}`,
-    getFetchConfig()
+    getFetchConfig('api')
   )
   
   if (!response.ok) {
@@ -44,7 +44,7 @@ export async function getProductsByCategory(
 export async function getCatalog(perCat: number = 12): Promise<CatalogResponse> {
   const response = await fetch(
     `${API_BASE_URL}/wp-json/roihin/v1/catalog?per_cat=${perCat}`,
-    getFetchConfig()
+    getFetchConfig('api')
   )
   
   if (!response.ok) {
@@ -67,7 +67,7 @@ export async function getProductById(
   
   const response = await fetch(
     `${API_BASE_URL}/wp-json/roihin/v1/product/${id}${params.toString() ? `?${params.toString()}` : ''}`,
-    getFetchConfig()
+    getFetchConfig('api')
   )
   
   if (!response.ok) {
@@ -90,7 +90,7 @@ export async function getProductBySlug(
   
   const response = await fetch(
     `${API_BASE_URL}/wp-json/roihin/v1/product/by-slug/${slug}${params.toString() ? `?${params.toString()}` : ''}`,
-    getFetchConfig()
+    getFetchConfig('api')
   )
   
   if (!response.ok) {
