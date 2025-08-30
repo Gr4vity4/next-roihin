@@ -1,13 +1,15 @@
 'use client'
 
+import AuthModal from '@/components/AuthModal'
+import { useAuth } from '@/contexts/AuthContext'
+import { useCart } from '@/contexts/CartContext'
 import { cn } from '@/lib/utils'
-import { Menu, X, ChevronDown } from 'lucide-react'
+import { ShoppingCartIcon } from '@heroicons/react/24/outline'
+import { ChevronDown, Menu, X } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useCallback, useEffect, useState, useRef } from 'react'
-import { useRouter, usePathname } from 'next/navigation'
-import { useAuth } from '@/contexts/AuthContext'
-import AuthModal from '@/components/AuthModal'
+import { useRouter } from 'next/navigation'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 const navItems = [
   { name: 'หน้าแรก', href: '/' },
@@ -44,8 +46,8 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
   const userMenuRef = useRef<HTMLDivElement>(null)
   const languageMenuRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
-  const pathname = usePathname()
   const { isLoggedIn, user, logout } = useAuth()
+  const { itemCount } = useCart()
 
   // Calculate the height of the first section (hero section)
   const calculateScrollThreshold = useCallback(() => {
@@ -131,9 +133,10 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
       className={cn(
         position === 'fixed' ? 'fixed top-0 left-0 right-0 z-50' : 'static bg-black',
         'transition-all duration-300',
-        position === 'fixed' && (isScrolled
-          ? 'bg-black shadow-[0_8px_32px_rgba(0,0,0,0.5)] border-b border-white/10'
-          : 'bg-transparent'),
+        position === 'fixed' &&
+          (isScrolled
+            ? 'bg-black shadow-[0_8px_32px_rgba(0,0,0,0.5)] border-b border-white/10'
+            : 'bg-transparent'),
       )}
     >
       {/* Desktop Navigation with Video Background */}
@@ -192,7 +195,20 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                     {item.name}
                   </Link>
                 ))}
-                
+
+                {/* Cart Icon */}
+                <Link
+                  href="/checkout"
+                  className="relative p-2 text-white hover:text-gold transition-colors"
+                >
+                  <ShoppingCartIcon className="w-6 h-6" />
+                  {itemCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-gold text-black text-xs font-bold rounded-full min-w-[20px] h-5 px-1.5 flex items-center justify-center">
+                      {itemCount > 99 ? '99+' : itemCount}
+                    </span>
+                  )}
+                </Link>
+
                 {/* Language Switcher */}
                 <div className="relative" ref={languageMenuRef}>
                   <button
@@ -200,16 +216,21 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                     className="flex items-center space-x-1 px-3 py-1.5 text-white hover:text-gold transition-colors"
                   >
                     <span className="text-sm font-medium tracking-widest">{currentLanguage}</span>
-                    <ChevronDown className={cn("w-3 h-3 transition-transform", isLanguageMenuOpen && "rotate-180")} />
+                    <ChevronDown
+                      className={cn(
+                        'w-3 h-3 transition-transform',
+                        isLanguageMenuOpen && 'rotate-180',
+                      )}
+                    />
                   </button>
-                  
+
                   {isLanguageMenuOpen && (
                     <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-2xl border border-gray-100 py-1 z-[10000]">
                       <button
                         onClick={() => handleLanguageSwitch('TH')}
                         className={cn(
-                          "w-full px-4 py-2 text-sm text-left hover:bg-gray-100 flex items-center justify-between",
-                          currentLanguage === 'TH' && "bg-gray-50 font-semibold"
+                          'w-full px-4 py-2 text-sm text-left hover:bg-gray-100 flex items-center justify-between',
+                          currentLanguage === 'TH' && 'bg-gray-50 font-semibold',
                         )}
                       >
                         ไทย
@@ -218,8 +239,8 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                       <button
                         onClick={() => handleLanguageSwitch('EN')}
                         className={cn(
-                          "w-full px-4 py-2 text-sm text-left hover:bg-gray-100 flex items-center justify-between",
-                          currentLanguage === 'EN' && "bg-gray-50 font-semibold"
+                          'w-full px-4 py-2 text-sm text-left hover:bg-gray-100 flex items-center justify-between',
+                          currentLanguage === 'EN' && 'bg-gray-50 font-semibold',
                         )}
                       >
                         English
@@ -228,7 +249,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                     </div>
                   )}
                 </div>
-                
+
                 {/* Auth Section */}
                 <div className="flex items-center space-x-3 ml-4 pl-4 border-l border-white/20 relative">
                   {isLoggedIn ? (
@@ -238,12 +259,22 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                         className="flex items-center space-x-2 font-medium text-sm text-white transition-colors hover:text-gold"
                       >
                         <div className="w-8 h-8 bg-[#005635] rounded-full flex items-center justify-center text-white text-xs font-semibold">
-                          {user?.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'U'}
+                          {user?.name
+                            ?.split(' ')
+                            .map((n) => n[0])
+                            .join('')
+                            .toUpperCase()
+                            .slice(0, 2) || 'U'}
                         </div>
                         <span className="tracking-widest">{user?.name}</span>
-                        <ChevronDown className={cn("w-4 h-4 transition-transform", isUserMenuOpen && "rotate-180")} />
+                        <ChevronDown
+                          className={cn(
+                            'w-4 h-4 transition-transform',
+                            isUserMenuOpen && 'rotate-180',
+                          )}
+                        />
                       </button>
-                      
+
                       {/* Dropdown Menu */}
                       {isUserMenuOpen && (
                         <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-2xl border border-gray-100 py-2 z-[10000]">
@@ -317,7 +348,20 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                     {item.name}
                   </Link>
                 ))}
-                
+
+                {/* Cart Icon */}
+                <Link
+                  href="/checkout"
+                  className="relative p-2 text-white hover:text-gold transition-colors"
+                >
+                  <ShoppingCartIcon className="w-6 h-6" />
+                  {itemCount > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-gold text-black text-xs font-bold rounded-full min-w-[20px] h-5 px-1.5 flex items-center justify-center bg-white">
+                      {itemCount > 99 ? '99+' : itemCount}
+                    </span>
+                  )}
+                </Link>
+
                 {/* Language Switcher */}
                 <div className="relative" ref={languageMenuRef}>
                   <button
@@ -325,16 +369,21 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                     className="flex items-center space-x-1 px-3 py-1.5 text-white hover:text-gold transition-colors"
                   >
                     <span className="text-base font-medium tracking-wider">{currentLanguage}</span>
-                    <ChevronDown className={cn("w-3 h-3 transition-transform", isLanguageMenuOpen && "rotate-180")} />
+                    <ChevronDown
+                      className={cn(
+                        'w-3 h-3 transition-transform',
+                        isLanguageMenuOpen && 'rotate-180',
+                      )}
+                    />
                   </button>
-                  
+
                   {isLanguageMenuOpen && (
                     <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-2xl border border-gray-100 py-1 z-[10000]">
                       <button
                         onClick={() => handleLanguageSwitch('TH')}
                         className={cn(
-                          "w-full px-4 py-2 text-sm text-left hover:bg-gray-100 flex items-center justify-between",
-                          currentLanguage === 'TH' && "bg-gray-50 font-semibold"
+                          'w-full px-4 py-2 text-sm text-left hover:bg-gray-100 flex items-center justify-between',
+                          currentLanguage === 'TH' && 'bg-gray-50 font-semibold',
                         )}
                       >
                         ไทย
@@ -343,8 +392,8 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                       <button
                         onClick={() => handleLanguageSwitch('EN')}
                         className={cn(
-                          "w-full px-4 py-2 text-sm text-left hover:bg-gray-100 flex items-center justify-between",
-                          currentLanguage === 'EN' && "bg-gray-50 font-semibold"
+                          'w-full px-4 py-2 text-sm text-left hover:bg-gray-100 flex items-center justify-between',
+                          currentLanguage === 'EN' && 'bg-gray-50 font-semibold',
                         )}
                       >
                         English
@@ -353,7 +402,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                     </div>
                   )}
                 </div>
-                
+
                 {/* Auth Section */}
                 <div className="flex items-center space-x-3 ml-4 pl-4 border-l border-white/20 relative">
                   {isLoggedIn ? (
@@ -363,12 +412,22 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                         className="flex items-center space-x-2 font-medium text-base text-white transition-colors hover:text-gold"
                       >
                         <div className="w-8 h-8 bg-[#005635] rounded-full flex items-center justify-center text-white text-xs font-semibold">
-                          {user?.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'U'}
+                          {user?.name
+                            ?.split(' ')
+                            .map((n) => n[0])
+                            .join('')
+                            .toUpperCase()
+                            .slice(0, 2) || 'U'}
                         </div>
                         <span className="tracking-wider">{user?.name}</span>
-                        <ChevronDown className={cn("w-4 h-4 transition-transform", isUserMenuOpen && "rotate-180")} />
+                        <ChevronDown
+                          className={cn(
+                            'w-4 h-4 transition-transform',
+                            isUserMenuOpen && 'rotate-180',
+                          )}
+                        />
                       </button>
-                      
+
                       {/* Dropdown Menu */}
                       {isUserMenuOpen && (
                         <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-2xl border border-gray-100 py-2 z-[10000]">
@@ -440,19 +499,35 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
             </div>
           </Link>
 
-          {/* Mobile Menu Toggle */}
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className={cn(
-              'p-2 transition-all cursor-pointer',
-              'focus:outline-none focus:ring-2 focus:ring-gold-400 focus:ring-offset-2',
-              isScrolled ? 'text-white hover:bg-white/10' : 'text-white hover:bg-white/10',
-            )}
-            aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
-            aria-expanded={isMobileMenuOpen}
-          >
-            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          {/* Mobile Actions */}
+          <div className="flex items-center gap-2">
+            {/* Cart Icon */}
+            <Link
+              href="/checkout"
+              className="relative p-2 text-white hover:text-gold transition-colors"
+            >
+              <ShoppingCartIcon className="w-6 h-6" />
+              {itemCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-gold text-black text-xs font-bold rounded-full min-w-[20px] h-5 px-1.5 flex items-center justify-center">
+                  {itemCount > 99 ? '99+' : itemCount}
+                </span>
+              )}
+            </Link>
+
+            {/* Mobile Menu Toggle */}
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className={cn(
+                'p-2 transition-all cursor-pointer',
+                'focus:outline-none focus:ring-2 focus:ring-gold-400 focus:ring-offset-2',
+                isScrolled ? 'text-white hover:bg-white/10' : 'text-white hover:bg-white/10',
+              )}
+              aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={isMobileMenuOpen}
+            >
+              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
 
         {/* Mobile Menu */}
@@ -469,7 +544,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                   {item.name}
                 </Link>
               ))}
-              
+
               {/* Language Switcher for Mobile */}
               <div className="border-t border-gray-800 mt-3 pt-3">
                 <div className="flex items-center justify-between py-3">
@@ -480,10 +555,10 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                     <button
                       onClick={() => handleLanguageSwitch('TH')}
                       className={cn(
-                        "px-3 py-1 rounded text-sm",
-                        currentLanguage === 'TH' 
-                          ? "bg-gold text-black font-semibold" 
-                          : "bg-gray-800 text-white"
+                        'px-3 py-1 rounded text-sm',
+                        currentLanguage === 'TH'
+                          ? 'bg-gold text-black font-semibold'
+                          : 'bg-gray-800 text-white',
                       )}
                     >
                       ไทย
@@ -491,10 +566,10 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                     <button
                       onClick={() => handleLanguageSwitch('EN')}
                       className={cn(
-                        "px-3 py-1 rounded text-sm",
-                        currentLanguage === 'EN' 
-                          ? "bg-gold text-black font-semibold" 
-                          : "bg-gray-800 text-white"
+                        'px-3 py-1 rounded text-sm',
+                        currentLanguage === 'EN'
+                          ? 'bg-gold text-black font-semibold'
+                          : 'bg-gray-800 text-white',
                       )}
                     >
                       EN
@@ -502,13 +577,18 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                   </div>
                 </div>
               </div>
-              
+
               <div className="border-t border-gray-800 mt-3 pt-3">
                 {isLoggedIn ? (
                   <>
                     <div className="flex items-center space-x-3 py-3 mb-2">
                       <div className="w-10 h-10 bg-[#005635] rounded-full flex items-center justify-center text-white font-semibold">
-                        {user?.name?.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2) || 'U'}
+                        {user?.name
+                          ?.split(' ')
+                          .map((n) => n[0])
+                          .join('')
+                          .toUpperCase()
+                          .slice(0, 2) || 'U'}
                       </div>
                       <div>
                         <p className="text-white font-semibold">{user?.name}</p>

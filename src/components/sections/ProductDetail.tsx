@@ -1,12 +1,14 @@
 'use client'
 
-import { useState } from 'react'
-import Image from 'next/image'
-import Link from 'next/link'
 import Container from '@/components/ui/Container'
 import Typography from '@/components/ui/Typography'
-import { Product, Category } from '@/lib/types/products'
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
+import { useCart } from '@/contexts/CartContext'
+import { Category, Product } from '@/lib/types/products'
+import { ChevronLeftIcon, ChevronRightIcon, ShoppingCartIcon } from '@heroicons/react/24/outline'
+import Image from 'next/image'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 
 interface ProductDetailProps {
   product: Product
@@ -16,10 +18,14 @@ interface ProductDetailProps {
 export default function ProductDetail({ product, category }: ProductDetailProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const [selectedColor, setSelectedColor] = useState(0)
+  const [isAdding, setIsAdding] = useState(false)
+  const router = useRouter()
+  const { addItem } = useCart()
 
   const allImages = [product.featured_image_url, ...product.gallery_urls].filter(Boolean)
   const colorPrices = product.acf.color_prices || []
   const selectedPrice = colorPrices[selectedColor]?.price
+  const selectedColorData = colorPrices[selectedColor]
 
   const handlePrevImage = () => {
     setSelectedImageIndex((prev) => (prev === 0 ? allImages.length - 1 : prev - 1))
@@ -36,14 +42,17 @@ export default function ProductDetail({ product, category }: ProductDetailProps)
         <nav className="mb-8">
           <ol className="flex items-center space-x-2 text-sm">
             <li>
-              <Link href="/charmspacer" className="text-gray-400 hover:text-white transition-colors">
+              <Link
+                href="/charmspacer"
+                className="text-gray-400 hover:text-white transition-colors"
+              >
                 ชาร์ม/สเปเซอร์
               </Link>
             </li>
             <li className="text-gray-600">/</li>
             <li>
-              <Link 
-                href={`/charmspacer#${category.slug}`} 
+              <Link
+                href={`/charmspacer#${category.slug}`}
                 className="text-gray-400 hover:text-white transition-colors"
               >
                 {category.name_th || category.name_en}
@@ -68,7 +77,7 @@ export default function ProductDetail({ product, category }: ProductDetailProps)
                     priority
                     sizes="(max-width: 1024px) 100vw, 50vw"
                   />
-                  
+
                   {allImages.length > 1 && (
                     <>
                       <button
@@ -99,7 +108,9 @@ export default function ProductDetail({ product, category }: ProductDetailProps)
                     key={index}
                     onClick={() => setSelectedImageIndex(index)}
                     className={`relative aspect-square bg-gray-900 overflow-hidden border-2 transition-colors ${
-                      selectedImageIndex === index ? 'border-white' : 'border-gray-700 hover:border-gray-500'
+                      selectedImageIndex === index
+                        ? 'border-white'
+                        : 'border-gray-700 hover:border-gray-500'
                     }`}
                   >
                     <Image
@@ -180,7 +191,7 @@ export default function ProductDetail({ product, category }: ProductDetailProps)
                   <p className="text-white">{product.acf.material}</p>
                 </div>
               )}
-              
+
               {product.acf.dimensions && (
                 <div>
                   <h3 className="text-sm text-gray-400 mb-1">ขนาด:</h3>
@@ -195,13 +206,13 @@ export default function ProductDetail({ product, category }: ProductDetailProps)
                 <h3 className="text-lg text-white font-medium">รายละเอียดสินค้า</h3>
                 <div className="text-gray-300 leading-relaxed space-y-4">
                   {product.acf.description_th && (
-                    <div 
+                    <div
                       dangerouslySetInnerHTML={{ __html: product.acf.description_th }}
                       className="prose prose-invert prose-sm max-w-none"
                     />
                   )}
                   {product.acf.description_en && (
-                    <div 
+                    <div
                       dangerouslySetInnerHTML={{ __html: product.acf.description_en }}
                       className="text-sm italic prose prose-invert prose-sm max-w-none"
                     />
@@ -210,18 +221,66 @@ export default function ProductDetail({ product, category }: ProductDetailProps)
               </div>
             )}
 
-            {/* Contact CTA */}
-            <div className="border-t border-gray-800 pt-6">
-              <Link
-                href="https://lin.ee/xyzabc"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center w-full px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors"
+            {/* Add to Cart CTA */}
+            <div className="border-t border-gray-800 pt-6 space-y-3">
+              <button
+                onClick={() => {
+                  if (selectedPrice && selectedColorData) {
+                    setIsAdding(true)
+                    addItem({
+                      id: `${product.id}-${selectedColorData.color}`,
+                      slug: product.slug,
+                      title: product.title,
+                      price: selectedPrice,
+                      image: allImages[0] || '/images/placeholder.jpg',
+                      color: selectedColorData.color,
+                      category: category.name_th || category.name_en,
+                    })
+                    setTimeout(() => {
+                      setIsAdding(false)
+                    }, 500)
+                  }
+                }}
+                disabled={!selectedPrice || !selectedColorData?.available || isAdding}
+                className={`inline-flex items-center justify-center w-full px-6 py-3 font-medium rounded-md transition-all ${
+                  !selectedPrice || !selectedColorData?.available
+                    ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                    : isAdding
+                    ? 'bg-green-600 text-white'
+                    : 'bg-white hover:bg-gray-100 text-black'
+                }`}
               >
-                สั่งซื้อผ่าน LINE
-              </Link>
-              <p className="text-xs text-gray-500 text-center mt-2">
-                ติดต่อเราเพื่อสอบถามรายละเอียดเพิ่มเติม
+                <ShoppingCartIcon className="w-5 h-5 mr-2" />
+                {isAdding ? 'เพิ่มลงตะกร้าแล้ว!' : 'เพิ่มลงตะกร้า'}
+              </button>
+
+              <button
+                onClick={() => {
+                  if (selectedPrice && selectedColorData) {
+                    addItem({
+                      id: `${product.id}-${selectedColorData.color}`,
+                      slug: product.slug,
+                      title: product.title,
+                      price: selectedPrice,
+                      image: allImages[0] || '/images/placeholder.jpg',
+                      color: selectedColorData.color,
+                      category: category.name_th || category.name_en,
+                    })
+                    router.push('/checkout')
+                  }
+                }}
+                disabled={!selectedPrice || !selectedColorData?.available}
+                className={`inline-flex items-center justify-center w-full px-6 py-3 font-medium rounded-lg transition-colors ${
+                  !selectedPrice || !selectedColorData?.available
+                    ? 'bg-gray-800 text-gray-500 cursor-not-allowed border border-gray-700'
+                    : 'bg-transparent border border-gold text-gold hover:bg-gold hover:text-black'
+                }`}
+              >
+                ซื้อเลย
+              </button>
+
+              <p className="text-xs text-gray-500 text-center">
+                จัดส่งฟรีทั่วประเทศ เมื่อซื้อครบ 1,500 บาท
               </p>
             </div>
           </div>

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { AuthProvider } from '@/contexts/AuthContext'
+import { CartProvider } from '@/contexts/CartContext'
 import './globals.css'
 
 const inter = Inter({
@@ -45,7 +46,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable}  antialiased`}>
         <AuthProvider>
-          {children}
+          <CartProvider>
+            {children}
+          </CartProvider>
         </AuthProvider>
       </body>
     </html>
