@@ -141,14 +141,14 @@ export default function ProductDetail({ product, category }: ProductDetailProps)
                 </div>
                 <WishlistButton 
                   product={{
-                    id: `${product.id}-${selectedColorData?.color || 'default'}`,
+                    id: product.id,
                     slug: product.slug,
                     title: product.title,
                     price: selectedPrice || 0,
                     image: allImages[0] || '/images/placeholder.jpg',
-                    color: selectedColorData?.color,
                     category: category.name_th || category.name_en,
                   }}
+                  color={selectedColorData?.color}
                   size="lg"
                 />
               </div>
@@ -243,14 +243,14 @@ export default function ProductDetail({ product, category }: ProductDetailProps)
               <div className="flex gap-3">
                 <WishlistButton 
                   product={{
-                    id: `${product.id}-${selectedColorData?.color || 'default'}`,
+                    id: product.id,
                     slug: product.slug,
                     title: product.title,
                     price: selectedPrice || 0,
                     image: allImages[0] || '/images/placeholder.jpg',
-                    color: selectedColorData?.color,
                     category: category.name_th || category.name_en,
                   }}
+                  color={selectedColorData?.color}
                   showText
                   className="flex-shrink-0"
                 />

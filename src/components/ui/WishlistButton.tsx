@@ -7,14 +7,15 @@ import { useEffect, useState } from 'react'
 
 interface WishlistButtonProps {
   product: {
-    id: string
-    slug: string
-    title: string
-    price: number
-    image: string
+    id: number
+    slug?: string
+    title?: string
+    price?: number
+    image?: string
     color?: string
     category?: string
   }
+  color?: string
   className?: string
   size?: 'sm' | 'md' | 'lg'
   showText?: boolean
@@ -22,32 +23,47 @@ interface WishlistButtonProps {
 
 export default function WishlistButton({
   product,
+  color,
   className = '',
   size = 'md',
   showText = false,
 }: WishlistButtonProps) {
-  const { addItem, removeItem, isInWishlist } = useWishlist()
+  const { addItem, removeByProductId, isInWishlist, loading } = useWishlist()
   const [isWishlisted, setIsWishlisted] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false)
+
+  const selectedColor = color || product.color
 
   useEffect(() => {
-    setIsWishlisted(isInWishlist(product.id))
-  }, [isInWishlist, product.id])
-
-  const handleToggleWishlist = () => {
-    setIsAnimating(true)
-
-    if (isWishlisted) {
-      removeItem(product.id)
-    } else {
-      addItem(product)
+    if (!loading) {
+      setIsWishlisted(isInWishlist(product.id, selectedColor))
     }
+  }, [isInWishlist, product.id, selectedColor, loading])
 
-    setIsWishlisted(!isWishlisted)
+  const handleToggleWishlist = async () => {
+    if (isProcessing) return
 
-    setTimeout(() => {
-      setIsAnimating(false)
-    }, 300)
+    setIsAnimating(true)
+    setIsProcessing(true)
+
+    try {
+      if (isWishlisted) {
+        await removeByProductId(product.id, selectedColor)
+        setIsWishlisted(false)
+      } else {
+        await addItem(product.id, selectedColor)
+        setIsWishlisted(true)
+      }
+    } catch (error) {
+      console.error('Failed to toggle wishlist:', error)
+      setIsWishlisted(!isWishlisted)
+    } finally {
+      setIsProcessing(false)
+      setTimeout(() => {
+        setIsAnimating(false)
+      }, 300)
+    }
   }
 
   const sizeClasses = {
@@ -65,6 +81,7 @@ export default function WishlistButton({
   return (
     <button
       onClick={handleToggleWishlist}
+      disabled={isProcessing}
       className={`
         relative group transition-all duration-200
         ${
@@ -77,6 +94,7 @@ export default function WishlistButton({
             ? 'bg-red-500/10 border-red-500 hover:border-red-400'
             : 'bg-black/50 hover:bg-white/10'
         }
+        ${isProcessing ? 'opacity-50 cursor-not-allowed' : ''}
         ${className}
       `}
       aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
@@ -110,7 +128,6 @@ export default function WishlistButton({
         </span>
       )}
 
-      {/* Ripple effect on click */}
       {isAnimating && !showText && (
         <span className="absolute inset-0 rounded-full animate-ping bg-red-400/20"></span>
       )}
