@@ -1,13 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import Image from 'next/image'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import Container from '@/components/ui/Container'
 import Typography from '@/components/ui/Typography'
 import { useCart } from '@/contexts/CartContext'
-import { TrashIcon, MinusIcon, PlusIcon, ShoppingBagIcon } from '@heroicons/react/24/outline'
+import { MinusIcon, PlusIcon, ShoppingBagIcon, TrashIcon } from '@heroicons/react/24/outline'
+import Image from 'next/image'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 export default function CheckoutContent() {
   const router = useRouter()
@@ -22,22 +22,27 @@ export default function CheckoutContent() {
 
   const handleCheckout = async () => {
     setIsProcessing(true)
-    
+
     // Create order summary for LINE message
-    const orderSummary = items.map(item => 
-      `- ${item.title} ${item.color ? `(${item.color})` : ''} x ${item.quantity} = ฿${(item.price * item.quantity).toLocaleString('th-TH')}`
-    ).join('\n')
-    
+    const orderSummary = items
+      .map(
+        (item) =>
+          `- ${item.title} ${item.color ? `(${item.color})` : ''} x ${item.quantity} = ฿${(
+            item.price * item.quantity
+          ).toLocaleString('th-TH')}`,
+      )
+      .join('\n')
+
     const message = encodeURIComponent(
-      `สั่งซื้อสินค้า:\n${orderSummary}\n\nรวมทั้งหมด: ฿${totalAmount.toLocaleString('th-TH')}`
+      `สั่งซื้อสินค้า:\n${orderSummary}\n\nรวมทั้งหมด: ฿${totalAmount.toLocaleString('th-TH')}`,
     )
-    
+
     // Clear cart after processing
     clearCart()
-    
+
     // Redirect to LINE with order details
     window.open(`https://lin.ee/xyzabc?message=${message}`, '_blank')
-    
+
     // Redirect to thank you page
     setTimeout(() => {
       router.push('/')
@@ -104,12 +109,7 @@ export default function CheckoutContent() {
                   <div className="flex gap-4">
                     {/* Product Image */}
                     <div className="relative w-28 h-28 md:w-36 md:h-36 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden">
-                      <Image
-                        src={item.image}
-                        alt={item.title}
-                        fill
-                        className="object-cover"
-                      />
+                      <Image src={item.image} alt={item.title} fill className="object-cover" />
                     </div>
 
                     {/* Product Details */}
@@ -190,14 +190,14 @@ export default function CheckoutContent() {
             {/* Order Summary */}
             <div className="lg:col-span-1">
               <div className="bg-white rounded-xl shadow-lg p-6 sticky top-24">
-                <h2 className="text-xl text-gray-900 font-semibold mb-6">
-                  สรุปคำสั่งซื้อ
-                </h2>
+                <h2 className="text-xl text-gray-900 font-semibold mb-6">สรุปคำสั่งซื้อ</h2>
 
                 <div className="space-y-4 pb-6 border-b border-gray-200">
                   <div className="flex justify-between text-gray-600">
                     <span>ราคาสินค้า ({itemCount} ชิ้น)</span>
-                    <span className="font-medium text-gray-900">฿{totalAmount.toLocaleString('th-TH')}</span>
+                    <span className="font-medium text-gray-900">
+                      ฿{totalAmount.toLocaleString('th-TH')}
+                    </span>
                   </div>
                   <div className="flex justify-between text-gray-600">
                     <span>ค่าจัดส่ง</span>
@@ -208,7 +208,9 @@ export default function CheckoutContent() {
                 <div className="pt-6 pb-6">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-900 text-lg font-semibold">รวมทั้งหมด</span>
-                    <span className="text-2xl font-bold text-gray-900">฿{totalAmount.toLocaleString('th-TH')}</span>
+                    <span className="text-2xl font-bold text-gray-900">
+                      ฿{totalAmount.toLocaleString('th-TH')}
+                    </span>
                   </div>
                 </div>
 
@@ -223,37 +225,6 @@ export default function CheckoutContent() {
                 >
                   {isProcessing ? 'กำลังดำเนินการ...' : 'ดำเนินการสั่งซื้อผ่าน LINE'}
                 </button>
-
-                <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-                  <p className="text-sm text-gray-600 text-center">
-                    <span className="font-medium text-gray-700">📱 ติดต่อผ่าน LINE</span><br />
-                    เราจะติดต่อกลับเพื่อยืนยันคำสั่งซื้อ<br />
-                    และนัดหมายการจัดส่ง
-                  </p>
-                </div>
-
-                <div className="mt-6 pt-6 border-t border-gray-200">
-                  <div className="space-y-3">
-                    <div className="flex items-center text-sm text-gray-600">
-                      <svg className="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      จัดส่งฟรีทั่วประเทศ
-                    </div>
-                    <div className="flex items-center text-sm text-gray-600">
-                      <svg className="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      รับประกันสินค้า 30 วัน
-                    </div>
-                    <div className="flex items-center text-sm text-gray-600">
-                      <svg className="w-5 h-5 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      ชำระเงินปลายทาง
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
