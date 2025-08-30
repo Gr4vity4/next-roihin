@@ -1,6 +1,10 @@
+'use client'
+
 import Link from 'next/link'
+import { useAuth } from '@/contexts/AuthContext'
 
 export default function MemberDashboard() {
+  const { user } = useAuth()
   const stats = [
     { label: 'Total Orders', value: '12' },
     { label: 'In Progress', value: '2' },
@@ -18,7 +22,7 @@ export default function MemberDashboard() {
     <>
           {/* Header */}
           <div className="mb-8 mt-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, John!</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back{user?.name ? `, ${user.name}` : ''}!</h1>
             <p className="text-gray-600">Here&apos;s what&apos;s happening with your orders today.</p>
           </div>
 
