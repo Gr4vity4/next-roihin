@@ -193,12 +193,18 @@ export default function ProductDetail({ product, category }: ProductDetailProps)
             {(product.acf.description_th || product.acf.description_en) && (
               <div className="space-y-4 border-t border-gray-800 pt-6">
                 <h3 className="text-lg text-white font-medium">รายละเอียดสินค้า</h3>
-                <div className="text-gray-300 leading-relaxed space-y-2">
+                <div className="text-gray-300 leading-relaxed space-y-4">
                   {product.acf.description_th && (
-                    <p>{product.acf.description_th}</p>
+                    <div 
+                      dangerouslySetInnerHTML={{ __html: product.acf.description_th }}
+                      className="prose prose-invert prose-sm max-w-none"
+                    />
                   )}
                   {product.acf.description_en && (
-                    <p className="text-sm italic">{product.acf.description_en}</p>
+                    <div 
+                      dangerouslySetInnerHTML={{ __html: product.acf.description_en }}
+                      className="text-sm italic prose prose-invert prose-sm max-w-none"
+                    />
                   )}
                 </div>
               </div>
