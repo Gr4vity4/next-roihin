@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Button from '@/components/Button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -8,112 +8,192 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 
 interface Address {
   id: string
-  name: string
+  full_name: string
   phone: string
   address: string
-  subDistrict: string
+  subdistrict: string
   district: string
   province: string
-  postalCode: string
-  isDefault: boolean
+  postal_code: string
+  country: string
+  created_at: number
+  updated_at: number
+  is_default: boolean
 }
 
 export default function AddressesPage() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [editingAddress, setEditingAddress] = useState<Address | null>(null)
-  const [addresses, setAddresses] = useState<Address[]>([
-    {
-      id: '1',
-      name: 'John Doe',
-      phone: '+66 81 234 5678',
-      address: '123 Sukhumvit Road',
-      subDistrict: 'Khlong Toei',
-      district: 'Khlong Toei',
-      province: 'Bangkok',
-      postalCode: '10110',
-      isDefault: true,
-    },
-    {
-      id: '2',
-      name: 'John Doe',
-      phone: '+66 81 234 5678',
-      address: '456 Rama IV Road',
-      subDistrict: 'Pathum Wan',
-      district: 'Pathum Wan',
-      province: 'Bangkok',
-      postalCode: '10330',
-      isDefault: false,
-    },
-  ])
+  const [addresses, setAddresses] = useState<Address[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [isFetching, setIsFetching] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [setAsDefault, setSetAsDefault] = useState(false)
 
   const [formData, setFormData] = useState({
-    name: '',
+    full_name: '',
     phone: '',
     address: '',
-    subDistrict: '',
+    subdistrict: '',
     district: '',
     province: '',
-    postalCode: '',
+    postal_code: '',
   })
+
+  useEffect(() => {
+    fetchAddresses()
+  }, [])
+
+  const fetchAddresses = async () => {
+    try {
+      setIsFetching(true)
+      setError(null)
+      
+      const response = await fetch('/api/addresses')
+      
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to fetch addresses')
+      }
+      
+      const data = await response.json()
+      setAddresses(data.items || [])
+    } catch (err) {
+      console.error('Failed to fetch addresses:', err)
+      setError(err instanceof Error ? err.message : 'Failed to load addresses')
+    } finally {
+      setIsFetching(false)
+    }
+  }
 
   const handleAddAddress = () => {
     setFormData({
-      name: '',
+      full_name: '',
       phone: '',
       address: '',
-      subDistrict: '',
+      subdistrict: '',
       district: '',
       province: '',
-      postalCode: '',
+      postal_code: '',
     })
+    setSetAsDefault(false)
     setEditingAddress(null)
     setIsAddModalOpen(true)
   }
 
   const handleEditAddress = (address: Address) => {
     setFormData({
-      name: address.name,
+      full_name: address.full_name,
       phone: address.phone,
       address: address.address,
-      subDistrict: address.subDistrict,
+      subdistrict: address.subdistrict,
       district: address.district,
       province: address.province,
-      postalCode: address.postalCode,
+      postal_code: address.postal_code,
     })
     setEditingAddress(address)
     setIsAddModalOpen(true)
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (editingAddress) {
-      // Update existing address
-      setAddresses(addresses.map(addr => 
-        addr.id === editingAddress.id 
-          ? { ...addr, ...formData }
-          : addr
-      ))
-    } else {
-      // Add new address
-      const newAddress: Address = {
-        id: Date.now().toString(),
-        ...formData,
-        isDefault: addresses.length === 0,
+    setIsLoading(true)
+    setError(null)
+    
+    try {
+      if (editingAddress) {
+        const response = await fetch(`/api/addresses/${editingAddress.id}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        })
+        
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.error || 'Failed to update address')
+        }
+        
+        await fetchAddresses()
+      } else {
+        const response = await fetch('/api/addresses', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            ...formData,
+            country: 'TH',
+            set_default: setAsDefault,
+          }),
+        })
+        
+        if (!response.ok) {
+          const errorData = await response.json()
+          throw new Error(errorData.error || 'Failed to create address')
+        }
+        
+        await fetchAddresses()
       }
-      setAddresses([...addresses, newAddress])
+      
+      setIsAddModalOpen(false)
+    } catch (err) {
+      console.error('Failed to save address:', err)
+      setError(err instanceof Error ? err.message : 'Failed to save address')
+    } finally {
+      setIsLoading(false)
     }
-    setIsAddModalOpen(false)
   }
 
-  const handleSetDefault = (id: string) => {
-    setAddresses(addresses.map(addr => ({
-      ...addr,
-      isDefault: addr.id === id
-    })))
+  const handleSetDefault = async (id: string) => {
+    try {
+      setError(null)
+      
+      const response = await fetch(`/api/addresses/${id}/default`, {
+        method: 'POST',
+      })
+      
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to set default address')
+      }
+      
+      await fetchAddresses()
+    } catch (err) {
+      console.error('Failed to set default:', err)
+      setError(err instanceof Error ? err.message : 'Failed to set default address')
+    }
   }
 
-  const handleDelete = (id: string) => {
-    setAddresses(addresses.filter(addr => addr.id !== id))
+  const handleDelete = async (id: string) => {
+    try {
+      setError(null)
+      
+      const response = await fetch(`/api/addresses/${id}`, {
+        method: 'DELETE',
+      })
+      
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to delete address')
+      }
+      
+      await fetchAddresses()
+    } catch (err) {
+      console.error('Failed to delete:', err)
+      setError(err instanceof Error ? err.message : 'Failed to delete address')
+    }
+  }
+
+  if (isFetching) {
+    return (
+      <div className="max-w-7xl mx-auto pt-8">
+        <div className="flex items-center justify-center py-12">
+          <div className="text-gray-500">Loading addresses...</div>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -128,23 +208,29 @@ export default function AddressesPage() {
         </Button>
       </div>
 
+      {error && (
+        <div className="mb-4 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg">
+          {error}
+        </div>
+      )}
+
       {/* Address Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {addresses.map((address) => (
           <div key={address.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            {address.isDefault && (
+            {address.is_default && (
               <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 mb-3">
                 Default Address
               </span>
             )}
             
             <div className="space-y-2 mb-4">
-              <p className="font-semibold text-gray-900">{address.name}</p>
+              <p className="font-semibold text-gray-900">{address.full_name}</p>
               <p className="text-gray-600">{address.phone}</p>
               <p className="text-gray-600">
                 {address.address}<br />
-                {address.subDistrict}, {address.district}<br />
-                {address.province} {address.postalCode}
+                {address.subdistrict}, {address.district}<br />
+                {address.province} {address.postal_code}
               </p>
             </div>
 
@@ -156,7 +242,7 @@ export default function AddressesPage() {
               >
                 Edit
               </Button>
-              {!address.isDefault && (
+              {!address.is_default && (
                 <>
                   <Button 
                     variant="outline" 
@@ -207,12 +293,12 @@ export default function AddressesPage() {
           
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
+              <Label htmlFor="full_name">Full Name</Label>
               <Input
-                id="name"
+                id="full_name"
                 type="text"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                value={formData.full_name}
+                onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
                 required
               />
             </div>
@@ -242,12 +328,12 @@ export default function AddressesPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="subDistrict">Sub-district</Label>
+                <Label htmlFor="subdistrict">Sub-district</Label>
                 <Input
-                  id="subDistrict"
+                  id="subdistrict"
                   type="text"
-                  value={formData.subDistrict}
-                  onChange={(e) => setFormData({ ...formData, subDistrict: e.target.value })}
+                  value={formData.subdistrict}
+                  onChange={(e) => setFormData({ ...formData, subdistrict: e.target.value })}
                   required
                 />
               </div>
@@ -275,16 +361,31 @@ export default function AddressesPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="postalCode">Postal Code</Label>
+                <Label htmlFor="postal_code">Postal Code</Label>
                 <Input
-                  id="postalCode"
+                  id="postal_code"
                   type="text"
-                  value={formData.postalCode}
-                  onChange={(e) => setFormData({ ...formData, postalCode: e.target.value })}
+                  value={formData.postal_code}
+                  onChange={(e) => setFormData({ ...formData, postal_code: e.target.value })}
                   required
                 />
               </div>
             </div>
+
+            {!editingAddress && (
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="setDefault"
+                  checked={setAsDefault}
+                  onChange={(e) => setSetAsDefault(e.target.checked)}
+                  className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                />
+                <Label htmlFor="setDefault" className="text-sm font-medium text-gray-700">
+                  Set as default address
+                </Label>
+              </div>
+            )}
 
             <div className="flex justify-end space-x-3 pt-4">
               <Button
@@ -294,7 +395,7 @@ export default function AddressesPage() {
               >
                 Cancel
               </Button>
-              <Button type="submit">
+              <Button type="submit" isLoading={isLoading}>
                 {editingAddress ? 'Update Address' : 'Add Address'}
               </Button>
             </div>
