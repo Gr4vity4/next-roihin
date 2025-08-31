@@ -3,6 +3,8 @@ export interface OrderItem {
   variation_id?: number
   quantity: number
   color?: string
+  price?: number
+  total?: number
 }
 
 export interface BillingAddress {
@@ -24,6 +26,8 @@ export interface OrderCreateRequest {
   shipping?: BillingAddress
   payment_method: 'bacs'
   shipping_total: number
+  total?: number
+  subtotal?: number
   note?: string
   slip_base64?: string
 }

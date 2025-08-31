@@ -148,6 +148,8 @@ export default function CheckoutConfirmContent() {
           product_id: parseInt(item.id),
           quantity: item.quantity,
           color: item.color || undefined,
+          price: item.price,
+          total: item.price * item.quantity,
         })),
         billing: {
           first_name: firstName,
@@ -163,12 +165,16 @@ export default function CheckoutConfirmContent() {
         },
         payment_method: 'bacs',
         shipping_total: 0,
+        total: totalAmount,
+        subtotal: totalAmount,
         note: '',
         slip_base64: slipPreview || undefined, // Include slip if available
       }
 
       // Create order
       const orderResponse = await createOrder(orderData)
+
+      console.log('Order response:', orderResponse) // Debug log
 
       if (!orderResponse.ok) {
         throw new Error('Failed to create order')
@@ -189,11 +195,14 @@ export default function CheckoutConfirmContent() {
       }
 
       // Store order info in sessionStorage for thank you page
+      // Use the total from the response, or fallback to our calculated total
+      const orderTotal = orderResponse.order.total ? parseFloat(orderResponse.order.total) : totalAmount
+      
       const orderInfo = {
         orderId: orderResponse.order.order_id.toString(),
         orderKey: orderResponse.order.order_key,
         orderNumber: orderResponse.order.order_number,
-        total: parseFloat(orderResponse.order.total),
+        total: orderTotal || totalAmount, // Always fallback to totalAmount if orderTotal is 0 or NaN
       }
       
       sessionStorage.setItem('lastOrder', JSON.stringify(orderInfo))
