@@ -3,9 +3,10 @@ import { uploadSlipFile, uploadSlipBase64 } from '@/lib/api/orders'
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const searchParams = request.nextUrl.searchParams
     const orderKey = searchParams.get('key')
     
@@ -29,7 +30,7 @@ export async function POST(
         )
       }
       
-      const result = await uploadSlipFile(params.id, orderKey, slip)
+      const result = await uploadSlipFile(id, orderKey, slip)
       return NextResponse.json(result)
     } else {
       const body = await request.json()
@@ -41,7 +42,7 @@ export async function POST(
         )
       }
       
-      const result = await uploadSlipBase64(params.id, orderKey, body.slip_base64)
+      const result = await uploadSlipBase64(id, orderKey, body.slip_base64)
       return NextResponse.json(result)
     }
   } catch (error) {

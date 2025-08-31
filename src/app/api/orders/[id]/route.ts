@@ -3,9 +3,10 @@ import { getOrder } from '@/lib/api/orders'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const searchParams = request.nextUrl.searchParams
     const orderKey = searchParams.get('key')
     
@@ -16,7 +17,7 @@ export async function GET(
       )
     }
     
-    const result = await getOrder(params.id, orderKey)
+    const result = await getOrder(id, orderKey)
     
     return NextResponse.json(result)
   } catch (error) {
