@@ -14,6 +14,7 @@ import { createOrder, uploadSlipBase64, getBankAccounts } from '@/lib/api/orders
 import type { OrderCreateRequest, BankAccount } from '@/lib/types/order'
 import { getDefaultAddress } from '@/lib/api/addresses.client'
 import { useAuth } from '@/contexts/AuthContext'
+import OrderSuccessModal from '@/components/OrderSuccessModal'
 
 interface ShippingAddress {
   fullName: string
@@ -36,6 +37,14 @@ export default function CheckoutConfirmContent() {
   const [, setBankAccounts] = useState<BankAccount[]>([])
   const [orderError, setOrderError] = useState<string>('')
   const [addressLoading, setAddressLoading] = useState(false)
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
+  const [orderSuccess, setOrderSuccess] = useState(false)
+  const [orderDetails, setOrderDetails] = useState<{
+    orderId: string
+    orderKey: string
+    orderNumber?: string
+    total?: number
+  } | null>(null)
   const [shippingAddress, setShippingAddress] = useState<ShippingAddress>({
     fullName: '',
     phone: '',
@@ -46,10 +55,11 @@ export default function CheckoutConfirmContent() {
   })
 
   useEffect(() => {
-    if (itemCount === 0) {
+    // Only redirect if cart is empty AND we don't have a successful order
+    if (itemCount === 0 && !orderSuccess) {
       router.push('/checkout')
     }
-  }, [itemCount, router])
+  }, [itemCount, router, orderSuccess])
 
   useEffect(() => {
     const fetchDefaultAddress = async () => {
@@ -178,19 +188,27 @@ export default function CheckoutConfirmContent() {
         }
       }
 
-      // Clear cart after successful order
-      clearCart()
-
       // Store order info in sessionStorage for thank you page
-      sessionStorage.setItem('lastOrder', JSON.stringify({
-        orderId: orderResponse.order.order_id,
+      const orderInfo = {
+        orderId: orderResponse.order.order_id.toString(),
         orderKey: orderResponse.order.order_key,
         orderNumber: orderResponse.order.order_number,
-        total: orderResponse.order.total,
-      }))
+        total: parseFloat(orderResponse.order.total),
+      }
+      
+      sessionStorage.setItem('lastOrder', JSON.stringify(orderInfo))
 
-      // Redirect to thank you page
-      router.push(`/checkout/thank-you?order=${orderResponse.order.order_id}&key=${orderResponse.order.order_key}`)
+      // Set order success flag BEFORE clearing cart
+      setOrderSuccess(true)
+      
+      // Set order details and show success modal
+      setOrderDetails(orderInfo)
+      setShowSuccessModal(true)
+      
+      // Clear cart after setting success flag
+      clearCart()
+      
+      setIsProcessing(false)
 
     } catch (error) {
       console.error('Order creation failed:', error)
@@ -212,7 +230,7 @@ export default function CheckoutConfirmContent() {
     )
   }
 
-  if (itemCount === 0) {
+  if (itemCount === 0 && !orderSuccess) {
     return null
   }
 
@@ -527,6 +545,18 @@ export default function CheckoutConfirmContent() {
           </form>
         </div>
       </Container>
+
+      {/* Order Success Modal */}
+      {orderDetails && (
+        <OrderSuccessModal
+          isOpen={showSuccessModal}
+          onClose={() => setShowSuccessModal(false)}
+          orderId={orderDetails.orderId}
+          orderKey={orderDetails.orderKey}
+          orderNumber={orderDetails.orderNumber}
+          total={orderDetails.total}
+        />
+      )}
     </section>
   )
 }
