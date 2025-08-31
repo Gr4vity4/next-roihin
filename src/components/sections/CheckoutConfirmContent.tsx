@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation'
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
 import { getBanks } from '@/lib/api/banks'
 import type { BankData } from '@/lib/types/bank'
-import { createOrder, uploadSlipBase64, getBankAccounts } from '@/lib/api/orders'
+import { createOrder, uploadSlipBase64, getBankAccounts } from '@/lib/api/orders.client'
 import type { OrderCreateRequest, BankAccount } from '@/lib/types/order'
 import { getDefaultAddress } from '@/lib/api/addresses.client'
 import { useAuth } from '@/contexts/AuthContext'
@@ -18,6 +18,7 @@ import OrderSuccessModal from '@/components/OrderSuccessModal'
 
 interface ShippingAddress {
   fullName: string
+  email: string
   phone: string
   address: string
   district: string
@@ -28,7 +29,7 @@ interface ShippingAddress {
 export default function CheckoutConfirmContent() {
   const router = useRouter()
   const { items, itemCount, totalAmount, clearCart } = useCart()
-  const { isLoggedIn } = useAuth()
+  const { isLoggedIn, user } = useAuth()
   const [isProcessing, setIsProcessing] = useState(false)
   const [paymentSlip, setPaymentSlip] = useState<File | null>(null)
   const [slipPreview, setSlipPreview] = useState<string>('')
@@ -47,6 +48,7 @@ export default function CheckoutConfirmContent() {
   } | null>(null)
   const [shippingAddress, setShippingAddress] = useState<ShippingAddress>({
     fullName: '',
+    email: '',
     phone: '',
     address: '',
     district: '',
@@ -72,6 +74,7 @@ export default function CheckoutConfirmContent() {
         if (hasDefault && item) {
           setShippingAddress({
             fullName: item.full_name,
+            email: user?.email || '',
             phone: item.phone,
             address: `${item.address}${item.subdistrict ? `, ${item.subdistrict}` : ''}`,
             district: item.district,
@@ -87,7 +90,7 @@ export default function CheckoutConfirmContent() {
     }
 
     fetchDefaultAddress()
-  }, [isLoggedIn])
+  }, [isLoggedIn, user])
 
   useEffect(() => {
     const fetchBanks = async () => {
@@ -154,7 +157,7 @@ export default function CheckoutConfirmContent() {
         billing: {
           first_name: firstName,
           last_name: lastName,
-          email: `${shippingAddress.phone}@roihin.temp`, // Temporary email based on phone
+          email: shippingAddress.email || `${shippingAddress.phone}@roihin.temp`, // Use actual email or fallback to temporary
           phone: shippingAddress.phone,
           address_1: shippingAddress.address,
           address_2: '',
@@ -229,6 +232,7 @@ export default function CheckoutConfirmContent() {
   const isFormValid = () => {
     return (
       shippingAddress.fullName &&
+      shippingAddress.email &&
       shippingAddress.phone &&
       shippingAddress.address &&
       shippingAddress.district &&
@@ -285,6 +289,24 @@ export default function CheckoutConfirmContent() {
                         id="fullName"
                         name="fullName"
                         value={shippingAddress.fullName}
+                        onChange={handleAddressChange}
+                        required
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      />
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <label
+                        htmlFor="email"
+                        className="block text-sm font-medium text-gray-700 mb-2"
+                      >
+                        อีเมล *
+                      </label>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={shippingAddress.email}
                         onChange={handleAddressChange}
                         required
                         className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
