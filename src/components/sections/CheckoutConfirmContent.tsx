@@ -12,6 +12,8 @@ import { getBanks } from '@/lib/api/banks'
 import type { BankData } from '@/lib/types/bank'
 import { createOrder, uploadSlipBase64, getBankAccounts } from '@/lib/api/orders'
 import type { OrderCreateRequest, BankAccount } from '@/lib/types/order'
+import { getDefaultAddress } from '@/lib/api/addresses.client'
+import { useAuth } from '@/contexts/AuthContext'
 
 interface ShippingAddress {
   fullName: string
@@ -25,6 +27,7 @@ interface ShippingAddress {
 export default function CheckoutConfirmContent() {
   const router = useRouter()
   const { items, itemCount, totalAmount, clearCart } = useCart()
+  const { isLoggedIn } = useAuth()
   const [isProcessing, setIsProcessing] = useState(false)
   const [paymentSlip, setPaymentSlip] = useState<File | null>(null)
   const [slipPreview, setSlipPreview] = useState<string>('')
@@ -32,6 +35,7 @@ export default function CheckoutConfirmContent() {
   const [selectedBank, setSelectedBank] = useState<string>('')
   const [, setBankAccounts] = useState<BankAccount[]>([])
   const [orderError, setOrderError] = useState<string>('')
+  const [addressLoading, setAddressLoading] = useState(false)
   const [shippingAddress, setShippingAddress] = useState<ShippingAddress>({
     fullName: '',
     phone: '',
@@ -46,6 +50,34 @@ export default function CheckoutConfirmContent() {
       router.push('/checkout')
     }
   }, [itemCount, router])
+
+  useEffect(() => {
+    const fetchDefaultAddress = async () => {
+      if (!isLoggedIn) return
+      
+      setAddressLoading(true)
+      try {
+        const { hasDefault, item } = await getDefaultAddress()
+        
+        if (hasDefault && item) {
+          setShippingAddress({
+            fullName: item.full_name,
+            phone: item.phone,
+            address: `${item.address}${item.subdistrict ? `, ${item.subdistrict}` : ''}`,
+            district: item.district,
+            province: item.province,
+            postalCode: item.postal_code,
+          })
+        }
+      } catch (error) {
+        console.error('Failed to fetch default address:', error)
+      } finally {
+        setAddressLoading(false)
+      }
+    }
+
+    fetchDefaultAddress()
+  }, [isLoggedIn])
 
   useEffect(() => {
     const fetchBanks = async () => {
@@ -206,7 +238,12 @@ export default function CheckoutConfirmContent() {
               <div className="lg:col-span-2 space-y-8">
                 {/* Shipping Address */}
                 <div className="bg-white rounded-xl shadow-md p-6">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-6">ที่อยู่จัดส่ง</h3>
+                  <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-xl font-semibold text-gray-900">ที่อยู่จัดส่ง</h3>
+                    {addressLoading && (
+                      <span className="text-sm text-gray-500">กำลังโหลดที่อยู่...</span>
+                    )}
+                  </div>
 
                   <div className="grid md:grid-cols-2 gap-4">
                     <div className="md:col-span-2">
