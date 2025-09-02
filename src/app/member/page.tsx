@@ -5,12 +5,6 @@ import Link from 'next/link'
 
 export default function MemberDashboard() {
   const { user } = useAuth()
-  const stats = [
-    { label: 'Total Orders', value: '12' },
-    { label: 'In Progress', value: '2' },
-    { label: 'Wishlist Items', value: '5' },
-    { label: 'Total Spent', value: '฿15,420' },
-  ]
 
   const recentOrders = [
     { id: 'ORD-001', date: '2024-01-15', status: 'Delivered', total: '฿3,500' },

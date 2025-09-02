@@ -14,10 +14,6 @@ interface DIYCreationModalProps {
 export default function DIYCreationModal({ creation, isOpen, onClose }: DIYCreationModalProps) {
   if (!creation) return null
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('th-TH').format(price)
-  }
-
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
     return date.toLocaleDateString('th-TH', {

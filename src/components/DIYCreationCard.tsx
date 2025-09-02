@@ -9,10 +9,6 @@ interface DIYCreationCardProps {
 }
 
 export default function DIYCreationCard({ creation, onClick }: DIYCreationCardProps) {
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('th-TH').format(price)
-  }
-
   return (
     <div
       onClick={onClick}
