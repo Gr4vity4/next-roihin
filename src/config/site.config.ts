@@ -1,7 +1,7 @@
 export const siteConfig = {
   name: 'ROIHIN STONE & BRACELET',
   description: 'Transform your life on a spiritual level with personalized stone stringing science',
-  url: 'https://roihin.com',
+  url: process.env.NEXT_PUBLIC_SITE_URL || 'https://roihin.com',
 
   // Navigation
   navigation: [
