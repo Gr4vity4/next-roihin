@@ -2,9 +2,27 @@
 
 import { useEffect, useState } from 'react'
 import { useLanguage } from '@/contexts/LanguageContext'
+import type { Testimonial } from '@/lib/types/wordpress-settings'
+import type { BankData } from '@/lib/types/bank'
+import type { Product } from '@/lib/types/products'
 
 interface UseApiOptions {
-  dependencies?: any[]
+  dependencies?: unknown[]
+}
+
+interface StoneSettings {
+  id: number
+  acf: {
+    category: string
+    stone_name_en: string
+    stone_name_th: string
+    [key: string]: unknown
+  }
+}
+
+interface PageSettings {
+  id: number
+  [key: string]: unknown
 }
 
 export function useApiWithLanguage<T>(
@@ -43,6 +61,7 @@ export function useApiWithLanguage<T>(
     }
 
     fetchData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [endpoint, language, ...(options.dependencies || [])])
 
   return { data, loading, error, refetch: () => fetchData() }
@@ -51,7 +70,7 @@ export function useApiWithLanguage<T>(
 // Specific hooks for different APIs
 export function useTestimonials() {
   const { data, loading, error } = useApiWithLanguage<{
-    testimonials: any[]
+    testimonials: Testimonial[]
   }>('/api/testimonials')
   
   return {
@@ -62,7 +81,7 @@ export function useTestimonials() {
 }
 
 export function useBanks() {
-  const { data, loading, error } = useApiWithLanguage<any[]>('/api/banks')
+  const { data, loading, error } = useApiWithLanguage<BankData[]>('/api/banks')
   
   return {
     banks: data || [],
@@ -72,7 +91,7 @@ export function useBanks() {
 }
 
 export function useProducts() {
-  const { data, loading, error } = useApiWithLanguage<any[]>('/api/products')
+  const { data, loading, error } = useApiWithLanguage<Product[]>('/api/products')
   
   return {
     products: data || [],
@@ -82,7 +101,7 @@ export function useProducts() {
 }
 
 export function useStones() {
-  const { data, loading, error } = useApiWithLanguage<any[]>('/api/stone-settings')
+  const { data, loading, error } = useApiWithLanguage<StoneSettings[]>('/api/stone-settings')
   
   return {
     stones: data || [],
@@ -92,7 +111,7 @@ export function useStones() {
 }
 
 export function usePageSettings() {
-  const { data, loading, error } = useApiWithLanguage<any[]>('/api/page-settings')
+  const { data, loading, error } = useApiWithLanguage<PageSettings[]>('/api/page-settings')
   
   return {
     pageSettings: data?.[0] || null,

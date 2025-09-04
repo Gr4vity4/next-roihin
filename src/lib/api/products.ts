@@ -24,19 +24,20 @@ export async function getCategories(): Promise<Category[]> {
 
 export async function getProductsByCategory(
   categorySlug: string, 
-  perPage: number = 12
+  perPage: number = 12,
+  language: 'en' | 'th' = 'en'
 ): Promise<Product[]> {
   // Fetch all products and filter by category
-  const allProducts = await getAllProducts('en')
+  const allProducts = await getAllProducts(language)
   
   return allProducts
     .filter(product => product.product_category?.slug === categorySlug)
     .slice(0, perPage)
 }
 
-export async function getCatalog(perCat: number = 12): Promise<CatalogResponse> {
+export async function getCatalog(perCat: number = 12, language: 'en' | 'th' = 'en'): Promise<CatalogResponse> {
   // Fetch all products and group by category
-  const allProducts = await getAllProducts('en')
+  const allProducts = await getAllProducts(language)
   const categories = await getCategories()
   
   const catalog: CatalogResponse = {
@@ -54,11 +55,14 @@ export async function getCatalog(perCat: number = 12): Promise<CatalogResponse> 
 export async function getProductById(
   id: number, 
   includeRelated: boolean = false,
-  relatedLimit: number = 6
+  relatedLimit: number = 6,
+  language: 'en' | 'th' = 'en'
 ): Promise<ProductDetailResponse> {
+  // Add language prefix to API URL if Thai
+  const langPrefix = language === 'th' ? '/th' : ''
   // Fetch product by ID using standard WordPress API
   const response = await fetch(
-    `${API_BASE_URL}/wp-json/wp/v2/product/${id}`,
+    `${API_BASE_URL}${langPrefix}/wp-json/wp/v2/product/${id}`,
     getFetchConfig('api')
   )
   

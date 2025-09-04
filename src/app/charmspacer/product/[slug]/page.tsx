@@ -6,6 +6,7 @@ import { Footer } from '@/components/sections'
 import ProductDetail from '@/components/sections/ProductDetail'
 import RelatedProducts from '@/components/sections/RelatedProducts'
 import { getProductBySlug } from '@/lib/api/products'
+import { cookies } from 'next/headers'
 
 export const revalidate = 900
 
@@ -17,7 +18,9 @@ interface ProductPageProps {
 export async function generateMetadata({ params, searchParams }: ProductPageProps): Promise<Metadata> {
   const { slug } = await params
   const { lang } = await searchParams
-  const language = (lang === 'th' ? 'th' : 'en') as 'en' | 'th'
+  const cookieStore = await cookies()
+  const cookieLang = cookieStore.get('site-language')?.value as 'en' | 'th' | undefined
+  const language = (lang === 'th' ? 'th' : lang === 'en' ? 'en' : cookieLang || 'en') as 'en' | 'th'
   
   try {
     const { product } = await getProductBySlug(slug, false, 6, language)
@@ -42,7 +45,9 @@ export async function generateMetadata({ params, searchParams }: ProductPageProp
 export default async function ProductPage({ params, searchParams }: ProductPageProps) {
   const { slug } = await params
   const { lang } = await searchParams
-  const language = (lang === 'th' ? 'th' : 'en') as 'en' | 'th'
+  const cookieStore = await cookies()
+  const cookieLang = cookieStore.get('site-language')?.value as 'en' | 'th' | undefined
+  const language = (lang === 'th' ? 'th' : lang === 'en' ? 'en' : cookieLang || 'en') as 'en' | 'th'
   
   let productData
   try {
