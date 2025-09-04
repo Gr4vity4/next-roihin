@@ -1,7 +1,7 @@
 import ChatWidget from '@/components/ChatWidget'
 import Navigation from '@/components/Navigation'
 import Footer from '@/components/sections/Footer'
-import TestimonialsContainer from '@/components/TestimonialsContainer'
+import TestimonialsClient from '@/components/TestimonialsClient'
 import { Typography } from '@/components/ui'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -42,7 +42,7 @@ export default function TestimonialPage() {
             </div>
 
             {/* Database-driven testimonials */}
-            <TestimonialsContainer />
+            <TestimonialsClient />
 
             {/* Call to action */}
             <div className="text-center mt-12">

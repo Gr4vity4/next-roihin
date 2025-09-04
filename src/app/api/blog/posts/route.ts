@@ -4,7 +4,7 @@ import { extractTextFromHtml } from '@/lib/utils'
 import { NextRequest, NextResponse } from 'next/server'
 import { getFetchConfig, getCacheHeaders } from '@/config/cache.config'
 
-const WORDPRESS_API_URL = 'https://wp-roihin.precisiondevlab.com/wp-json/wp/v2/posts'
+const WORDPRESS_BASE_URL = 'https://wp-roihin.precisiondevlab.com'
 const DEFAULT_IMAGE = '/images/357c3a_ac4bc1a787364c358512be32cc1ffc30~mv2.avif'
 
 /**
@@ -17,6 +17,11 @@ export async function GET(request: NextRequest) {
     const page = searchParams.get('page') || '1'
     const perPage = searchParams.get('per_page') || '6'
     const categories = searchParams.get('categories') || ''
+    const lang = searchParams.get('lang') || 'en'
+
+    // Build WordPress API URL with language prefix
+    const langPrefix = lang === 'th' ? '/th' : ''
+    const apiUrl = `${WORDPRESS_BASE_URL}${langPrefix}/wp-json/wp/v2/posts`
 
     // Build WordPress API URL with parameters
     const params = new URLSearchParams({
@@ -31,7 +36,7 @@ export async function GET(request: NextRequest) {
       params.append('categories', categories)
     }
 
-    const wpApiUrl = `${WORDPRESS_API_URL}?${params.toString()}`
+    const wpApiUrl = `${apiUrl}?${params.toString()}`
 
     // Fetch posts from WordPress API with environment-aware caching
     const response = await fetch(wpApiUrl, {

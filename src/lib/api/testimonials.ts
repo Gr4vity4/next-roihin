@@ -12,7 +12,7 @@ export async function getTestimonials(language?: string): Promise<Testimonial[]>
   try {
     const params = new URLSearchParams()
     if (language) {
-      params.append('language', language)
+      params.append('lang', language)
     }
 
     const url = `${API_BASE_URL}/testimonials${params.toString() ? `?${params.toString()}` : ''}`

@@ -3,12 +3,13 @@
 import AuthModal from '@/components/AuthModal'
 import { useAuth } from '@/contexts/AuthContext'
 import { useCart } from '@/contexts/CartContext'
+import { useLanguage } from '@/contexts/LanguageContext'
 import { cn } from '@/lib/utils'
 import { ShoppingCartIcon } from '@heroicons/react/24/outline'
 import { ChevronDown, Menu, X } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 const navItems = [
@@ -40,15 +41,17 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false)
-  const [currentLanguage, setCurrentLanguage] = useState<'TH' | 'EN'>('TH')
   const [scrollThreshold, setScrollThreshold] = useState(10)
   const [authModalOpen, setAuthModalOpen] = useState(false)
   const [authModalMode, setAuthModalMode] = useState<'sign-in' | 'sign-up'>('sign-in')
   const userMenuRef = useRef<HTMLDivElement>(null)
   const languageMenuRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
   const { isLoggedIn, user, logout } = useAuth()
   const { itemCount } = useCart()
+  const { language, setLanguage } = useLanguage()
 
   // Calculate the height of the first section (hero section)
   const calculateScrollThreshold = useCallback(() => {
@@ -122,11 +125,13 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
     setIsMobileMenuOpen(false)
   }
 
-  const handleLanguageSwitch = (lang: 'TH' | 'EN') => {
-    setCurrentLanguage(lang)
+  const handleLanguageSwitch = (lang: 'th' | 'en') => {
+    setLanguage(lang)
     setIsLanguageMenuOpen(false)
-    // Here you can add logic to handle language change
-    // For example: router.push(pathname, { locale: lang.toLowerCase() })
+    // Update URL with new language parameter
+    const params = new URLSearchParams(searchParams.toString())
+    params.set('lang', lang)
+    router.push(`${pathname}?${params.toString()}`)
   }
 
   return (
@@ -216,7 +221,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                     onClick={() => setIsLanguageMenuOpen(!isLanguageMenuOpen)}
                     className="flex items-center space-x-1 px-3 py-1.5 text-white hover:text-gold transition-colors"
                   >
-                    <span className="text-sm font-medium tracking-widest">{currentLanguage}</span>
+                    <span className="text-sm font-medium tracking-widest">{language.toUpperCase()}</span>
                     <ChevronDown
                       className={cn(
                         'w-3 h-3 transition-transform',
@@ -228,24 +233,24 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                   {isLanguageMenuOpen && (
                     <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-2xl border border-gray-100 py-1 z-[10000]">
                       <button
-                        onClick={() => handleLanguageSwitch('TH')}
+                        onClick={() => handleLanguageSwitch('th')}
                         className={cn(
                           'w-full px-4 py-2 text-sm text-left hover:bg-gray-100 flex items-center justify-between',
-                          currentLanguage === 'TH' && 'bg-gray-50 font-semibold',
+                          language === 'th' && 'bg-gray-50 font-semibold',
                         )}
                       >
                         ไทย
-                        {currentLanguage === 'TH' && <span className="text-gold">✓</span>}
+                        {language === 'th' && <span className="text-gold">✓</span>}
                       </button>
                       <button
-                        onClick={() => handleLanguageSwitch('EN')}
+                        onClick={() => handleLanguageSwitch('en')}
                         className={cn(
                           'w-full px-4 py-2 text-sm text-left hover:bg-gray-100 flex items-center justify-between',
-                          currentLanguage === 'EN' && 'bg-gray-50 font-semibold',
+                          language === 'en' && 'bg-gray-50 font-semibold',
                         )}
                       >
                         English
-                        {currentLanguage === 'EN' && <span className="text-gold">✓</span>}
+                        {language === 'en' && <span className="text-gold">✓</span>}
                       </button>
                     </div>
                   )}
@@ -369,7 +374,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                     onClick={() => setIsLanguageMenuOpen(!isLanguageMenuOpen)}
                     className="flex items-center space-x-1 px-3 py-1.5 text-white hover:text-gold transition-colors"
                   >
-                    <span className="text-base font-medium tracking-wider">{currentLanguage}</span>
+                    <span className="text-base font-medium tracking-wider">{language.toUpperCase()}</span>
                     <ChevronDown
                       className={cn(
                         'w-3 h-3 transition-transform',
@@ -381,24 +386,24 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                   {isLanguageMenuOpen && (
                     <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-2xl border border-gray-100 py-1 z-[10000]">
                       <button
-                        onClick={() => handleLanguageSwitch('TH')}
+                        onClick={() => handleLanguageSwitch('th')}
                         className={cn(
                           'w-full px-4 py-2 text-sm text-left hover:bg-gray-100 flex items-center justify-between',
-                          currentLanguage === 'TH' && 'bg-gray-50 font-semibold',
+                          language === 'th' && 'bg-gray-50 font-semibold',
                         )}
                       >
                         ไทย
-                        {currentLanguage === 'TH' && <span className="text-gold">✓</span>}
+                        {language === 'th' && <span className="text-gold">✓</span>}
                       </button>
                       <button
-                        onClick={() => handleLanguageSwitch('EN')}
+                        onClick={() => handleLanguageSwitch('en')}
                         className={cn(
                           'w-full px-4 py-2 text-sm text-left hover:bg-gray-100 flex items-center justify-between',
-                          currentLanguage === 'EN' && 'bg-gray-50 font-semibold',
+                          language === 'en' && 'bg-gray-50 font-semibold',
                         )}
                       >
                         English
-                        {currentLanguage === 'EN' && <span className="text-gold">✓</span>}
+                        {language === 'en' && <span className="text-gold">✓</span>}
                       </button>
                     </div>
                   )}
@@ -554,10 +559,10 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                   </div>
                   <div className="flex space-x-2">
                     <button
-                      onClick={() => handleLanguageSwitch('TH')}
+                      onClick={() => handleLanguageSwitch('th')}
                       className={cn(
                         'px-3 py-1 rounded text-sm',
-                        currentLanguage === 'TH'
+                        language === 'th'
                           ? 'bg-gold text-black font-semibold'
                           : 'bg-gray-800 text-white',
                       )}
@@ -565,10 +570,10 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                       ไทย
                     </button>
                     <button
-                      onClick={() => handleLanguageSwitch('EN')}
+                      onClick={() => handleLanguageSwitch('en')}
                       className={cn(
                         'px-3 py-1 rounded text-sm',
-                        currentLanguage === 'EN'
+                        language === 'en'
                           ? 'bg-gold text-black font-semibold'
                           : 'bg-gray-800 text-white',
                       )}

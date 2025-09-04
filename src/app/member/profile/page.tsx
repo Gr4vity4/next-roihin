@@ -10,7 +10,7 @@ interface ProfileData {
   email: string
   first_name: string
   last_name: string
-  phone: string
+  phone_number: string
   birth_date: string
   gender: 'male' | 'female' | 'other' | 'prefer_not_to_say'
   member_since: {
@@ -24,6 +24,7 @@ export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(false)
   const [isFetching, setIsFetching] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
   const [memberSince, setMemberSince] = useState('January 2024')
   const [formData, setFormData] = useState({
     firstName: '',
@@ -53,11 +54,11 @@ export default function ProfilePage() {
       const data: ProfileData = await response.json()
       
       setFormData({
-        firstName: data.first_name,
-        lastName: data.last_name,
-        email: data.email,
-        phone: data.phone,
-        birthDate: data.birth_date,
+        firstName: data.first_name || '',
+        lastName: data.last_name || '',
+        email: data.email || '',
+        phone: data.phone_number || '',
+        birthDate: data.birth_date || '',
         gender: data.gender || 'male',
       })
       
@@ -76,6 +77,7 @@ export default function ProfilePage() {
     e.preventDefault()
     setIsLoading(true)
     setError(null)
+    setSuccess(null)
     
     try {
       const response = await fetch('/api/profile', {
@@ -87,7 +89,7 @@ export default function ProfilePage() {
           first_name: formData.firstName,
           last_name: formData.lastName,
           email: formData.email,
-          phone: formData.phone,
+          phone_number: formData.phone,
           birth_date: formData.birthDate,
           gender: formData.gender,
         }),
@@ -100,15 +102,17 @@ export default function ProfilePage() {
       }
       
       setFormData({
-        firstName: data.first_name,
-        lastName: data.last_name,
-        email: data.email,
-        phone: data.phone,
-        birthDate: data.birth_date,
+        firstName: data.first_name || '',
+        lastName: data.last_name || '',
+        email: data.email || '',
+        phone: data.phone_number || '',
+        birthDate: data.birth_date || '',
         gender: data.gender || 'male',
       })
       
       setIsEditing(false)
+      setSuccess('บันทึกข้อมูลเรียบร้อยแล้ว')
+      setTimeout(() => setSuccess(null), 3000)
     } catch (err) {
       console.error('Failed to update profile:', err)
       setError(err instanceof Error ? err.message : 'Failed to update profile')
@@ -137,6 +141,12 @@ export default function ProfilePage() {
       {error && (
         <div className="mb-4 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg">
           {error}
+        </div>
+      )}
+
+      {success && (
+        <div className="mb-4 p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg">
+          {success}
         </div>
       )}
 
@@ -199,7 +209,7 @@ export default function ProfilePage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="phone">Phone Number</Label>
+            <Label htmlFor="phone">เบอร์โทรศัพท์</Label>
             <Input
               id="phone"
               type="tel"
@@ -207,6 +217,7 @@ export default function ProfilePage() {
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
               disabled={!isEditing}
               className="w-full"
+              placeholder={!isEditing ? "ไม่มีข้อมูล" : "กรุณากรอกเบอร์โทรศัพท์"}
             />
           </div>
 

@@ -39,7 +39,7 @@ export default function DIYCreationModal({ creation, isOpen, onClose }: DIYCreat
 
         <div className="grid md:grid-cols-2 gap-6">
           <div className="relative aspect-square rounded-lg overflow-hidden">
-            <Image src={creation.thumbnail} alt={creation.title} fill className="object-cover" />
+            <Image src={creation.thumbnail} alt={creation.title} fill className="object-contain" />
           </div>
 
           <div className="space-y-4">

@@ -6,6 +6,7 @@ import type {
   BlogPost,
   BlogPostsResponse,
 } from '@/lib/types/wordpress'
+import { useLanguage } from '@/contexts/LanguageContext'
 import { formatThaiDate } from '@/lib/utils'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -33,7 +34,7 @@ function BlogPostCard({ post }: { post: BlogPost }) {
   const formattedDate = formatThaiDate(post.date)
 
   return (
-    <Link href={`/blog/${post.title}`} className="group">
+    <Link href={`/blog/${post.slug}`} className="group">
       <article className="bg-white shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 group-hover:scale-[1.02]">
         {/* Post Image */}
         <div className="relative w-full h-48">
@@ -83,6 +84,7 @@ export default function BlogPostsSection({
   loadMoreButton,
   className = '',
 }: BlogPostsSectionProps) {
+  const { language } = useLanguage()
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [currentPage, setCurrentPage] = useState(1)
   const [posts, setPosts] = useState<BlogPost[]>([])
@@ -92,11 +94,12 @@ export default function BlogPostsSection({
   const [error, setError] = useState<string | null>(null)
   const [totalPages, setTotalPages] = useState<number | undefined>(undefined)
 
-  // Fetch categories on component mount
+  // Fetch categories on component mount and when language changes
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch('/api/blog/categories')
+        const params = new URLSearchParams({ lang: language })
+        const response = await fetch(`/api/blog/categories?${params.toString()}`)
         if (!response.ok) throw new Error('Failed to fetch categories')
 
         const data: BlogCategoriesResponse = await response.json()
@@ -117,9 +120,9 @@ export default function BlogPostsSection({
     }
 
     fetchCategories()
-  }, [])
+  }, [language])
 
-  // Fetch posts when category or page changes
+  // Fetch posts when category, page, or language changes
   useEffect(() => {
     const fetchPosts = async (reset = false) => {
       try {
@@ -134,6 +137,7 @@ export default function BlogPostsSection({
         const params = new URLSearchParams({
           page: reset ? '1' : currentPage.toString(),
           per_page: '6',
+          lang: language,
         })
 
         if (selectedCategory !== 'all') {
@@ -163,12 +167,18 @@ export default function BlogPostsSection({
     }
 
     fetchPosts(currentPage === 1)
-  }, [selectedCategory, currentPage])
+  }, [selectedCategory, currentPage, language])
 
   const handleCategoryChange = (categoryId: string) => {
     setSelectedCategory(categoryId)
     setCurrentPage(1)
   }
+
+  // Reset page when language changes
+  useEffect(() => {
+    setCurrentPage(1)
+    setPosts([])
+  }, [language])
 
   const handleLoadMore = () => {
     setCurrentPage((prev) => prev + 1)

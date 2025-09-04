@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getFetchConfig, getCacheHeaders } from '@/config/cache.config'
+import { getWordPressApiUrl, getApiBasePath } from '@/lib/api/api-helper'
 import {
   WordPressTestimonialsResponseSchema,
   type TestimonialsResponse,
   type Testimonial,
 } from '@/lib/types/wordpress-settings'
 
-const WORDPRESS_API_URL = process.env.WORDPRESS_API_URL || 'https://wp-roihin.precisiondevlab.com'
-const WORDPRESS_API_BASE_PATH = process.env.WORDPRESS_API_BASE_PATH || '/wp-json/wp/v2'
 const DEFAULT_AVATAR = '/images/default-avatar.jpg'
 
 /**
@@ -21,6 +20,7 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
     const limit = searchParams.get('limit') || '15'
+    const language = (searchParams.get('lang') || 'en') as 'en' | 'th'
 
     // Build WordPress API URL for testimonials
     const params = new URLSearchParams({
@@ -32,7 +32,9 @@ export async function GET(request: NextRequest) {
       acf_format: 'standard',
     })
 
-    const wpApiUrl = `${WORDPRESS_API_URL}${WORDPRESS_API_BASE_PATH}/testimonial?${params.toString()}`
+    const apiUrl = getWordPressApiUrl(language)
+    const basePath = getApiBasePath()
+    const wpApiUrl = `${apiUrl}${basePath}/testimonial?${params.toString()}`
 
     // Fetch testimonials from WordPress API with environment-aware caching
     const response = await fetch(wpApiUrl, {
@@ -122,6 +124,7 @@ function formatDate(dateString: string): string {
     return dateString
   }
 
+  // Format date based on language from request context (defaulting to Thai for backward compatibility)
   return date.toLocaleDateString('th-TH', {
     year: 'numeric',
     month: 'long',

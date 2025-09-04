@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getFetchConfig, getCacheHeaders } from '@/config/cache.config'
 import { getWordPressApiUrl, getApiBasePath } from '@/lib/api/api-helper'
-import { StonesResponseSchema } from '@/lib/types/api-types'
+import { PageSettingsResponseSchema } from '@/lib/types/api-types'
 
 export async function GET(request: NextRequest) {
   try {
@@ -11,26 +11,26 @@ export async function GET(request: NextRequest) {
     const apiUrl = getWordPressApiUrl(language)
     const basePath = getApiBasePath()
     
-    // Updated endpoint from stone-setting to stone
+    // Updated endpoint from pagesetting to page-setting
     const response = await fetch(
-      `${apiUrl}${basePath}/stone?_fields=acf`,
+      `${apiUrl}${basePath}/page-setting?_fields=acf`,
       getFetchConfig('siteSettings')
     )
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch stone settings: ${response.status}`)
+      throw new Error(`Failed to fetch page settings: ${response.status}`)
     }
 
-    const rawData = await response.json()
-    const data = StonesResponseSchema.parse(rawData)
-    
-    return NextResponse.json(data, {
+    const data = await response.json()
+    const pageSettings = PageSettingsResponseSchema.parse(data)
+
+    return NextResponse.json(pageSettings, {
       headers: getCacheHeaders(),
     })
   } catch (error) {
-    console.error('Error fetching stone settings:', error)
+    console.error('Error fetching page settings:', error)
     return NextResponse.json(
-      { error: 'Failed to fetch stone settings' },
+      { error: 'Failed to fetch page settings' },
       { status: 500, headers: getCacheHeaders() }
     )
   }

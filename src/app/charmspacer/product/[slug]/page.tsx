@@ -11,13 +11,16 @@ export const revalidate = 900
 
 interface ProductPageProps {
   params: Promise<{ slug: string }>
+  searchParams: Promise<{ lang?: string }>
 }
 
-export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: ProductPageProps): Promise<Metadata> {
   const { slug } = await params
+  const { lang } = await searchParams
+  const language = (lang === 'th' ? 'th' : 'en') as 'en' | 'th'
   
   try {
-    const { product } = await getProductBySlug(slug, false)
+    const { product } = await getProductBySlug(slug, false, 6, language)
     
     return {
       title: `${product.title} | Roihin Thailand`,
@@ -36,12 +39,14 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   }
 }
 
-export default async function ProductPage({ params }: ProductPageProps) {
+export default async function ProductPage({ params, searchParams }: ProductPageProps) {
   const { slug } = await params
+  const { lang } = await searchParams
+  const language = (lang === 'th' ? 'th' : 'en') as 'en' | 'th'
   
   let productData
   try {
-    productData = await getProductBySlug(slug, true, 6)
+    productData = await getProductBySlug(slug, true, 6, language)
   } catch (error) {
     console.error('Failed to fetch product:', error)
     notFound()
@@ -54,7 +59,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <Navigation position="static" />
 
       <main className="min-h-screen bg-black">
-        <ProductDetail product={product} category={category} />
+        <ProductDetail product={product} category={category} language={language} />
         
         {related && related.length > 0 && (
           <RelatedProducts products={related} />

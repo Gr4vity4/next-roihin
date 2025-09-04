@@ -5,7 +5,7 @@ import CharmspacerHero from '@/components/sections/CharmspacerHero'
 import ProductSection from '@/components/sections/ProductSection'
 import { Footer } from '@/components/sections'
 import { content } from '@/config/content.config'
-import { getCatalog } from '@/lib/api/products'
+import { getAllProducts } from '@/lib/api/products'
 
 export const revalidate = 900
 
@@ -18,15 +18,38 @@ export const metadata: Metadata = {
 export default async function CharmspacerPage() {
   const { charmspacerPage } = content
   
-  let catalogData
+  let products = []
+  
   try {
-    catalogData = await getCatalog(12)
+    products = await getAllProducts()
   } catch (error) {
-    console.error('Failed to fetch catalog data:', error)
-    catalogData = { sections: [] }
+    console.error('Failed to fetch products:', error)
+    products = []
   }
 
-  const sections = catalogData.sections || []
+  // Group products by their category from ACF
+  const categoryMap = new Map<string, typeof products>()
+  
+  products.forEach(product => {
+    const categoryName = product.product_category?.name || 'Uncategorized'
+    if (!categoryMap.has(categoryName)) {
+      categoryMap.set(categoryName, [])
+    }
+    categoryMap.get(categoryName)?.push(product)
+  })
+
+  const productsByCategory = Array.from(categoryMap.entries()).map(([categoryName, categoryProducts]) => ({
+    category: {
+      slug: categoryName.toLowerCase().replace(/\s+/g, '-'),
+      name_en: categoryName,
+      name_th: categoryName === 'Lucky Charm' ? 'ชาร์ม' : 
+              categoryName === 'Spacer' ? 'ตัวคั่น' : 
+              categoryName === 'Pendant' ? 'จี้' : categoryName,
+      intro_th: '',
+      intro_en: ''
+    },
+    products: categoryProducts
+  }))
 
   return (
     <>
@@ -40,8 +63,8 @@ export default async function CharmspacerPage() {
         />
         
         <div className="bg-black">
-          {sections.map((section, index) => {
-            const products = section.products.map(product => ({
+          {productsByCategory.map((section, index) => {
+            const productImages = section.products.map(product => ({
               src: product.featured_image_url,
               alt: product.title,
               href: `/charmspacer/product/${product.slug}`,
@@ -55,13 +78,13 @@ export default async function CharmspacerPage() {
                 id={section.category.slug}
                 title={section.category.name_th || section.category.name_en}
                 description={section.category.intro_th || section.category.intro_en || ''}
-                images={products}
-                className={index === 0 ? '' : index === sections.length - 1 ? 'pt-24 pb-24' : 'pt-24'}
+                images={productImages}
+                className={index === 0 ? '' : index === productsByCategory.length - 1 ? 'pt-24 pb-24' : 'pt-24'}
               />
             )
           })}
 
-          {sections.length === 0 && (
+          {productsByCategory.length === 0 && (
             <>
               <ProductSection
                 id={charmspacerPage.sections.charm.id}

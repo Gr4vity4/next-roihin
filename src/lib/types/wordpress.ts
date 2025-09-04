@@ -42,7 +42,7 @@ export const WordPressTitleSchema = z.object({
  * WordPress API ACF Fields Schema
  */
 export const WordPressACFSchema = z.object({
-  hero_image: z.string().optional(),
+  hero_image: z.union([z.string(), z.boolean()]).optional(),
 }).optional()
 
 /**

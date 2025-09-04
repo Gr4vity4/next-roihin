@@ -3,24 +3,26 @@ import { WordPressSinglePostSchema } from '@/lib/types/wordpress'
 import { extractTextFromHtml } from '@/lib/utils'
 import { NextRequest, NextResponse } from 'next/server'
 
-const WORDPRESS_API_URL = 'https://wp-roihin.precisiondevlab.com/wp-json/custom/v1/post-by-title'
+const WORDPRESS_BASE_URL = 'https://wp-roihin.precisiondevlab.com'
 const DEFAULT_IMAGE = '/images/357c3a_ac4bc1a787364c358512be32cc1ffc30~mv2.avif'
 
 interface RouteParams {
   params: Promise<{
-    title: string
+    title: string // This is actually a slug now, but keeping the name for backwards compatibility
   }>
 }
 
 /**
  * GET /api/blog/posts/[title]
- * Proxy endpoint to fetch a single post by title from WordPress REST API
+ * Proxy endpoint to fetch a single post by slug from WordPress REST API
  * Path parameters:
- * - title: The URL-encoded title of the post to fetch
+ * - title: The URL-encoded slug of the post to fetch (kept as 'title' for backwards compatibility)
  */
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
     const { title } = await params
+    const searchParams = request.nextUrl.searchParams
+    const lang = searchParams.get('lang') || 'en'
 
     if (!title) {
       return NextResponse.json(
@@ -37,17 +39,21 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       )
     }
 
-    // Decode the URL-encoded title
-    const decodedTitle = decodeURIComponent(title)
+    // Decode the URL-encoded slug
+    const decodedSlug = decodeURIComponent(title)
 
-    // Build WordPress API URL with title parameter
+    // Build WordPress API URL with language prefix
+    const langPrefix = lang === 'th' ? '/th' : ''
+    const apiUrl = `${WORDPRESS_BASE_URL}${langPrefix}/wp-json/wp/v2/posts`
+
+    // Build WordPress API URL with slug parameter
     const apiParams = new URLSearchParams({
-      title: decodedTitle,
+      slug: decodedSlug,
       _embed: 'author,wp:featuredmedia,wp:term',
       _fields: 'id,slug,title,content,excerpt,date,categories,acf,_links,_embedded',
     })
 
-    const wpApiUrl = `${WORDPRESS_API_URL}?${apiParams.toString()}`
+    const wpApiUrl = `${apiUrl}?${apiParams.toString()}`
 
     // Fetch post from WordPress API
     const response = await fetch(wpApiUrl, {
@@ -80,8 +86,37 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
     const data = await response.json()
 
+    // When fetching by slug, WordPress returns an array
+    const postData = Array.isArray(data) ? data[0] : data
+    
+    if (!postData) {
+      return NextResponse.json(
+        {
+          error: 'Post not found',
+          message: 'No post found with the specified slug',
+        },
+        {
+          status: 404,
+          headers: {
+            'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+          },
+        },
+      )
+    }
+
     // Validate response data with Zod
-    const validatedPost = WordPressSinglePostSchema.parse(data)
+    let validatedPost
+    try {
+      validatedPost = WordPressSinglePostSchema.parse(postData)
+    } catch (validationError) {
+      console.error('Validation error for post data:', {
+        slug: decodedSlug,
+        lang,
+        postDataKeys: Object.keys(postData || {}),
+        error: validationError
+      })
+      throw validationError
+    }
 
     // Transform WordPress post to our frontend format
     const transformedPost = transformWordPressPost(validatedPost)
@@ -139,7 +174,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 function transformWordPressPost(post: WordPressSinglePost) {
   // Extract hero image from ACF, fallback to featured media, then default
   const heroImage =
-    post.acf?.hero_image || post._embedded?.['wp:featuredmedia']?.[0]?.source_url || DEFAULT_IMAGE
+    (post.acf?.hero_image && typeof post.acf.hero_image === 'string' ? post.acf.hero_image : null) ||
+    post._embedded?.['wp:featuredmedia']?.[0]?.source_url ||
+    DEFAULT_IMAGE
 
   // Extract featured image (different from hero image)
   const featuredImage = post._embedded?.['wp:featuredmedia']?.[0]?.source_url

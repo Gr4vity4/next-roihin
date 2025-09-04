@@ -1,6 +1,7 @@
 'use client'
 
 import Button from '@/components/Button'
+import { useLanguage } from '@/contexts/LanguageContext'
 import {
   Dialog,
   DialogContent,
@@ -19,8 +20,13 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import type { BankData } from '@/lib/types/bank'
-import { STONE_CATEGORIES, type StoneSetting } from '@/lib/types/stone-settings'
+import type { Bank, Stone } from '@/lib/types/api-types'
+
+const STONE_CATEGORIES = {
+  Stone: 'Stone',
+  Charm: 'Charm',
+  Pendant: 'Pendant',
+} as const
 import { ArrowLeft, Check, GripVertical, RefreshCw, Upload } from 'lucide-react'
 import Image from 'next/image'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -35,7 +41,7 @@ interface Bead {
   backgroundImage?: string
   imageUrl?: string
   shape: BeadShape
-  stoneSetting?: StoneSetting['acf']['stone_information']
+  stoneSetting?: Stone['acf']
   price: number
   size: number // Size in mm when the bead was added
 }
@@ -48,17 +54,16 @@ interface CustomerInfo {
 }
 
 export default function BraceletDesigner() {
+  const { language } = useLanguage()
   const [beadSize, setBeadSize] = useState(6)
   const [wristLength, setWristLength] = useState('15')
   const [beads, setBeads] = useState<Bead[]>([])
-  const [lastSelectedBead, setLastSelectedBead] = useState<
-    StoneSetting['acf']['stone_information'] | null
-  >(null)
-  const [stoneSettings, setStoneSettings] = useState<StoneSetting[]>([])
+  const [lastSelectedBead, setLastSelectedBead] = useState<Stone['acf'] | null>(null)
+  const [stoneSettings, setStoneSettings] = useState<Stone[]>([])
   const [loading, setLoading] = useState(true)
   const [isMobile, setIsMobile] = useState(false)
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
-  const [banks, setBanks] = useState<BankData[]>([])
+  const [banks, setBanks] = useState<Bank[]>([])
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
     name: '',
     phone: '',
@@ -100,26 +105,26 @@ export default function BraceletDesigner() {
   useEffect(() => {
     const fetchStoneSettings = async () => {
       try {
-        const response = await fetch('/api/stone-settings')
+        const response = await fetch(`/api/stones?lang=${language}`)
         if (response.ok) {
           const data = await response.json()
           setStoneSettings(data)
         }
       } catch (error) {
-        console.error('Error fetching stone settings:', error)
+        console.error('Error fetching stones:', error)
       } finally {
         setLoading(false)
       }
     }
     fetchStoneSettings()
-  }, [])
+  }, [language])
 
   // Fetch banks when dialog opens
   useEffect(() => {
     if (showConfirmDialog && banks.length === 0) {
       const fetchBanks = async () => {
         try {
-          const response = await fetch('/api/banks')
+          const response = await fetch(`/api/banks?lang=${language}`)
           if (response.ok) {
             const data = await response.json()
             setBanks(data)
@@ -130,21 +135,21 @@ export default function BraceletDesigner() {
       }
       fetchBanks()
     }
-  }, [showConfirmDialog, banks.length])
+  }, [showConfirmDialog, banks.length, language])
 
   // Get stones by category
   const getStonesByCategory = (category: string) => {
-    return stoneSettings.filter((stone) => stone.acf.stone_information.category === category)
+    return stoneSettings.filter((stone) => stone.acf.category === category)
   }
 
   // Get price for stone based on size
-  const getStonePrice = (stone: StoneSetting['acf']['stone_information'], size: number): number => {
-    const sizePricing = stone[''] // The API returns an empty string as key for size pricing
+  const getStonePrice = (stone: Stone['acf'], size: number): number => {
+    const sizePricing = stone.size
     if (!sizePricing) return 0
 
-    const sizeKey = `size_${size}_mm` as keyof typeof sizePricing
-    const sizeData = sizePricing[sizeKey]
-    return sizeData ? parseInt(sizeData.base_price) : 0
+    const sizeKey = `size_${size}_mm_base_price` as keyof typeof sizePricing
+    const price = sizePricing[sizeKey]
+    return price ? parseInt(price) : 0
   }
 
   // Calculate total price
@@ -440,7 +445,7 @@ export default function BraceletDesigner() {
     draggedBeadRef.current = draggedBead
   }, [draggedBead])
 
-  const addBead = (stone: StoneSetting['acf']['stone_information']) => {
+  const addBead = (stone: Stone['acf']) => {
     const d = mmToPx(beadSize)
     const r = d / 2
 
@@ -472,8 +477,9 @@ export default function BraceletDesigner() {
     // Use image if available
     if (stone.stone_image) {
       el.style.backgroundImage = `url(${stone.stone_image})`
-      el.style.backgroundSize = 'cover'
+      el.style.backgroundSize = 'contain'
       el.style.backgroundPosition = 'center'
+      el.style.backgroundRepeat = 'no-repeat'
     }
 
     // Add drag event listeners to the bead element
@@ -792,11 +798,11 @@ export default function BraceletDesigner() {
 
         <div className="grid grid-cols-12 w-full mt-10 mb-20 gap-8">
           <div className="col-span-12 md:col-span-6">
-            <Tabs defaultValue="1" className="w-full">
+            <Tabs defaultValue="Stone" className="w-full">
               <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="1">หิน</TabsTrigger>
-                <TabsTrigger value="2">ชาร์ม</TabsTrigger>
-                <TabsTrigger value="3">ตัวคั่น/จี้</TabsTrigger>
+                <TabsTrigger value="Stone">หิน</TabsTrigger>
+                <TabsTrigger value="Charm">ชาร์ม</TabsTrigger>
+                <TabsTrigger value="Pendant">ตัวคั่น/จี้</TabsTrigger>
               </TabsList>
 
               {loading ? (
@@ -807,21 +813,22 @@ export default function BraceletDesigner() {
                     <TabsContent key={category} value={category} className="mt-6">
                       <div className="grid grid-cols-8 gap-2.5">
                         {getStonesByCategory(category).map((stone) => {
-                          const stoneInfo = stone.acf.stone_information
+                          const stoneInfo = stone.acf
                           const price = getStonePrice(stoneInfo, beadSize)
 
                           return (
-                            <div key={stoneInfo.stone_title} className="relative group">
+                            <div key={stoneInfo.title} className="relative group">
                               <button
                                 className="w-11 h-11 cursor-pointer active:scale-95 transition-transform overflow-hidden"
                                 style={{
                                   backgroundImage: `url(${stoneInfo.stone_image})`,
-                                  backgroundSize: 'cover',
+                                  backgroundSize: 'contain',
                                   backgroundPosition: 'center',
+                                  backgroundRepeat: 'no-repeat',
                                 }}
-                                title={`${stoneInfo.stone_title} - ฿${price}`}
+                                title={`${stoneInfo.title} - ฿${price}`}
                                 onClick={() => addBead(stoneInfo)}
-                                aria-label={`Add ${stoneInfo.stone_title} - ฿${price}`}
+                                aria-label={`Add ${stoneInfo.title} - ฿${price}`}
                               />
                               {/* Price tooltip */}
                               <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-1 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
@@ -845,7 +852,7 @@ export default function BraceletDesigner() {
                   <div className="relative w-24 h-24">
                     <Image
                       src={lastSelectedBead.stone_image}
-                      alt={lastSelectedBead.stone_title}
+                      alt={lastSelectedBead.title}
                       width={96}
                       height={96}
                     />
@@ -862,9 +869,9 @@ export default function BraceletDesigner() {
                   <>
                     {/* bead header */}
                     <div className="flex flex-col gap-1">
-                      <span className="text-xl font-semibold">{lastSelectedBead.stone_title}</span>
+                      <span className="text-xl font-semibold">{lastSelectedBead.title}</span>
                       <span className="text-gray-600 text-sm">
-                        {lastSelectedBead.stone_sub_title}
+                        {lastSelectedBead.sub_title}
                       </span>
                       {/* <span className="text-gray-500 text-xs">
                         {
@@ -878,40 +885,40 @@ export default function BraceletDesigner() {
                     </div>
                     {/* bead description */}
                     <div className="text-gray-700 text-sm">
-                      {lastSelectedBead.stone_description}
+                      {lastSelectedBead.description}
                     </div>
                     {/* stone story */}
-                    {lastSelectedBead.stone_story && (
+                    {lastSelectedBead.story && (
                       <div className="grid grid-cols-2 gap-2 text-xs">
-                        {lastSelectedBead.stone_story.energy_element && (
+                        {lastSelectedBead.story.energy_element && (
                           <div className="flex flex-col">
                             <span className="font-semibold text-gray-600">ธาตุพลังงาน:</span>
                             <span className="text-gray-600">
-                              {lastSelectedBead.stone_story.energy_element}
+                              {lastSelectedBead.story.energy_element}
                             </span>
                           </div>
                         )}
-                        {lastSelectedBead.stone_story.connected_chakras && (
+                        {lastSelectedBead.story.connected_chakras && (
                           <div className="flex flex-col">
                             <span className="font-semibold text-gray-600">จักระ:</span>
                             <span className="text-gray-600">
-                              {lastSelectedBead.stone_story.connected_chakras}
+                              {lastSelectedBead.story.connected_chakras}
                             </span>
                           </div>
                         )}
-                        {lastSelectedBead.stone_story.ascendant && (
+                        {lastSelectedBead.story.ascendant && (
                           <div className="flex flex-col">
                             <span className="font-semibold text-gray-600">ลัคนา:</span>
                             <span className="text-gray-600">
-                              {lastSelectedBead.stone_story.ascendant}
+                              {lastSelectedBead.story.ascendant}
                             </span>
                           </div>
                         )}
-                        {lastSelectedBead.stone_story.star_relations && (
+                        {lastSelectedBead.story.star_relations && (
                           <div className="flex flex-col">
                             <span className="font-semibold text-gray-600">ดาวประจำ:</span>
                             <span className="text-gray-600">
-                              {lastSelectedBead.stone_story.star_relations}
+                              {lastSelectedBead.story.star_relations}
                             </span>
                           </div>
                         )}
@@ -977,7 +984,7 @@ export default function BraceletDesigner() {
                           {bead.imageUrl && (
                             <Image
                               src={bead.imageUrl}
-                              alt={bead.stoneSetting?.stone_title || 'Bead'}
+                              alt={bead.stoneSetting?.title || 'Bead'}
                               width={40}
                               height={40}
                               className="w-full h-full object-cover"
@@ -986,7 +993,7 @@ export default function BraceletDesigner() {
                         </div>
                         <div className="flex-1 text-sm">
                           <div className="font-medium">
-                            {bead.stoneSetting?.stone_title || 'Unknown'}
+                            {bead.stoneSetting?.title || 'Unknown'}
                           </div>
                           <div className="text-xs text-gray-500">{bead.size} mm</div>
                         </div>
@@ -1001,7 +1008,7 @@ export default function BraceletDesigner() {
                     {(() => {
                       // Group beads by stone title and size
                       const groupedBeads = beads.reduce((acc, bead) => {
-                        const key = `${bead.stoneSetting?.stone_title || 'Unknown'}_${bead.size}mm`
+                        const key = `${bead.stoneSetting?.title || 'Unknown'}_${bead.size}mm`
                         if (!acc[key]) {
                           acc[key] = {
                             stoneSetting: bead.stoneSetting,
@@ -1015,7 +1022,7 @@ export default function BraceletDesigner() {
                         acc[key].count++
                         acc[key].totalPrice += bead.price
                         return acc
-                      }, {} as Record<string, { stoneSetting: StoneSetting['acf']['stone_information'] | undefined; imageUrl?: string; count: number; price: number; totalPrice: number; size: number }>)
+                      }, {} as Record<string, { stoneSetting: Stone['acf'] | undefined; imageUrl?: string; count: number; price: number; totalPrice: number; size: number }>)
 
                       return Object.entries(groupedBeads).map(([key, group]) => (
                         <div
@@ -1023,7 +1030,7 @@ export default function BraceletDesigner() {
                           className="flex items-center justify-between text-xs text-gray-600 py-1"
                         >
                           <span>
-                            {group.stoneSetting?.stone_title || 'Unknown'} ({group.size}mm)
+                            {group.stoneSetting?.title || 'Unknown'} ({group.size}mm)
                           </span>
                           <span>
                             x{group.count} = ฿{group.totalPrice}

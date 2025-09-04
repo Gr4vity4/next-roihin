@@ -3,7 +3,7 @@ import { WordPressCategoriesResponseSchema } from '@/lib/types/wordpress'
 import type { BlogCategoriesResponse } from '@/lib/types/wordpress'
 import { getFetchConfig, getCacheHeaders } from '@/config/cache.config'
 
-const WORDPRESS_API_URL = 'https://wp-roihin.precisiondevlab.com/wp-json/wp/v2/categories'
+const WORDPRESS_BASE_URL = 'https://wp-roihin.precisiondevlab.com'
 
 /**
  * GET /api/blog/categories
@@ -13,9 +13,14 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
     const exclude = searchParams.get('exclude') || '1' // Exclude "Uncategorized" by default
+    const lang = searchParams.get('lang') || 'en'
+    
+    // Build WordPress API URL with language prefix
+    const langPrefix = lang === 'th' ? '/th' : ''
+    const apiUrl = `${WORDPRESS_BASE_URL}${langPrefix}/wp-json/wp/v2/categories`
     
     // Fetch categories from WordPress API with environment-aware caching
-    const response = await fetch(`${WORDPRESS_API_URL}?exclude=${exclude}&per_page=100`, {
+    const response = await fetch(`${apiUrl}?exclude=${exclude}&per_page=100`, {
       headers: {
         'Content-Type': 'application/json',
       },

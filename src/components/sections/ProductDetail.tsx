@@ -14,9 +14,10 @@ import { useState } from 'react'
 interface ProductDetailProps {
   product: Product
   category: Category
+  language?: 'en' | 'th'
 }
 
-export default function ProductDetail({ product, category }: ProductDetailProps) {
+export default function ProductDetail({ product, category, language = 'en' }: ProductDetailProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const [selectedColor, setSelectedColor] = useState(0)
   const [isAdding, setIsAdding] = useState(false)
@@ -47,7 +48,7 @@ export default function ProductDetail({ product, category }: ProductDetailProps)
                 href="/charmspacer"
                 className="text-gray-400 hover:text-white transition-colors"
               >
-                ชาร์ม/สเปเซอร์
+                {language === 'th' ? 'ชาร์ม/สเปเซอร์' : 'Charm/Spacer'}
               </Link>
             </li>
             <li className="text-gray-600">/</li>
@@ -56,7 +57,10 @@ export default function ProductDetail({ product, category }: ProductDetailProps)
                 href={`/charmspacer#${category.slug}`}
                 className="text-gray-400 hover:text-white transition-colors"
               >
-                {category.name_th || category.name_en}
+                {language === 'th' 
+                  ? category.name_th || category.name_en
+                  : category.name_en || category.name_th
+                }
               </Link>
             </li>
             <li className="text-gray-600">/</li>
@@ -136,7 +140,11 @@ export default function ProductDetail({ product, category }: ProductDetailProps)
                     {product.title}
                   </Typography>
                   <p className="text-gray-400 text-sm">
-                    หมวดหมู่: {category.name_th || category.name_en}
+                    {language === 'th' ? 'หมวดหมู่: ' : 'Category: '}
+                    {language === 'th' 
+                      ? category.name_th || category.name_en 
+                      : category.name_en || category.name_th
+                    }
                   </p>
                 </div>
                 <WishlistButton 
@@ -146,7 +154,9 @@ export default function ProductDetail({ product, category }: ProductDetailProps)
                     title: product.title,
                     price: selectedPrice || 0,
                     image: allImages[0] || '/images/placeholder.jpg',
-                    category: category.name_th || category.name_en,
+                    category: language === 'th' 
+                      ? category.name_th || category.name_en
+                      : category.name_en || category.name_th,
                   }}
                   color={selectedColorData?.color}
                   size="lg"
@@ -165,7 +175,9 @@ export default function ProductDetail({ product, category }: ProductDetailProps)
 
                 {colorPrices.length > 1 && (
                   <div>
-                    <label className="block text-sm text-gray-400 mb-3">เลือกสี:</label>
+                    <label className="block text-sm text-gray-400 mb-3">
+                      {language === 'th' ? 'เลือกสี:' : 'Select Color:'}
+                    </label>
                     <div className="flex flex-wrap gap-2">
                       {colorPrices.map((colorPrice, index) => (
                         <button
@@ -204,14 +216,18 @@ export default function ProductDetail({ product, category }: ProductDetailProps)
             <div className="space-y-4 border-t border-gray-800 pt-6">
               {product.acf.material && (
                 <div>
-                  <h3 className="text-sm text-gray-400 mb-1">วัสดุ:</h3>
+                  <h3 className="text-sm text-gray-400 mb-1">
+                    {language === 'th' ? 'วัสดุ:' : 'Material:'}
+                  </h3>
                   <p className="text-white">{product.acf.material}</p>
                 </div>
               )}
 
               {product.acf.dimensions && (
                 <div>
-                  <h3 className="text-sm text-gray-400 mb-1">ขนาด:</h3>
+                  <h3 className="text-sm text-gray-400 mb-1">
+                    {language === 'th' ? 'ขนาด:' : 'Dimensions:'}
+                  </h3>
                   <p className="text-white">{product.acf.dimensions}</p>
                 </div>
               )}
@@ -220,20 +236,18 @@ export default function ProductDetail({ product, category }: ProductDetailProps)
             {/* Description */}
             {(product.acf.description_th || product.acf.description_en) && (
               <div className="space-y-4 border-t border-gray-800 pt-6">
-                <h3 className="text-lg text-white font-medium">รายละเอียดสินค้า</h3>
-                <div className="text-gray-300 leading-relaxed space-y-4">
-                  {product.acf.description_th && (
-                    <div
-                      dangerouslySetInnerHTML={{ __html: product.acf.description_th }}
-                      className="prose prose-invert prose-sm max-w-none"
-                    />
-                  )}
-                  {product.acf.description_en && (
-                    <div
-                      dangerouslySetInnerHTML={{ __html: product.acf.description_en }}
-                      className="text-sm italic prose prose-invert prose-sm max-w-none"
-                    />
-                  )}
+                <h3 className="text-lg text-white font-medium">
+                  {language === 'th' ? 'รายละเอียดสินค้า' : 'Product Details'}
+                </h3>
+                <div className="text-gray-300 leading-relaxed">
+                  <div
+                    dangerouslySetInnerHTML={{ 
+                      __html: language === 'th' 
+                        ? product.acf.description_th || product.acf.description_en || ''
+                        : product.acf.description_en || product.acf.description_th || ''
+                    }}
+                    className="prose prose-invert prose-sm max-w-none"
+                  />
                 </div>
               </div>
             )}
@@ -248,7 +262,9 @@ export default function ProductDetail({ product, category }: ProductDetailProps)
                     title: product.title,
                     price: selectedPrice || 0,
                     image: allImages[0] || '/images/placeholder.jpg',
-                    category: category.name_th || category.name_en,
+                    category: language === 'th' 
+                      ? category.name_th || category.name_en
+                      : category.name_en || category.name_th,
                   }}
                   color={selectedColorData?.color}
                   showText
@@ -267,7 +283,9 @@ export default function ProductDetail({ product, category }: ProductDetailProps)
                       price: selectedPrice,
                       image: allImages[0] || '/images/placeholder.jpg',
                       color: selectedColorData.color,
-                      category: category.name_th || category.name_en,
+                      category: language === 'th' 
+                      ? category.name_th || category.name_en
+                      : category.name_en || category.name_th,
                     })
                     setTimeout(() => {
                       setIsAdding(false)
@@ -284,7 +302,10 @@ export default function ProductDetail({ product, category }: ProductDetailProps)
                 }`}
               >
                 <ShoppingCartIcon className="w-5 h-5 mr-2" />
-                {isAdding ? 'เพิ่มลงตะกร้าแล้ว!' : 'เพิ่มลงตะกร้า'}
+                {isAdding 
+                  ? (language === 'th' ? 'เพิ่มลงตะกร้าแล้ว!' : 'Added to Cart!')
+                  : (language === 'th' ? 'เพิ่มลงตะกร้า' : 'Add to Cart')
+                }
               </button>
 
               <button
@@ -297,7 +318,9 @@ export default function ProductDetail({ product, category }: ProductDetailProps)
                       price: selectedPrice,
                       image: allImages[0] || '/images/placeholder.jpg',
                       color: selectedColorData.color,
-                      category: category.name_th || category.name_en,
+                      category: language === 'th' 
+                      ? category.name_th || category.name_en
+                      : category.name_en || category.name_th,
                     })
                     router.push('/checkout')
                   }
@@ -309,11 +332,14 @@ export default function ProductDetail({ product, category }: ProductDetailProps)
                     : 'bg-transparent border border-gold text-gold hover:bg-gold hover:text-black'
                 }`}
               >
-                ซื้อเลย
+                {language === 'th' ? 'ซื้อเลย' : 'Buy Now'}
               </button>
 
               <p className="text-xs text-gray-500 text-center">
-                จัดส่งฟรีทั่วประเทศ เมื่อซื้อครบ 1,500 บาท
+                {language === 'th' 
+                  ? 'จัดส่งฟรีทั่วประเทศ เมื่อซื้อครบ 1,500 บาท'
+                  : 'Free shipping nationwide for orders over 1,500 THB'
+                }
               </p>
             </div>
           </div>

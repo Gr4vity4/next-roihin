@@ -7,7 +7,7 @@ export interface ProfileData {
   email: string
   first_name: string
   last_name: string
-  phone: string
+  phone_number: string
   birth_date: string
   gender: 'male' | 'female' | 'other' | 'prefer_not_to_say'
   member_since: {
@@ -20,7 +20,7 @@ export interface UpdateProfileData {
   first_name?: string
   last_name?: string
   email?: string
-  phone?: string
+  phone_number?: string
   birth_date?: string
   gender?: 'male' | 'female' | 'other' | 'prefer_not_to_say'
 }

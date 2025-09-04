@@ -1,13 +1,18 @@
 import { getCacheHeaders, getFetchConfig } from '@/config/cache.config'
-import type { BankData } from '@/lib/types/bank'
-import { NextResponse } from 'next/server'
+import { getWordPressApiUrl, getApiBasePath } from '@/lib/api/api-helper'
+import { BanksResponseSchema } from '@/lib/types/api-types'
+import { NextRequest, NextResponse } from 'next/server'
 
-const WORDPRESS_API_URL = process.env.WORDPRESS_API_URL || 'https://wp-roihin.precisiondevlab.com'
-
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
+    const searchParams = request.nextUrl.searchParams
+    const language = (searchParams.get('lang') || 'en') as 'en' | 'th'
+    
+    const apiUrl = getWordPressApiUrl(language)
+    const basePath = getApiBasePath()
+    
     const response = await fetch(
-      `${WORDPRESS_API_URL}/wp-json/wp/v2/bank?_fields=acf`,
+      `${apiUrl}${basePath}/bank?_fields=acf`,
       getFetchConfig('api')
     )
 
@@ -15,7 +20,8 @@ export async function GET() {
       throw new Error(`Failed to fetch banks: ${response.status}`)
     }
 
-    const banks: BankData[] = await response.json()
+    const data = await response.json()
+    const banks = BanksResponseSchema.parse(data)
 
     return NextResponse.json(banks, {
       headers: getCacheHeaders(),
