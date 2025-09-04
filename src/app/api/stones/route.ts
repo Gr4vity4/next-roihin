@@ -10,7 +10,7 @@ export async function GET(request: Request) {
   try {
     const response = await fetch(
       `${WORDPRESS_API_URL}/wp-json/wp/v2/stone?_fields=acf&per_page=100&lang=${lang}`,
-      getFetchConfig()
+      getFetchConfig('api')
     )
     
     if (!response.ok) {
