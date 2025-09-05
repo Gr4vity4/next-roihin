@@ -1,5 +1,5 @@
 import ChatWidget from '@/components/ChatWidget'
-import Navigation from '@/components/Navigation'
+import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import { BlogHeroSection, BlogPostsSection, Footer } from '@/components/sections'
 import { content } from '@/config/content.config'
 import type { Metadata } from 'next'
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
 export default function BlogPage() {
   return (
     <>
-      <Navigation />
+      <NavigationWithSuspense />
 
       <main>
         {/* Blog Hero Section */}

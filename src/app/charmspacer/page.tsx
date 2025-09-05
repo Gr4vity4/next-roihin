@@ -1,11 +1,12 @@
 import { Metadata } from 'next'
 import ChatWidget from '@/components/ChatWidget'
-import Navigation from '@/components/Navigation'
+import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import CharmspacerHero from '@/components/sections/CharmspacerHero'
 import ProductSection from '@/components/sections/ProductSection'
 import { Footer } from '@/components/sections'
 import { content } from '@/config/content.config'
 import { getAllProducts } from '@/lib/api/products'
+import { Product } from '@/lib/types/products'
 
 export const revalidate = 900
 
@@ -18,7 +19,7 @@ export const metadata: Metadata = {
 export default async function CharmspacerPage() {
   const { charmspacerPage } = content
   
-  let products = []
+  let products: Product[] = []
   
   try {
     products = await getAllProducts()
@@ -28,7 +29,7 @@ export default async function CharmspacerPage() {
   }
 
   // Group products by their category from ACF
-  const categoryMap = new Map<string, typeof products>()
+  const categoryMap = new Map<string, Product[]>()
   
   products.forEach(product => {
     const categoryName = product.product_category?.name || 'Uncategorized'
@@ -53,7 +54,7 @@ export default async function CharmspacerPage() {
 
   return (
     <>
-      <Navigation />
+      <NavigationWithSuspense />
 
       <main className="min-h-screen">
         <CharmspacerHero

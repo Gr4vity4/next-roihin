@@ -45,7 +45,7 @@ export const ProductGalleryImageSchema = z.object({
   icon: z.string(),
   width: z.number(),
   height: z.number(),
-  sizes: z.record(z.union([z.string(), z.number()])),
+  sizes: z.record(z.string(), z.union([z.string(), z.number()])),
 })
 
 export const ProductSchema = z.object({

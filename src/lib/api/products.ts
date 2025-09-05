@@ -16,9 +16,30 @@ export async function getCategories(): Promise<Category[]> {
   // For now, return mock categories since the custom endpoint doesn't exist
   // In production, this should fetch from WordPress taxonomies
   return [
-    { id: 1, name: 'Bracelets', slug: 'bracelets' },
-    { id: 2, name: 'Stones', slug: 'stones' },
-    { id: 3, name: 'Charms', slug: 'charms' }
+    { 
+      id: 1, 
+      name_en: 'Bracelets', 
+      name_th: 'สร้อยข้อมือ', 
+      slug: 'bracelets',
+      count: 0,
+      products_endpoint: '/api/products?category=bracelets'
+    },
+    { 
+      id: 2, 
+      name_en: 'Stones', 
+      name_th: 'หิน', 
+      slug: 'stones',
+      count: 0,
+      products_endpoint: '/api/products?category=stones'
+    },
+    { 
+      id: 3, 
+      name_en: 'Charms', 
+      name_th: 'ชาร์ม', 
+      slug: 'charms',
+      count: 0,
+      products_endpoint: '/api/products?category=charms'
+    }
   ]
 }
 
@@ -41,8 +62,8 @@ export async function getCatalog(perCat: number = 12, language: 'en' | 'th' = 'e
   const categories = await getCategories()
   
   const catalog: CatalogResponse = {
-    categories: categories.map(category => ({
-      ...category,
+    sections: categories.map(category => ({
+      category: category,
       products: allProducts
         .filter(product => product.product_category?.slug === category.slug)
         .slice(0, perCat)
@@ -102,10 +123,19 @@ export async function getProductById(
     }
   }
   
-  // Prepare the response
+  // Prepare the response with a proper Category object
+  const category: Category = {
+    id: product.product_category.id,
+    slug: product.product_category.slug,
+    name_en: product.product_category.name,
+    name_th: product.product_category.name,
+    count: 0,
+    products_endpoint: `/api/products?category=${product.product_category.slug}`
+  }
+  
   const result: ProductDetailResponse = {
     product,
-    category: product.product_category
+    category
   }
   
   // If related products are requested, fetch them from the same category
@@ -185,10 +215,19 @@ export async function getProductBySlug(
     }
   }
   
-  // Prepare the response
+  // Prepare the response with a proper Category object
+  const category: Category = {
+    id: product.product_category.id,
+    slug: product.product_category.slug,
+    name_en: product.product_category.name,
+    name_th: product.product_category.name,
+    count: 0,
+    products_endpoint: `/api/products?category=${product.product_category.slug}`
+  }
+  
   const result: ProductDetailResponse = {
     product,
-    category: product.product_category
+    category
   }
   
   // If related products are requested, fetch them from the same category

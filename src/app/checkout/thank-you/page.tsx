@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import { Suspense } from 'react'
-import Navigation from '@/components/Navigation'
+import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import ChatWidget from '@/components/ChatWidget'
 import { Footer } from '@/components/sections'
 import ThankYouContent from '@/components/sections/ThankYouContent'
@@ -24,7 +24,7 @@ function ThankYouLoading() {
 export default function ThankYouPage() {
   return (
     <>
-      <Navigation position="static" />
+      <NavigationWithSuspense position="static" />
       
       <main className="min-h-screen bg-black">
         <Suspense fallback={<ThankYouLoading />}>

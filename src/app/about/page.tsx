@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import ChatWidget from '@/components/ChatWidget'
-import Navigation from '@/components/Navigation'
+import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import { Footer } from '@/components/sections'
 import AboutHeroSection from '@/components/sections/AboutHeroSection'
 import AboutContentSection from '@/components/sections/AboutContentSection'
@@ -33,7 +33,7 @@ export default function AboutPage() {
   return (
     <main className="min-h-screen">
       {/* Navigation */}
-      <Navigation />
+      <NavigationWithSuspense />
 
       {/* Hero Section */}
       <AboutHeroSection

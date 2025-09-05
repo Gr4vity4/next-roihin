@@ -10,6 +10,7 @@ interface ProfileData {
   email: string
   first_name: string
   last_name: string
+  phone?: string // Some responses may use 'phone' instead of 'phone_number'
   phone_number: string
   birth_date: string
   gender: 'male' | 'female' | 'other' | 'prefer_not_to_say'
@@ -53,11 +54,14 @@ export default function ProfilePage() {
       
       const data: ProfileData = await response.json()
       
+      // Log the received data for debugging
+      console.log('Received profile data:', data)
+      
       setFormData({
         firstName: data.first_name || '',
         lastName: data.last_name || '',
         email: data.email || '',
-        phone: data.phone_number || '',
+        phone: data.phone_number || data.phone || '', // Check both fields
         birthDate: data.birth_date || '',
         gender: data.gender || 'male',
       })
@@ -101,11 +105,12 @@ export default function ProfilePage() {
         throw new Error(data.error || 'Failed to update profile')
       }
       
+      // Update form data with the response
       setFormData({
         firstName: data.first_name || '',
         lastName: data.last_name || '',
         email: data.email || '',
-        phone: data.phone_number || '',
+        phone: data.phone_number || data.phone || formData.phone || '', // Keep existing phone if not in response
         birthDate: data.birth_date || '',
         gender: data.gender || 'male',
       })
@@ -210,15 +215,22 @@ export default function ProfilePage() {
 
           <div className="space-y-2">
             <Label htmlFor="phone">เบอร์โทรศัพท์</Label>
-            <Input
-              id="phone"
-              type="tel"
-              value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              disabled={!isEditing}
-              className="w-full"
-              placeholder={!isEditing ? "ไม่มีข้อมูล" : "กรุณากรอกเบอร์โทรศัพท์"}
-            />
+            <div className="relative">
+              <Input
+                id="phone"
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                disabled={!isEditing}
+                className="w-full"
+                placeholder={!isEditing && !formData.phone ? "ไม่มีข้อมูล" : isEditing ? "กรุณากรอกเบอร์โทรศัพท์ (เช่น 0812345678)" : ""}
+              />
+              {!formData.phone && !isEditing && (
+                <div className="text-sm text-gray-500 mt-1">
+                  กรุณาเพิ่มเบอร์โทรศัพท์ของคุณเพื่อรับข่าวสารและโปรโมชั่น
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

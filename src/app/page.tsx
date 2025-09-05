@@ -1,5 +1,5 @@
 import ChatWidget from '@/components/ChatWidget'
-import Navigation from '@/components/Navigation'
+import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import {
   AboutSection,
   Footer,
@@ -18,7 +18,7 @@ export const revalidate = 300
 export default function Home() {
   return (
     <>
-      <Navigation />
+      <NavigationWithSuspense />
 
       {/* Main content wrapper - no padding needed, hero section will handle spacing */}
       <main className="overflow-x-hidden w-full">

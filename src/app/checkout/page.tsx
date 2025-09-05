@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import Navigation from '@/components/Navigation'
+import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import ChatWidget from '@/components/ChatWidget'
 import { Footer } from '@/components/sections'
 import CheckoutContent from '@/components/sections/CheckoutContent'
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function CheckoutPage() {
   return (
     <>
-      <Navigation position="static" />
+      <NavigationWithSuspense position="static" />
       
       <main className="min-h-screen bg-black">
         <CheckoutContent />

@@ -1,5 +1,5 @@
 import ChatWidget from '@/components/ChatWidget'
-import Navigation from '@/components/Navigation'
+import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import { Footer } from '@/components/sections'
 import PersonalizedContentSection from '@/components/sections/PersonalizedContentSection'
 import PersonalizedCTASection from '@/components/sections/PersonalizedCTASection'
@@ -37,7 +37,7 @@ export default function PersonalizedPage() {
   return (
     <main className="min-h-screen">
       {/* Navigation */}
-      <Navigation />
+      <NavigationWithSuspense />
 
       {/* Hero Section */}
       <PersonalizedHeroSection

@@ -4,7 +4,17 @@ import { NextResponse } from 'next/server'
 export async function GET() {
   try {
     const profile = await getProfile()
-    return NextResponse.json(profile)
+    
+    // Log the response to debug phone_number field
+    console.log('Profile data from WordPress:', JSON.stringify(profile, null, 2))
+    
+    // Ensure phone_number is included in response
+    const responseData = {
+      ...profile,
+      phone_number: profile.phone_number || ''
+    }
+    
+    return NextResponse.json(responseData)
   } catch (error) {
     console.error('Failed to fetch profile:', error)
     return NextResponse.json(
@@ -17,8 +27,22 @@ export async function GET() {
 export async function PATCH(request: Request) {
   try {
     const body = await request.json()
+    
+    // Log the update request to debug
+    console.log('Update request body:', JSON.stringify(body, null, 2))
+    
     const profile = await updateProfile(body)
-    return NextResponse.json(profile)
+    
+    // Log the response to debug
+    console.log('Updated profile data from WordPress:', JSON.stringify(profile, null, 2))
+    
+    // Ensure phone_number is included in response
+    const responseData = {
+      ...profile,
+      phone_number: profile.phone_number || body.phone_number || ''
+    }
+    
+    return NextResponse.json(responseData)
   } catch (error) {
     console.error('Failed to update profile:', error)
     return NextResponse.json(

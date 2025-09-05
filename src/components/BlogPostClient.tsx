@@ -1,7 +1,7 @@
 'use client'
 
 import ChatWidget from '@/components/ChatWidget'
-import Navigation from '@/components/Navigation'
+import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import { Footer } from '@/components/sections'
 import {
   Breadcrumb,
@@ -67,7 +67,7 @@ export default function BlogPostClient({ slug }: BlogPostClientProps) {
   if (loading) {
     return (
       <div className="min-h-screen bg-white">
-        <Navigation />
+        <NavigationWithSuspense />
         <main className="pt-20 lg:pt-24">
           <Container>
             <div className="py-16 text-center">
@@ -105,7 +105,7 @@ export default function BlogPostClient({ slug }: BlogPostClientProps) {
 
   return (
     <div className="min-h-screen bg-white">
-      <Navigation />
+      <NavigationWithSuspense />
 
       <main className="pt-20 lg:pt-24">
         <section className="relative">

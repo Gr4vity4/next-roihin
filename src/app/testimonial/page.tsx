@@ -1,5 +1,5 @@
 import ChatWidget from '@/components/ChatWidget'
-import Navigation from '@/components/Navigation'
+import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import Footer from '@/components/sections/Footer'
 import TestimonialsClient from '@/components/TestimonialsClient'
 import { Typography } from '@/components/ui'
@@ -12,7 +12,7 @@ export const revalidate = 300
 export default function TestimonialPage() {
   return (
     <>
-      <Navigation />
+      <NavigationWithSuspense />
 
       <main>
         {/* Full-width image section */}

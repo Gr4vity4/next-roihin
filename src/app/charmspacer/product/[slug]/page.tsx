@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import Navigation from '@/components/Navigation'
+import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import ChatWidget from '@/components/ChatWidget'
 import { Footer } from '@/components/sections'
 import ProductDetail from '@/components/sections/ProductDetail'
@@ -61,7 +61,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
 
   return (
     <>
-      <Navigation position="static" />
+      <NavigationWithSuspense position="static" />
 
       <main className="min-h-screen bg-black">
         <ProductDetail product={product} category={category} language={language} />

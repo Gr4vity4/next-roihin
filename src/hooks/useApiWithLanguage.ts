@@ -34,37 +34,37 @@ export function useApiWithLanguage<T>(
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    async function fetchData() {
-      setLoading(true)
-      setError(null)
+  const fetchData = async () => {
+    setLoading(true)
+    setError(null)
 
-      try {
-        // Add language parameter to endpoint
-        const separator = endpoint.includes('?') ? '&' : '?'
-        const url = `${endpoint}${separator}lang=${language}`
-        
-        const response = await fetch(url)
-        
-        if (!response.ok) {
-          throw new Error(`Failed to fetch: ${response.status}`)
-        }
-        
-        const responseData = await response.json()
-        setData(responseData)
-      } catch (err) {
-        console.error('Error fetching data:', err)
-        setError(err instanceof Error ? err.message : 'Unknown error')
-      } finally {
-        setLoading(false)
+    try {
+      // Add language parameter to endpoint
+      const separator = endpoint.includes('?') ? '&' : '?'
+      const url = `${endpoint}${separator}lang=${language}`
+      
+      const response = await fetch(url)
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch: ${response.status}`)
       }
+      
+      const responseData = await response.json()
+      setData(responseData)
+    } catch (err) {
+      console.error('Error fetching data:', err)
+      setError(err instanceof Error ? err.message : 'Unknown error')
+    } finally {
+      setLoading(false)
     }
+  }
 
+  useEffect(() => {
     fetchData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [endpoint, language, ...(options.dependencies || [])])
 
-  return { data, loading, error, refetch: () => fetchData() }
+  return { data, loading, error, refetch: fetchData }
 }
 
 // Specific hooks for different APIs

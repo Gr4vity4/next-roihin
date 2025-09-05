@@ -1,4 +1,4 @@
-import Navigation from '@/components/Navigation'
+import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import { Footer } from '@/components/sections'
 import ChatWidget from '@/components/ChatWidget'
 import { Container } from '@/components/ui'
@@ -10,7 +10,7 @@ export default function MemberLayout({
 }) {
   return (
     <>
-      <Navigation />
+      <NavigationWithSuspense />
       
       <main className="min-h-screen bg-gray-50 pt-20 lg:pt-[230px] pb-16">
         <Container>

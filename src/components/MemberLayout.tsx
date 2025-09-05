@@ -1,4 +1,4 @@
-import Navigation from '@/components/Navigation'
+import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import { Footer } from '@/components/sections'
 import MemberSidebar from '@/components/MemberSidebar'
 import ChatWidget from '@/components/ChatWidget'
@@ -10,7 +10,7 @@ interface MemberLayoutProps {
 export default function MemberLayout({ children }: MemberLayoutProps) {
   return (
     <>
-      <Navigation />
+      <NavigationWithSuspense />
       
       <main className="min-h-screen bg-gray-50 pt-20 lg:pt-[230px]">
         <div className="flex">

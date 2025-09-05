@@ -1,6 +1,6 @@
 'use client'
 
-import Navigation from '@/components/Navigation'
+import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import Footer from '@/components/sections/Footer'
 import ChatWidget from '@/components/ChatWidget'
 import { Container, Typography } from '@/components/ui'
@@ -9,7 +9,7 @@ import Image from 'next/image'
 export default function CustomerServicePage() {
   return (
     <>
-      <Navigation />
+      <NavigationWithSuspense />
 
       {/* Main content wrapper with top padding to account for navigation */}
       <main className="pt-20 lg:pt-[230px]">
