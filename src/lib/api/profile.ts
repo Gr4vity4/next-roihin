@@ -52,13 +52,19 @@ export async function getProfile(): Promise<ProfileData> {
 
   const data = await response.json()
   
+  // Log the raw data from WordPress for debugging
+  console.log('Raw WordPress profile data:', JSON.stringify(data, null, 2))
+  
   // Ensure all fields are present, providing defaults if missing
+  const phone_number = data.phone_number || data.phone || data.acf?.phone_number || ''
+  console.log('Resolved phone number:', phone_number)
+  
   const profileData: ProfileData = {
     id: data.id,
     email: data.email || '',
     first_name: data.first_name || '',
     last_name: data.last_name || '',
-    phone_number: data.phone_number || data.phone || '', // Check both phone_number and phone fields
+    phone_number: phone_number, // Use resolved phone number
     birth_date: data.birth_date || '',
     gender: data.gender || 'prefer_not_to_say',
     member_since: data.member_since || {
@@ -102,13 +108,17 @@ export async function updateProfile(payload: UpdateProfileData): Promise<Profile
     throw new Error(data.message || 'Update failed')
   }
   
+  // Resolve phone number with proper fallback chain
+  const updated_phone = data.phone_number || data.phone || data.acf?.phone_number || payload.phone_number || ''
+  console.log('Updated phone number resolved:', updated_phone)
+  
   // Ensure all fields are present in the response
   const profileData: ProfileData = {
     id: data.id,
     email: data.email || payload.email || '',
     first_name: data.first_name || payload.first_name || '',
     last_name: data.last_name || payload.last_name || '',
-    phone_number: data.phone_number || data.phone || payload.phone_number || '',
+    phone_number: updated_phone, // Use resolved phone number
     birth_date: data.birth_date || payload.birth_date || '',
     gender: data.gender || payload.gender || 'prefer_not_to_say',
     member_since: data.member_since || {

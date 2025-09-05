@@ -5,6 +5,7 @@ import { Container, Typography } from './ui'
 import Button from './Button'
 import { ReactNode } from 'react'
 import { cn } from '@/lib/utils'
+import { useTranslations } from '@/contexts/TranslationContext'
 
 interface ParallaxContentSectionProps {
   // Parallax configuration
@@ -52,6 +53,7 @@ export default function ParallaxContentSection({
   className = '',
   minHeight = 'min-h-[750px]',
 }: ParallaxContentSectionProps) {
+  const { translations } = useTranslations()
   return (
     <ParallaxSection
       imageUrl={imageUrl}
@@ -69,7 +71,11 @@ export default function ParallaxContentSection({
                                 textShadow
                 align={contentAlign}
               >
-                {title}
+                {title === 'SIGNATURE CHARM' && translations?.acf?.home_p4 ? (
+                  <span dangerouslySetInnerHTML={{ __html: translations.acf.home_p4.replace(/\\r\\n/g, '<br />') }} />
+                ) : (
+                  title
+                )}
               </Typography>
             )}
             
@@ -79,7 +85,11 @@ export default function ParallaxContentSection({
                                 className="text-gray-300"
                 align={contentAlign}
               >
-                {subtitle}
+                {title === 'SIGNATURE CHARM' && translations?.acf?.home_p6 ? (
+                  <span dangerouslySetInnerHTML={{ __html: translations.acf.home_p6.replace(/\\r\\n/g, '<br />') }} />
+                ) : (
+                  subtitle
+                )}
               </Typography>
             )}
             
@@ -105,7 +115,11 @@ export default function ParallaxContentSection({
                     highlight={button.highlight}
                     onClick={button.onClick}
                   >
-                    {button.text}
+                    {title === 'SIGNATURE CHARM' && translations?.acf?.home_p5 ? (
+                      <span dangerouslySetInnerHTML={{ __html: translations.acf.home_p5.replace(/\\r\\n/g, '<br />') }} />
+                    ) : (
+                      button.text
+                    )}
                   </Button>
                 ))}
               </div>

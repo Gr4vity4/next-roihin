@@ -61,9 +61,16 @@ export default function ProfilePage() {
         firstName: data.first_name || '',
         lastName: data.last_name || '',
         email: data.email || '',
-        phone: data.phone_number || data.phone || '', // Check both fields
+        phone: data.phone_number || data.phone || '', // Check both fields with proper fallback
         birthDate: data.birth_date || '',
         gender: data.gender || 'male',
+      })
+      
+      // Additional logging to debug phone field
+      console.log('Phone number from API:', {
+        phone_number: data.phone_number,
+        phone: data.phone,
+        final_phone: data.phone_number || data.phone || ''
       })
       
       if (data.member_since) {
@@ -105,14 +112,24 @@ export default function ProfilePage() {
         throw new Error(data.error || 'Failed to update profile')
       }
       
-      // Update form data with the response
+      // Update form data with the response, ensuring phone number is preserved
+      const updatedPhone = data.phone_number || data.phone || formData.phone || ''
+      
       setFormData({
-        firstName: data.first_name || '',
-        lastName: data.last_name || '',
-        email: data.email || '',
-        phone: data.phone_number || data.phone || formData.phone || '', // Keep existing phone if not in response
-        birthDate: data.birth_date || '',
-        gender: data.gender || 'male',
+        firstName: data.first_name || formData.firstName || '',
+        lastName: data.last_name || formData.lastName || '',
+        email: data.email || formData.email || '',
+        phone: updatedPhone, // Use the computed phone value
+        birthDate: data.birth_date || formData.birthDate || '',
+        gender: data.gender || formData.gender || 'male',
+      })
+      
+      // Log update result for debugging
+      console.log('Updated phone number:', {
+        response_phone_number: data.phone_number,
+        response_phone: data.phone,
+        form_phone: formData.phone,
+        final_phone: updatedPhone
       })
       
       setIsEditing(false)
@@ -219,15 +236,20 @@ export default function ProfilePage() {
               <Input
                 id="phone"
                 type="tel"
-                value={formData.phone}
+                value={formData.phone || ''}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 disabled={!isEditing}
                 className="w-full"
-                placeholder={!isEditing && !formData.phone ? "ไม่มีข้อมูล" : isEditing ? "กรุณากรอกเบอร์โทรศัพท์ (เช่น 0812345678)" : ""}
+                placeholder={!isEditing && !formData.phone ? "ยังไม่มีข้อมูลเบอร์โทรศัพท์" : isEditing ? "กรุณากรอกเบอร์โทรศัพท์ (เช่น 0812345678)" : ""}
               />
               {!formData.phone && !isEditing && (
                 <div className="text-sm text-gray-500 mt-1">
                   กรุณาเพิ่มเบอร์โทรศัพท์ของคุณเพื่อรับข่าวสารและโปรโมชั่น
+                </div>
+              )}
+              {formData.phone && !isEditing && (
+                <div className="text-sm text-green-600 mt-1">
+                  เบอร์โทรศัพท์: {formData.phone}
                 </div>
               )}
             </div>

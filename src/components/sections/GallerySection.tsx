@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import Button from '../Button'
+import { useTranslations } from '@/contexts/TranslationContext'
 
 interface GallerySectionProps {
   backgroundImage: string
@@ -23,10 +24,11 @@ interface GallerySectionProps {
 
 export default function GallerySection({
   title,
-  subtitle,
+  // subtitle,
   ctaButtons,
   className = '',
 }: GallerySectionProps) {
+  const { translations } = useTranslations()
   const productImages = Array.from({ length: 10 }, (_, i) => ({
     src: `/images/home-page/${i + 1}.png`,
     alt: `Product ${i + 1}`,
@@ -37,11 +39,15 @@ export default function GallerySection({
       <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 max-w-full">
         <div className="text-center mb-12">
           <h2 className="font-mixed-lang text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-4">
-            {title}
+            {translations?.acf?.home_p9 ? (
+              <span dangerouslySetInnerHTML={{ __html: translations.acf.home_p9.replace(/\r\n/g, '<br />') }} />
+            ) : (
+              title
+            )}
           </h2>
-          <p className="text-base sm:text-lg md:text-xl text-white max-w-3xl mx-auto mb-8 ">
+          {/* <p className="text-base sm:text-lg md:text-xl text-white max-w-3xl mx-auto mb-8 ">
             {subtitle}
-          </p>
+          </p> */}
           <div className="flex flex-wrap justify-center gap-4">
             {ctaButtons.map((button, index) => {
               if (button.href) {

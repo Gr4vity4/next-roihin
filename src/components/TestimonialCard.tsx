@@ -5,6 +5,7 @@ interface TestimonialCardProps {
   content: string
   variant?: 'dark' | 'light'
   className?: string
+  enableHtml?: boolean
 }
 
 const variantStyles = {
@@ -16,14 +17,19 @@ export default function TestimonialCard({
   content,
   variant = 'dark',
   className = '',
+  enableHtml = false,
 }: TestimonialCardProps) {
   return (
     <div className={cn('p-8 space-y-4 rounded-lg', variantStyles[variant], className)}>
       <Typography
         variant="body"
-                className={variant === 'dark' ? 'text-gray-300' : 'text-gray-700'}
+        className={variant === 'dark' ? 'text-gray-300' : 'text-gray-700'}
       >
-        {content}
+        {enableHtml ? (
+          <span dangerouslySetInnerHTML={{ __html: content.replace(/\r\n/g, '<br />') }} />
+        ) : (
+          content
+        )}
       </Typography>
     </div>
   )

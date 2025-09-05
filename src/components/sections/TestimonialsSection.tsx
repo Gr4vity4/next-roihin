@@ -1,3 +1,6 @@
+'use client'
+
+import { useTranslations } from '@/contexts/TranslationContext'
 import { cn } from '@/lib/utils'
 import Link from 'next/link'
 import Button from '../Button'
@@ -27,46 +30,43 @@ interface TestimonialsSectionProps {
   className?: string
 }
 
-const columnClasses = {
-  1: 'grid-cols-1',
-  2: 'grid-cols-1 md:grid-cols-2',
-  3: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
-  4: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4',
-}
-
 export default function TestimonialsSection({
   id,
   title,
-  subtitle,
-  testimonials,
-  columns = 2,
   ctaButton,
   backgroundColor = 'bg-black',
   textColor = 'text-white',
   className = '',
 }: TestimonialsSectionProps) {
+  const { translations } = useTranslations()
+
   return (
     <section id={id} className={cn('py-24', backgroundColor, textColor, className)}>
       <Container>
-        <Typography
-          variant="h2"
-         
-          align="center"
-          className="mb-4"
-          color="primary"
-        >
-          {title}
+        <Typography variant="h2" align="center" className="mb-16" color="primary">
+          {translations?.acf?.home_p7 ? (
+            <span
+              dangerouslySetInnerHTML={{
+                __html: translations.acf.home_p7.replace(/\r\n/g, '<br />'),
+              }}
+            />
+          ) : (
+            title
+          )}
         </Typography>
 
-        <Typography variant="h3" align="center" className="mb-16 text-gray-300">
-          {subtitle}
-        </Typography>
-
-        <div className={cn('grid gap-8 mb-12', columnClasses[columns])}>
-          {testimonials.map((testimonial) => (
-            <TestimonialCard key={testimonial.id} content={testimonial.content} variant="dark" />
-          ))}
-        </div>
+        {/* Featured Testimonial from translations */}
+        {translations?.acf?.home_p8 && (
+          <div className="mb-12">
+            <div className="max-w-4xl mx-auto">
+              <TestimonialCard
+                content={translations.acf.home_p8}
+                variant="dark"
+                enableHtml={true}
+              />
+            </div>
+          </div>
+        )}
 
         {ctaButton && (
           <div className="text-center">

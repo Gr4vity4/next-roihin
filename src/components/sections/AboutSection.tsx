@@ -26,7 +26,6 @@ interface AboutSectionProps {
 export default function AboutSection({
   id,
   title,
-  subtitle,
   content,
   ctaButton,
   backgroundColor = 'bg-light-gray',
