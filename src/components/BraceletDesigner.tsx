@@ -149,7 +149,7 @@ export default function BraceletDesigner() {
 
     const sizeKey = `size_${size}_mm_base_price` as keyof typeof sizePricing
     const price = sizePricing[sizeKey]
-    return price && price !== '-1' && price !== -1
+    return Boolean(price && price !== '-1')
   }
 
   // Get price for stone based on size
@@ -159,7 +159,7 @@ export default function BraceletDesigner() {
 
     const sizeKey = `size_${size}_mm_base_price` as keyof typeof sizePricing
     const price = sizePricing[sizeKey]
-    return price && price !== '-1' && price !== -1 ? parseInt(price) : 0
+    return price && price !== '-1' ? parseInt(price, 10) : 0
   }
 
   // Calculate total price
