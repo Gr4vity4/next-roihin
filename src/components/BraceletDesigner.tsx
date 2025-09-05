@@ -1,7 +1,6 @@
 'use client'
 
 import Button from '@/components/Button'
-import { useLanguage } from '@/contexts/LanguageContext'
 import {
   Dialog,
   DialogContent,
@@ -20,16 +19,17 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useLanguage } from '@/contexts/LanguageContext'
 import type { Bank, Stone } from '@/lib/types/api-types'
+import { ArrowLeft, Check, GripVertical, RefreshCw, Upload } from 'lucide-react'
+import Image from 'next/image'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 const STONE_CATEGORIES = {
   Stone: 'Stone',
   Charm: 'Charm',
   Pendant: 'Pendant',
 } as const
-import { ArrowLeft, Check, GripVertical, RefreshCw, Upload } from 'lucide-react'
-import Image from 'next/image'
-import { useCallback, useEffect, useRef, useState } from 'react'
 
 type BeadShape = 'circle' | 'square' | 'triangle'
 
@@ -415,8 +415,7 @@ export default function BraceletDesigner() {
     const firstBeadEl = newBeads[0].el
     if (firstBeadEl) {
       newBeads[0].theta = theta
-      firstBeadEl.style.left =
-        geometryRef.current.cx + R * Math.cos(theta) - newBeads[0].r + 'px'
+      firstBeadEl.style.left = geometryRef.current.cx + R * Math.cos(theta) - newBeads[0].r + 'px'
       firstBeadEl.style.top = geometryRef.current.cy + R * Math.sin(theta) - newBeads[0].r + 'px'
 
       // Update dataset for drag and drop
@@ -429,10 +428,8 @@ export default function BraceletDesigner() {
       const beadEl = newBeads[i].el
       if (beadEl) {
         newBeads[i].theta = theta
-        beadEl.style.left =
-          geometryRef.current.cx + R * Math.cos(theta) - newBeads[i].r + 'px'
-        beadEl.style.top =
-          geometryRef.current.cy + R * Math.sin(theta) - newBeads[i].r + 'px'
+        beadEl.style.left = geometryRef.current.cx + R * Math.cos(theta) - newBeads[i].r + 'px'
+        beadEl.style.top = geometryRef.current.cy + R * Math.sin(theta) - newBeads[i].r + 'px'
 
         // Update dataset for drag and drop
         beadEl.dataset.beadId = newBeads[i].id
@@ -811,7 +808,7 @@ export default function BraceletDesigner() {
                 <>
                   {Object.keys(STONE_CATEGORIES).map((category) => (
                     <TabsContent key={category} value={category} className="mt-6">
-                      <div className="grid grid-cols-8 gap-2.5">
+                      <div className="grid grid-cols-8 md:grid-cols-6 lg:grid-cols-12 md:gap-2.5 lg:gap-2">
                         {getStonesByCategory(category).map((stone) => {
                           const stoneInfo = stone.acf
                           const price = getStonePrice(stoneInfo, beadSize)
@@ -870,9 +867,7 @@ export default function BraceletDesigner() {
                     {/* bead header */}
                     <div className="flex flex-col gap-1">
                       <span className="text-xl font-semibold">{lastSelectedBead.title}</span>
-                      <span className="text-gray-600 text-sm">
-                        {lastSelectedBead.sub_title}
-                      </span>
+                      <span className="text-gray-600 text-sm">{lastSelectedBead.sub_title}</span>
                       {/* <span className="text-gray-500 text-xs">
                         {
                           STONE_CATEGORIES[
@@ -884,9 +879,7 @@ export default function BraceletDesigner() {
                       </span> */}
                     </div>
                     {/* bead description */}
-                    <div className="text-gray-700 text-sm">
-                      {lastSelectedBead.description}
-                    </div>
+                    <div className="text-gray-700 text-sm">{lastSelectedBead.description}</div>
                     {/* stone story */}
                     {lastSelectedBead.story && (
                       <div className="grid grid-cols-2 gap-2 text-xs">
@@ -992,9 +985,7 @@ export default function BraceletDesigner() {
                           )}
                         </div>
                         <div className="flex-1 text-sm">
-                          <div className="font-medium">
-                            {bead.stoneSetting?.title || 'Unknown'}
-                          </div>
+                          <div className="font-medium">{bead.stoneSetting?.title || 'Unknown'}</div>
                           <div className="text-xs text-gray-500">{bead.size} mm</div>
                         </div>
                         <div className="text-right text-sm">
