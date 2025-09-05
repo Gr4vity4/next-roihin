@@ -142,6 +142,16 @@ export default function BraceletDesigner() {
     return stoneSettings.filter((stone) => stone.acf.category === category)
   }
 
+  // Check if stone is available for specific size
+  const isStoneAvailableForSize = (stone: Stone['acf'], size: number): boolean => {
+    const sizePricing = stone.size
+    if (!sizePricing) return false
+
+    const sizeKey = `size_${size}_mm_base_price` as keyof typeof sizePricing
+    const price = sizePricing[sizeKey]
+    return price && price !== '-1' && price !== -1
+  }
+
   // Get price for stone based on size
   const getStonePrice = (stone: Stone['acf'], size: number): number => {
     const sizePricing = stone.size
@@ -149,7 +159,7 @@ export default function BraceletDesigner() {
 
     const sizeKey = `size_${size}_mm_base_price` as keyof typeof sizePricing
     const price = sizePricing[sizeKey]
-    return price ? parseInt(price) : 0
+    return price && price !== '-1' && price !== -1 ? parseInt(price) : 0
   }
 
   // Calculate total price
@@ -811,7 +821,11 @@ export default function BraceletDesigner() {
                       <div className="grid grid-cols-8 md:grid-cols-6 lg:grid-cols-12 md:gap-2.5 lg:gap-2">
                         {getStonesByCategory(category).map((stone) => {
                           const stoneInfo = stone.acf
+                          const isAvailable = isStoneAvailableForSize(stoneInfo, beadSize)
                           const price = getStonePrice(stoneInfo, beadSize)
+
+                          // Hide stone if not available for selected size
+                          if (!isAvailable) return null
 
                           return (
                             <div key={stoneInfo.title} className="relative group">
