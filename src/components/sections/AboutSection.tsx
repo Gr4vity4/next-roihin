@@ -1,6 +1,9 @@
-import { Container, Typography } from '../ui'
-import Button from '../Button'
+'use client'
+
 import { cn } from '@/lib/utils'
+import Button from '../Button'
+import { Container, Typography } from '../ui'
+import { useTranslations } from '@/contexts/TranslationContext'
 
 interface AboutSectionProps {
   id?: string
@@ -31,49 +34,36 @@ export default function AboutSection({
   maxWidth = 'lg',
   className = '',
 }: AboutSectionProps) {
+  const { translations } = useTranslations()
+  
   return (
-    <section
-      id={id}
-      className={cn(
-        'py-24',
-        backgroundColor,
-        className
-      )}
-    >
+    <section id={id} className={cn('py-24', backgroundColor, className)}>
       <Container maxWidth={maxWidth}>
-        <div className={cn(
-          textAlign === 'center' && 'text-center',
-          textAlign === 'left' && 'text-left',
-          textAlign === 'right' && 'text-right'
-        )}>
-          <Typography
-            variant="h3"
-           
-            className="mb-4"
-          >
-            {title}
+        <div
+          className={cn(
+            textAlign === 'center' && 'text-center',
+            textAlign === 'left' && 'text-left',
+            textAlign === 'right' && 'text-right',
+          )}
+        >
+          <Typography variant="h3" className="mb-10">
+            {translations?.acf?.home_p2 ? (
+              <span dangerouslySetInnerHTML={{ __html: translations.acf.home_p2.replace(/\r\n/g, '<br />') }} />
+            ) : (
+              title
+            )}
           </Typography>
-          
-          {subtitle && (
-            <Typography
-              variant="body"
-             
-              className="mb-10 font-light text-gray-700"
-            >
-              {subtitle}
+
+          {(content || translations?.acf?.home_p3) && (
+            <Typography variant="body" className="text-gray-600">
+              {translations?.acf?.home_p3 ? (
+                <span dangerouslySetInnerHTML={{ __html: translations.acf.home_p3.replace(/\r\n/g, '<br />') }} />
+              ) : (
+                content
+              )}
             </Typography>
           )}
-          
-          {content && (
-            <Typography
-              variant="body"
-             
-              className="text-gray-600"
-            >
-              {content}
-            </Typography>
-          )}
-          
+
           {ctaButton && (
             <div className="mt-10">
               <Button
