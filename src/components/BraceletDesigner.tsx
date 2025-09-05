@@ -717,7 +717,7 @@ export default function BraceletDesigner() {
         {/* Summary Price */}
         <div className="col-span-12 md:col-span-4 flex justify-center flex-col">
           <span className="text-[#006039] text-lg">ราคารวม</span>
-          <span className="text-2xl font-bold">฿{calculateTotalPrice()}</span>
+          <span className="font-prompt text-2xl font-bold">฿{calculateTotalPrice()}</span>
         </div>
       </div>
 
@@ -989,7 +989,7 @@ export default function BraceletDesigner() {
                           <div className="text-xs text-gray-500">{bead.size} mm</div>
                         </div>
                         <div className="text-right text-sm">
-                          <div className="text-xs text-gray-600">฿{bead.price}</div>
+                          <div className="text-xs text-gray-600 font-prompt">฿{bead.price}</div>
                         </div>
                       </div>
                     ))}
@@ -1023,7 +1023,7 @@ export default function BraceletDesigner() {
                           <span>
                             {group.stoneSetting?.title || 'Unknown'} ({group.size}mm)
                           </span>
-                          <span>
+                          <span className="font-prompt">
                             x{group.count} = ฿{group.totalPrice}
                           </span>
                         </div>
@@ -1033,7 +1033,9 @@ export default function BraceletDesigner() {
                 </div>
                 <div className="flex justify-between border-t pt-2">
                   <span className="font-semibold">ราคารวม:</span>
-                  <span className="font-bold text-lg text-green-600">฿{calculateTotalPrice()}</span>
+                  <span className="font-prompt font-bold text-lg text-green-600">
+                    ฿{calculateTotalPrice()}
+                  </span>
                 </div>
               </div>
             </div>

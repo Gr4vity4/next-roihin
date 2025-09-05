@@ -57,10 +57,9 @@ export default function ProductDetail({ product, category, language = 'en' }: Pr
                 href={`/charmspacer#${category.slug}`}
                 className="text-gray-400 hover:text-white transition-colors"
               >
-                {language === 'th' 
+                {language === 'th'
                   ? category.name_th || category.name_en
-                  : category.name_en || category.name_th
-                }
+                  : category.name_en || category.name_th}
               </Link>
             </li>
             <li className="text-gray-600">/</li>
@@ -141,22 +140,22 @@ export default function ProductDetail({ product, category, language = 'en' }: Pr
                   </Typography>
                   <p className="text-gray-400 text-sm">
                     {language === 'th' ? 'หมวดหมู่: ' : 'Category: '}
-                    {language === 'th' 
-                      ? category.name_th || category.name_en 
-                      : category.name_en || category.name_th
-                    }
+                    {language === 'th'
+                      ? category.name_th || category.name_en
+                      : category.name_en || category.name_th}
                   </p>
                 </div>
-                <WishlistButton 
+                <WishlistButton
                   product={{
                     id: product.id,
                     slug: product.slug,
                     title: product.title,
                     price: selectedPrice || 0,
                     image: allImages[0] || '/images/placeholder.jpg',
-                    category: language === 'th' 
-                      ? category.name_th || category.name_en
-                      : category.name_en || category.name_th,
+                    category:
+                      language === 'th'
+                        ? category.name_th || category.name_en
+                        : category.name_en || category.name_th,
                   }}
                   color={selectedColorData?.color}
                   size="lg"
@@ -168,7 +167,7 @@ export default function ProductDetail({ product, category, language = 'en' }: Pr
             {colorPrices.length > 0 && (
               <div className="space-y-4">
                 <div>
-                  <Typography variant="h3" className="text-2xl text-white">
+                  <Typography variant="h3" className="text-2xl text-white font-prompt">
                     ฿{selectedPrice?.toLocaleString('th-TH') || '0'}
                   </Typography>
                 </div>
@@ -241,10 +240,11 @@ export default function ProductDetail({ product, category, language = 'en' }: Pr
                 </h3>
                 <div className="text-gray-300 leading-relaxed">
                   <div
-                    dangerouslySetInnerHTML={{ 
-                      __html: language === 'th' 
-                        ? product.acf.description_th || product.acf.description_en || ''
-                        : product.acf.description_en || product.acf.description_th || ''
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        language === 'th'
+                          ? product.acf.description_th || product.acf.description_en || ''
+                          : product.acf.description_en || product.acf.description_th || '',
                     }}
                     className="prose prose-invert prose-sm max-w-none"
                   />
@@ -255,23 +255,24 @@ export default function ProductDetail({ product, category, language = 'en' }: Pr
             {/* Add to Cart CTA */}
             <div className="border-t border-gray-800 pt-6 space-y-3">
               <div className="flex gap-3">
-                <WishlistButton 
+                <WishlistButton
                   product={{
                     id: product.id,
                     slug: product.slug,
                     title: product.title,
                     price: selectedPrice || 0,
                     image: allImages[0] || '/images/placeholder.jpg',
-                    category: language === 'th' 
-                      ? category.name_th || category.name_en
-                      : category.name_en || category.name_th,
+                    category:
+                      language === 'th'
+                        ? category.name_th || category.name_en
+                        : category.name_en || category.name_th,
                   }}
                   color={selectedColorData?.color}
                   showText
                   className="flex-shrink-0"
                 />
               </div>
-              
+
               <button
                 onClick={() => {
                   if (selectedPrice && selectedColorData) {
@@ -283,9 +284,10 @@ export default function ProductDetail({ product, category, language = 'en' }: Pr
                       price: selectedPrice,
                       image: allImages[0] || '/images/placeholder.jpg',
                       color: selectedColorData.color,
-                      category: language === 'th' 
-                      ? category.name_th || category.name_en
-                      : category.name_en || category.name_th,
+                      category:
+                        language === 'th'
+                          ? category.name_th || category.name_en
+                          : category.name_en || category.name_th,
                     })
                     setTimeout(() => {
                       setIsAdding(false)
@@ -302,10 +304,13 @@ export default function ProductDetail({ product, category, language = 'en' }: Pr
                 }`}
               >
                 <ShoppingCartIcon className="w-5 h-5 mr-2" />
-                {isAdding 
-                  ? (language === 'th' ? 'เพิ่มลงตะกร้าแล้ว!' : 'Added to Cart!')
-                  : (language === 'th' ? 'เพิ่มลงตะกร้า' : 'Add to Cart')
-                }
+                {isAdding
+                  ? language === 'th'
+                    ? 'เพิ่มลงตะกร้าแล้ว!'
+                    : 'Added to Cart!'
+                  : language === 'th'
+                  ? 'เพิ่มลงตะกร้า'
+                  : 'Add to Cart'}
               </button>
 
               <button
@@ -318,9 +323,10 @@ export default function ProductDetail({ product, category, language = 'en' }: Pr
                       price: selectedPrice,
                       image: allImages[0] || '/images/placeholder.jpg',
                       color: selectedColorData.color,
-                      category: language === 'th' 
-                      ? category.name_th || category.name_en
-                      : category.name_en || category.name_th,
+                      category:
+                        language === 'th'
+                          ? category.name_th || category.name_en
+                          : category.name_en || category.name_th,
                     })
                     router.push('/checkout')
                   }
@@ -336,10 +342,9 @@ export default function ProductDetail({ product, category, language = 'en' }: Pr
               </button>
 
               <p className="text-xs text-gray-500 text-center">
-                {language === 'th' 
+                {language === 'th'
                   ? 'จัดส่งฟรีทั่วประเทศ เมื่อซื้อครบ 1,500 บาท'
-                  : 'Free shipping nationwide for orders over 1,500 THB'
-                }
+                  : 'Free shipping nationwide for orders over 1,500 THB'}
               </p>
             </div>
           </div>

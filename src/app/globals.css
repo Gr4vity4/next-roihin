@@ -64,6 +64,11 @@ html {
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
+/* Font utility class for Prompt font */
+.font-prompt {
+  font-family: var(--font-prompt), sans-serif !important;
+}
+
 /* Parallax performance optimization */
 .will-change-transform {
   will-change: transform;

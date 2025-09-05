@@ -133,11 +133,11 @@ export default function CheckoutContent() {
                           </button>
                         </div>
                         <div className="text-right">
-                          <p className="text-gray-900 font-semibold text-xl">
+                          <p className="text-gray-900 font-semibold text-xl font-prompt">
                             ฿{(item.price * item.quantity).toLocaleString('th-TH')}
                           </p>
                           {item.quantity > 1 && (
-                            <p className="text-gray-500 text-sm mt-1">
+                            <p className="text-gray-500 text-sm mt-1 font-prompt">
                               ฿{item.price.toLocaleString('th-TH')} ต่อชิ้น
                             </p>
                           )}
@@ -172,7 +172,7 @@ export default function CheckoutContent() {
                 <div className="space-y-4 pb-6 border-b border-gray-200">
                   <div className="flex justify-between text-gray-600">
                     <span>ราคาสินค้า ({itemCount} ชิ้น)</span>
-                    <span className="font-medium text-gray-900">
+                    <span className="font-medium text-gray-900 font-prompt">
                       ฿{totalAmount.toLocaleString('th-TH')}
                     </span>
                   </div>
@@ -185,7 +185,7 @@ export default function CheckoutContent() {
                 <div className="pt-6 pb-6">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-900 text-lg font-semibold">รวมทั้งหมด</span>
-                    <span className="text-2xl font-bold text-gray-900">
+                    <span className="text-2xl font-bold text-gray-900 font-prompt">
                       ฿{totalAmount.toLocaleString('th-TH')}
                     </span>
                   </div>
