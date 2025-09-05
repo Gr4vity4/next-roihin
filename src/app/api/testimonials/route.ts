@@ -62,6 +62,14 @@ export async function GET(request: NextRequest) {
         // Use avatar URL directly from WordPress API with acf_format=standard
         const avatarUrl = acf.avatar || DEFAULT_AVATAR
 
+        // Extract review image URL if available
+        const reviewImageUrl = 
+          acf.review_image && 
+          typeof acf.review_image === 'object' && 
+          'url' in acf.review_image 
+            ? acf.review_image.url 
+            : null
+
         return {
           id: `testimonial-${index + 1}`,
           avatar: avatarUrl,
@@ -69,6 +77,7 @@ export async function GET(request: NextRequest) {
           date: formatDate(acf.date),
           isActive: acf.is_active,
           sortOrder: acf.sort_order,
+          reviewImage: reviewImageUrl,
         }
       })
       .sort((a, b) => a.sortOrder - b.sortOrder) // Sort by sort_order
