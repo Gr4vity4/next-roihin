@@ -4,24 +4,14 @@ import AuthModal from '@/components/AuthModal'
 import { useAuth } from '@/contexts/AuthContext'
 import { useCart } from '@/contexts/CartContext'
 import { useLanguage } from '@/contexts/LanguageContext'
+import { useTranslations } from '@/contexts/TranslationContext'
 import { cn } from '@/lib/utils'
 import { ShoppingCartIcon } from '@heroicons/react/24/outline'
 import { ChevronDown, Menu, X } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter, usePathname, useSearchParams } from 'next/navigation'
-import { useCallback, useEffect, useRef, useState } from 'react'
-
-const navItems = [
-  { name: 'หน้าแรก', href: '/' },
-  { name: 'เกี่ยวกับร้อยหิน', href: '/about' },
-  { name: 'งานออกแบบเฉพาะบุคคล', href: '/personalized' },
-  { name: 'ชาร์ม/สเปเซอร์', href: '/charmspacer' },
-  { name: 'DIY', href: '/custom' },
-  { name: 'รีวิวจริง', href: '/testimonial' },
-  { name: 'บริการลูกค้า', href: '/customer-service' },
-  { name: 'บทความ', href: '/blog' },
-]
+import { useCallback, useEffect, useRef, useState, useMemo } from 'react'
 
 const userMenuItems = [
   { name: 'แดชบอร์ด', href: '/member' },
@@ -52,6 +42,21 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
   const { isLoggedIn, user, logout } = useAuth()
   const { itemCount } = useCart()
   const { language, setLanguage } = useLanguage()
+  const { translations } = useTranslations()
+
+  const navItems = useMemo(() => {
+    const t = translations?.acf
+    return [
+      { name: t?.menu_home || 'หน้าแรก', href: '/' },
+      { name: t?.menu_about_us || 'เกี่ยวกับร้อยหิน', href: '/about' },
+      { name: t?.menu_personalized_design || 'งานออกแบบเฉพาะบุคคล', href: '/personalized' },
+      { name: t?.menu_charm_spacer || 'ชาร์ม/สเปเซอร์', href: '/charmspacer' },
+      { name: t?.menu_diy || 'DIY', href: '/custom' },
+      { name: t?.menu_testimonial || 'รีวิวจริง', href: '/testimonial' },
+      { name: t?.menu_contact || 'บริการลูกค้า', href: '/customer-service' },
+      { name: t?.menu_blogs || 'บทความ', href: '/blog' },
+    ]
+  }, [translations])
 
   // Calculate the height of the first section (hero section)
   const calculateScrollThreshold = useCallback(() => {

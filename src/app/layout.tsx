@@ -4,6 +4,7 @@ import { AuthProvider } from '@/contexts/AuthContext'
 import { CartProvider } from '@/contexts/CartContext'
 import { WishlistProvider } from '@/contexts/WishlistContext'
 import { LanguageProvider } from '@/contexts/LanguageContext'
+import { TranslationProvider } from '@/contexts/TranslationContext'
 import './globals.css'
 
 const inter = Inter({
@@ -61,13 +62,15 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} ${playfairDisplay.variable} ${prompt.variable} antialiased`}>
         <LanguageProvider>
-          <AuthProvider>
-            <CartProvider>
-              <WishlistProvider>
-                {children}
-              </WishlistProvider>
-            </CartProvider>
-          </AuthProvider>
+          <TranslationProvider>
+            <AuthProvider>
+              <CartProvider>
+                <WishlistProvider>
+                  {children}
+                </WishlistProvider>
+              </CartProvider>
+            </AuthProvider>
+          </TranslationProvider>
         </LanguageProvider>
       </body>
     </html>
