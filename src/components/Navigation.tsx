@@ -10,8 +10,8 @@ import { ShoppingCartIcon } from '@heroicons/react/24/outline'
 import { ChevronDown, Menu, X } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useRouter, usePathname, useSearchParams } from 'next/navigation'
-import { useCallback, useEffect, useRef, useState, useMemo } from 'react'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 const userMenuItems = [
   { name: 'แดชบอร์ด', href: '/member' },
@@ -27,7 +27,9 @@ interface NavigationProps {
 }
 
 export default function Navigation({ position = 'fixed' }: NavigationProps = {}) {
-  const [isScrolled, setIsScrolled] = useState(false)
+  const pathname = usePathname()
+  const isCustomPage = pathname === '/custom'
+  const [isScrolled, setIsScrolled] = useState(isCustomPage)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false)
@@ -37,7 +39,6 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
   const userMenuRef = useRef<HTMLDivElement>(null)
   const languageMenuRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
-  const pathname = usePathname()
   const searchParams = useSearchParams()
   const { isLoggedIn, user, logout } = useAuth()
   const { itemCount } = useCart()
@@ -74,6 +75,12 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
   }, [])
 
   useEffect(() => {
+    // Skip scroll handling for custom page
+    if (isCustomPage) {
+      setIsScrolled(true)
+      return
+    }
+
     const handleScroll = () => {
       setIsScrolled(window.scrollY > scrollThreshold)
     }
@@ -97,7 +104,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
       window.removeEventListener('resize', handleResize)
       window.removeEventListener('load', handleLoad)
     }
-  }, [scrollThreshold, calculateScrollThreshold])
+  }, [scrollThreshold, calculateScrollThreshold, isCustomPage])
 
   // Close menus when clicking outside
   useEffect(() => {
@@ -226,7 +233,9 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                     onClick={() => setIsLanguageMenuOpen(!isLanguageMenuOpen)}
                     className="flex items-center space-x-1 px-3 py-1.5 text-white hover:text-gold transition-colors"
                   >
-                    <span className="text-sm font-medium tracking-widest">{language.toUpperCase()}</span>
+                    <span className="text-sm font-medium tracking-widest">
+                      {language.toUpperCase()}
+                    </span>
                     <ChevronDown
                       className={cn(
                         'w-3 h-3 transition-transform',
@@ -379,7 +388,9 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                     onClick={() => setIsLanguageMenuOpen(!isLanguageMenuOpen)}
                     className="flex items-center space-x-1 px-3 py-1.5 text-white hover:text-gold transition-colors"
                   >
-                    <span className="text-base font-medium tracking-wider">{language.toUpperCase()}</span>
+                    <span className="text-base font-medium tracking-wider">
+                      {language.toUpperCase()}
+                    </span>
                     <ChevronDown
                       className={cn(
                         'w-3 h-3 transition-transform',

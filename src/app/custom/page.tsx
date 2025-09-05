@@ -14,7 +14,7 @@ export default function CustomPage() {
   return (
     <>
       <NavigationWithSuspense />
-      <main className="min-h-screen pt-24 lg:pt-[230px]">
+      <main className="min-h-screen pt-24">
         <div className="px-4 md:px-8">
           <BraceletDesigner />
         </div>
