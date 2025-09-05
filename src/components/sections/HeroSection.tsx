@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Button from '../Button'
 import ParallaxSection from '../ParallaxSection'
 import { Container, Typography } from '../ui'
+import { useTranslations } from '@/contexts/TranslationContext'
 
 interface HeroSectionProps {
   backgroundImage: string
@@ -36,11 +37,11 @@ export default function HeroSection({
   overlayOpacity = 0.4,
   parallaxSpeed = 0.5,
   title,
-  subtitle,
   ctaButton,
   className = '',
   minHeight = 'min-h-screen',
 }: HeroSectionProps) {
+  const { translations } = useTranslations()
   return (
     <ParallaxSection
       imageUrl={backgroundImage}
@@ -50,17 +51,12 @@ export default function HeroSection({
       className={`${minHeight} flex items-center justify-center ${className}`}
     >
       <Container className="text-center text-white">
-        <Typography variant="h2" textShadow className="mb-2">
-          {title.line1}
-        </Typography>
-        <Typography variant="h3" textShadow className="mb-6">
-          {title.line2}
-        </Typography>
-        <Typography variant="h3" textShadow className="mb-4 font-light">
-          {subtitle.thai}
-        </Typography>
-        <Typography variant="body" textShadow className="mb-10 max-w-2xl mx-auto">
-          {subtitle.english}
+        <Typography variant="h2" textShadow className="mb-10">
+          {translations?.acf?.home_p1 ? (
+            <span dangerouslySetInnerHTML={{ __html: translations.acf.home_p1.replace(/\r\n/g, '<br />') }} />
+          ) : (
+            title.line1
+          )}
         </Typography>
         {ctaButton.href ? (
           <Link href={ctaButton.href}>
