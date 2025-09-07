@@ -185,17 +185,17 @@ export default function BraceletDesigner() {
   // Calculate optimal radius for perfect fit with max beads
   const calculateOptimalRadius = (beadCount: number, beadSizeMm: number): number => {
     if (beadCount === 0) return geometryRef.current.R
-    
+
     const beadDiameterPx = mmToPx(beadSizeMm)
-    
+
     // For perfect fit without gaps, calculate circumference needed
     // Add small gap between beads for visual clarity
     const gapBetweenBeads = 0.5 // Small gap in pixels
     const requiredCircumference = beadCount * (beadDiameterPx + gapBetweenBeads)
-    
+
     // Radius = Circumference / (2π)
     const optimalRadius = requiredCircumference / (2 * Math.PI)
-    
+
     return optimalRadius
   }
 
@@ -273,16 +273,16 @@ export default function BraceletDesigner() {
 
       const maxBeads = getMaxBeadCount()
       const isMaxCapacity = prevBeads.length === maxBeads
-      
+
       // If at max capacity, use equal spacing
       if (isMaxCapacity) {
         const anglePerBead = (2 * Math.PI) / maxBeads
         const updatedBeads = [...prevBeads]
-        
+
         for (let i = 0; i < updatedBeads.length; i++) {
-          const theta = START + (i * anglePerBead) // Counter-clockwise placement
+          const theta = START + i * anglePerBead // Counter-clockwise placement
           updatedBeads[i].theta = theta
-          
+
           if (updatedBeads[i].el) {
             const element = updatedBeads[i].el!
             const isPendant = updatedBeads[i].stoneSetting?.category === 'Pendant'
@@ -312,7 +312,7 @@ export default function BraceletDesigner() {
             element.dataset.beadId = updatedBeads[i].id
           }
         }
-        
+
         return updatedBeads
       }
 
@@ -395,14 +395,14 @@ export default function BraceletDesigner() {
     if (!ringRef.current || !stageRef.current) return
 
     const maxBeads = getMaxBeadCount()
-    
+
     // If we have reached max beads, calculate perfect fit radius
     if (beads.length === maxBeads) {
       const optimalRadius = calculateOptimalRadius(maxBeads, beadSize)
-      
+
       ringRef.current.style.width = `${optimalRadius * 2}px`
       ringRef.current.style.height = `${optimalRadius * 2}px`
-      
+
       geometryRef.current.R = optimalRadius
       relayoutForRadius(optimalRadius)
       return
@@ -488,20 +488,20 @@ export default function BraceletDesigner() {
 
   const canPlaceWithRadius = (rNext: number) => {
     if (beads.length === 0) return true
-    
+
     // Check if we're at max capacity
     const maxBeads = getMaxBeadCount()
     if (beads.length >= maxBeads) return false
-    
+
     const lastRadius = getLastRadius()
     const needBetweenPrevAndNext = deltaTheta(lastRadius, rNext)
     const rFirst = beads[0].r
     const needNextToFirst = deltaTheta(rNext, rFirst)
-    
+
     // Ensure we don't exceed the circle
     const totalAngleNeeded = needBetweenPrevAndNext + needNextToFirst
     const available = remainingArc()
-    
+
     return available >= totalAngleNeeded - EPS
   }
 
@@ -568,15 +568,15 @@ export default function BraceletDesigner() {
     const R = geometryRef.current.R
     const maxBeads = getMaxBeadCount()
     const isMaxCapacity = newBeads.length === maxBeads
-    
+
     // If at max capacity, use equal spacing
     if (isMaxCapacity) {
       const anglePerBead = (2 * Math.PI) / maxBeads
-      
+
       for (let i = 0; i < newBeads.length; i++) {
-        const theta = START + (i * anglePerBead) // Counter-clockwise placement
+        const theta = START + i * anglePerBead // Counter-clockwise placement
         const beadEl = newBeads[i].el
-        
+
         if (beadEl) {
           newBeads[i].theta = theta
           const isPendant = newBeads[i].stoneSetting?.category === 'Pendant'
@@ -602,14 +602,14 @@ export default function BraceletDesigner() {
           // Apply rotation to align tangentially with circle
           const rotationAngle = (theta * 180) / Math.PI - 90
           beadEl.style.transform = `rotate(${rotationAngle}deg) scale(1)`
-          
+
           // Update dataset for drag and drop
           beadEl.dataset.beadId = newBeads[i].id
         }
       }
       return
     }
-    
+
     // Normal layout for non-max capacity
     let theta = START
 
@@ -688,13 +688,15 @@ export default function BraceletDesigner() {
 
   const addBead = (stone: Stone['acf']) => {
     const maxBeads = getMaxBeadCount()
-    
+
     // Check if we've reached the maximum bead count
     if (beads.length >= maxBeads) {
       // Show nudge animation instead of alert for better UX
       nudgeFull()
       // Optionally, you could add a toast notification here
-      console.log(`Maximum ${maxBeads} beads reached for ${wristLength}cm wrist with ${beadSize}mm beads`)
+      console.log(
+        `Maximum ${maxBeads} beads reached for ${wristLength}cm wrist with ${beadSize}mm beads`,
+      )
       return
     }
 
@@ -706,7 +708,7 @@ export default function BraceletDesigner() {
       // This will be the last bead, so we'll adjust radius for perfect fit
       const optimalRadius = calculateOptimalRadius(maxBeads, beadSize)
       geometryRef.current.R = optimalRadius
-      
+
       if (ringRef.current) {
         ringRef.current.style.width = `${optimalRadius * 2}px`
         ringRef.current.style.height = `${optimalRadius * 2}px`
@@ -910,7 +912,7 @@ export default function BraceletDesigner() {
 
     setBeads((prev) => {
       const updatedBeads = [...prev, newBead]
-      
+
       // Check if we've reached max capacity after adding this bead
       if (updatedBeads.length === maxBeads) {
         // Force immediate relayout with optimal spacing
@@ -927,7 +929,7 @@ export default function BraceletDesigner() {
         // If radius was increased, reflow all beads
         setTimeout(() => relayoutForRadius(geometryRef.current.R), 10)
       }
-      
+
       return updatedBeads
     })
   }
@@ -993,17 +995,20 @@ export default function BraceletDesigner() {
       <div className="container mx-auto min-h-24 grid grid-cols-12 gap-4 md:gap-0">
         <div className="col-span-6 md:col-span-4 flex justify-center flex-col">
           <span className="text-[#006039] text-lg">ความยาวรอบข้อมือ</span>
-          <Select value={wristLength} onValueChange={(value) => {
-            const newMaxCount = MAX_BEAD_COUNTS[value]?.[beadSize] || 30
-            
-            // Check if current bead count exceeds new maximum
-            if (beads.length > newMaxCount) {
-              setPendingWristLength(value)
-              setShowWristWarning(true)
-            } else {
-              setWristLength(value)
-            }
-          }}>
+          <Select
+            value={wristLength}
+            onValueChange={(value) => {
+              const newMaxCount = MAX_BEAD_COUNTS[value]?.[beadSize] || 30
+
+              // Check if current bead count exceeds new maximum
+              if (beads.length > newMaxCount) {
+                setPendingWristLength(value)
+                setShowWristWarning(true)
+              } else {
+                setWristLength(value)
+              }
+            }}
+          >
             <SelectTrigger className="w-[100px]">
               <SelectValue placeholder="Select length" />
             </SelectTrigger>
@@ -1021,18 +1026,21 @@ export default function BraceletDesigner() {
         {/* Bead Size */}
         <div className="col-span-6 md:col-span-4 flex justify-center flex-col">
           <span className="text-[#006039] text-lg">ขนาดหิน</span>
-          <Select value={String(beadSize)} onValueChange={(value) => {
-            const newSize = Number(value)
-            const newMaxCount = MAX_BEAD_COUNTS[wristLength]?.[newSize] || 30
-            
-            // Check if current bead count exceeds new maximum
-            if (beads.length > newMaxCount) {
-              setPendingBeadSize(newSize)
-              setShowSizeWarning(true)
-            } else {
-              setBeadSize(newSize)
-            }
-          }}>
+          <Select
+            value={String(beadSize)}
+            onValueChange={(value) => {
+              const newSize = Number(value)
+              const newMaxCount = MAX_BEAD_COUNTS[wristLength]?.[newSize] || 30
+
+              // Check if current bead count exceeds new maximum
+              if (beads.length > newMaxCount) {
+                setPendingBeadSize(newSize)
+                setShowSizeWarning(true)
+              } else {
+                setBeadSize(newSize)
+              }
+            }}
+          >
             <SelectTrigger className="w-[100px]">
               <SelectValue placeholder="Select size" />
             </SelectTrigger>
@@ -1152,13 +1160,13 @@ export default function BraceletDesigner() {
                           if (!isAvailable) return null
 
                           const isMaxReached = beads.length >= getMaxBeadCount()
-                          
+
                           return (
                             <div key={stoneInfo.title} className="relative group">
                               <button
                                 className={`w-11 h-11 transition-transform overflow-hidden ${
-                                  isMaxReached 
-                                    ? 'opacity-50 cursor-not-allowed' 
+                                  isMaxReached
+                                    ? 'opacity-50 cursor-not-allowed'
                                     : 'cursor-pointer active:scale-95'
                                 }`}
                                 style={{
@@ -1168,7 +1176,7 @@ export default function BraceletDesigner() {
                                   backgroundRepeat: 'no-repeat',
                                 }}
                                 title={
-                                  isMaxReached 
+                                  isMaxReached
                                     ? `จำนวนหินเต็มแล้ว (${getMaxBeadCount()} เม็ด)`
                                     : `${stoneInfo.title} - ฿${price}`
                                 }
@@ -1193,7 +1201,7 @@ export default function BraceletDesigner() {
           <div className="col-span-12 md:col-span-6 border-t-1 border-gray-200 pt-10 md:border-t-0 md:pt-0">
             <div className="grid grid-cols-12 gap-4">
               {/* preview single bead image */}
-              <div className="col-span-full md:col-span-3 flex items-center justify-center">
+              <div className="col-span-full md:col-span-3 flex justify-center">
                 {lastSelectedBead ? (
                   <div className="relative w-24 h-24">
                     <Image
@@ -1210,7 +1218,7 @@ export default function BraceletDesigner() {
                 )}
               </div>
               {/* preview bead detail */}
-              <div className="col-span-full md:col-span-9 flex flex-col gap-2">
+              <div className="col-span-full md:col-span-9 flex flex-col gap-4">
                 {lastSelectedBead ? (
                   <>
                     {/* bead header */}
@@ -1228,10 +1236,10 @@ export default function BraceletDesigner() {
                       </span> */}
                     </div>
                     {/* bead description */}
-                    <div className="text-gray-700 text-sm">{lastSelectedBead.description}</div>
+                    <div className="text-gray-700 text-md">{lastSelectedBead.description}</div>
                     {/* stone story */}
                     {lastSelectedBead.story && (
-                      <div className="grid grid-cols-2 gap-2 text-xs">
+                      <div className="grid grid-cols-2 gap-2 text-md">
                         {lastSelectedBead.story.energy_element && (
                           <div className="flex flex-col">
                             <span className="font-semibold text-gray-600">ธาตุพลังงาน:</span>
@@ -1288,9 +1296,10 @@ export default function BraceletDesigner() {
           <div className="space-y-4 py-4">
             <p className="text-gray-700">
               การเปลี่ยนขนาดหินจาก <span className="font-bold">{beadSize} mm</span> เป็น{' '}
-              <span className="font-bold">{pendingBeadSize} mm</span> จะทำให้จำนวนหินสูงสุดเหลือเพียง{' '}
+              <span className="font-bold">{pendingBeadSize} mm</span>{' '}
+              จะทำให้จำนวนหินสูงสุดเหลือเพียง{' '}
               <span className="font-bold text-red-600">
-                {pendingBeadSize ? (MAX_BEAD_COUNTS[wristLength]?.[pendingBeadSize] || 0) : 0} เม็ด
+                {pendingBeadSize ? MAX_BEAD_COUNTS[wristLength]?.[pendingBeadSize] || 0 : 0} เม็ด
               </span>
             </p>
             <p className="text-gray-700">
@@ -1299,7 +1308,7 @@ export default function BraceletDesigner() {
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
               <p className="text-sm text-yellow-800">
                 หากต้องการเปลี่ยนขนาด คุณต้องลบหินออกให้เหลือไม่เกิน{' '}
-                {pendingBeadSize ? (MAX_BEAD_COUNTS[wristLength]?.[pendingBeadSize] || 0) : 0} เม็ด
+                {pendingBeadSize ? MAX_BEAD_COUNTS[wristLength]?.[pendingBeadSize] || 0 : 0} เม็ด
               </p>
             </div>
           </div>
@@ -1340,9 +1349,10 @@ export default function BraceletDesigner() {
           <div className="space-y-4 py-4">
             <p className="text-gray-700">
               การเปลี่ยนความยาวรอบข้อมือจาก <span className="font-bold">{wristLength} cm</span> เป็น{' '}
-              <span className="font-bold">{pendingWristLength} cm</span> จะทำให้จำนวนหินสูงสุดเหลือเพียง{' '}
+              <span className="font-bold">{pendingWristLength} cm</span>{' '}
+              จะทำให้จำนวนหินสูงสุดเหลือเพียง{' '}
               <span className="font-bold text-red-600">
-                {pendingWristLength ? (MAX_BEAD_COUNTS[pendingWristLength]?.[beadSize] || 0) : 0} เม็ด
+                {pendingWristLength ? MAX_BEAD_COUNTS[pendingWristLength]?.[beadSize] || 0 : 0} เม็ด
               </span>
             </p>
             <p className="text-gray-700">
@@ -1351,7 +1361,7 @@ export default function BraceletDesigner() {
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
               <p className="text-sm text-yellow-800">
                 หากต้องการเปลี่ยนความยาวรอบข้อมือ คุณต้องลบหินออกให้เหลือไม่เกิน{' '}
-                {pendingWristLength ? (MAX_BEAD_COUNTS[pendingWristLength]?.[beadSize] || 0) : 0} เม็ด
+                {pendingWristLength ? MAX_BEAD_COUNTS[pendingWristLength]?.[beadSize] || 0 : 0} เม็ด
               </p>
             </div>
           </div>
