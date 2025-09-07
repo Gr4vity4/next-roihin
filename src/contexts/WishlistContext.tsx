@@ -102,11 +102,11 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
         throw new Error('Failed to add to wishlist')
       }
 
-      const result = await response.json()
+      // Consume the response to prevent memory leak
+      await response.json()
       
-      if (result.action === 'added' || result.action === 'kept') {
-        await refreshWishlist()
-      }
+      // Always refresh to get the full product details
+      await refreshWishlist()
     } catch (err) {
       console.error('Failed to add to wishlist:', err)
       setError(err instanceof Error ? err.message : 'Failed to add to wishlist')
@@ -207,13 +207,8 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
       const result = await response.json()
       
       if (result.action === 'added') {
-        // Add the item to local state
-        setItems(prevItems => [...prevItems, {
-          id: result.item.id,
-          product_id: result.item.product_id,
-          color: result.item.color,
-          added_at: result.item.added_at,
-        }])
+        // Refresh the wishlist to get full product details
+        await refreshWishlist()
         return true
       } else if (result.action === 'removed') {
         // Remove the item from local state

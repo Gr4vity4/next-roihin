@@ -128,7 +128,8 @@ export async function toggleWishlist({
 }
 
 export async function fetchWishlist(token: string): Promise<WishlistResponse> {
-  const response = await fetch(`${API_URL}/wp-json/roihin/v1/wishlist`, {
+  // Add timestamp to ensure fresh data
+  const response = await fetch(`${API_URL}/wp-json/roihin/v1/wishlist?t=${Date.now()}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

@@ -5,13 +5,18 @@ import Image from 'next/image'
 import Button from '@/components/Button'
 import { useWishlist } from '@/contexts/WishlistContext'
 import { useCart } from '@/contexts/CartContext'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 export default function WishlistPage() {
-  const { items, loading, error, removeItem, clearWishlist } = useWishlist()
+  const { items, loading, error, removeItem, clearWishlist, refreshWishlist } = useWishlist()
   const { addItem } = useCart()
   const [removingItem, setRemovingItem] = useState<string | null>(null)
   const [clearing, setClearing] = useState(false)
   const [addingToCart, setAddingToCart] = useState<string | null>(null)
+  
+  // Refresh wishlist data when page mounts to ensure we have latest data
+  useEffect(() => {
+    refreshWishlist()
+  }, [refreshWishlist])
 
   const handleRemoveItem = async (itemId: string) => {
     setRemovingItem(itemId)
