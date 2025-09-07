@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers'
-import { checkIsFavorite } from '@/lib/api/wishlist'
+import { checkFavorite } from '@/lib/api/wishlist'
 
 export async function GET(request: Request) {
   try {
@@ -24,7 +24,7 @@ export async function GET(request: Request) {
       )
     }
 
-    const response = await checkIsFavorite(
+    const response = await checkFavorite(
       token, 
       parseInt(productId),
       color || undefined
