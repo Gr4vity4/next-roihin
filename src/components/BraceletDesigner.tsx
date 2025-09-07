@@ -242,12 +242,18 @@ export default function BraceletDesigner() {
       // Position first bead
       if (updatedBeads[0].el) {
         const element = updatedBeads[0].el!
-        element.style.left =
-          geometryRef.current.cx + Rnew * Math.cos(theta) - updatedBeads[0].r + 'px'
-        element.style.top =
-          geometryRef.current.cy + Rnew * Math.sin(theta) - updatedBeads[0].r + 'px'
+        const isPendant = updatedBeads[0].stoneSetting?.category === 'Pendant'
+        const pendantOffset = isPendant ? 20 : 0
+
+        const baseX = geometryRef.current.cx + Rnew * Math.cos(theta)
+        const baseY = geometryRef.current.cy + Rnew * Math.sin(theta)
+        const offsetX = pendantOffset * Math.cos(theta)
+        const offsetY = pendantOffset * Math.sin(theta)
+
+        element.style.left = baseX + offsetX - updatedBeads[0].r + 'px'
+        element.style.top = baseY + offsetY - updatedBeads[0].r + 'px'
         // Apply rotation to align tangentially with circle
-        const rotationAngle = (theta * 180 / Math.PI) - 90
+        const rotationAngle = (theta * 180) / Math.PI - 90
         element.style.transform = `rotate(${rotationAngle}deg) scale(1)`
         // Ensure dataset is set for drag and drop
         element.dataset.beadId = updatedBeads[0].id
@@ -260,12 +266,18 @@ export default function BraceletDesigner() {
 
         if (updatedBeads[i].el) {
           const element = updatedBeads[i].el!
-          element.style.left =
-            geometryRef.current.cx + Rnew * Math.cos(theta) - updatedBeads[i].r + 'px'
-          element.style.top =
-            geometryRef.current.cy + Rnew * Math.sin(theta) - updatedBeads[i].r + 'px'
+          const isPendant = updatedBeads[i].stoneSetting?.category === 'Pendant'
+          const pendantOffset = isPendant ? 20 : 0
+
+          const baseX = geometryRef.current.cx + Rnew * Math.cos(theta)
+          const baseY = geometryRef.current.cy + Rnew * Math.sin(theta)
+          const offsetX = pendantOffset * Math.cos(theta)
+          const offsetY = pendantOffset * Math.sin(theta)
+
+          element.style.left = baseX + offsetX - updatedBeads[i].r + 'px'
+          element.style.top = baseY + offsetY - updatedBeads[i].r + 'px'
           // Apply rotation to align tangentially with circle
-          const rotationAngle = (theta * 180 / Math.PI) - 90
+          const rotationAngle = (theta * 180) / Math.PI - 90
           element.style.transform = `rotate(${rotationAngle}deg) scale(1)`
           // Ensure dataset is set for drag and drop
           element.dataset.beadId = updatedBeads[i].id
@@ -431,10 +443,18 @@ export default function BraceletDesigner() {
     const firstBeadEl = newBeads[0].el
     if (firstBeadEl) {
       newBeads[0].theta = theta
-      firstBeadEl.style.left = geometryRef.current.cx + R * Math.cos(theta) - newBeads[0].r + 'px'
-      firstBeadEl.style.top = geometryRef.current.cy + R * Math.sin(theta) - newBeads[0].r + 'px'
+      const isPendant = newBeads[0].stoneSetting?.category === 'Pendant'
+      const pendantOffset = isPendant ? 20 : 0
+
+      const baseX = geometryRef.current.cx + R * Math.cos(theta)
+      const baseY = geometryRef.current.cy + R * Math.sin(theta)
+      const offsetX = pendantOffset * Math.cos(theta)
+      const offsetY = pendantOffset * Math.sin(theta)
+
+      firstBeadEl.style.left = baseX + offsetX - newBeads[0].r + 'px'
+      firstBeadEl.style.top = baseY + offsetY - newBeads[0].r + 'px'
       // Apply rotation to align tangentially with circle
-      const rotationAngle = (theta * 180 / Math.PI) - 90
+      const rotationAngle = (theta * 180) / Math.PI - 90
       firstBeadEl.style.transform = `rotate(${rotationAngle}deg) scale(1)`
 
       // Update dataset for drag and drop
@@ -447,10 +467,18 @@ export default function BraceletDesigner() {
       const beadEl = newBeads[i].el
       if (beadEl) {
         newBeads[i].theta = theta
-        beadEl.style.left = geometryRef.current.cx + R * Math.cos(theta) - newBeads[i].r + 'px'
-        beadEl.style.top = geometryRef.current.cy + R * Math.sin(theta) - newBeads[i].r + 'px'
+        const isPendant = newBeads[i].stoneSetting?.category === 'Pendant'
+        const pendantOffset = isPendant ? 20 : 0
+
+        const baseX = geometryRef.current.cx + R * Math.cos(theta)
+        const baseY = geometryRef.current.cy + R * Math.sin(theta)
+        const offsetX = pendantOffset * Math.cos(theta)
+        const offsetY = pendantOffset * Math.sin(theta)
+
+        beadEl.style.left = baseX + offsetX - newBeads[i].r + 'px'
+        beadEl.style.top = baseY + offsetY - newBeads[i].r + 'px'
         // Apply rotation to align tangentially with circle
-        const rotationAngle = (theta * 180 / Math.PI) - 90
+        const rotationAngle = (theta * 180) / Math.PI - 90
         beadEl.style.transform = `rotate(${rotationAngle}deg) scale(1)`
 
         // Update dataset for drag and drop
@@ -612,10 +640,21 @@ export default function BraceletDesigner() {
       }
     }
 
-    el.style.left = geometryRef.current.cx + geometryRef.current.R * Math.cos(theta) - r + 'px'
-    el.style.top = geometryRef.current.cy + geometryRef.current.R * Math.sin(theta) - r + 'px'
+    // Calculate position with offset for pendants
+    const isPendant = stone.category === 'Pendant'
+    const pendantOffset = isPendant ? 4 : 0 // Move pendants 20px forward (outward)
+
+    const baseX = geometryRef.current.cx + geometryRef.current.R * Math.cos(theta)
+    const baseY = geometryRef.current.cy + geometryRef.current.R * Math.sin(theta)
+
+    // Apply offset in the direction of the radius (outward from center)
+    const offsetX = pendantOffset * Math.cos(theta)
+    const offsetY = pendantOffset * Math.sin(theta)
+
+    el.style.left = baseX + offsetX - r + 'px'
+    el.style.top = baseY + offsetY - r + 'px'
     // Apply rotation to align tangentially with circle
-    const rotationAngle = (theta * 180 / Math.PI) - 90
+    const rotationAngle = (theta * 180) / Math.PI - 90
     el.style.transform = `rotate(${rotationAngle}deg) scale(0.6)`
 
     // Display image without border radius to show original shape
