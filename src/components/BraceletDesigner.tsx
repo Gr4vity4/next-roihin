@@ -1009,10 +1009,10 @@ export default function BraceletDesigner() {
               }
             }}
           >
-            <SelectTrigger className="w-[100px]">
+            <SelectTrigger className="w-[100px] font-prompt">
               <SelectValue placeholder="Select length" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="font-prompt">
               <SelectItem value="14">14 cm</SelectItem>
               <SelectItem value="15">15 cm</SelectItem>
               <SelectItem value="16">16 cm</SelectItem>
@@ -1041,10 +1041,10 @@ export default function BraceletDesigner() {
               }
             }}
           >
-            <SelectTrigger className="w-[100px]">
+            <SelectTrigger className="w-[100px] font-prompt">
               <SelectValue placeholder="Select size" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="font-prompt">
               <SelectItem value="6">6 mm</SelectItem>
               <SelectItem value="8">8 mm</SelectItem>
               <SelectItem value="10">10 mm</SelectItem>
@@ -1056,7 +1056,7 @@ export default function BraceletDesigner() {
         <div className="col-span-12 md:col-span-4 flex justify-center flex-col">
           <span className="text-[#006039] text-lg">ราคารวม</span>
           <span className="font-prompt text-2xl font-bold">฿{calculateTotalPrice()}</span>
-          <span className="text-sm text-gray-600 mt-1">
+          <span className="text-sm text-gray-600 mt-1 font-prompt">
             จำนวนหิน: {beads.length}/{getMaxBeadCount()} เม็ด
           </span>
         </div>
