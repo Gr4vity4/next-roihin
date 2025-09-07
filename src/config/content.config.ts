@@ -661,13 +661,13 @@ export const content = {
         },
         {
           text: 'LINE : @roihin4289',
-          href: 'https://line.me/R/ti/p/@roihin4289',
+          href: 'https://lin.ee/94ASqOI',
           variant: 'secondary' as const,
         },
       ],
     },
   },
-  
+
   // Charmspacer Page Content
   charmspacerPage: {
     hero: {
@@ -686,11 +686,20 @@ export const content = {
       charm: {
         id: 'charm',
         title: 'ชาร์ม',
-        description: 'ร้อยหินชาร์ม จัดทำขึ้นเป็นวาระโดยอาศัยตำนานและเรื่องเล่าของครูบาอาจารย์ ชาร์มทุกชิ้นได้ผ่านพิธีกรรมอันเชิญตามต้นกำเนิดเพื่อให้เกิดเทวคุณอันเป็นสิริมงคลสูงสุดต่อผู้ครอบครอง',
+        description:
+          'ร้อยหินชาร์ม จัดทำขึ้นเป็นวาระโดยอาศัยตำนานและเรื่องเล่าของครูบาอาจารย์ ชาร์มทุกชิ้นได้ผ่านพิธีกรรมอันเชิญตามต้นกำเนิดเพื่อให้เกิดเทวคุณอันเป็นสิริมงคลสูงสุดต่อผู้ครอบครอง',
         images: [
           { src: '/images/charmspacer/charm/charm-01.png', alt: 'Lucky Charm 01' },
-          { src: '/images/charmspacer/charm/charm-02.png', alt: 'Lord Ganesh', href: '/charm-1/ganesha' },
-          { src: '/images/charmspacer/charm/charm-03.png', alt: 'Naga Charm', href: '/charm-1/naga' },
+          {
+            src: '/images/charmspacer/charm/charm-02.png',
+            alt: 'Lord Ganesh',
+            href: '/charm-1/ganesha',
+          },
+          {
+            src: '/images/charmspacer/charm/charm-03.png',
+            alt: 'Naga Charm',
+            href: '/charm-1/naga',
+          },
           { src: '/images/charmspacer/charm/charm-04.png', alt: 'Lucky Charm 04' },
           { src: '/images/charmspacer/charm/charm-05.png', alt: 'Lucky Charm 05' },
           { src: '/images/charmspacer/charm/charm-06.png', alt: 'Lucky Charm 06' },
@@ -707,7 +716,8 @@ export const content = {
       spacer: {
         id: 'spacer',
         title: 'ตัวคั่น',
-        description: 'ร้อยหินชาร์ม จัดทำขึ้นเป็นวาระโดยอาศัยตำนานและเรื่องเล่าของครูบาอาจารย์ ชาร์มทุกชิ้นได้ผ่านพิธีกรรมอันเชิญตามต้นกำเนิดเพื่อให้เกิดเทวคุณอันเป็นสิริมงคลสูงสุดต่อผู้ครอบครอง',
+        description:
+          'ร้อยหินชาร์ม จัดทำขึ้นเป็นวาระโดยอาศัยตำนานและเรื่องเล่าของครูบาอาจารย์ ชาร์มทุกชิ้นได้ผ่านพิธีกรรมอันเชิญตามต้นกำเนิดเพื่อให้เกิดเทวคุณอันเป็นสิริมงคลสูงสุดต่อผู้ครอบครอง',
         images: [
           { src: '/images/charmspacer/spacer/spacer-01.png', alt: 'Spacer 01' },
           { src: '/images/charmspacer/spacer/spacer-02.png', alt: 'Spacer 02' },
@@ -738,7 +748,8 @@ export const content = {
       pendant: {
         id: 'pendant',
         title: 'ชาร์มจี้',
-        description: 'ร้อยหินชาร์ม จัดทำขึ้นเป็นวาระโดยอาศัยตำนานและเรื่องเล่าของครูบาอาจารย์ ชาร์มทุกชิ้นได้ผ่านพิธีกรรมอันเชิญตามต้นกำเนิดเพื่อให้เกิดเทวคุณอันเป็นสิริมงคลสูงสุดต่อผู้ครอบครอง',
+        description:
+          'ร้อยหินชาร์ม จัดทำขึ้นเป็นวาระโดยอาศัยตำนานและเรื่องเล่าของครูบาอาจารย์ ชาร์มทุกชิ้นได้ผ่านพิธีกรรมอันเชิญตามต้นกำเนิดเพื่อให้เกิดเทวคุณอันเป็นสิริมงคลสูงสุดต่อผู้ครอบครอง',
         images: [
           { src: '/images/charmspacer/pendant/pendant-01.png', alt: 'Pendant Charm 01' },
           { src: '/images/charmspacer/pendant/pendant-02.png', alt: 'Pendant Charm 02' },
