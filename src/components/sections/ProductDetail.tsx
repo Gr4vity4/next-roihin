@@ -218,7 +218,7 @@ export default function ProductDetail({ product, category, language = 'en' }: Pr
                   <h3 className="text-sm text-gray-400 mb-1">
                     {language === 'th' ? 'วัสดุ:' : 'Material:'}
                   </h3>
-                  <p className="text-white">{product.acf.material}</p>
+                  <p className="text-white font-prompt">{product.acf.material}</p>
                 </div>
               )}
 
@@ -227,7 +227,7 @@ export default function ProductDetail({ product, category, language = 'en' }: Pr
                   <h3 className="text-sm text-gray-400 mb-1">
                     {language === 'th' ? 'ขนาด:' : 'Dimensions:'}
                   </h3>
-                  <p className="text-white">{product.acf.dimensions}</p>
+                  <p className="text-white font-prompt">{product.acf.dimensions}</p>
                 </div>
               )}
             </div>
@@ -321,12 +321,6 @@ export default function ProductDetail({ product, category, language = 'en' }: Pr
               >
                 {language === 'th' ? 'ซื้อเลย' : 'Buy Now'}
               </button>
-
-              <p className="text-xs text-gray-500 text-center">
-                {language === 'th'
-                  ? 'จัดส่งฟรีทั่วประเทศ เมื่อซื้อครบ 1,500 บาท'
-                  : 'Free shipping nationwide for orders over 1,500 THB'}
-              </p>
             </div>
           </div>
         </div>

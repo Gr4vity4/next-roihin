@@ -46,10 +46,10 @@ export default function ProductGallery({
                 sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
               />
               {/* Watermark overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              {/* <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <div className="absolute bottom-2 left-2 right-2 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <p className="text-[10px] text-white/80 ">ROIHIN STONE & BRACELET, THAILAND</p>
-              </div>
+              </div> */}
             </div>
             {(image.title || image.price) && (
               <div className="text-center space-y-1">
@@ -57,7 +57,9 @@ export default function ProductGallery({
                   <h3 className="text-sm text-white/90 font-medium line-clamp-1">{image.title}</h3>
                 )}
                 {image.price && (
-                  <p className="text-xs text-gray-400">฿{image.price.toLocaleString('th-TH')}</p>
+                  <p className="text-xs text-gray-400 font-prompt">
+                    ฿{image.price.toLocaleString('th-TH')}
+                  </p>
                 )}
               </div>
             )}
