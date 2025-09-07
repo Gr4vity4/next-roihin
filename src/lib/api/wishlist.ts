@@ -210,7 +210,7 @@ export async function fetchWishlist(token: string): Promise<WishlistResponse> {
         if (colorOption) {
           displayPrice = parseInt(colorOption.price) || 0
           isAvailable = colorOption.available === true
-        } else if (productData.acf?.color_options?.length > 0) {
+        } else if (productData.acf?.color_options && productData.acf.color_options.length > 0) {
           // If no color match, use the first available option
           const firstOption = productData.acf.color_options[0]
           displayPrice = parseInt(firstOption.price) || 0
@@ -228,7 +228,7 @@ export async function fetchWishlist(token: string): Promise<WishlistResponse> {
             id: item.product,
             slug: productData.slug || `product-${item.product}`,
             title: productData.title?.rendered || `Product ${item.product}`,
-            featured_image_url: productData.acf?.product_image || productData.acf?.product_gallery?.[0]?.url || null,
+            featured_image_url: productData.acf?.product_image || productData.acf?.product_gallery?.[0]?.url || undefined,
             acf: productData.acf,
           },
           price: {
@@ -257,7 +257,7 @@ export async function fetchWishlist(token: string): Promise<WishlistResponse> {
             id: item.product,
             slug: `product-${item.product}`,
             title: `Product ${item.product}`,
-            featured_image_url: null,
+            featured_image_url: undefined,
           },
           price: {
             min_price: 0,

@@ -12,6 +12,7 @@ interface ProfileData {
   last_name: string
   phone?: string // Some responses may use 'phone' instead of 'phone_number'
   phone_number?: string // Make optional since it might not exist
+  billing_phone?: string // WooCommerce billing phone field
   birth_date: string
   gender: 'male' | 'female' | 'other' | 'prefer_not_to_say'
   member_since: {
