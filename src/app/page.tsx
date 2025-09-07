@@ -8,7 +8,6 @@ import {
   HeroSection,
   SignatureCharmSection,
   TestimonialsSection,
-  VibrantDestinySection,
 } from '@/components/sections'
 import { content } from '@/config/content.config'
 // Configure route segment caching for home page (dynamic content with testimonials)
@@ -32,65 +31,65 @@ export default function Home() {
           className="pt-20 lg:pt-[230px]"
         />
 
-      {/* About Section */}
-      <AboutSection
-        id="about"
-        title={content.about.title}
-        subtitle={content.about.subtitle}
-        content={content.about.content}
-        ctaButton={content.about.cta}
-      />
+        {/* About Section */}
+        <AboutSection
+          id="about"
+          title={content.about.title}
+          subtitle={content.about.subtitle}
+          content={content.about.content}
+          ctaButton={content.about.cta}
+        />
 
-      {/* Signature Charm Section */}
-      <SignatureCharmSection
-        id="charms"
-        backgroundImage={content.signatureCharm.background.image}
-        backgroundAlt={content.signatureCharm.background.alt}
-        title={content.signatureCharm.title}
-        subtitle={content.signatureCharm.subtitle}
-        ctaButton={content.signatureCharm.cta}
-      />
+        {/* Signature Charm Section */}
+        <SignatureCharmSection
+          id="charms"
+          backgroundImage={content.signatureCharm.background.image}
+          backgroundAlt={content.signatureCharm.background.alt}
+          title={content.signatureCharm.title}
+          subtitle={content.signatureCharm.subtitle}
+          ctaButton={content.signatureCharm.cta}
+        />
 
-      {/* Testimonials Section */}
-      <TestimonialsSection
-        id="reviews"
-        title={content.testimonials.title}
-        subtitle={content.testimonials.subtitle}
-        testimonials={content.testimonials.items}
-        ctaButton={content.testimonials.cta}
-      />
+        {/* Testimonials Section */}
+        <TestimonialsSection
+          id="reviews"
+          title={content.testimonials.title}
+          subtitle={content.testimonials.subtitle}
+          testimonials={content.testimonials.items}
+          ctaButton={content.testimonials.cta}
+        />
 
-      {/* Full Width Background Section */}
-      <FullWidthBackgroundSection
-        backgroundImage="/images/357c3a_449b1b790747456cb742616cdedb4af0~mv2.avif"
-        backgroundAlt="Beautiful handcrafted jewelry showcasing natural stone bracelets"
-        overlayOpacity={0}
-        parallaxSpeed={0}
-      />
+        {/* Full Width Background Section */}
+        <FullWidthBackgroundSection
+          backgroundImage="/images/357c3a_449b1b790747456cb742616cdedb4af0~mv2.avif"
+          backgroundAlt="Beautiful handcrafted jewelry showcasing natural stone bracelets"
+          overlayOpacity={0}
+          parallaxSpeed={0}
+        />
 
-      {/* Gallery Section */}
-      <GallerySection
-        backgroundImage=""
-        backgroundAlt={content.gallery.background.alt}
-        title={content.gallery.title}
-        subtitle={content.gallery.subtitle}
-        ctaButtons={content.gallery.ctaButtons}
-      />
+        {/* Gallery Section */}
+        <GallerySection
+          backgroundImage=""
+          backgroundAlt={content.gallery.background.alt}
+          title={content.gallery.title}
+          subtitle={content.gallery.subtitle}
+          ctaButtons={content.gallery.ctaButtons}
+        />
 
-      {/* Vibrant Destiny Section */}
-      <VibrantDestinySection
+        {/* Vibrant Destiny Section */}
+        {/* <VibrantDestinySection
         backgroundImage={content.vibrantDestiny.background.image}
         backgroundAlt={content.vibrantDestiny.background.alt}
         title={content.vibrantDestiny.title}
         subtitle={content.vibrantDestiny.subtitle}
         since={content.vibrantDestiny.since}
         overlayOpacity={0.2}
-      />
+      /> */}
 
-      {/* Footer */}
-      <Footer />
+        {/* Footer */}
+        <Footer />
 
-      <ChatWidget />
+        <ChatWidget />
       </main>
     </>
   )

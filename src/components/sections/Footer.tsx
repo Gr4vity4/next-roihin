@@ -1,3 +1,5 @@
+import { VibrantDestinySection } from '@/components/sections'
+import { content } from '@/config/content.config'
 import { cn } from '@/lib/utils'
 import { MapPin } from 'lucide-react'
 import Image from 'next/image'
@@ -58,44 +60,60 @@ export default function Footer({
 
   const copyright = '© 2021 All rights is reserved by Roihin Stone and Bracelet'
   return (
-    <footer className={cn('py-8 sm:py-10 md:py-12', backgroundColor, textColor, className)}>
-      <Container padding="lg">
-        <div className="grid md:grid-cols-4 gap-6 sm:gap-7 md:gap-8 mb-6 sm:mb-7 md:mb-8">
-          {/* Logo Column */}
-          <div className="flex justify-center md:justify-start">
-            <Link href="/" className="inline-block">
-              <div className="relative w-24 h-24 md:w-32 md:h-32">
-                <Image src="/images/logo.avif" alt="Roihin Logo" fill className="object-contain" />
-              </div>
-            </Link>
-          </div>
+    <>
+      {/* Vibrant Destiny Section */}
+      <VibrantDestinySection
+        backgroundImage={content.vibrantDestiny.background.image}
+        backgroundAlt={content.vibrantDestiny.background.alt}
+        title={content.vibrantDestiny.title}
+        subtitle={content.vibrantDestiny.subtitle}
+        since={content.vibrantDestiny.since}
+        overlayOpacity={0.2}
+      />
+      <footer className={cn('py-8 sm:py-10 md:py-12', backgroundColor, textColor, className)}>
+        <Container padding="lg">
+          <div className="grid md:grid-cols-4 gap-6 sm:gap-7 md:gap-8 mb-6 sm:mb-7 md:mb-8">
+            {/* Logo Column */}
+            <div className="flex justify-center md:justify-start">
+              <Link href="/" className="inline-block">
+                <div className="relative w-24 h-24 md:w-32 md:h-32">
+                  <Image
+                    src="/images/logo.avif"
+                    alt="Roihin Logo"
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+              </Link>
+            </div>
 
-          {/* Footer Columns */}
-          {columns.map((column, index) => (
-            <FooterColumn key={index} title={column.title} links={column.links} />
-          ))}
+            {/* Footer Columns */}
+            {columns.map((column, index) => (
+              <FooterColumn key={index} title={column.title} links={column.links} />
+            ))}
 
-          {/* Contact Info Column */}
-          <div className="space-y-4">
-            <p className="">ติดต่อเรา</p>
-            <div className="space-y-2 text-gray-400 text-sm">
-              <div className="flex items-start space-x-2">
-                <MapPin size={16} className="mt-1 flex-shrink-0" />
-                <span className=" break-words">{contactInfo.address}</span>
-              </div>
-              <div className="pt-4">
-                <SocialLinks links={contactInfo.socialLinks} size="md" gap="sm" />
+            {/* Contact Info Column */}
+            <div className="space-y-4">
+              <p className="">ติดต่อเรา</p>
+              <div className="space-y-2 text-gray-400 text-sm">
+                <div className="flex items-start space-x-2">
+                  <MapPin size={16} className="mt-1 flex-shrink-0" />
+                  <span className=" break-words">{contactInfo.address}</span>
+                </div>
+                <div className="pt-4">
+                  <SocialLinks links={contactInfo.socialLinks} size="md" gap="sm" />
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="border-t border-gray-800 pt-6 sm:pt-7 md:pt-8 text-center text-gray-400">
-          <Typography variant="body" className="text-sm">
-            {copyright}
-          </Typography>
-        </div>
-      </Container>
-    </footer>
+          <div className="border-t border-gray-800 pt-6 sm:pt-7 md:pt-8 text-center text-gray-400">
+            <Typography variant="body" className="text-sm">
+              {copyright}
+            </Typography>
+          </div>
+        </Container>
+      </footer>
+    </>
   )
 }
