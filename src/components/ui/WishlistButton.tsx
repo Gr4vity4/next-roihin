@@ -28,7 +28,7 @@ export default function WishlistButton({
   size = 'md',
   showText = false,
 }: WishlistButtonProps) {
-  const { toggleItem, isInWishlist, loading } = useWishlist()
+  const { toggleItem, isInWishlist, loading, checkFavorite } = useWishlist()
   const [isWishlisted, setIsWishlisted] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
@@ -36,10 +36,21 @@ export default function WishlistButton({
   const selectedColor = color || product.color
 
   useEffect(() => {
-    if (!loading) {
-      setIsWishlisted(isInWishlist(product.id, selectedColor))
+    const checkInitialFavorite = async () => {
+      if (!loading) {
+        // First check local state
+        const localState = isInWishlist(product.id, selectedColor)
+        
+        // Always check server state for the most accurate information
+        const serverState = await checkFavorite(product.id, selectedColor)
+        
+        // Use server state if available, otherwise fall back to local state
+        setIsWishlisted(serverState || localState)
+      }
     }
-  }, [isInWishlist, product.id, selectedColor, loading])
+    
+    checkInitialFavorite()
+  }, [checkFavorite, isInWishlist, product.id, selectedColor, loading])
 
   const handleToggleWishlist = async () => {
     if (isProcessing) return

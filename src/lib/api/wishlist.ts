@@ -55,6 +55,11 @@ interface WishlistCheckResponse {
   map: Record<string, string | null>
 }
 
+interface WishlistFavoriteResponse {
+  favorite: boolean
+  item_id: string | null
+}
+
 const API_URL = process.env.WORDPRESS_API_URL || 'https://wp-roihin.precisiondevlab.com'
 
 export async function toggleWishlist({
@@ -222,4 +227,30 @@ export async function clearWishlist(token: string): Promise<void> {
     const error = await response.json()
     throw new Error(error.message || 'Failed to clear wishlist')
   }
+}
+
+export async function checkFavorite(
+  token: string,
+  productId: number,
+  color?: string
+): Promise<WishlistFavoriteResponse> {
+  const url = new URL(`${API_URL}/wp-json/roihin/v1/wishlist/is-favorite`)
+  url.searchParams.append('product', productId.toString())
+  if (color) {
+    url.searchParams.append('color', color)
+  }
+
+  const response = await fetch(url.toString(), {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    credentials: 'include',
+  })
+
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message || 'Failed to check favorite status')
+  }
+
+  return response.json()
 }

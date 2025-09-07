@@ -39,6 +39,7 @@ interface WishlistContextType {
   getItemId: (productId: number, color?: string) => string | null
   clearWishlist: () => Promise<void>
   refreshWishlist: () => Promise<void>
+  checkFavorite: (productId: number, color?: string) => Promise<boolean>
   itemCount: number
 }
 
@@ -252,6 +253,29 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  const checkFavorite = async (productId: number, color?: string): Promise<boolean> => {
+    try {
+      const response = await fetch(`/api/wishlist/check-favorite?product=${productId}${color ? `&color=${color}` : ''}`, {
+        credentials: 'include',
+      })
+
+      if (response.status === 401) {
+        return false
+      }
+
+      if (!response.ok) {
+        console.error('Failed to check favorite status')
+        return false
+      }
+
+      const data = await response.json()
+      return data.favorite || false
+    } catch (err) {
+      console.error('Failed to check favorite:', err)
+      return false
+    }
+  }
+
   const value: WishlistContextType = {
     items,
     loading,
@@ -264,6 +288,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     getItemId,
     clearWishlist,
     refreshWishlist,
+    checkFavorite,
     itemCount: items.length,
   }
 
