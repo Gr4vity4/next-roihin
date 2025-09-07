@@ -1314,7 +1314,7 @@ export default function BraceletDesigner() {
               ยกเลิก
             </Button>
             <Button
-              variant="destructive"
+              variant="primary"
               onClick={() => {
                 // Clear all beads and change size
                 clearBeads()
@@ -1366,7 +1366,7 @@ export default function BraceletDesigner() {
               ยกเลิก
             </Button>
             <Button
-              variant="destructive"
+              variant="primary"
               onClick={() => {
                 // Clear all beads and change wrist length
                 clearBeads()
