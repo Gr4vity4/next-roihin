@@ -342,33 +342,10 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
               </div>
             </div>
           ) : (
-            // Default state - vertical centered layout
-            <div className="flex flex-col items-center justify-center h-full">
-              {/* Logo */}
-              <Link href="/">
-                <div className="relative w-32 h-32">
-                  <Image
-                    src="/images/logo.avif"
-                    alt="Roihin Logo"
-                    fill
-                    className="object-contain"
-                    priority
-                  />
-                </div>
-              </Link>
-
-              {/* Menu Items */}
-              <div className="flex items-center space-x-8">
-                {navItems.map((item) => (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className=" font-medium text-base text-white transition-colors hover:text-gold tracking-wider"
-                  >
-                    {item.name}
-                  </Link>
-                ))}
-
+            // Default state - header layout with top actions
+            <div className="relative h-full">
+              {/* Top Row - Actions (Cart, Language, Auth) */}
+              <div className="absolute top-4 right-4 flex items-center space-x-6">
                 {/* Cart Icon */}
                 <Link
                   href="/checkout"
@@ -376,7 +353,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                 >
                   <ShoppingCartIcon className="w-6 h-6" />
                   {itemCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-gold text-black text-xs font-bold rounded-full min-w-[20px] h-5 px-1.5 flex items-center justify-center bg-white">
+                    <span className="absolute -top-1 -right-1 bg-gold text-black text-xs font-bold rounded-full min-w-[20px] h-5 px-1.5 flex items-center justify-center">
                       {itemCount > 99 ? '99+' : itemCount}
                     </span>
                   )}
@@ -388,7 +365,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                     onClick={() => setIsLanguageMenuOpen(!isLanguageMenuOpen)}
                     className="flex items-center space-x-1 px-3 py-1.5 text-white hover:text-gold transition-colors"
                   >
-                    <span className="text-base font-medium tracking-wider">
+                    <span className="text-sm font-medium tracking-widest">
                       {language.toUpperCase()}
                     </span>
                     <ChevronDown
@@ -431,7 +408,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                     <div className="relative z-[9999]" ref={userMenuRef}>
                       <button
                         onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                        className="flex items-center space-x-2 font-medium text-base text-white transition-colors hover:text-gold"
+                        className="flex items-center space-x-2 font-medium text-sm text-white transition-colors hover:text-gold"
                       >
                         <div className="w-8 h-8 bg-[#005635] rounded-full flex items-center justify-center text-white text-xs font-semibold">
                           {user?.name
@@ -441,7 +418,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                             .toUpperCase()
                             .slice(0, 2) || 'U'}
                         </div>
-                        <span className="tracking-wider">{user?.name}</span>
+                        <span className="tracking-widest">{user?.name}</span>
                         <ChevronDown
                           className={cn(
                             'w-4 h-4 transition-transform',
@@ -480,19 +457,48 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                     <>
                       <button
                         onClick={() => openAuthModal('sign-in')}
-                        className="font-medium text-base text-white transition-colors hover:text-gold tracking-wider"
+                        className="font-medium text-sm text-white transition-colors hover:text-gold tracking-widest"
                       >
                         เข้าสู่ระบบ
                       </button>
                       <span className="text-white/40">|</span>
                       <button
                         onClick={() => openAuthModal('sign-up')}
-                        className="font-medium text-base text-white transition-colors hover:text-gold tracking-wider"
+                        className="font-medium text-sm text-white transition-colors hover:text-gold tracking-widest"
                       >
                         สมัครสมาชิก
                       </button>
                     </>
                   )}
+                </div>
+              </div>
+
+              {/* Center Content - Logo and Navigation */}
+              <div className="flex flex-col items-center justify-center h-full">
+                {/* Logo */}
+                <Link href="/">
+                  <div className="relative w-32 h-32">
+                    <Image
+                      src="/images/logo.avif"
+                      alt="Roihin Logo"
+                      fill
+                      className="object-contain"
+                      priority
+                    />
+                  </div>
+                </Link>
+
+                {/* Menu Items */}
+                <div className="flex items-center space-x-8 mt-4">
+                  {navItems.map((item) => (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      className="font-medium text-base text-white transition-colors hover:text-gold tracking-wider"
+                    >
+                      {item.name}
+                    </Link>
+                  ))}
                 </div>
               </div>
             </div>
