@@ -1,13 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { X } from 'lucide-react'
 import Button from '@/components/Button'
+import ForgotPasswordModal from '@/components/ForgotPasswordModal'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useAuth } from '@/contexts/AuthContext'
-import ForgotPasswordModal from '@/components/ForgotPasswordModal'
+import { X } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 interface AuthModalProps {
   isOpen: boolean
@@ -24,7 +24,7 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
   const [error, setError] = useState<string | null>(null)
   const [signInData, setSignInData] = useState({
     email: '',
-    password: ''
+    password: '',
   })
   const [signUpData, setSignUpData] = useState({
     firstName: '',
@@ -33,7 +33,7 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
     phone: '',
     password: '',
     confirmPassword: '',
-    acceptTerms: false
+    acceptTerms: false,
   })
 
   useEffect(() => {
@@ -52,7 +52,7 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
     e.preventDefault()
     setIsLoading(true)
     setError(null)
-    
+
     try {
       await login(signInData.email, signInData.password)
       onClose()
@@ -68,19 +68,19 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
     e.preventDefault()
     setIsLoading(true)
     setError(null)
-    
+
     if (signUpData.password !== signUpData.confirmPassword) {
       setError('รหัสผ่านไม่ตรงกัน')
       setIsLoading(false)
       return
     }
-    
+
     if (!signUpData.acceptTerms) {
       setError('กรุณายอมรับข้อกำหนดการใช้งาน')
       setIsLoading(false)
       return
     }
-    
+
     try {
       await register({
         firstName: signUpData.firstName,
@@ -88,7 +88,7 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
         email: signUpData.email,
         phone: signUpData.phone,
         password: signUpData.password,
-        acceptTerms: signUpData.acceptTerms
+        acceptTerms: signUpData.acceptTerms,
       })
       onClose()
       router.push('/member')
@@ -103,11 +103,8 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      <div 
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-        onClick={onClose}
-      />
-      
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+
       <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
         <button
           onClick={onClose}
@@ -140,7 +137,7 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="password">รหัสผ่าน</Label>
-                  <button 
+                  <button
                     type="button"
                     onClick={() => setShowForgotPassword(true)}
                     className="text-sm text-[#005635] hover:underline"
@@ -176,12 +173,7 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
                 </Label>
               </div>
 
-              <Button
-                type="submit"
-                fullWidth
-                size="lg"
-                isLoading={isLoading}
-              >
+              <Button type="submit" fullWidth size="lg" isLoading={isLoading}>
                 เข้าสู่ระบบ
               </Button>
             </form>
@@ -189,7 +181,7 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
             <div className="mt-8 text-center">
               <p className="text-gray-600">
                 ยังไม่มีบัญชี?{' '}
-                <button 
+                <button
                   onClick={() => onModeChange('sign-up')}
                   className="font-semibold text-[#005635] hover:underline"
                 >
@@ -197,7 +189,6 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
                 </button>
               </p>
             </div>
-
           </div>
         ) : (
           <div className="p-8">
@@ -213,7 +204,7 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
                   <Input
                     id="firstName"
                     type="text"
-                    placeholder="สมชาย"
+                    placeholder=""
                     value={signUpData.firstName}
                     onChange={(e) => setSignUpData({ ...signUpData, firstName: e.target.value })}
                     required
@@ -224,7 +215,7 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
                   <Input
                     id="lastName"
                     type="text"
-                    placeholder="ใจดี"
+                    placeholder=""
                     value={signUpData.lastName}
                     onChange={(e) => setSignUpData({ ...signUpData, lastName: e.target.value })}
                     required
@@ -237,7 +228,7 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
                 <Input
                   id="email"
                   type="email"
-                  placeholder="somchai@example.com"
+                  placeholder=""
                   value={signUpData.email}
                   onChange={(e) => setSignUpData({ ...signUpData, email: e.target.value })}
                   required
@@ -250,11 +241,11 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
                 <Input
                   id="phone"
                   type="tel"
-                  placeholder="081 234 5678"
+                  placeholder=""
                   value={signUpData.phone}
                   onChange={(e) => setSignUpData({ ...signUpData, phone: e.target.value })}
                   required
-                  className="w-full"
+                  className="w-full font-prompt"
                 />
               </div>
 
@@ -263,7 +254,7 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
                 <Input
                   id="password"
                   type="password"
-                  placeholder="สร้างรหัสผ่าน"
+                  placeholder=""
                   value={signUpData.password}
                   onChange={(e) => setSignUpData({ ...signUpData, password: e.target.value })}
                   required
@@ -276,9 +267,11 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
                 <Input
                   id="confirmPassword"
                   type="password"
-                  placeholder="ยืนยันรหัสผ่านของคุณ"
+                  placeholder=""
                   value={signUpData.confirmPassword}
-                  onChange={(e) => setSignUpData({ ...signUpData, confirmPassword: e.target.value })}
+                  onChange={(e) =>
+                    setSignUpData({ ...signUpData, confirmPassword: e.target.value })
+                  }
                   required
                   className="w-full"
                 />
@@ -311,12 +304,7 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
                 </div>
               )}
 
-              <Button
-                type="submit"
-                fullWidth
-                size="lg"
-                isLoading={isLoading}
-              >
+              <Button type="submit" fullWidth size="lg" isLoading={isLoading}>
                 สร้างบัญชี
               </Button>
             </form>
@@ -324,7 +312,7 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
             <div className="mt-6 text-center">
               <p className="text-gray-600">
                 มีบัญชีแล้ว?{' '}
-                <button 
+                <button
                   onClick={() => onModeChange('sign-in')}
                   className="font-semibold text-[#005635] hover:underline"
                 >
@@ -335,7 +323,7 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
           </div>
         )}
       </div>
-      
+
       <ForgotPasswordModal
         isOpen={showForgotPassword}
         onClose={() => setShowForgotPassword(false)}
