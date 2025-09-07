@@ -254,25 +254,6 @@ export default function ProductDetail({ product, category, language = 'en' }: Pr
 
             {/* Add to Cart CTA */}
             <div className="border-t border-gray-800 pt-6 space-y-3">
-              <div className="flex gap-3">
-                <WishlistButton
-                  product={{
-                    id: product.id,
-                    slug: product.slug,
-                    title: product.title,
-                    price: selectedPrice || 0,
-                    image: allImages[0] || '/images/placeholder.jpg',
-                    category:
-                      language === 'th'
-                        ? category.name_th || category.name_en
-                        : category.name_en || category.name_th,
-                  }}
-                  color={selectedColorData?.color}
-                  showText
-                  className="flex-shrink-0"
-                />
-              </div>
-
               <button
                 onClick={() => {
                   if (selectedPrice && selectedColorData) {
