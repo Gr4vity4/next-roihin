@@ -692,7 +692,7 @@ export default function BraceletDesigner() {
 
   return (
     <>
-      <div className="container mx-auto min-h-32 grid grid-cols-12 gap-4 md:gap-0">
+      <div className="container mx-auto min-h-24 grid grid-cols-12 gap-4 md:gap-0">
         <div className="col-span-6 md:col-span-4 flex justify-center flex-col">
           <span className="text-[#006039] text-lg">ความยาวรอบข้อมือ</span>
           <Select value={wristLength} onValueChange={setWristLength}>
@@ -761,11 +761,11 @@ export default function BraceletDesigner() {
       `}</style>
 
       <div className="container mx-auto">
-        <div className="flex items-center justify-center flex-col">
+        <div className="flex items-center justify-center flex-col gap-2">
           {/* Stage */}
           <section
             ref={stageRef}
-            className="relative w-[520px] h-[320px] md:h-[520px] max-w-[90vw] aspect-square overflow-hidden"
+            className="relative w-[520px] h-[320px] max-w-[90vw] aspect-square overflow-hidden"
           >
             <div className="absolute inset-0 grid place-items-center">
               <div
