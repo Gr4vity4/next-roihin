@@ -221,7 +221,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                 >
                   <ShoppingCartIcon className="w-6 h-6" />
                   {itemCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-gold text-black text-xs font-bold rounded-full min-w-[20px] h-5 px-1.5 flex items-center justify-center">
+                    <span className="absolute -top-1 -right-1 bg-white font-prompt text-black text-xs font-bold rounded-full min-w-[20px] h-5 px-1.5 flex items-center justify-center">
                       {itemCount > 99 ? '99+' : itemCount}
                     </span>
                   )}
@@ -353,7 +353,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                 >
                   <ShoppingCartIcon className="w-6 h-6" />
                   {itemCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-gold text-black text-xs font-bold rounded-full min-w-[20px] h-5 px-1.5 flex items-center justify-center">
+                    <span className="absolute -top-1 -right-1 bg-white font-prompt text-black text-xs font-bold rounded-full min-w-[20px] h-5 px-1.5 flex items-center justify-center">
                       {itemCount > 99 ? '99+' : itemCount}
                     </span>
                   )}
@@ -536,7 +536,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
             >
               <ShoppingCartIcon className="w-6 h-6" />
               {itemCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-gold text-black text-xs font-bold rounded-full min-w-[20px] h-5 px-1.5 flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 bg-white font-prompt text-black text-xs font-bold rounded-full min-w-[20px] h-5 px-1.5 flex items-center justify-center">
                   {itemCount > 99 ? '99+' : itemCount}
                 </span>
               )}
