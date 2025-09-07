@@ -243,7 +243,7 @@ export default function BraceletDesigner() {
       if (updatedBeads[0].el) {
         const element = updatedBeads[0].el!
         const isPendant = updatedBeads[0].stoneSetting?.category === 'Pendant'
-        const pendantOffset = isPendant ? 20 : 0
+        const pendantOffset = isPendant ? (updatedBeads[0].size === 6 ? 4 : updatedBeads[0].size === 8 ? 6 : updatedBeads[0].size === 10 ? 8 : updatedBeads[0].size === 12 ? 10 : 0) : 0
 
         const baseX = geometryRef.current.cx + Rnew * Math.cos(theta)
         const baseY = geometryRef.current.cy + Rnew * Math.sin(theta)
@@ -267,7 +267,7 @@ export default function BraceletDesigner() {
         if (updatedBeads[i].el) {
           const element = updatedBeads[i].el!
           const isPendant = updatedBeads[i].stoneSetting?.category === 'Pendant'
-          const pendantOffset = isPendant ? 20 : 0
+          const pendantOffset = isPendant ? (updatedBeads[i].size === 6 ? 4 : updatedBeads[i].size === 8 ? 6 : updatedBeads[i].size === 10 ? 8 : updatedBeads[i].size === 12 ? 10 : 0) : 0
 
           const baseX = geometryRef.current.cx + Rnew * Math.cos(theta)
           const baseY = geometryRef.current.cy + Rnew * Math.sin(theta)
@@ -444,7 +444,7 @@ export default function BraceletDesigner() {
     if (firstBeadEl) {
       newBeads[0].theta = theta
       const isPendant = newBeads[0].stoneSetting?.category === 'Pendant'
-      const pendantOffset = isPendant ? 20 : 0
+      const pendantOffset = isPendant ? (newBeads[0].size === 6 ? 4 : newBeads[0].size === 8 ? 6 : newBeads[0].size === 10 ? 8 : newBeads[0].size === 12 ? 10 : 0) : 0
 
       const baseX = geometryRef.current.cx + R * Math.cos(theta)
       const baseY = geometryRef.current.cy + R * Math.sin(theta)
@@ -468,7 +468,7 @@ export default function BraceletDesigner() {
       if (beadEl) {
         newBeads[i].theta = theta
         const isPendant = newBeads[i].stoneSetting?.category === 'Pendant'
-        const pendantOffset = isPendant ? 20 : 0
+        const pendantOffset = isPendant ? (newBeads[i].size === 6 ? 4 : newBeads[i].size === 8 ? 6 : newBeads[i].size === 10 ? 8 : newBeads[i].size === 12 ? 10 : 0) : 0
 
         const baseX = geometryRef.current.cx + R * Math.cos(theta)
         const baseY = geometryRef.current.cy + R * Math.sin(theta)
@@ -642,7 +642,7 @@ export default function BraceletDesigner() {
 
     // Calculate position with offset for pendants
     const isPendant = stone.category === 'Pendant'
-    const pendantOffset = isPendant ? 4 : 0 // Move pendants 20px forward (outward)
+    const pendantOffset = isPendant ? (beadSize === 6 ? 4 : beadSize === 8 ? 6 : beadSize === 10 ? 8 : beadSize === 12 ? 10 : 0) : 0 // Dynamic offset based on bead size
 
     const baseX = geometryRef.current.cx + geometryRef.current.R * Math.cos(theta)
     const baseY = geometryRef.current.cy + geometryRef.current.R * Math.sin(theta)
@@ -820,11 +820,11 @@ export default function BraceletDesigner() {
       `}</style>
 
       <div className="container mx-auto">
-        <div className="flex items-center justify-center flex-col gap-2">
+        <div className="flex items-center justify-center flex-col gap-4">
           {/* Stage */}
           <section
             ref={stageRef}
-            className="relative w-[520px] h-[320px] max-w-[90vw] aspect-square overflow-hidden"
+            className="relative w-[520px] h-[320px] md:h-[360px] max-w-[90vw] aspect-square overflow-hidden"
           >
             <div className="absolute inset-0 grid place-items-center">
               <div
