@@ -56,7 +56,7 @@ interface CustomerInfo {
 export default function BraceletDesigner() {
   const { language } = useLanguage()
   const [beadSize, setBeadSize] = useState(6)
-  const [wristLength, setWristLength] = useState('15')
+  const [wristLength, setWristLength] = useState('14')
   const [beads, setBeads] = useState<Bead[]>([])
   const [lastSelectedBead, setLastSelectedBead] = useState<Stone['acf'] | null>(null)
   const [stoneSettings, setStoneSettings] = useState<Stone[]>([])
@@ -243,7 +243,17 @@ export default function BraceletDesigner() {
       if (updatedBeads[0].el) {
         const element = updatedBeads[0].el!
         const isPendant = updatedBeads[0].stoneSetting?.category === 'Pendant'
-        const pendantOffset = isPendant ? (updatedBeads[0].size === 6 ? 4 : updatedBeads[0].size === 8 ? 6 : updatedBeads[0].size === 10 ? 8 : updatedBeads[0].size === 12 ? 10 : 0) : 0
+        const pendantOffset = isPendant
+          ? updatedBeads[0].size === 6
+            ? 4
+            : updatedBeads[0].size === 8
+            ? 6
+            : updatedBeads[0].size === 10
+            ? 8
+            : updatedBeads[0].size === 12
+            ? 10
+            : 0
+          : 0
 
         const baseX = geometryRef.current.cx + Rnew * Math.cos(theta)
         const baseY = geometryRef.current.cy + Rnew * Math.sin(theta)
@@ -267,7 +277,17 @@ export default function BraceletDesigner() {
         if (updatedBeads[i].el) {
           const element = updatedBeads[i].el!
           const isPendant = updatedBeads[i].stoneSetting?.category === 'Pendant'
-          const pendantOffset = isPendant ? (updatedBeads[i].size === 6 ? 4 : updatedBeads[i].size === 8 ? 6 : updatedBeads[i].size === 10 ? 8 : updatedBeads[i].size === 12 ? 10 : 0) : 0
+          const pendantOffset = isPendant
+            ? updatedBeads[i].size === 6
+              ? 4
+              : updatedBeads[i].size === 8
+              ? 6
+              : updatedBeads[i].size === 10
+              ? 8
+              : updatedBeads[i].size === 12
+              ? 10
+              : 0
+            : 0
 
           const baseX = geometryRef.current.cx + Rnew * Math.cos(theta)
           const baseY = geometryRef.current.cy + Rnew * Math.sin(theta)
@@ -313,6 +333,9 @@ export default function BraceletDesigner() {
     } else if (wristLengthNum === 15) {
       // Smaller size for 15cm
       scale = 0.95
+    } else if (wristLengthNum === 14) {
+      // Smaller size for 14cm
+      scale = 0.85
     }
 
     // Apply mobile scaling (1.5 times smaller)
@@ -444,7 +467,17 @@ export default function BraceletDesigner() {
     if (firstBeadEl) {
       newBeads[0].theta = theta
       const isPendant = newBeads[0].stoneSetting?.category === 'Pendant'
-      const pendantOffset = isPendant ? (newBeads[0].size === 6 ? 4 : newBeads[0].size === 8 ? 6 : newBeads[0].size === 10 ? 8 : newBeads[0].size === 12 ? 10 : 0) : 0
+      const pendantOffset = isPendant
+        ? newBeads[0].size === 6
+          ? 4
+          : newBeads[0].size === 8
+          ? 6
+          : newBeads[0].size === 10
+          ? 8
+          : newBeads[0].size === 12
+          ? 10
+          : 0
+        : 0
 
       const baseX = geometryRef.current.cx + R * Math.cos(theta)
       const baseY = geometryRef.current.cy + R * Math.sin(theta)
@@ -468,7 +501,17 @@ export default function BraceletDesigner() {
       if (beadEl) {
         newBeads[i].theta = theta
         const isPendant = newBeads[i].stoneSetting?.category === 'Pendant'
-        const pendantOffset = isPendant ? (newBeads[i].size === 6 ? 4 : newBeads[i].size === 8 ? 6 : newBeads[i].size === 10 ? 8 : newBeads[i].size === 12 ? 10 : 0) : 0
+        const pendantOffset = isPendant
+          ? newBeads[i].size === 6
+            ? 4
+            : newBeads[i].size === 8
+            ? 6
+            : newBeads[i].size === 10
+            ? 8
+            : newBeads[i].size === 12
+            ? 10
+            : 0
+          : 0
 
         const baseX = geometryRef.current.cx + R * Math.cos(theta)
         const baseY = geometryRef.current.cy + R * Math.sin(theta)
@@ -642,7 +685,17 @@ export default function BraceletDesigner() {
 
     // Calculate position with offset for pendants
     const isPendant = stone.category === 'Pendant'
-    const pendantOffset = isPendant ? (beadSize === 6 ? 4 : beadSize === 8 ? 6 : beadSize === 10 ? 8 : beadSize === 12 ? 10 : 0) : 0 // Dynamic offset based on bead size
+    const pendantOffset = isPendant
+      ? beadSize === 6
+        ? 4
+        : beadSize === 8
+        ? 6
+        : beadSize === 10
+        ? 8
+        : beadSize === 12
+        ? 10
+        : 0
+      : 0 // Dynamic offset based on bead size
 
     const baseX = geometryRef.current.cx + geometryRef.current.R * Math.cos(theta)
     const baseY = geometryRef.current.cy + geometryRef.current.R * Math.sin(theta)
@@ -758,6 +811,7 @@ export default function BraceletDesigner() {
               <SelectValue placeholder="Select length" />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="14">14 cm</SelectItem>
               <SelectItem value="15">15 cm</SelectItem>
               <SelectItem value="16">16 cm</SelectItem>
               <SelectItem value="17">17 cm</SelectItem>
