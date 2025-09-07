@@ -875,7 +875,7 @@ export default function BraceletDesigner() {
                 )}
               </div>
               {/* preview bead detail */}
-              <div className="col-span-full md:col-span-9 flex flex-col gap-4">
+              <div className="col-span-full md:col-span-9 flex flex-col gap-2">
                 {lastSelectedBead ? (
                   <>
                     {/* bead header */}
