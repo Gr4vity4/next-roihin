@@ -34,6 +34,7 @@ interface WishlistContextType {
   addItem: (productId: number, color?: string) => Promise<void>
   removeItem: (itemId: string) => Promise<void>
   removeByProductId: (productId: number, color?: string) => Promise<void>
+  toggleItem: (productId: number, color?: string) => Promise<boolean>
   isInWishlist: (productId: number, color?: string) => boolean
   getItemId: (productId: number, color?: string) => string | null
   clearWishlist: () => Promise<void>
@@ -183,6 +184,54 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     return item?.id || null
   }
 
+  const toggleItem = async (productId: number, color?: string): Promise<boolean> => {
+    try {
+      setError(null)
+      const response = await fetch('/api/wishlist/toggle', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          product_id: productId,
+          color: color || null,
+        }),
+        credentials: 'include',
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to toggle wishlist')
+      }
+
+      const result = await response.json()
+      
+      if (result.action === 'added') {
+        // Add the item to local state
+        setItems(prevItems => [...prevItems, {
+          id: result.item.id,
+          product_id: result.item.product_id,
+          color: result.item.color,
+          added_at: result.item.added_at,
+        }])
+        return true
+      } else if (result.action === 'removed') {
+        // Remove the item from local state
+        setItems(prevItems => 
+          prevItems.filter(item => 
+            !(item.product_id === productId && item.color === (color || undefined))
+          )
+        )
+        return false
+      }
+      
+      return isInWishlist(productId, color)
+    } catch (err) {
+      console.error('Failed to toggle wishlist:', err)
+      setError(err instanceof Error ? err.message : 'Failed to toggle wishlist')
+      throw err
+    }
+  }
+
   const clearWishlist = async () => {
     try {
       setError(null)
@@ -210,6 +259,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     addItem,
     removeItem,
     removeByProductId,
+    toggleItem,
     isInWishlist,
     getItemId,
     clearWishlist,

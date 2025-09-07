@@ -70,7 +70,7 @@ export async function toggleWishlist({
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({
-      product_id: productId,
+      product: productId,
       color: color ?? null,
       op,
     }),
@@ -82,7 +82,44 @@ export async function toggleWishlist({
     throw new Error(error.message || 'Failed to toggle wishlist')
   }
 
-  return response.json()
+  const data = await response.json()
+  
+  // Map WordPress API response to our expected format
+  if (data.added) {
+    return {
+      action: 'added',
+      item: {
+        id: data.item.id,
+        product_id: data.item.product,
+        color: data.item.color,
+        added_at: new Date(data.item.added_at).getTime(),
+      },
+      count: data.count,
+    }
+  } else if (data.removed) {
+    return {
+      action: 'removed',
+      item: {
+        id: data.item.id,
+        product_id: data.item.product,
+        color: data.item.color,
+        added_at: new Date(data.item.added_at).getTime(),
+      },
+      count: data.count,
+    }
+  }
+  
+  // Fallback for toggle without explicit add/remove
+  return {
+    action: 'kept',
+    item: {
+      id: data.item.id,
+      product_id: data.item.product,
+      color: data.item.color,
+      added_at: new Date(data.item.added_at).getTime(),
+    },
+    count: data.count,
+  }
 }
 
 export async function fetchWishlist(token: string): Promise<WishlistResponse> {

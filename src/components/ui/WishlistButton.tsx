@@ -28,7 +28,7 @@ export default function WishlistButton({
   size = 'md',
   showText = false,
 }: WishlistButtonProps) {
-  const { addItem, removeByProductId, isInWishlist, loading } = useWishlist()
+  const { toggleItem, isInWishlist, loading } = useWishlist()
   const [isWishlisted, setIsWishlisted] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
@@ -48,16 +48,10 @@ export default function WishlistButton({
     setIsProcessing(true)
 
     try {
-      if (isWishlisted) {
-        await removeByProductId(product.id, selectedColor)
-        setIsWishlisted(false)
-      } else {
-        await addItem(product.id, selectedColor)
-        setIsWishlisted(true)
-      }
+      const newState = await toggleItem(product.id, selectedColor)
+      setIsWishlisted(newState)
     } catch (error) {
       console.error('Failed to toggle wishlist:', error)
-      setIsWishlisted(!isWishlisted)
     } finally {
       setIsProcessing(false)
       setTimeout(() => {
