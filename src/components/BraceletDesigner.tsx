@@ -246,6 +246,9 @@ export default function BraceletDesigner() {
           geometryRef.current.cx + Rnew * Math.cos(theta) - updatedBeads[0].r + 'px'
         element.style.top =
           geometryRef.current.cy + Rnew * Math.sin(theta) - updatedBeads[0].r + 'px'
+        // Apply rotation to align tangentially with circle
+        const rotationAngle = (theta * 180 / Math.PI) - 90
+        element.style.transform = `rotate(${rotationAngle}deg) scale(1)`
         // Ensure dataset is set for drag and drop
         element.dataset.beadId = updatedBeads[0].id
       }
@@ -261,6 +264,9 @@ export default function BraceletDesigner() {
             geometryRef.current.cx + Rnew * Math.cos(theta) - updatedBeads[i].r + 'px'
           element.style.top =
             geometryRef.current.cy + Rnew * Math.sin(theta) - updatedBeads[i].r + 'px'
+          // Apply rotation to align tangentially with circle
+          const rotationAngle = (theta * 180 / Math.PI) - 90
+          element.style.transform = `rotate(${rotationAngle}deg) scale(1)`
           // Ensure dataset is set for drag and drop
           element.dataset.beadId = updatedBeads[i].id
         }
@@ -427,6 +433,9 @@ export default function BraceletDesigner() {
       newBeads[0].theta = theta
       firstBeadEl.style.left = geometryRef.current.cx + R * Math.cos(theta) - newBeads[0].r + 'px'
       firstBeadEl.style.top = geometryRef.current.cy + R * Math.sin(theta) - newBeads[0].r + 'px'
+      // Apply rotation to align tangentially with circle
+      const rotationAngle = (theta * 180 / Math.PI) - 90
+      firstBeadEl.style.transform = `rotate(${rotationAngle}deg) scale(1)`
 
       // Update dataset for drag and drop
       firstBeadEl.dataset.beadId = newBeads[0].id
@@ -440,6 +449,9 @@ export default function BraceletDesigner() {
         newBeads[i].theta = theta
         beadEl.style.left = geometryRef.current.cx + R * Math.cos(theta) - newBeads[i].r + 'px'
         beadEl.style.top = geometryRef.current.cy + R * Math.sin(theta) - newBeads[i].r + 'px'
+        // Apply rotation to align tangentially with circle
+        const rotationAngle = (theta * 180 / Math.PI) - 90
+        beadEl.style.transform = `rotate(${rotationAngle}deg) scale(1)`
 
         // Update dataset for drag and drop
         beadEl.dataset.beadId = newBeads[i].id
@@ -602,12 +614,19 @@ export default function BraceletDesigner() {
 
     el.style.left = geometryRef.current.cx + geometryRef.current.R * Math.cos(theta) - r + 'px'
     el.style.top = geometryRef.current.cy + geometryRef.current.R * Math.sin(theta) - r + 'px'
+    // Apply rotation to align tangentially with circle
+    const rotationAngle = (theta * 180 / Math.PI) - 90
+    el.style.transform = `rotate(${rotationAngle}deg) scale(0.6)`
 
     // Display image without border radius to show original shape
 
     if (beadsLayerRef.current) {
       beadsLayerRef.current.appendChild(el)
-      requestAnimationFrame(() => el.classList.add('show'))
+      requestAnimationFrame(() => {
+        el.classList.add('show')
+        // Update transform to include rotation and scale
+        el.style.transform = `rotate(${rotationAngle}deg) scale(1)`
+      })
     }
 
     const price = getStonePrice(stone, beadSize)
@@ -738,9 +757,10 @@ export default function BraceletDesigner() {
             transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
           transform: scale(0.6);
           pointer-events: auto !important;
+          transform-origin: center;
         }
         .bead.show {
-          transform: scale(1);
+          /* Transform is now set via JavaScript to include rotation */
         }
         .bead:hover {
           filter: brightness(1.2);
