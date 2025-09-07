@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import Button from '@/components/Button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useEffect, useState } from 'react'
 
 interface ProfileData {
   id: number
@@ -45,22 +45,22 @@ export default function ProfilePage() {
     try {
       setIsFetching(true)
       setError(null)
-      
+
       const response = await fetch('/api/profile')
-      
+
       if (!response.ok) {
         const errorData = await response.json()
         throw new Error(errorData.error || 'Failed to fetch profile')
       }
-      
+
       const data: ProfileData = await response.json()
-      
+
       // Log the received data for debugging
       console.log('Received profile data:', data)
-      
+
       // Extract phone from multiple possible fields
       const phoneValue = data.phone_number || data.phone || data.billing_phone || ''
-      
+
       setFormData({
         firstName: data.first_name || '',
         lastName: data.last_name || '',
@@ -69,16 +69,16 @@ export default function ProfilePage() {
         birthDate: data.birth_date || '',
         gender: data.gender || 'male',
       })
-      
+
       // Enhanced logging to debug phone field
       console.log('Phone number extraction from API:', {
         'data.phone_number': data.phone_number,
         'data.phone': data.phone,
         'data.billing_phone': data.billing_phone,
-        'extracted_value': phoneValue,
-        'is_empty': !phoneValue || phoneValue.trim() === ''
+        extracted_value: phoneValue,
+        is_empty: !phoneValue || phoneValue.trim() === '',
       })
-      
+
       if (data.member_since) {
         setMemberSince(data.member_since.human)
       }
@@ -95,7 +95,7 @@ export default function ProfilePage() {
     setIsLoading(true)
     setError(null)
     setSuccess(null)
-    
+
     try {
       const response = await fetch('/api/profile', {
         method: 'PATCH',
@@ -111,16 +111,16 @@ export default function ProfilePage() {
           gender: formData.gender,
         }),
       })
-      
+
       const data = await response.json()
-      
+
       if (!response.ok) {
         throw new Error(data.error || 'Failed to update profile')
       }
-      
+
       // Update form data with the response, ensuring phone number is preserved
       const updatedPhone = data.phone_number || data.phone || formData.phone || ''
-      
+
       setFormData({
         firstName: data.first_name || formData.firstName || '',
         lastName: data.last_name || formData.lastName || '',
@@ -129,15 +129,15 @@ export default function ProfilePage() {
         birthDate: data.birth_date || formData.birthDate || '',
         gender: data.gender || formData.gender || 'male',
       })
-      
+
       // Log update result for debugging
       console.log('Updated phone number:', {
         response_phone_number: data.phone_number,
         response_phone: data.phone,
         form_phone: formData.phone,
-        final_phone: updatedPhone
+        final_phone: updatedPhone,
       })
-      
+
       setIsEditing(false)
       setSuccess('บันทึกข้อมูลเรียบร้อยแล้ว')
       setTimeout(() => setSuccess(null), 3000)
@@ -189,7 +189,7 @@ export default function ProfilePage() {
               <p className="text-gray-500">Member since {memberSince}</p>
             </div>
             <Button
-              onClick={() => isEditing ? setIsEditing(false) : setIsEditing(true)}
+              onClick={() => (isEditing ? setIsEditing(false) : setIsEditing(true))}
               variant="outline"
             >
               {isEditing ? 'Cancel' : 'Edit Profile'}
@@ -247,24 +247,15 @@ export default function ProfilePage() {
                 disabled={!isEditing}
                 className="w-full"
                 placeholder={
-                  isEditing 
-                    ? "กรุณากรอกเบอร์โทรศัพท์ (เช่น 0812345678)" 
-                    : (!formData.phone || formData.phone.trim() === '') 
-                      ? "ยังไม่มีข้อมูลเบอร์โทรศัพท์" 
-                      : ""
+                  isEditing
+                    ? 'กรุณากรอกเบอร์โทรศัพท์ (เช่น 0812345678)'
+                    : !formData.phone || formData.phone.trim() === ''
+                    ? 'ยังไม่มีข้อมูลเบอร์โทรศัพท์'
+                    : ''
                 }
               />
-              {(!formData.phone || formData.phone.trim() === '') && !isEditing && (
-                <div className="text-sm text-amber-600 mt-1">
-                  <span className="font-medium">⚠️ กรุณาเพิ่มเบอร์โทรศัพท์</span>
-                  <br />
-                  <span className="text-gray-500">เพื่อรับข่าวสารและโปรโมชั่นพิเศษ</span>
-                </div>
-              )}
               {formData.phone && formData.phone.trim() !== '' && !isEditing && (
-                <div className="text-sm text-green-600 mt-1">
-                  ✓ เบอร์โทรศัพท์บันทึกแล้ว
-                </div>
+                <div className="text-sm text-green-600 mt-1">✓ เบอร์โทรศัพท์บันทึกแล้ว</div>
               )}
             </div>
           </div>
@@ -286,7 +277,12 @@ export default function ProfilePage() {
               <select
                 id="gender"
                 value={formData.gender}
-                onChange={(e) => setFormData({ ...formData, gender: e.target.value as 'male' | 'female' | 'other' | 'prefer_not_to_say' })}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    gender: e.target.value as 'male' | 'female' | 'other' | 'prefer_not_to_say',
+                  })
+                }
                 disabled={!isEditing}
                 className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               >
@@ -300,17 +296,10 @@ export default function ProfilePage() {
 
           {isEditing && (
             <div className="flex justify-end space-x-3 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setIsEditing(false)}
-              >
+              <Button type="button" variant="outline" onClick={() => setIsEditing(false)}>
                 Cancel
               </Button>
-              <Button
-                type="submit"
-                isLoading={isLoading}
-              >
+              <Button type="submit" isLoading={isLoading}>
                 Save Changes
               </Button>
             </div>
