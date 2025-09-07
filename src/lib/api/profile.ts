@@ -55,9 +55,26 @@ export async function getProfile(): Promise<ProfileData> {
   // Log the raw data from WordPress for debugging
   console.log('Raw WordPress profile data:', JSON.stringify(data, null, 2))
   
-  // Ensure all fields are present, providing defaults if missing
-  const phone_number = data.phone_number || data.phone || data.acf?.phone_number || ''
-  console.log('Resolved phone number:', phone_number)
+  // Check all possible phone field locations from WordPress
+  // WordPress might store phone in user meta, ACF fields, or custom fields
+  const phone_number = data.phone_number || 
+                       data.phone || 
+                       data.meta?.phone_number || 
+                       data.meta?.phone || 
+                       data.acf?.phone_number || 
+                       data.acf?.phone ||
+                       data.billing_phone || // WooCommerce field
+                       ''
+  console.log('Resolved phone number from multiple sources:', {
+    'data.phone_number': data.phone_number,
+    'data.phone': data.phone,
+    'data.meta?.phone_number': data.meta?.phone_number,
+    'data.meta?.phone': data.meta?.phone,
+    'data.acf?.phone_number': data.acf?.phone_number,
+    'data.acf?.phone': data.acf?.phone,
+    'data.billing_phone': data.billing_phone,
+    'final': phone_number
+  })
   
   const profileData: ProfileData = {
     id: data.id,
@@ -83,14 +100,21 @@ export async function updateProfile(payload: UpdateProfileData): Promise<Profile
     throw new Error('No authentication token found')
   }
 
-  // Ensure phone_number field is sent correctly
+  // Ensure phone_number field is sent in all possible formats WordPress might expect
   const requestBody = {
     ...payload,
-    // Map phone field if present
-    phone_number: payload.phone_number || undefined
+    // Send phone number in multiple fields to ensure WordPress receives it
+    phone_number: payload.phone_number || undefined,
+    phone: payload.phone_number || undefined, // Some WordPress setups use 'phone'
+    billing_phone: payload.phone_number || undefined, // WooCommerce field
+    // If phone_number exists, also try to update user meta
+    meta: payload.phone_number ? {
+      phone_number: payload.phone_number,
+      phone: payload.phone_number
+    } : undefined
   }
 
-  console.log('Sending update to WordPress:', requestBody)
+  console.log('Sending update to WordPress with multiple phone fields:', requestBody)
 
   const response = await fetch(`${API_URL}/wp-json/roihin/v1/me`, {
     method: 'PATCH',
@@ -108,9 +132,27 @@ export async function updateProfile(payload: UpdateProfileData): Promise<Profile
     throw new Error(data.message || 'Update failed')
   }
   
-  // Resolve phone number with proper fallback chain
-  const updated_phone = data.phone_number || data.phone || data.acf?.phone_number || payload.phone_number || ''
-  console.log('Updated phone number resolved:', updated_phone)
+  // Resolve phone number with proper fallback chain from multiple sources
+  const updated_phone = data.phone_number || 
+                       data.phone || 
+                       data.meta?.phone_number || 
+                       data.meta?.phone || 
+                       data.acf?.phone_number || 
+                       data.acf?.phone ||
+                       data.billing_phone || // WooCommerce field
+                       payload.phone_number || 
+                       ''
+  console.log('Updated phone number resolved from multiple sources:', {
+    'data.phone_number': data.phone_number,
+    'data.phone': data.phone,
+    'data.meta?.phone_number': data.meta?.phone_number,
+    'data.meta?.phone': data.meta?.phone,
+    'data.acf?.phone_number': data.acf?.phone_number,
+    'data.acf?.phone': data.acf?.phone,
+    'data.billing_phone': data.billing_phone,
+    'payload.phone_number': payload.phone_number,
+    'final': updated_phone
+  })
   
   // Ensure all fields are present in the response
   const profileData: ProfileData = {

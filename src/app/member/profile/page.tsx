@@ -11,7 +11,7 @@ interface ProfileData {
   first_name: string
   last_name: string
   phone?: string // Some responses may use 'phone' instead of 'phone_number'
-  phone_number: string
+  phone_number?: string // Make optional since it might not exist
   birth_date: string
   gender: 'male' | 'female' | 'other' | 'prefer_not_to_say'
   member_since: {
@@ -57,20 +57,25 @@ export default function ProfilePage() {
       // Log the received data for debugging
       console.log('Received profile data:', data)
       
+      // Extract phone from multiple possible fields
+      const phoneValue = data.phone_number || data.phone || data.billing_phone || ''
+      
       setFormData({
         firstName: data.first_name || '',
         lastName: data.last_name || '',
         email: data.email || '',
-        phone: data.phone_number || data.phone || '', // Check both fields with proper fallback
+        phone: phoneValue, // Use extracted phone value
         birthDate: data.birth_date || '',
         gender: data.gender || 'male',
       })
       
-      // Additional logging to debug phone field
-      console.log('Phone number from API:', {
-        phone_number: data.phone_number,
-        phone: data.phone,
-        final_phone: data.phone_number || data.phone || ''
+      // Enhanced logging to debug phone field
+      console.log('Phone number extraction from API:', {
+        'data.phone_number': data.phone_number,
+        'data.phone': data.phone,
+        'data.billing_phone': data.billing_phone,
+        'extracted_value': phoneValue,
+        'is_empty': !phoneValue || phoneValue.trim() === ''
       })
       
       if (data.member_since) {
@@ -240,16 +245,24 @@ export default function ProfilePage() {
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 disabled={!isEditing}
                 className="w-full"
-                placeholder={!isEditing && !formData.phone ? "ยังไม่มีข้อมูลเบอร์โทรศัพท์" : isEditing ? "กรุณากรอกเบอร์โทรศัพท์ (เช่น 0812345678)" : ""}
+                placeholder={
+                  isEditing 
+                    ? "กรุณากรอกเบอร์โทรศัพท์ (เช่น 0812345678)" 
+                    : (!formData.phone || formData.phone.trim() === '') 
+                      ? "ยังไม่มีข้อมูลเบอร์โทรศัพท์" 
+                      : ""
+                }
               />
-              {!formData.phone && !isEditing && (
-                <div className="text-sm text-gray-500 mt-1">
-                  กรุณาเพิ่มเบอร์โทรศัพท์ของคุณเพื่อรับข่าวสารและโปรโมชั่น
+              {(!formData.phone || formData.phone.trim() === '') && !isEditing && (
+                <div className="text-sm text-amber-600 mt-1">
+                  <span className="font-medium">⚠️ กรุณาเพิ่มเบอร์โทรศัพท์</span>
+                  <br />
+                  <span className="text-gray-500">เพื่อรับข่าวสารและโปรโมชั่นพิเศษ</span>
                 </div>
               )}
-              {formData.phone && !isEditing && (
+              {formData.phone && formData.phone.trim() !== '' && !isEditing && (
                 <div className="text-sm text-green-600 mt-1">
-                  เบอร์โทรศัพท์: {formData.phone}
+                  ✓ เบอร์โทรศัพท์บันทึกแล้ว
                 </div>
               )}
             </div>
