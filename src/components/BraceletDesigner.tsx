@@ -85,6 +85,10 @@ export default function BraceletDesigner() {
   const [paymentSlipPreview, setPaymentSlipPreview] = useState<string>('')
   const [draggedBead, setDraggedBead] = useState<string | null>(null)
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
+  const [showSizeWarning, setShowSizeWarning] = useState(false)
+  const [pendingBeadSize, setPendingBeadSize] = useState<number | null>(null)
+  const [showWristWarning, setShowWristWarning] = useState(false)
+  const [pendingWristLength, setPendingWristLength] = useState<string | null>(null)
   const stageRef = useRef<HTMLDivElement>(null)
   const ringRef = useRef<HTMLDivElement>(null)
   const beadsLayerRef = useRef<HTMLDivElement>(null)
@@ -989,7 +993,17 @@ export default function BraceletDesigner() {
       <div className="container mx-auto min-h-24 grid grid-cols-12 gap-4 md:gap-0">
         <div className="col-span-6 md:col-span-4 flex justify-center flex-col">
           <span className="text-[#006039] text-lg">ความยาวรอบข้อมือ</span>
-          <Select value={wristLength} onValueChange={setWristLength}>
+          <Select value={wristLength} onValueChange={(value) => {
+            const newMaxCount = MAX_BEAD_COUNTS[value]?.[beadSize] || 30
+            
+            // Check if current bead count exceeds new maximum
+            if (beads.length > newMaxCount) {
+              setPendingWristLength(value)
+              setShowWristWarning(true)
+            } else {
+              setWristLength(value)
+            }
+          }}>
             <SelectTrigger className="w-[100px]">
               <SelectValue placeholder="Select length" />
             </SelectTrigger>
@@ -1007,7 +1021,18 @@ export default function BraceletDesigner() {
         {/* Bead Size */}
         <div className="col-span-6 md:col-span-4 flex justify-center flex-col">
           <span className="text-[#006039] text-lg">ขนาดหิน</span>
-          <Select value={String(beadSize)} onValueChange={(value) => setBeadSize(Number(value))}>
+          <Select value={String(beadSize)} onValueChange={(value) => {
+            const newSize = Number(value)
+            const newMaxCount = MAX_BEAD_COUNTS[wristLength]?.[newSize] || 30
+            
+            // Check if current bead count exceeds new maximum
+            if (beads.length > newMaxCount) {
+              setPendingBeadSize(newSize)
+              setShowSizeWarning(true)
+            } else {
+              setBeadSize(newSize)
+            }
+          }}>
             <SelectTrigger className="w-[100px]">
               <SelectValue placeholder="Select size" />
             </SelectTrigger>
@@ -1253,6 +1278,110 @@ export default function BraceletDesigner() {
           </div>
         </div>
       </div>
+
+      {/* Size Change Warning Dialog */}
+      <Dialog open={showSizeWarning} onOpenChange={setShowSizeWarning}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl">คำเตือน</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <p className="text-gray-700">
+              การเปลี่ยนขนาดหินจาก <span className="font-bold">{beadSize} mm</span> เป็น{' '}
+              <span className="font-bold">{pendingBeadSize} mm</span> จะทำให้จำนวนหินสูงสุดเหลือเพียง{' '}
+              <span className="font-bold text-red-600">
+                {pendingBeadSize ? (MAX_BEAD_COUNTS[wristLength]?.[pendingBeadSize] || 0) : 0} เม็ด
+              </span>
+            </p>
+            <p className="text-gray-700">
+              ขณะนี้คุณมีหินอยู่ <span className="font-bold">{beads.length} เม็ด</span>
+            </p>
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+              <p className="text-sm text-yellow-800">
+                หากต้องการเปลี่ยนขนาด คุณต้องลบหินออกให้เหลือไม่เกิน{' '}
+                {pendingBeadSize ? (MAX_BEAD_COUNTS[wristLength]?.[pendingBeadSize] || 0) : 0} เม็ด
+              </p>
+            </div>
+          </div>
+          <DialogFooter className="flex gap-2">
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setShowSizeWarning(false)
+                setPendingBeadSize(null)
+              }}
+            >
+              ยกเลิก
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                // Clear all beads and change size
+                clearBeads()
+                if (pendingBeadSize) {
+                  setBeadSize(pendingBeadSize)
+                }
+                setShowSizeWarning(false)
+                setPendingBeadSize(null)
+              }}
+            >
+              ลบหินทั้งหมดและเปลี่ยนขนาด
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Wrist Length Change Warning Dialog */}
+      <Dialog open={showWristWarning} onOpenChange={setShowWristWarning}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl">คำเตือน</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <p className="text-gray-700">
+              การเปลี่ยนความยาวรอบข้อมือจาก <span className="font-bold">{wristLength} cm</span> เป็น{' '}
+              <span className="font-bold">{pendingWristLength} cm</span> จะทำให้จำนวนหินสูงสุดเหลือเพียง{' '}
+              <span className="font-bold text-red-600">
+                {pendingWristLength ? (MAX_BEAD_COUNTS[pendingWristLength]?.[beadSize] || 0) : 0} เม็ด
+              </span>
+            </p>
+            <p className="text-gray-700">
+              ขณะนี้คุณมีหินอยู่ <span className="font-bold">{beads.length} เม็ด</span>
+            </p>
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+              <p className="text-sm text-yellow-800">
+                หากต้องการเปลี่ยนความยาวรอบข้อมือ คุณต้องลบหินออกให้เหลือไม่เกิน{' '}
+                {pendingWristLength ? (MAX_BEAD_COUNTS[pendingWristLength]?.[beadSize] || 0) : 0} เม็ด
+              </p>
+            </div>
+          </div>
+          <DialogFooter className="flex gap-2">
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setShowWristWarning(false)
+                setPendingWristLength(null)
+              }}
+            >
+              ยกเลิก
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => {
+                // Clear all beads and change wrist length
+                clearBeads()
+                if (pendingWristLength) {
+                  setWristLength(pendingWristLength)
+                }
+                setShowWristWarning(false)
+                setPendingWristLength(null)
+              }}
+            >
+              ลบหินทั้งหมดและเปลี่ยนความยาว
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Confirmation Dialog */}
       <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
