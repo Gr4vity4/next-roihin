@@ -188,7 +188,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
         </div>
 
         {/* Navigation Content */}
-        <div className="relative z-10 container mx-auto px-4 h-full">
+        <div className="relative z-10 container-fluid mx-auto px-10 h-full">
           {isScrolled ? (
             // Scrolled state - horizontal layout
             <div className="flex items-center justify-between h-full">
