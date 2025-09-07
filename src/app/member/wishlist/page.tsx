@@ -4,11 +4,14 @@ import Link from 'next/link'
 import Image from 'next/image'
 import Button from '@/components/Button'
 import { useWishlist } from '@/contexts/WishlistContext'
+import { useCart } from '@/contexts/CartContext'
 import { useState } from 'react'
 export default function WishlistPage() {
   const { items, loading, error, removeItem, clearWishlist } = useWishlist()
+  const { addItem } = useCart()
   const [removingItem, setRemovingItem] = useState<string | null>(null)
   const [clearing, setClearing] = useState(false)
+  const [addingToCart, setAddingToCart] = useState<string | null>(null)
 
   const handleRemoveItem = async (itemId: string) => {
     setRemovingItem(itemId)
@@ -36,8 +39,41 @@ export default function WishlistPage() {
     }
   }
 
-  const handleAddToCart = (item: { product_id: number; color?: string }) => {
-    console.log('Add to cart:', item)
+  const handleAddToCart = (item: {
+    id: string
+    product_id: number
+    color?: string
+    product?: {
+      slug: string
+      title: string
+      featured_image_url?: string
+      category?: string
+    }
+    display_price?: number
+    price?: {
+      min_price: number
+    }
+  }) => {
+    setAddingToCart(item.id)
+    
+    // Prepare cart item data
+    const cartItem = {
+      id: item.color ? `${item.product_id}-${item.color}` : String(item.product_id),
+      slug: item.product?.slug || `product-${item.product_id}`,
+      title: item.product?.title || `Product ${item.product_id}`,
+      price: item.display_price || item.price?.min_price || 0,
+      image: item.product?.featured_image_url || '/images/placeholder.jpg',
+      color: item.color,
+      category: item.product?.category
+    }
+    
+    // Add item to cart
+    addItem(cartItem)
+    
+    // Show success feedback
+    setTimeout(() => {
+      setAddingToCart(null)
+    }, 1000)
   }
 
   const formatPrice = (price: number) => {
@@ -169,8 +205,10 @@ export default function WishlistPage() {
                         fullWidth 
                         size="sm"
                         onClick={() => handleAddToCart(item)}
+                        disabled={addingToCart === item.id}
+                        className={addingToCart === item.id ? 'bg-green-600 hover:bg-green-600' : ''}
                       >
-                        เพิ่มลงตะกร้า
+                        {addingToCart === item.id ? 'เพิ่มลงตะกร้าแล้ว!' : 'เพิ่มลงตะกร้า'}
                       </Button>
                     ) : (
                       <Button 
