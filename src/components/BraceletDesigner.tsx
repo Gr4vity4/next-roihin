@@ -743,8 +743,8 @@ export default function BraceletDesigner() {
           transform: scale(1);
         }
         .bead:hover {
-          filter: brightness(1.1);
-          box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+          filter: brightness(1.2);
+          // box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
           z-index: 10;
         }
         .bead-list-item {
