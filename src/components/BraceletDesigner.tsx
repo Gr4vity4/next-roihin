@@ -185,14 +185,14 @@ export default function BraceletDesigner() {
     const beadDiameterPx = mmToPx(beadSizeMm)
     
     // For perfect fit without gaps, calculate circumference needed
-    // Circumference = number of beads × bead diameter
-    const requiredCircumference = beadCount * beadDiameterPx
+    // Add small gap between beads for visual clarity
+    const gapBetweenBeads = 0.5 // Small gap in pixels
+    const requiredCircumference = beadCount * (beadDiameterPx + gapBetweenBeads)
     
     // Radius = Circumference / (2π)
     const optimalRadius = requiredCircumference / (2 * Math.PI)
     
-    // Add a small adjustment to ensure beads touch but don't overlap
-    return optimalRadius + 0.5
+    return optimalRadius
   }
 
   // Calculate total price
@@ -276,7 +276,7 @@ export default function BraceletDesigner() {
         const updatedBeads = [...prevBeads]
         
         for (let i = 0; i < updatedBeads.length; i++) {
-          const theta = START + (i * anglePerBead)
+          const theta = START + (i * anglePerBead) // Counter-clockwise placement
           updatedBeads[i].theta = theta
           
           if (updatedBeads[i].el) {
@@ -484,11 +484,21 @@ export default function BraceletDesigner() {
 
   const canPlaceWithRadius = (rNext: number) => {
     if (beads.length === 0) return true
+    
+    // Check if we're at max capacity
+    const maxBeads = getMaxBeadCount()
+    if (beads.length >= maxBeads) return false
+    
     const lastRadius = getLastRadius()
     const needBetweenPrevAndNext = deltaTheta(lastRadius, rNext)
     const rFirst = beads[0].r
     const needNextToFirst = deltaTheta(rNext, rFirst)
-    return remainingArc() >= needBetweenPrevAndNext + needNextToFirst - EPS
+    
+    // Ensure we don't exceed the circle
+    const totalAngleNeeded = needBetweenPrevAndNext + needNextToFirst
+    const available = remainingArc()
+    
+    return available >= totalAngleNeeded - EPS
   }
 
   const nudgeFull = () => {
@@ -552,6 +562,51 @@ export default function BraceletDesigner() {
     if (newBeads.length === 0) return
 
     const R = geometryRef.current.R
+    const maxBeads = getMaxBeadCount()
+    const isMaxCapacity = newBeads.length === maxBeads
+    
+    // If at max capacity, use equal spacing
+    if (isMaxCapacity) {
+      const anglePerBead = (2 * Math.PI) / maxBeads
+      
+      for (let i = 0; i < newBeads.length; i++) {
+        const theta = START + (i * anglePerBead) // Counter-clockwise placement
+        const beadEl = newBeads[i].el
+        
+        if (beadEl) {
+          newBeads[i].theta = theta
+          const isPendant = newBeads[i].stoneSetting?.category === 'Pendant'
+          const pendantOffset = isPendant
+            ? newBeads[i].size === 6
+              ? 4
+              : newBeads[i].size === 8
+              ? 6
+              : newBeads[i].size === 10
+              ? 8
+              : newBeads[i].size === 12
+              ? 10
+              : 0
+            : 0
+
+          const baseX = geometryRef.current.cx + R * Math.cos(theta)
+          const baseY = geometryRef.current.cy + R * Math.sin(theta)
+          const offsetX = pendantOffset * Math.cos(theta)
+          const offsetY = pendantOffset * Math.sin(theta)
+
+          beadEl.style.left = baseX + offsetX - newBeads[i].r + 'px'
+          beadEl.style.top = baseY + offsetY - newBeads[i].r + 'px'
+          // Apply rotation to align tangentially with circle
+          const rotationAngle = (theta * 180) / Math.PI - 90
+          beadEl.style.transform = `rotate(${rotationAngle}deg) scale(1)`
+          
+          // Update dataset for drag and drop
+          beadEl.dataset.beadId = newBeads[i].id
+        }
+      }
+      return
+    }
+    
+    // Normal layout for non-max capacity
     let theta = START
 
     // Update first bead position
@@ -851,11 +906,24 @@ export default function BraceletDesigner() {
 
     setBeads((prev) => {
       const updatedBeads = [...prev, newBead]
-      // If radius was increased, reflow all beads
-      if (minRAfterAdd > geometryRef.current.R - 1) {
-        // Relayout immediately after adding
+      
+      // Check if we've reached max capacity after adding this bead
+      if (updatedBeads.length === maxBeads) {
+        // Force immediate relayout with optimal spacing
+        setTimeout(() => {
+          const optimalR = calculateOptimalRadius(maxBeads, beadSize)
+          geometryRef.current.R = optimalR
+          if (ringRef.current) {
+            ringRef.current.style.width = `${optimalR * 2}px`
+            ringRef.current.style.height = `${optimalR * 2}px`
+          }
+          relayoutForRadius(optimalR)
+        }, 10)
+      } else if (minRAfterAdd > geometryRef.current.R - 1) {
+        // If radius was increased, reflow all beads
         setTimeout(() => relayoutForRadius(geometryRef.current.R), 10)
       }
+      
       return updatedBeads
     })
   }
