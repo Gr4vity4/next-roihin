@@ -128,7 +128,7 @@ export async function toggleWishlist({
 }
 
 export async function fetchWishlist(token: string): Promise<WishlistResponse> {
-  const response = await fetch(`${API_URL}/wp-json/roihin/v1/wishlist?expand=1`, {
+  const response = await fetch(`${API_URL}/wp-json/roihin/v1/wishlist`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -145,7 +145,134 @@ export async function fetchWishlist(token: string): Promise<WishlistResponse> {
     throw new Error(error.message || 'Failed to fetch wishlist')
   }
 
-  return response.json()
+  interface WishlistApiItem {
+    id: string
+    product: number
+    color?: string
+    color_key?: string
+    note?: string
+    added_at: string
+  }
+
+  interface WishlistApiResponse {
+    user?: number
+    count: number
+    items: WishlistApiItem[]
+  }
+
+  const wishlistData: WishlistApiResponse = await response.json()
+  
+  // Fetch product details for each wishlist item
+  const itemsWithDetails = await Promise.all(
+    wishlistData.items.map(async (item: WishlistApiItem) => {
+      try {
+        // Fetch product ACF fields
+        const productResponse = await fetch(
+          `${API_URL}/wp-json/wp/v2/product/${item.product}?_fields=acf,title,slug`,
+          {
+            cache: 'no-store',
+          }
+        )
+
+        if (!productResponse.ok) {
+          throw new Error(`Failed to fetch product ${item.product}`)
+        }
+
+        interface ProductApiResponse {
+          id: number
+          slug?: string
+          title?: {
+            rendered: string
+          }
+          acf?: {
+            product_image?: string
+            product_gallery?: Array<{ url: string }>
+            color_options?: Array<{
+              color: string
+              price: string
+              available: boolean
+            }>
+          }
+        }
+
+        const productData: ProductApiResponse = await productResponse.json()
+        
+        // Find the color option to get the price and availability
+        const colorOption = productData.acf?.color_options?.find(
+          (opt) => opt.color.toLowerCase() === item.color?.toLowerCase()
+        )
+        
+        // Determine price and availability
+        let displayPrice = 0
+        let isAvailable = false
+        
+        if (colorOption) {
+          displayPrice = parseInt(colorOption.price) || 0
+          isAvailable = colorOption.available === true
+        } else if (productData.acf?.color_options?.length > 0) {
+          // If no color match, use the first available option
+          const firstOption = productData.acf.color_options[0]
+          displayPrice = parseInt(firstOption.price) || 0
+          isAvailable = firstOption.available === true
+        }
+
+        return {
+          id: item.id,
+          product_id: item.product,
+          color: item.color,
+          color_key: item.color_key,
+          note: item.note,
+          added_at: new Date(item.added_at).getTime(),
+          product: {
+            id: item.product,
+            slug: productData.slug || `product-${item.product}`,
+            title: productData.title?.rendered || `Product ${item.product}`,
+            featured_image_url: productData.acf?.product_image || productData.acf?.product_gallery?.[0]?.url || null,
+            acf: productData.acf,
+          },
+          price: {
+            min_price: displayPrice,
+            available_any: productData.acf?.color_options?.some((opt) => opt.available) || false,
+            selected: colorOption ? {
+              color: colorOption.color,
+              price: parseInt(colorOption.price) || 0,
+              available: colorOption.available,
+            } : undefined,
+          },
+          is_available: isAvailable,
+          display_price: displayPrice,
+        }
+      } catch (error) {
+        console.error(`Error fetching product details for item ${item.id}:`, error)
+        // Return the item with minimal data if product fetch fails
+        return {
+          id: item.id,
+          product_id: item.product,
+          color: item.color,
+          color_key: item.color_key,
+          note: item.note,
+          added_at: new Date(item.added_at).getTime(),
+          product: {
+            id: item.product,
+            slug: `product-${item.product}`,
+            title: `Product ${item.product}`,
+            featured_image_url: null,
+          },
+          price: {
+            min_price: 0,
+            available_any: false,
+          },
+          is_available: false,
+          display_price: 0,
+        }
+      }
+    })
+  )
+
+  return {
+    count: wishlistData.count || itemsWithDetails.length,
+    items: itemsWithDetails,
+  }
 }
 
 export async function checkWishlistItem(
