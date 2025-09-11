@@ -100,7 +100,7 @@ export async function getProductById(
     title: rawProduct.title?.rendered || '',
     excerpt: rawProduct.excerpt?.rendered || '',
     featured_image_url: rawProduct.acf?.product_image || '',
-    gallery_urls: rawProduct.acf?.product_gallery?.map((img) => img.url) || [],
+    gallery_urls: rawProduct.acf?.product_gallery ? rawProduct.acf.product_gallery.map((img) => img.url) : [],
     acf: {
       material: rawProduct.acf?.material || '',
       dimensions: rawProduct.acf?.size_dimensions || '',
@@ -192,7 +192,7 @@ export async function getProductBySlug(
     title: rawProduct.title?.rendered || '',
     excerpt: rawProduct.excerpt?.rendered || '',
     featured_image_url: rawProduct.acf?.product_image || '',
-    gallery_urls: rawProduct.acf?.product_gallery?.map((img) => img.url) || [],
+    gallery_urls: rawProduct.acf?.product_gallery ? rawProduct.acf.product_gallery.map((img) => img.url) : [],
     acf: {
       material: rawProduct.acf?.material || '',
       dimensions: rawProduct.acf?.size_dimensions || '',
@@ -297,7 +297,7 @@ export async function getAllProducts(language: 'en' | 'th' = 'en'): Promise<Prod
     title: product.title?.rendered || '',
     excerpt: product.excerpt?.rendered || '',
     featured_image_url: product.acf?.product_image || '',
-    gallery_urls: product.acf?.product_gallery?.map((img) => img.url) || [],
+    gallery_urls: product.acf?.product_gallery ? product.acf.product_gallery.map((img) => img.url) : [],
     acf: {
       material: product.acf?.material || '',
       dimensions: product.acf?.size_dimensions || '',
