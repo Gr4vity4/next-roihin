@@ -6,24 +6,20 @@ import { Footer } from '@/components/sections'
 import ProductDetail from '@/components/sections/ProductDetail'
 import RelatedProducts from '@/components/sections/RelatedProducts'
 import { getProductBySlug } from '@/lib/api/products'
-import { cookies } from 'next/headers'
+import { getLocale } from 'next-intl/server'
 
 export const revalidate = 900
 
 interface ProductPageProps {
-  params: Promise<{ slug: string }>
-  searchParams: Promise<{ lang?: string }>
+  params: Promise<{ slug: string; locale: string }>
 }
 
-export async function generateMetadata({ params, searchParams }: ProductPageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { slug } = await params
-  const { lang } = await searchParams
-  const cookieStore = await cookies()
-  const cookieLang = cookieStore.get('site-language')?.value as 'en' | 'th' | undefined
-  const language = (lang === 'th' ? 'th' : lang === 'en' ? 'en' : cookieLang || 'en') as 'en' | 'th'
+  const locale = await getLocale() as 'en' | 'th'
   
   try {
-    const { product } = await getProductBySlug(slug, false, 6, language)
+    const { product } = await getProductBySlug(slug, false, 6, locale)
     
     return {
       title: `${product.title} | Roihin Thailand`,
@@ -42,16 +38,13 @@ export async function generateMetadata({ params, searchParams }: ProductPageProp
   }
 }
 
-export default async function ProductPage({ params, searchParams }: ProductPageProps) {
+export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params
-  const { lang } = await searchParams
-  const cookieStore = await cookies()
-  const cookieLang = cookieStore.get('site-language')?.value as 'en' | 'th' | undefined
-  const language = (lang === 'th' ? 'th' : lang === 'en' ? 'en' : cookieLang || 'en') as 'en' | 'th'
+  const locale = await getLocale() as 'en' | 'th'
   
   let productData
   try {
-    productData = await getProductBySlug(slug, true, 6, language)
+    productData = await getProductBySlug(slug, true, 6, locale)
   } catch (error) {
     console.error('Failed to fetch product:', error)
     notFound()
@@ -64,7 +57,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
       <NavigationWithSuspense position="static" />
 
       <main className="min-h-screen bg-black">
-        <ProductDetail product={product} category={category} language={language} />
+        <ProductDetail product={product} category={category} language={locale} />
         
         {related && related.length > 0 && (
           <RelatedProducts products={related} />

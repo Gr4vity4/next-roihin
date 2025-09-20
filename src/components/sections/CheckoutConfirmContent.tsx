@@ -14,7 +14,7 @@ import { createOrder, uploadSlipBase64, getBankAccounts } from '@/lib/api/orders
 import type { OrderCreateRequest, BankAccount } from '@/lib/types/order'
 import { getDefaultAddress } from '@/lib/api/addresses.client'
 import { useAuth } from '@/contexts/AuthContext'
-import { useLanguage } from '@/contexts/LanguageContext'
+import { useLocale } from 'next-intl'
 import OrderSuccessModal from '@/components/OrderSuccessModal'
 
 interface ShippingAddress {
@@ -31,7 +31,7 @@ export default function CheckoutConfirmContent() {
   const router = useRouter()
   const { items, itemCount, totalAmount, clearCart } = useCart()
   const { isLoggedIn, user } = useAuth()
-  const { language } = useLanguage()
+  const locale = useLocale() as 'en' | 'th'
   const [isProcessing, setIsProcessing] = useState(false)
   const [paymentSlip, setPaymentSlip] = useState<File | null>(null)
   const [slipPreview, setSlipPreview] = useState<string>('')
@@ -97,7 +97,7 @@ export default function CheckoutConfirmContent() {
   useEffect(() => {
     const fetchBanks = async () => {
       // Fetch banks from existing API for display
-      const banksData = await getBanks(language)
+      const banksData = await getBanks(locale)
       setBanks(banksData)
       if (banksData.length > 0) {
         setSelectedBank(banksData[0].acf.bank_account_number)
@@ -114,7 +114,7 @@ export default function CheckoutConfirmContent() {
       }
     }
     fetchBanks()
-  }, [language])
+  }, [locale])
 
   const handleAddressChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target

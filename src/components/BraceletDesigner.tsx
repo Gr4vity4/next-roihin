@@ -19,7 +19,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useLanguage } from '@/contexts/LanguageContext'
+import { useLocale } from 'next-intl'
 import type { Bank, Stone } from '@/lib/types/api-types'
 import { ArrowLeft, Check, GripVertical, RefreshCw, Upload } from 'lucide-react'
 import Image from 'next/image'
@@ -65,7 +65,7 @@ interface CustomerInfo {
 }
 
 export default function BraceletDesigner() {
-  const { language } = useLanguage()
+  const locale = useLocale() as 'en' | 'th'
   const [beadSize, setBeadSize] = useState(6)
   const [wristLength, setWristLength] = useState('14')
   const [beads, setBeads] = useState<Bead[]>([])
@@ -120,7 +120,7 @@ export default function BraceletDesigner() {
   useEffect(() => {
     const fetchStoneSettings = async () => {
       try {
-        const response = await fetch(`/api/stones?lang=${language}`)
+        const response = await fetch(`/api/stones?lang=${locale}`)
         if (response.ok) {
           const data = await response.json()
           setStoneSettings(data)
@@ -132,14 +132,14 @@ export default function BraceletDesigner() {
       }
     }
     fetchStoneSettings()
-  }, [language])
+  }, [locale])
 
   // Fetch banks when dialog opens
   useEffect(() => {
     if (showConfirmDialog && banks.length === 0) {
       const fetchBanks = async () => {
         try {
-          const response = await fetch(`/api/banks?lang=${language}`)
+          const response = await fetch(`/api/banks?lang=${locale}`)
           if (response.ok) {
             const data = await response.json()
             setBanks(data)
@@ -150,7 +150,7 @@ export default function BraceletDesigner() {
       }
       fetchBanks()
     }
-  }, [showConfirmDialog, banks.length, language])
+  }, [showConfirmDialog, banks.length, locale])
 
   // Get stones by category
   const getStonesByCategory = (category: string) => {

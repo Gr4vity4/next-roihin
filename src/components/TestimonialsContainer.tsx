@@ -2,7 +2,7 @@ import { Suspense } from 'react'
 import { Typography } from '@/components/ui'
 import Image from 'next/image'
 import { getTestimonials } from '@/lib/api/testimonials'
-import { cookies } from 'next/headers'
+import { getLocale } from 'next-intl/server'
 
 // Loading component
 function TestimonialsLoading() {
@@ -53,11 +53,10 @@ function TestimonialsError({ error }: { error: string }) {
 // Main testimonials component
 async function TestimonialsContent() {
   try {
-    // Get language from cookies (set by middleware from localStorage)
-    const cookieStore = await cookies()
-    const language = cookieStore.get('site-language')?.value as 'en' | 'th' || 'en'
+    // Get locale from next-intl
+    const locale = await getLocale() as 'en' | 'th'
     
-    const testimonials = await getTestimonials(language)
+    const testimonials = await getTestimonials(locale)
     
     if (!testimonials || testimonials.length === 0) {
       return (

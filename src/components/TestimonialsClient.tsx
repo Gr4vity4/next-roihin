@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useLanguage } from '@/contexts/LanguageContext'
+import { useLocale } from 'next-intl'
 import { Typography } from '@/components/ui'
 import Image from 'next/image'
 import type { Testimonial } from '@/lib/types/wordpress-settings'
@@ -58,7 +58,7 @@ function TestimonialsError({ error }: { error: string }) {
 }
 
 export default function TestimonialsClient() {
-  const { language } = useLanguage()
+  const locale = useLocale() as 'en' | 'th'
   const [testimonials, setTestimonials] = useState<Testimonial[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -69,7 +69,7 @@ export default function TestimonialsClient() {
       setError(null)
       
       try {
-        const response = await fetch(`/api/testimonials?lang=${language}`)
+        const response = await fetch(`/api/testimonials?lang=${locale}`)
         
         if (!response.ok) {
           throw new Error(`Failed to fetch testimonials: ${response.status}`)
@@ -86,7 +86,7 @@ export default function TestimonialsClient() {
     }
 
     fetchTestimonials()
-  }, [language])
+  }, [locale])
 
   if (loading) {
     return <TestimonialsLoading />

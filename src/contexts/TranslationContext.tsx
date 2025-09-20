@@ -2,7 +2,7 @@
 
 import { getSiteTranslations } from '@/lib/api/translations'
 import type { SiteTranslations } from '@/lib/types/translations'
-import { useLanguage } from '@/contexts/LanguageContext'
+import { useLocale } from 'next-intl'
 import { createContext, useContext, useEffect, useState, ReactNode, useRef } from 'react'
 
 interface TranslationContextType {
@@ -16,7 +16,7 @@ const TranslationContext = createContext<TranslationContextType | undefined>(und
 const translationsCache = new Map<string, SiteTranslations>()
 
 export function TranslationProvider({ children }: { children: ReactNode }) {
-  const { language } = useLanguage()
+  const locale = useLocale() as 'en' | 'th'
   const [translations, setTranslations] = useState<SiteTranslations | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const isInitialMount = useRef(true)
@@ -24,7 +24,7 @@ export function TranslationProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const fetchTranslations = async () => {
       // Check if we have cached translations for this language
-      const cached = translationsCache.get(language)
+      const cached = translationsCache.get(locale)
       if (cached) {
         setTranslations(cached)
         setIsLoading(false)
@@ -37,9 +37,9 @@ export function TranslationProvider({ children }: { children: ReactNode }) {
       }
 
       try {
-        const data = await getSiteTranslations(language)
+        const data = await getSiteTranslations(locale)
         if (data) {
-          translationsCache.set(language, data)
+          translationsCache.set(locale, data)
           setTranslations(data)
         }
       } catch (error) {
@@ -51,7 +51,7 @@ export function TranslationProvider({ children }: { children: ReactNode }) {
     }
 
     fetchTranslations()
-  }, [language])
+  }, [locale])
 
   return (
     <TranslationContext.Provider value={{ translations, isLoading }}>

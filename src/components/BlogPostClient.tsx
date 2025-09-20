@@ -13,7 +13,7 @@ import {
 } from '@/components/ui'
 import { content } from '@/config/content.config'
 import { siteConfig } from '@/config/site.config'
-import { useLanguage } from '@/contexts/LanguageContext'
+import { useLocale } from 'next-intl'
 import type { BlogPostDetailsResponse } from '@/lib/types/wordpress'
 import { formatThaiDate } from '@/lib/utils'
 import Image from 'next/image'
@@ -25,7 +25,7 @@ interface BlogPostClientProps {
 }
 
 export default function BlogPostClient({ slug }: BlogPostClientProps) {
-  const { language } = useLanguage()
+  const locale = useLocale() as 'en' | 'th'
   const router = useRouter()
   const [article, setArticle] = useState<BlogPostDetailsResponse['post'] | null>(null)
   const [loading, setLoading] = useState(true)
@@ -37,7 +37,7 @@ export default function BlogPostClient({ slug }: BlogPostClientProps) {
         const decodedSlug = decodeURIComponent(slug)
         const baseUrl =
           process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : ''
-        const apiUrl = `${baseUrl}/api/blog/posts/${encodeURIComponent(decodedSlug)}?lang=${language}`
+        const apiUrl = `${baseUrl}/api/blog/posts/${encodeURIComponent(decodedSlug)}?lang=${locale}`
 
         const response = await fetch(apiUrl)
 
@@ -62,7 +62,7 @@ export default function BlogPostClient({ slug }: BlogPostClientProps) {
     }
 
     fetchArticle()
-  }, [slug, language, router])
+  }, [slug, locale, router])
 
   if (loading) {
     return (
@@ -91,11 +91,11 @@ export default function BlogPostClient({ slug }: BlogPostClientProps) {
 
   const breadcrumbItems = [
     {
-      label: language === 'th' ? 'หน้าแรก' : 'Home',
+      label: locale === 'th' ? 'หน้าแรก' : 'Home',
       href: '/',
     },
     {
-      label: language === 'th' ? 'บล็อก' : 'Blog',
+      label: locale === 'th' ? 'บล็อก' : 'Blog',
       href: '/blog',
     },
     {
@@ -170,7 +170,7 @@ export default function BlogPostClient({ slug }: BlogPostClientProps) {
               {article.terms && article.terms.length > 0 && (
                 <div className="mt-12 pt-8 border-t border-gray-200">
                   <Typography variant="h4" className="text-[#006039] mb-4">
-                    {language === 'th' ? 'หมวดหมู่' : 'Categories'}
+                    {locale === 'th' ? 'หมวดหมู่' : 'Categories'}
                   </Typography>
                   <div className="flex flex-wrap gap-2">
                     {article.terms

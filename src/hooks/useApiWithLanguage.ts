@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useLanguage } from '@/contexts/LanguageContext'
+import { useLocale } from 'next-intl'
 import type { Testimonial } from '@/lib/types/wordpress-settings'
 import type { BankData } from '@/lib/types/bank'
 import type { Product } from '@/lib/types/products'
@@ -29,7 +29,7 @@ export function useApiWithLanguage<T>(
   endpoint: string,
   options: UseApiOptions = {}
 ) {
-  const { language } = useLanguage()
+  const locale = useLocale() as 'en' | 'th'
   const [data, setData] = useState<T | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -41,7 +41,7 @@ export function useApiWithLanguage<T>(
     try {
       // Add language parameter to endpoint
       const separator = endpoint.includes('?') ? '&' : '?'
-      const url = `${endpoint}${separator}lang=${language}`
+      const url = `${endpoint}${separator}lang=${locale}`
       
       const response = await fetch(url)
       
@@ -62,7 +62,7 @@ export function useApiWithLanguage<T>(
   useEffect(() => {
     fetchData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [endpoint, language, ...(options.dependencies || [])])
+  }, [endpoint, locale, ...(options.dependencies || [])])
 
   return { data, loading, error, refetch: fetchData }
 }

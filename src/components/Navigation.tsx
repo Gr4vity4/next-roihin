@@ -3,7 +3,6 @@
 import AuthModal from '@/components/AuthModal'
 import { useAuth } from '@/contexts/AuthContext'
 import { useCart } from '@/contexts/CartContext'
-import { useLanguage } from '@/contexts/LanguageContext'
 import { cn } from '@/lib/utils'
 import { ShoppingCartIcon } from '@heroicons/react/24/outline'
 import { ChevronDown, Menu, X } from 'lucide-react'
@@ -43,7 +42,6 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
   const locale = useLocale()
   const { isLoggedIn, user, logout } = useAuth()
   const { itemCount } = useCart()
-  const { language, setLanguage } = useLanguage()
   const t = useTranslations('navigation')
 
   const navItems = useMemo(() => {
@@ -137,11 +135,10 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
     setIsMobileMenuOpen(false)
   }
 
-  const handleLanguageSwitch = (lang: 'th' | 'en') => {
-    setLanguage(lang)
+  const handleLanguageSwitch = (newLocale: 'th' | 'en') => {
     setIsLanguageMenuOpen(false)
-    // Navigate to the new locale using replace to avoid adding to history
-    router.replace(pathname, { locale: lang })
+    // Use next-intl's router to switch locale
+    router.replace(pathname, { locale: newLocale })
   }
 
   return (

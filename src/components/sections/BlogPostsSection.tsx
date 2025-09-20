@@ -6,7 +6,7 @@ import type {
   BlogPost,
   BlogPostsResponse,
 } from '@/lib/types/wordpress'
-import { useLanguage } from '@/contexts/LanguageContext'
+import { useLocale } from 'next-intl'
 import { formatThaiDate } from '@/lib/utils'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -84,7 +84,7 @@ export default function BlogPostsSection({
   loadMoreButton,
   className = '',
 }: BlogPostsSectionProps) {
-  const { language } = useLanguage()
+  const locale = useLocale() as 'en' | 'th'
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [currentPage, setCurrentPage] = useState(1)
   const [posts, setPosts] = useState<BlogPost[]>([])
@@ -98,7 +98,7 @@ export default function BlogPostsSection({
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const params = new URLSearchParams({ lang: language })
+        const params = new URLSearchParams({ lang: locale })
         const response = await fetch(`/api/blog/categories?${params.toString()}`)
         if (!response.ok) throw new Error('Failed to fetch categories')
 
@@ -120,7 +120,7 @@ export default function BlogPostsSection({
     }
 
     fetchCategories()
-  }, [language])
+  }, [locale])
 
   // Fetch posts when category, page, or language changes
   useEffect(() => {
@@ -137,7 +137,7 @@ export default function BlogPostsSection({
         const params = new URLSearchParams({
           page: reset ? '1' : currentPage.toString(),
           per_page: '6',
-          lang: language,
+          lang: locale,
         })
 
         if (selectedCategory !== 'all') {
@@ -167,7 +167,7 @@ export default function BlogPostsSection({
     }
 
     fetchPosts(currentPage === 1)
-  }, [selectedCategory, currentPage, language])
+  }, [selectedCategory, currentPage, locale])
 
   const handleCategoryChange = (categoryId: string) => {
     setSelectedCategory(categoryId)
@@ -178,7 +178,7 @@ export default function BlogPostsSection({
   useEffect(() => {
     setCurrentPage(1)
     setPosts([])
-  }, [language])
+  }, [locale])
 
   const handleLoadMore = () => {
     setCurrentPage((prev) => prev + 1)

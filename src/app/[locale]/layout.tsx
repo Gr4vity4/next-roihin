@@ -3,7 +3,6 @@ import { Inter, Playfair_Display, Prompt } from 'next/font/google'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { CartProvider } from '@/contexts/CartContext'
 import { WishlistProvider } from '@/contexts/WishlistContext'
-import { LanguageProvider } from '@/contexts/LanguageContext'
 import { TranslationProvider } from '@/contexts/TranslationContext'
 import { notFound } from 'next/navigation'
 import { routing } from '@/i18n/routing'
@@ -71,7 +70,7 @@ export default async function LocaleLayout({
   const { locale } = await params
 
   // Ensure that the incoming locale is valid
-  if (!routing.locales.includes(locale as any)) {
+  if (!routing.locales.includes(locale as (typeof routing.locales)[number])) {
     notFound()
   }
 
@@ -85,17 +84,15 @@ export default async function LocaleLayout({
     <html lang={locale}>
       <body className={`${inter.variable} ${playfairDisplay.variable} ${prompt.variable} antialiased`}>
         <NextIntlClientProvider messages={messages}>
-          <LanguageProvider>
-            <TranslationProvider>
-              <AuthProvider>
-                <CartProvider>
-                  <WishlistProvider>
-                    {children}
-                  </WishlistProvider>
-                </CartProvider>
-              </AuthProvider>
-            </TranslationProvider>
-          </LanguageProvider>
+          <TranslationProvider>
+            <AuthProvider>
+              <CartProvider>
+                <WishlistProvider>
+                  {children}
+                </WishlistProvider>
+              </CartProvider>
+            </AuthProvider>
+          </TranslationProvider>
         </NextIntlClientProvider>
       </body>
     </html>
