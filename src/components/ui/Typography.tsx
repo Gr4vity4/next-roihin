@@ -1,6 +1,6 @@
-import { HTMLAttributes, ReactNode, createElement, Children, isValidElement } from 'react'
 import { cn } from '@/lib/utils'
 import { containsNumbers } from '@/lib/utils/text'
+import { HTMLAttributes, ReactNode, createElement, isValidElement } from 'react'
 
 interface TypographyProps extends HTMLAttributes<HTMLElement> {
   variant: 'h1' | 'h2' | 'h3' | 'h4' | 'body' | 'caption'
@@ -29,7 +29,6 @@ const variantComponents = {
   body: 'p',
   caption: 'span',
 }
-
 
 const alignmentClasses = {
   left: 'text-left',
@@ -75,10 +74,13 @@ export default function Typography({
       return true
     }
     if (Array.isArray(node)) {
-      return node.some(child => checkChildrenForNumbers(child))
+      return node.some((child) => checkChildrenForNumbers(child))
     }
-    if (isValidElement(node) && node.props.children) {
-      return checkChildrenForNumbers(node.props.children)
+    if (isValidElement(node)) {
+      const props = node.props as { children?: ReactNode }
+      if (props.children) {
+        return checkChildrenForNumbers(props.children)
+      }
     }
     return false
   }
@@ -96,10 +98,10 @@ export default function Typography({
         textShadow && 'text-shadow',
         align && alignmentClasses[align],
         colorClass,
-        className
+        className,
       ),
-      ...props
+      ...props,
     },
-    children
+    children,
   )
 }

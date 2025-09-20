@@ -28,7 +28,6 @@ export default function Footer({
   className = '',
 }: FooterProps) {
   const t = useTranslations('navigation')
-  const tCommon = useTranslations('common')
 
   // Use same navigation items as navbar
   const columns: FooterColumnData[] = [
