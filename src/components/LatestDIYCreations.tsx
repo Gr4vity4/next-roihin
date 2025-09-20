@@ -1,5 +1,6 @@
 'use client'
 
+import { Link } from '@/i18n/navigation'
 import { diyCreations } from '@/lib/data/diy-creations'
 import { DIYCreation } from '@/lib/types/diy-creation'
 import { useState } from 'react'
@@ -42,7 +43,7 @@ export default function LatestDIYCreations() {
         </div>
 
         <div className="text-center mt-12">
-          <a
+          <Link
             href="/custom"
             className="inline-flex items-center gap-2 px-6 py-3 border hover:bg-gray-50"
           >
@@ -61,7 +62,7 @@ export default function LatestDIYCreations() {
                 d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
               />
             </svg>
-          </a>
+          </Link>
         </div>
       </div>
 
