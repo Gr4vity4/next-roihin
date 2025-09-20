@@ -87,5 +87,136 @@
     "viewMoreCharms": "ดูชาร์มเพิ่มเติม",
     "designByYourself": "ออกแบบด้วยตัวเอง",
     "designByRoihin": "ออกแบบโดยร้อยหิน"
+  },
+  "checkout": {
+    "title": "ตะกร้าสินค้า",
+    "pageTitle": "ตะกร้าสินค้า | Roihin Thailand",
+    "pageDescription": "ตะกร้าสินค้าและการชำระเงิน",
+    "loading": "กำลังโหลด...",
+    "emptyCart": {
+      "title": "ตะกร้าสินค้าว่างเปล่า",
+      "description": "คุณยังไม่มีสินค้าในตะกร้า กรุณาเลือกสินค้าก่อน",
+      "shopNow": "เลือกซื้อสินค้า"
+    },
+    "cartSummary": {
+      "title": "ตะกร้าสินค้า",
+      "items": "ชิ้น",
+      "items_plural": "ชิ้น"
+    },
+    "product": {
+      "color": "สี",
+      "category": "หมวดหมู่",
+      "quantity": "จำนวน",
+      "perItem": "ต่อชิ้น",
+      "removeItem": "ลบสินค้า",
+      "decreaseQuantity": "ลดจำนวน",
+      "increaseQuantity": "เพิ่มจำนวน"
+    },
+    "actions": {
+      "continueShopping": "เลือกซื้อสินค้าเพิ่ม",
+      "clearCart": "ล้างตะกร้าสินค้า",
+      "processing": "กำลังดำเนินการ...",
+      "proceedToCheckout": "ดำเนินการต่อ"
+    },
+    "orderSummary": {
+      "title": "สรุปคำสั่งซื้อ",
+      "subtotal": "ราคาสินค้า",
+      "shipping": "ค่าจัดส่ง",
+      "shippingFree": "ฟรี",
+      "total": "รวมทั้งหมด"
+    }
+  },
+  "checkoutConfirm": {
+    "pageTitle": "ยืนยันการสั่งซื้อ | Roihin Thailand",
+    "pageDescription": "ยืนยันที่อยู่จัดส่งและการชำระเงิน",
+    "title": "ยืนยันการสั่งซื้อ",
+    "backToCart": "กลับไปที่ตะกร้า",
+    "loadingAddress": "กำลังโหลดที่อยู่...",
+    "shippingAddress": {
+      "title": "ที่อยู่จัดส่ง",
+      "fullName": "ชื่อ-นามสกุล",
+      "fullNamePlaceholder": "กรอกชื่อ-นามสกุลของคุณ",
+      "email": "อีเมล",
+      "emailPlaceholder": "กรอกอีเมลของคุณ",
+      "phone": "เบอร์โทรศัพท์",
+      "phonePlaceholder": "กรอกเบอร์โทรศัพท์ของคุณ",
+      "address": "ที่อยู่",
+      "addressPlaceholder": "กรอกที่อยู่ของคุณ",
+      "district": "อำเภอ/เขต",
+      "districtPlaceholder": "กรอกอำเภอ/เขต",
+      "province": "จังหวัด",
+      "provincePlaceholder": "กรอกจังหวัด",
+      "postalCode": "รหัสไปรษณีย์",
+      "postalCodePlaceholder": "กรอกรหัสไปรษณีย์"
+    },
+    "payment": {
+      "title": "วิธีการชำระเงิน",
+      "bankTransfer": "โอนเงินผ่านธนาคาร",
+      "selectBank": "กรุณาเลือกบัญชีธนาคารที่ต้องการโอนเงิน",
+      "selectBankLabel": "เลือกบัญชีธนาคาร",
+      "bankName": "ธนาคาร",
+      "branchName": "สาขา",
+      "accountName": "ชื่อบัญชี",
+      "accountNumber": "เลขบัญชี",
+      "uploadSlip": "แนบสลิปการโอนเงิน",
+      "slipPreview": "ตัวอย่างสลิป",
+      "required": "*"
+    },
+    "orderItems": {
+      "color": "สี",
+      "quantity": "จำนวน"
+    },
+    "actions": {
+      "processing": "กำลังดำเนินการ...",
+      "confirmOrder": "ยืนยันการสั่งซื้อ",
+      "formIncomplete": "กรุณากรอกข้อมูล เลือกบัญชีธนาคาร และแนบสลิปให้ครบถ้วน"
+    },
+    "errors": {
+      "orderFailed": "เกิดข้อผิดพลาดในการสร้างคำสั่งซื้อ กรุณาลองใหม่อีกครั้ง"
+    }
+  },
+  "thankYou": {
+    "pageTitle": "ขอบคุณสำหรับการสั่งซื้อ | Roihin Thailand",
+    "pageDescription": "ขอบคุณสำหรับการสั่งซื้อ เราจะดำเนินการจัดส่งสินค้าให้คุณโดยเร็วที่สุด",
+    "loading": "กำลังโหลดข้อมูลคำสั่งซื้อ...",
+    "notFound": {
+      "message": "ไม่พบข้อมูลคำสั่งซื้อ",
+      "backToCart": "กลับไปหน้าตะกร้าสินค้า"
+    },
+    "success": {
+      "title": "ขอบคุณสำหรับการสั่งซื้อ!",
+      "orderNumber": "หมายเลขคำสั่งซื้อ",
+      "status": "สถานะ"
+    },
+    "orderDetails": {
+      "title": "รายละเอียดคำสั่งซื้อ",
+      "color": "สี",
+      "quantity": "จำนวน",
+      "subtotal": "ราคาสินค้า",
+      "shipping": "ค่าจัดส่ง",
+      "shippingFree": "ฟรี",
+      "total": "รวมทั้งหมด"
+    },
+    "shippingAddress": {
+      "title": "ที่อยู่จัดส่ง"
+    },
+    "paymentInfo": {
+      "title": "ข้อมูลการชำระเงิน",
+      "transferTo": "โอนเงินไปที่บัญชีใดบัญชีหนึ่งด้านล่าง:",
+      "bankName": "ธนาคาร",
+      "accountName": "ชื่อบัญชี",
+      "accountNumber": "เลขบัญชี",
+      "uploadSlip": "แนบสลิปการโอนเงิน",
+      "updateSlip": "อัปเดตสลิปการโอนเงิน",
+      "slipUploaded": "คุณได้แนบสลิปแล้ว",
+      "slipPreview": "ตัวอย่างสลิป",
+      "selectFile": "เลือกไฟล์สลิป",
+      "uploading": "กำลังอัปโหลด...",
+      "uploadSuccess": "อัปโหลดสลิปสำเร็จ",
+      "uploadError": "เกิดข้อผิดพลาดในการอัปโหลดสลิป กรุณาลองใหม่"
+    },
+    "actions": {
+      "backToHome": "กลับหน้าหลัก"
+    }
   }
 }

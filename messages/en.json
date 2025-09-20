@@ -87,5 +87,136 @@
     "viewMoreCharms": "View More Charms",
     "designByYourself": "Design by Yourself",
     "designByRoihin": "Design by ROIHIN"
+  },
+  "checkout": {
+    "title": "Shopping Cart",
+    "pageTitle": "Shopping Cart | Roihin Thailand",
+    "pageDescription": "Shopping cart and checkout",
+    "loading": "Loading...",
+    "emptyCart": {
+      "title": "Your cart is empty",
+      "description": "You don't have any items in your cart yet. Please browse our products first.",
+      "shopNow": "Shop Now"
+    },
+    "cartSummary": {
+      "title": "Shopping Cart",
+      "items": "item",
+      "items_plural": "items"
+    },
+    "product": {
+      "color": "Color",
+      "category": "Category",
+      "quantity": "Quantity",
+      "perItem": "per item",
+      "removeItem": "Remove item",
+      "decreaseQuantity": "Decrease quantity",
+      "increaseQuantity": "Increase quantity"
+    },
+    "actions": {
+      "continueShopping": "Continue Shopping",
+      "clearCart": "Clear Cart",
+      "processing": "Processing...",
+      "proceedToCheckout": "Proceed to Checkout"
+    },
+    "orderSummary": {
+      "title": "Order Summary",
+      "subtotal": "Subtotal",
+      "shipping": "Shipping",
+      "shippingFree": "Free",
+      "total": "Total"
+    }
+  },
+  "checkoutConfirm": {
+    "pageTitle": "Confirm Order | Roihin Thailand",
+    "pageDescription": "Confirm shipping address and payment",
+    "title": "Confirm Order",
+    "backToCart": "Back to cart",
+    "loadingAddress": "Loading address...",
+    "shippingAddress": {
+      "title": "Shipping Address",
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "Enter your full name",
+      "email": "Email",
+      "emailPlaceholder": "Enter your email",
+      "phone": "Phone Number",
+      "phonePlaceholder": "Enter your phone number",
+      "address": "Address",
+      "addressPlaceholder": "Enter your address",
+      "district": "District",
+      "districtPlaceholder": "Enter your district",
+      "province": "Province",
+      "provincePlaceholder": "Enter your province",
+      "postalCode": "Postal Code",
+      "postalCodePlaceholder": "Enter postal code"
+    },
+    "payment": {
+      "title": "Payment Method",
+      "bankTransfer": "Bank Transfer",
+      "selectBank": "Please select a bank account for transfer",
+      "selectBankLabel": "Select Bank Account",
+      "bankName": "Bank Name",
+      "branchName": "Branch",
+      "accountName": "Account Name",
+      "accountNumber": "Account Number",
+      "uploadSlip": "Upload Payment Slip",
+      "slipPreview": "Slip Preview",
+      "required": "*"
+    },
+    "orderItems": {
+      "color": "Color",
+      "quantity": "qty"
+    },
+    "actions": {
+      "processing": "Processing...",
+      "confirmOrder": "Confirm Order",
+      "formIncomplete": "Please complete all fields, select a bank account, and upload payment slip"
+    },
+    "errors": {
+      "orderFailed": "Failed to create order. Please try again."
+    }
+  },
+  "thankYou": {
+    "pageTitle": "Thank You for Your Order | Roihin Thailand",
+    "pageDescription": "Thank you for your order. We will process and ship your items as soon as possible.",
+    "loading": "Loading order details...",
+    "notFound": {
+      "message": "Order not found",
+      "backToCart": "Back to Cart"
+    },
+    "success": {
+      "title": "Thank You for Your Order!",
+      "orderNumber": "Order Number",
+      "status": "Status"
+    },
+    "orderDetails": {
+      "title": "Order Details",
+      "color": "Color",
+      "quantity": "Quantity",
+      "subtotal": "Subtotal",
+      "shipping": "Shipping",
+      "shippingFree": "Free",
+      "total": "Total"
+    },
+    "shippingAddress": {
+      "title": "Shipping Address"
+    },
+    "paymentInfo": {
+      "title": "Payment Information",
+      "transferTo": "Transfer to one of the following accounts:",
+      "bankName": "Bank",
+      "accountName": "Account Name",
+      "accountNumber": "Account Number",
+      "uploadSlip": "Upload Payment Slip",
+      "updateSlip": "Update Payment Slip",
+      "slipUploaded": "Payment slip uploaded",
+      "slipPreview": "Slip Preview",
+      "selectFile": "Select file",
+      "uploading": "Uploading...",
+      "uploadSuccess": "Upload successful",
+      "uploadError": "Upload failed. Please try again."
+    },
+    "actions": {
+      "backToHome": "Back to Home"
+    }
   }
 }

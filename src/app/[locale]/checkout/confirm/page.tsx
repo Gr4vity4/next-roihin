@@ -3,10 +3,20 @@ import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import ChatWidget from '@/components/ChatWidget'
 import { Footer } from '@/components/sections'
 import CheckoutConfirmContent from '@/components/sections/CheckoutConfirmContent'
+import { getTranslations } from 'next-intl/server'
 
-export const metadata: Metadata = {
-  title: 'ยืนยันการสั่งซื้อ | Roihin Thailand',
-  description: 'ยืนยันที่อยู่จัดส่งและการชำระเงิน',
+interface CheckoutConfirmPageProps {
+  params: Promise<{ locale: string }>
+}
+
+export async function generateMetadata({ params }: CheckoutConfirmPageProps): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'checkoutConfirm' })
+
+  return {
+    title: t('pageTitle'),
+    description: t('pageDescription'),
+  }
 }
 
 export default function CheckoutConfirmPage() {

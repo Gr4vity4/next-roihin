@@ -4,10 +4,20 @@ import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import ChatWidget from '@/components/ChatWidget'
 import { Footer } from '@/components/sections'
 import ThankYouContent from '@/components/sections/ThankYouContent'
+import { getTranslations } from 'next-intl/server'
 
-export const metadata: Metadata = {
-  title: 'ขอบคุณสำหรับการสั่งซื้อ | Roihin Thailand',
-  description: 'ขอบคุณสำหรับการสั่งซื้อ เราจะดำเนินการจัดส่งสินค้าให้คุณโดยเร็วที่สุด',
+interface ThankYouPageProps {
+  params: Promise<{ locale: string }>
+}
+
+export async function generateMetadata({ params }: ThankYouPageProps): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'thankYou' })
+
+  return {
+    title: t('pageTitle'),
+    description: t('pageDescription'),
+  }
 }
 
 function ThankYouLoading() {
@@ -15,7 +25,7 @@ function ThankYouLoading() {
     <div className="flex justify-center items-center min-h-[400px]">
       <div className="text-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-        <p className="text-gray-600">กำลังโหลดข้อมูลคำสั่งซื้อ...</p>
+        <p className="text-gray-600">Loading order details...</p>
       </div>
     </div>
   )

@@ -14,7 +14,7 @@ import { createOrder, uploadSlipBase64, getBankAccounts } from '@/lib/api/orders
 import type { OrderCreateRequest, BankAccount } from '@/lib/types/order'
 import { getDefaultAddress } from '@/lib/api/addresses.client'
 import { useAuth } from '@/contexts/AuthContext'
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import OrderSuccessModal from '@/components/OrderSuccessModal'
 
 interface ShippingAddress {
@@ -29,6 +29,8 @@ interface ShippingAddress {
 
 export default function CheckoutConfirmContent() {
   const router = useRouter()
+  const t = useTranslations('checkoutConfirm')
+  const tCheckout = useTranslations('checkout')
   const { items, itemCount, totalAmount, clearCart } = useCart()
   const { isLoggedIn, user } = useAuth()
   const locale = useLocale() as 'en' | 'th'
@@ -226,7 +228,7 @@ export default function CheckoutConfirmContent() {
 
     } catch (error) {
       console.error('Order creation failed:', error)
-      setOrderError('เกิดข้อผิดพลาดในการสร้างคำสั่งซื้อ กรุณาลองใหม่อีกครั้ง')
+      setOrderError(t('errors.orderFailed'))
       setIsProcessing(false)
     }
   }
@@ -257,12 +259,12 @@ export default function CheckoutConfirmContent() {
             <Link
               href="/checkout"
               className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              aria-label="Back to cart"
+              aria-label={t('backToCart')}
             >
               <ArrowLeftIcon className="w-5 h-5 text-gray-600" />
             </Link>
             <Typography variant="h3" className="text-gray-900">
-              ยืนยันการสั่งซื้อ
+              {t('title')}
             </Typography>
           </div>
 
@@ -272,9 +274,9 @@ export default function CheckoutConfirmContent() {
                 {/* Shipping Address */}
                 <div className="bg-white rounded-xl shadow-md p-6">
                   <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-xl font-semibold text-gray-900">ที่อยู่จัดส่ง</h3>
+                    <h3 className="text-xl font-semibold text-gray-900">{t('shippingAddress.title')}</h3>
                     {addressLoading && (
-                      <span className="text-sm text-gray-500">กำลังโหลดที่อยู่...</span>
+                      <span className="text-sm text-gray-500">{t('loadingAddress')}</span>
                     )}
                   </div>
 
@@ -284,7 +286,7 @@ export default function CheckoutConfirmContent() {
                         htmlFor="fullName"
                         className="block text-sm font-medium text-gray-700 mb-2"
                       >
-                        ชื่อ-นามสกุล *
+                        {t('shippingAddress.fullName')} {t('payment.required')}
                       </label>
                       <input
                         type="text"
@@ -302,7 +304,7 @@ export default function CheckoutConfirmContent() {
                         htmlFor="email"
                         className="block text-sm font-medium text-gray-700 mb-2"
                       >
-                        อีเมล *
+                        {t('shippingAddress.email')} {t('payment.required')}
                       </label>
                       <input
                         type="email"
@@ -320,7 +322,7 @@ export default function CheckoutConfirmContent() {
                         htmlFor="phone"
                         className="block text-sm font-medium text-gray-700 mb-2"
                       >
-                        เบอร์โทรศัพท์ *
+                        {t('shippingAddress.phone')} {t('payment.required')}
                       </label>
                       <input
                         type="tel"
@@ -338,7 +340,7 @@ export default function CheckoutConfirmContent() {
                         htmlFor="address"
                         className="block text-sm font-medium text-gray-700 mb-2"
                       >
-                        ที่อยู่ *
+                        {t('shippingAddress.address')} {t('payment.required')}
                       </label>
                       <textarea
                         id="address"
@@ -356,7 +358,7 @@ export default function CheckoutConfirmContent() {
                         htmlFor="district"
                         className="block text-sm font-medium text-gray-700 mb-2"
                       >
-                        อำเภอ/เขต *
+                        {t('shippingAddress.district')} {t('payment.required')}
                       </label>
                       <input
                         type="text"
@@ -374,7 +376,7 @@ export default function CheckoutConfirmContent() {
                         htmlFor="province"
                         className="block text-sm font-medium text-gray-700 mb-2"
                       >
-                        จังหวัด *
+                        {t('shippingAddress.province')} {t('payment.required')}
                       </label>
                       <input
                         type="text"
@@ -392,7 +394,7 @@ export default function CheckoutConfirmContent() {
                         htmlFor="postalCode"
                         className="block text-sm font-medium text-gray-700 mb-2"
                       >
-                        รหัสไปรษณีย์ *
+                        {t('shippingAddress.postalCode')} {t('payment.required')}
                       </label>
                       <input
                         type="text"
@@ -411,18 +413,18 @@ export default function CheckoutConfirmContent() {
 
                 {/* Payment Method */}
                 <div className="bg-white rounded-xl shadow-md p-6">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-6">วิธีการชำระเงิน</h3>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-6">{t('payment.title')}</h3>
 
                   <div className="space-y-4">
                     <div className="p-4 bg-green-50 border-2 border-green-500 rounded-lg">
-                      <p className="font-medium text-gray-900 mb-2">โอนเงินผ่านธนาคาร</p>
-                      <p className="text-sm text-gray-600">กรุณาเลือกบัญชีธนาคารที่ต้องการโอนเงิน</p>
+                      <p className="font-medium text-gray-900 mb-2">{t('payment.bankTransfer')}</p>
+                      <p className="text-sm text-gray-600">{t('payment.selectBank')}</p>
                     </div>
 
                     {/* Bank Selection */}
                     {banks.length > 0 && (
                       <div className="space-y-3">
-                        <p className="text-sm font-medium text-gray-700">เลือกบัญชีธนาคาร *</p>
+                        <p className="text-sm font-medium text-gray-700">{t('payment.selectBankLabel')} {t('payment.required')}</p>
                         {banks.map((bank) => (
                           <label
                             key={bank.acf.bank_account_number}
@@ -455,10 +457,10 @@ export default function CheckoutConfirmContent() {
                                 <p className="font-medium text-gray-900">{bank.acf.bank_name}</p>
                                 <p className="text-sm text-gray-600">{bank.acf.bank_branch_name}</p>
                                 <p className="text-sm text-gray-700 font-medium mt-1">
-                                  ชื่อบัญชี: {bank.acf.bank_account_name}
+                                  {t('payment.accountName')}: {bank.acf.bank_account_name}
                                 </p>
                                 <p className="text-sm text-gray-700">
-                                  เลขบัญชี: {bank.acf.bank_account_number}
+                                  {t('payment.accountNumber')}: {bank.acf.bank_account_number}
                                 </p>
                               </div>
                             </div>
@@ -472,7 +474,7 @@ export default function CheckoutConfirmContent() {
                         htmlFor="paymentSlip"
                         className="block text-sm font-medium text-gray-700 mb-2"
                       >
-                        แนบสลิปการโอนเงิน *
+                        {t('payment.uploadSlip')} {t('payment.required')}
                       </label>
                       <input
                         type="file"
@@ -485,7 +487,7 @@ export default function CheckoutConfirmContent() {
 
                       {slipPreview && (
                         <div className="mt-4">
-                          <p className="text-sm text-gray-600 mb-2">ตัวอย่างสลิป:</p>
+                          <p className="text-sm text-gray-600 mb-2">{t('payment.slipPreview')}:</p>
                           <div className="relative w-48 h-64 border border-gray-200 rounded-lg overflow-hidden">
                             <Image
                               src={slipPreview}
@@ -504,7 +506,7 @@ export default function CheckoutConfirmContent() {
               {/* Order Summary */}
               <div className="lg:col-span-1">
                 <div className="bg-white rounded-xl shadow-lg p-6 sticky top-24">
-                  <h2 className="text-xl text-gray-900 font-semibold mb-6">สรุปคำสั่งซื้อ</h2>
+                  <h2 className="text-xl text-gray-900 font-semibold mb-6">{tCheckout('orderSummary.title')}</h2>
 
                   {/* Order Items */}
                   <div className="space-y-3 pb-4 mb-4 border-b border-gray-200 max-h-64 overflow-y-auto">
@@ -515,7 +517,7 @@ export default function CheckoutConfirmContent() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-gray-900 truncate">{item.title}</p>
-                          {item.color && <p className="text-xs text-gray-500">สี: {item.color}</p>}
+                          {item.color && <p className="text-xs text-gray-500">{t('orderItems.color')}: {item.color}</p>}
                           <p className="text-xs text-gray-600">
                             {item.quantity} x ฿{item.price.toLocaleString('th-TH')}
                           </p>
@@ -529,20 +531,20 @@ export default function CheckoutConfirmContent() {
 
                   <div className="space-y-3 pb-4 border-b border-gray-200">
                     <div className="flex justify-between text-gray-600">
-                      <span>ราคาสินค้า ({itemCount} ชิ้น)</span>
+                      <span>{tCheckout('orderSummary.subtotal')} ({itemCount} {itemCount === 1 ? tCheckout('cartSummary.items') : tCheckout('cartSummary.items_plural')})</span>
                       <span className="font-medium text-gray-900">
                         ฿{totalAmount.toLocaleString('th-TH')}
                       </span>
                     </div>
                     <div className="flex justify-between text-gray-600">
-                      <span>ค่าจัดส่ง</span>
-                      <span className="text-green-600 font-medium">ฟรี</span>
+                      <span>{tCheckout('orderSummary.shipping')}</span>
+                      <span className="text-green-600 font-medium">{tCheckout('orderSummary.shippingFree')}</span>
                     </div>
                   </div>
 
                   <div className="pt-4 pb-6">
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-900 text-lg font-semibold">รวมทั้งหมด</span>
+                      <span className="text-gray-900 text-lg font-semibold">{tCheckout('orderSummary.total')}</span>
                       <span className="text-2xl font-bold text-gray-900">
                         ฿{totalAmount.toLocaleString('th-TH')}
                       </span>
@@ -558,12 +560,12 @@ export default function CheckoutConfirmContent() {
                         : 'bg-green-600 hover:bg-green-700 text-white'
                     }`}
                   >
-                    {isProcessing ? 'กำลังดำเนินการ...' : 'ยืนยันการสั่งซื้อ'}
+                    {isProcessing ? t('actions.processing') : t('actions.confirmOrder')}
                   </button>
 
                   {!isFormValid() && (
                     <p className="text-xs text-red-500 mt-2 text-center">
-                      กรุณากรอกข้อมูล เลือกบัญชีธนาคาร และแนบสลิปให้ครบถ้วน
+                      {t('actions.formIncomplete')}
                     </p>
                   )}
 
