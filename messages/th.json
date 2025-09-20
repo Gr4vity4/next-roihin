@@ -88,6 +88,11 @@
     "designByYourself": "ออกแบบด้วยตัวเอง",
     "designByRoihin": "ออกแบบโดยร้อยหิน"
   },
+  "charmspacer": {
+    "pageTitle": "ชาร์ม/สเปเซอร์ | Roihin Thailand",
+    "pageDescription": "ชาร์มและสเปเซอร์เฉพาะตัว จัดทำขึ้นด้วยตำนานและพิธีกรรมโบราณ เพื่อให้เกิดเทวคุณอันเป็นสิริมงคล",
+    "noProducts": "กำลังอัพเดตข้อมูลสินค้า กรุณากลับมาใหม่อีกครั้ง"
+  },
   "checkout": {
     "title": "ตะกร้าสินค้า",
     "pageTitle": "ตะกร้าสินค้า | Roihin Thailand",
