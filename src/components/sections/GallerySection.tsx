@@ -4,6 +4,7 @@ import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
 import Button from '../Button'
 import { useTranslations } from '@/contexts/TranslationContext'
+import { useTranslations as useNextIntlTranslations } from 'next-intl'
 
 interface GallerySectionProps {
   backgroundImage: string
@@ -11,7 +12,8 @@ interface GallerySectionProps {
   title: string
   subtitle: string
   ctaButtons: Array<{
-    text: string
+    text?: string
+    translationKey?: string
     variant: 'primary' | 'gold' | 'green' | 'outline' | 'ghost'
     highlight?: boolean
     onClick?: () => void
@@ -29,6 +31,7 @@ export default function GallerySection({
   className = '',
 }: GallerySectionProps) {
   const { translations } = useTranslations()
+  const t = useNextIntlTranslations('common')
   const productImages = Array.from({ length: 10 }, (_, i) => ({
     src: `/images/home-page/${i + 1}.png`,
     alt: `Product ${i + 1}`,
@@ -50,11 +53,12 @@ export default function GallerySection({
           </p> */}
           <div className="flex flex-wrap justify-center gap-4">
             {ctaButtons.map((button, index) => {
+              const buttonText = button.translationKey ? t(button.translationKey) : button.text
               if (button.href) {
                 return (
                   <Link key={index} href={button.href}>
                     <Button variant={button.variant} size="lg" highlight={button.highlight}>
-                      {button.text}
+                      {buttonText}
                     </Button>
                   </Link>
                 )
@@ -68,7 +72,7 @@ export default function GallerySection({
                   highlight={button.highlight}
                   onClick={button.onClick}
                 >
-                  {button.text}
+                  {buttonText}
                 </Button>
               )
             })}

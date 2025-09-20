@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils'
 import Button from '../Button'
 import { Container, Typography } from '../ui'
 import { useTranslations } from '@/contexts/TranslationContext'
+import { useTranslations as useNextIntlTranslations } from 'next-intl'
 
 interface AboutSectionProps {
   id?: string
@@ -11,7 +12,8 @@ interface AboutSectionProps {
   subtitle?: string
   content?: string
   ctaButton?: {
-    text: string
+    text?: string
+    translationKey?: string
     variant: 'primary' | 'gold' | 'green' | 'outline' | 'ghost'
     onClick?: () => void
     href?: string
@@ -34,7 +36,10 @@ export default function AboutSection({
   className = '',
 }: AboutSectionProps) {
   const { translations } = useTranslations()
-  
+  const t = useNextIntlTranslations('common')
+
+  const buttonText = ctaButton?.translationKey ? t(ctaButton.translationKey) : ctaButton?.text
+
   return (
     <section id={id} className={cn('py-24', backgroundColor, className)}>
       <Container maxWidth={maxWidth}>
@@ -70,7 +75,7 @@ export default function AboutSection({
                 size={ctaButton.size || 'lg'}
                 onClick={ctaButton.onClick}
               >
-                {ctaButton.text}
+                {buttonText}
               </Button>
             </div>
           )}

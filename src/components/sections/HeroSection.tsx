@@ -5,6 +5,7 @@ import Button from '../Button'
 import ParallaxSection from '../ParallaxSection'
 import { Container, Typography } from '../ui'
 import { useTranslations } from '@/contexts/TranslationContext'
+import { useTranslations as useNextIntlTranslations } from 'next-intl'
 
 interface HeroSectionProps {
   backgroundImage: string
@@ -20,7 +21,8 @@ interface HeroSectionProps {
     english: string
   }
   ctaButton: {
-    text: string
+    text?: string
+    translationKey?: string
     variant: 'primary' | 'gold' | 'green' | 'outline' | 'ghost'
     onClick?: () => void
     href?: string
@@ -42,6 +44,10 @@ export default function HeroSection({
   minHeight = 'min-h-screen',
 }: HeroSectionProps) {
   const { translations } = useTranslations()
+  const t = useNextIntlTranslations('common')
+
+  const buttonText = ctaButton.translationKey ? t(ctaButton.translationKey) : ctaButton.text
+
   return (
     <ParallaxSection
       imageUrl={backgroundImage}
@@ -65,7 +71,7 @@ export default function HeroSection({
               size={ctaButton.size || 'lg'}
               highlight={ctaButton.highlight}
             >
-              {ctaButton.text}
+              {buttonText}
             </Button>
           </Link>
         ) : (
@@ -75,7 +81,7 @@ export default function HeroSection({
             highlight={ctaButton.highlight}
             onClick={ctaButton.onClick}
           >
-            {ctaButton.text}
+            {buttonText}
           </Button>
         )}
       </Container>

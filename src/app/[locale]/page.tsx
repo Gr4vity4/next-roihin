@@ -27,7 +27,7 @@ export default function Home() {
           backgroundAlt={content.hero.background.alt}
           title={content.hero.title}
           subtitle={content.hero.subtitle}
-          ctaButton={content.hero.cta}
+          ctaButton={{ ...content.hero.cta, translationKey: 'orderDesign' }}
           className="pt-20 lg:pt-[230px]"
         />
 
@@ -37,7 +37,7 @@ export default function Home() {
           title={content.about.title}
           subtitle={content.about.subtitle}
           content={content.about.content}
-          ctaButton={content.about.cta}
+          ctaButton={{ ...content.about.cta, translationKey: 'learnMore' }}
         />
 
         {/* Signature Charm Section */}
@@ -47,7 +47,7 @@ export default function Home() {
           backgroundAlt={content.signatureCharm.background.alt}
           title={content.signatureCharm.title}
           subtitle={content.signatureCharm.subtitle}
-          ctaButton={content.signatureCharm.cta}
+          ctaButton={{ ...content.signatureCharm.cta, translationKey: 'viewMoreCharms' }}
         />
 
         {/* Testimonials Section */}
@@ -56,7 +56,7 @@ export default function Home() {
           title={content.testimonials.title}
           subtitle={content.testimonials.subtitle}
           testimonials={content.testimonials.items}
-          ctaButton={content.testimonials.cta}
+          ctaButton={{ ...content.testimonials.cta, translationKey: 'readMore' }}
         />
 
         {/* Full Width Background Section */}
@@ -73,7 +73,10 @@ export default function Home() {
           backgroundAlt={content.gallery.background.alt}
           title={content.gallery.title}
           subtitle={content.gallery.subtitle}
-          ctaButtons={content.gallery.ctaButtons}
+          ctaButtons={[
+            { ...content.gallery.ctaButtons[0], translationKey: 'designByYourself' },
+            { ...content.gallery.ctaButtons[1], translationKey: 'designByRoihin' }
+          ]}
         />
 
         {/* Vibrant Destiny Section */}

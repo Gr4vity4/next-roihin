@@ -6,6 +6,7 @@ import Button from './Button'
 import { ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 import { useTranslations } from '@/contexts/TranslationContext'
+import { useTranslations as useNextIntlTranslations } from 'next-intl'
 
 interface ParallaxContentSectionProps {
   // Parallax configuration
@@ -19,7 +20,8 @@ interface ParallaxContentSectionProps {
   subtitle?: string
   content?: ReactNode
   ctaButtons?: Array<{
-    text: string
+    text?: string
+    translationKey?: string
     variant: 'primary' | 'gold' | 'green' | 'outline' | 'ghost'
     onClick?: () => void
     href?: string
@@ -54,6 +56,7 @@ export default function ParallaxContentSection({
   minHeight = 'min-h-[750px]',
 }: ParallaxContentSectionProps) {
   const { translations } = useTranslations()
+  const t = useNextIntlTranslations('common')
   return (
     <ParallaxSection
       imageUrl={imageUrl}
@@ -107,21 +110,24 @@ export default function ParallaxContentSection({
                 contentAlign === 'right' && 'justify-end',
                 ctaButtons.length > 1 && 'flex-col md:flex-row'
               )}>
-                {ctaButtons.map((button, index) => (
-                  <Button
-                    key={index}
-                    variant={button.variant}
-                    size="lg"
-                    highlight={button.highlight}
-                    onClick={button.onClick}
-                  >
-                    {title === 'SIGNATURE CHARM' && translations?.acf?.home_p5 ? (
-                      <span dangerouslySetInnerHTML={{ __html: translations.acf.home_p5.replace(/\\r\\n/g, '<br />') }} />
-                    ) : (
-                      button.text
-                    )}
-                  </Button>
-                ))}
+                {ctaButtons.map((button, index) => {
+                  const buttonText = button.translationKey ? t(button.translationKey) : button.text
+                  return (
+                    <Button
+                      key={index}
+                      variant={button.variant}
+                      size="lg"
+                      highlight={button.highlight}
+                      onClick={button.onClick}
+                    >
+                      {title === 'SIGNATURE CHARM' && translations?.acf?.home_p5 ? (
+                        <span dangerouslySetInnerHTML={{ __html: translations.acf.home_p5.replace(/\\r\\n/g, '<br />') }} />
+                      ) : (
+                        buttonText
+                      )}
+                    </Button>
+                  )
+                })}
               </div>
             )}
           </div>

@@ -6,6 +6,7 @@ import { Link } from '@/i18n/navigation'
 import Button from '../Button'
 import TestimonialCard from '../TestimonialCard'
 import { Container, Typography } from '../ui'
+import { useTranslations as useNextIntlTranslations } from 'next-intl'
 
 interface TestimonialData {
   id: string
@@ -20,7 +21,8 @@ interface TestimonialsSectionProps {
   testimonials: TestimonialData[]
   columns?: 1 | 2 | 3 | 4
   ctaButton?: {
-    text: string
+    text?: string
+    translationKey?: string
     variant: 'primary' | 'gold' | 'green' | 'outline' | 'ghost'
     onClick?: () => void
     href?: string
@@ -39,6 +41,7 @@ export default function TestimonialsSection({
   className = '',
 }: TestimonialsSectionProps) {
   const { translations } = useTranslations()
+  const t = useNextIntlTranslations('common')
 
   return (
     <section id={id} className={cn('py-24', backgroundColor, textColor, className)}>
@@ -73,12 +76,12 @@ export default function TestimonialsSection({
             {ctaButton.href ? (
               <Link href={ctaButton.href}>
                 <Button variant={ctaButton.variant} size="lg">
-                  {ctaButton.text}
+                  {ctaButton.translationKey ? t(ctaButton.translationKey) : ctaButton.text}
                 </Button>
               </Link>
             ) : (
               <Button variant={ctaButton.variant} size="lg" onClick={ctaButton.onClick}>
-                {ctaButton.text}
+                {ctaButton.translationKey ? t(ctaButton.translationKey) : ctaButton.text}
               </Button>
             )}
           </div>
