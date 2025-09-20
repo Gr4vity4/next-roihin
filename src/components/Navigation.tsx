@@ -140,8 +140,8 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
   const handleLanguageSwitch = (lang: 'th' | 'en') => {
     setLanguage(lang)
     setIsLanguageMenuOpen(false)
-    // Navigate to the new locale
-    router.push(pathname, { locale: lang })
+    // Navigate to the new locale using replace to avoid adding to history
+    router.replace(pathname, { locale: lang })
   }
 
   return (

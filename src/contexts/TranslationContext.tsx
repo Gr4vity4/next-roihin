@@ -3,7 +3,7 @@
 import { getSiteTranslations } from '@/lib/api/translations'
 import type { SiteTranslations } from '@/lib/types/translations'
 import { useLanguage } from '@/contexts/LanguageContext'
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react'
+import { createContext, useContext, useEffect, useState, ReactNode, useRef } from 'react'
 
 interface TranslationContextType {
   translations: SiteTranslations | null
@@ -12,17 +12,42 @@ interface TranslationContextType {
 
 const TranslationContext = createContext<TranslationContextType | undefined>(undefined)
 
+// Cache for translations to avoid refetching
+const translationsCache = new Map<string, SiteTranslations>()
+
 export function TranslationProvider({ children }: { children: ReactNode }) {
   const { language } = useLanguage()
   const [translations, setTranslations] = useState<SiteTranslations | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
+  const isInitialMount = useRef(true)
 
   useEffect(() => {
     const fetchTranslations = async () => {
-      setIsLoading(true)
-      const data = await getSiteTranslations(language)
-      setTranslations(data)
-      setIsLoading(false)
+      // Check if we have cached translations for this language
+      const cached = translationsCache.get(language)
+      if (cached) {
+        setTranslations(cached)
+        setIsLoading(false)
+        return
+      }
+
+      // Only show loading on initial mount, not on language switches
+      if (isInitialMount.current) {
+        setIsLoading(true)
+      }
+
+      try {
+        const data = await getSiteTranslations(language)
+        if (data) {
+          translationsCache.set(language, data)
+          setTranslations(data)
+        }
+      } catch (error) {
+        console.error('Failed to fetch translations:', error)
+      } finally {
+        setIsLoading(false)
+        isInitialMount.current = false
+      }
     }
 
     fetchTranslations()
@@ -30,15 +55,7 @@ export function TranslationProvider({ children }: { children: ReactNode }) {
 
   return (
     <TranslationContext.Provider value={{ translations, isLoading }}>
-      {isLoading ? (
-        <div className="min-h-screen bg-black flex items-center justify-center">
-          <div className="animate-pulse">
-            <div className="w-32 h-32 bg-gray-800 rounded-full" />
-          </div>
-        </div>
-      ) : (
-        children
-      )}
+      {children}
     </TranslationContext.Provider>
   )
 }

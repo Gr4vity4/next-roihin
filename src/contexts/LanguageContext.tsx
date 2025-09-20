@@ -34,13 +34,6 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem(LANGUAGE_KEY, lang)
       // Also set cookie for server components
       document.cookie = `${LANGUAGE_KEY}=${lang}; path=/; max-age=${60 * 60 * 24 * 365}; samesite=lax`
-      // Send header for middleware to update cookie properly
-      fetch('/api/testimonials', {
-        method: 'HEAD',
-        headers: {
-          'x-language': lang
-        }
-      }).catch(() => {})
     }
   }
 
