@@ -1,0 +1,12 @@
+{
+  "navigation": {
+    "home": "หน้าแรก",
+    "about": "เกี่ยวกับร้อยหิน",
+    "personalized": "งานออกแบบเฉพาะบุคคล",
+    "charmspacer": "ชาร์ม/สเปเซอร์",
+    "diy": "DIY",
+    "testimonial": "รีวิวจริง",
+    "customerService": "บริการลูกค้า",
+    "blog": "บทความ"
+  }
+}

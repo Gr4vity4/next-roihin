@@ -1,7 +1,10 @@
 {
   "includeCoAuthoredBy": false,
   "permissions": {
-    "allow": ["Bash(npm run dev:*)"],
+    "allow": [
+      "Bash(npm run dev:*)",
+      "WebFetch(domain:next-intl.dev)"
+    ],
     "deny": []
   }
 }

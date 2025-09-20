@@ -4,13 +4,14 @@ import AuthModal from '@/components/AuthModal'
 import { useAuth } from '@/contexts/AuthContext'
 import { useCart } from '@/contexts/CartContext'
 import { useLanguage } from '@/contexts/LanguageContext'
-import { useTranslations } from '@/contexts/TranslationContext'
 import { cn } from '@/lib/utils'
 import { ShoppingCartIcon } from '@heroicons/react/24/outline'
 import { ChevronDown, Menu, X } from 'lucide-react'
 import Image from 'next/image'
-import Link from 'next/link'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { usePathname, useRouter } from '@/i18n/navigation'
+import { Link } from '@/i18n/navigation'
+import { useTranslations } from 'next-intl'
+import { useLocale } from 'next-intl'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 const userMenuItems = [
@@ -39,25 +40,24 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
   const userMenuRef = useRef<HTMLDivElement>(null)
   const languageMenuRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
-  const searchParams = useSearchParams()
+  const locale = useLocale()
   const { isLoggedIn, user, logout } = useAuth()
   const { itemCount } = useCart()
   const { language, setLanguage } = useLanguage()
-  const { translations } = useTranslations()
+  const t = useTranslations('navigation')
 
   const navItems = useMemo(() => {
-    const t = translations?.acf
     return [
-      { name: t?.menu_home || 'หน้าแรก', href: '/' },
-      { name: t?.menu_about_us || 'เกี่ยวกับร้อยหิน', href: '/about' },
-      { name: t?.menu_personalized_design || 'งานออกแบบเฉพาะบุคคล', href: '/personalized' },
-      { name: t?.menu_charm_spacer || 'ชาร์ม/สเปเซอร์', href: '/charmspacer' },
-      { name: t?.menu_diy || 'DIY', href: '/custom' },
-      { name: t?.menu_testimonial || 'รีวิวจริง', href: '/testimonial' },
-      { name: t?.menu_contact || 'บริการลูกค้า', href: '/customer-service' },
-      { name: t?.menu_blogs || 'บทความ', href: '/blog' },
+      { name: t('home'), href: '/' },
+      { name: t('about'), href: '/about' },
+      { name: t('personalized'), href: '/personalized' },
+      { name: t('charmspacer'), href: '/charmspacer' },
+      { name: t('diy'), href: '/custom' },
+      { name: t('testimonial'), href: '/testimonial' },
+      { name: t('customerService'), href: '/customer-service' },
+      { name: t('blog'), href: '/blog' },
     ]
-  }, [translations])
+  }, [t])
 
   // Calculate the height of the first section (hero section)
   const calculateScrollThreshold = useCallback(() => {
@@ -140,10 +140,8 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
   const handleLanguageSwitch = (lang: 'th' | 'en') => {
     setLanguage(lang)
     setIsLanguageMenuOpen(false)
-    // Update URL with new language parameter
-    const params = new URLSearchParams(searchParams.toString())
-    params.set('lang', lang)
-    router.push(`${pathname}?${params.toString()}`)
+    // Navigate to the new locale
+    router.push(pathname, { locale: lang })
   }
 
   return (
@@ -234,7 +232,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                     className="flex items-center space-x-1 px-3 py-1.5 text-white hover:text-gold transition-colors"
                   >
                     <span className="text-sm font-medium tracking-widest">
-                      {language.toUpperCase()}
+                      {locale.toUpperCase()}
                     </span>
                     <ChevronDown
                       className={cn(
@@ -250,21 +248,21 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                         onClick={() => handleLanguageSwitch('th')}
                         className={cn(
                           'w-full px-4 py-2 text-sm text-left hover:bg-gray-100 flex items-center justify-between',
-                          language === 'th' && 'bg-gray-50 font-semibold',
+                          locale === 'th' && 'bg-gray-50 font-semibold',
                         )}
                       >
                         ไทย
-                        {language === 'th' && <span className="text-gold">✓</span>}
+                        {locale === 'th' && <span className="text-gold">✓</span>}
                       </button>
                       <button
                         onClick={() => handleLanguageSwitch('en')}
                         className={cn(
                           'w-full px-4 py-2 text-sm text-left hover:bg-gray-100 flex items-center justify-between',
-                          language === 'en' && 'bg-gray-50 font-semibold',
+                          locale === 'en' && 'bg-gray-50 font-semibold',
                         )}
                       >
                         English
-                        {language === 'en' && <span className="text-gold">✓</span>}
+                        {locale === 'en' && <span className="text-gold">✓</span>}
                       </button>
                     </div>
                   )}
@@ -366,7 +364,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                     className="flex items-center space-x-1 px-3 py-1.5 text-white hover:text-gold transition-colors"
                   >
                     <span className="text-sm font-medium tracking-widest">
-                      {language.toUpperCase()}
+                      {locale.toUpperCase()}
                     </span>
                     <ChevronDown
                       className={cn(
@@ -382,21 +380,21 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                         onClick={() => handleLanguageSwitch('th')}
                         className={cn(
                           'w-full px-4 py-2 text-sm text-left hover:bg-gray-100 flex items-center justify-between',
-                          language === 'th' && 'bg-gray-50 font-semibold',
+                          locale === 'th' && 'bg-gray-50 font-semibold',
                         )}
                       >
                         ไทย
-                        {language === 'th' && <span className="text-gold">✓</span>}
+                        {locale === 'th' && <span className="text-gold">✓</span>}
                       </button>
                       <button
                         onClick={() => handleLanguageSwitch('en')}
                         className={cn(
                           'w-full px-4 py-2 text-sm text-left hover:bg-gray-100 flex items-center justify-between',
-                          language === 'en' && 'bg-gray-50 font-semibold',
+                          locale === 'en' && 'bg-gray-50 font-semibold',
                         )}
                       >
                         English
-                        {language === 'en' && <span className="text-gold">✓</span>}
+                        {locale === 'en' && <span className="text-gold">✓</span>}
                       </button>
                     </div>
                   )}
@@ -584,7 +582,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                       onClick={() => handleLanguageSwitch('th')}
                       className={cn(
                         'px-3 py-1 rounded text-sm',
-                        language === 'th'
+                        locale === 'th'
                           ? 'bg-gold text-black font-semibold'
                           : 'bg-gray-800 text-white',
                       )}
@@ -595,7 +593,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                       onClick={() => handleLanguageSwitch('en')}
                       className={cn(
                         'px-3 py-1 rounded text-sm',
-                        language === 'en'
+                        locale === 'en'
                           ? 'bg-gold text-black font-semibold'
                           : 'bg-gray-800 text-white',
                       )}
