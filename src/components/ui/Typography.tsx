@@ -1,4 +1,4 @@
-import { HTMLAttributes, ReactNode, createElement } from 'react'
+import { HTMLAttributes, ReactNode, createElement, Children, isValidElement } from 'react'
 import { cn } from '@/lib/utils'
 import { containsNumbers } from '@/lib/utils/text'
 
@@ -66,8 +66,25 @@ export default function Typography({
 
   const colorClass = getColorClass(color)
 
-  // Check if children contains numbers
-  const hasNumbers = typeof children === 'string' && containsNumbers(children)
+  // Helper function to recursively check if children contain numbers
+  const checkChildrenForNumbers = (node: ReactNode): boolean => {
+    if (typeof node === 'string') {
+      return containsNumbers(node)
+    }
+    if (typeof node === 'number') {
+      return true
+    }
+    if (Array.isArray(node)) {
+      return node.some(child => checkChildrenForNumbers(child))
+    }
+    if (isValidElement(node) && node.props.children) {
+      return checkChildrenForNumbers(node.props.children)
+    }
+    return false
+  }
+
+  // Check if children contains numbers (handles complex JSX children)
+  const hasNumbers = checkChildrenForNumbers(children)
 
   return createElement(
     Component,
