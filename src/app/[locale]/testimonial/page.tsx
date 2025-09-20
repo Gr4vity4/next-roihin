@@ -1,15 +1,20 @@
+'use client'
+
 import ChatWidget from '@/components/ChatWidget'
 import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import Footer from '@/components/sections/Footer'
 import TestimonialsClient from '@/components/TestimonialsClient'
 import { Typography } from '@/components/ui'
 import Image from 'next/image'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
+import { useTranslations } from 'next-intl'
 // Configure route segment caching for testimonials (dynamic content)
 // Revalidate every 5 minutes
 export const revalidate = 300
 
 export default function TestimonialPage() {
+  const tCommon = useTranslations('common')
+
   return (
     <>
       <NavigationWithSuspense />
@@ -50,7 +55,7 @@ export default function TestimonialPage() {
                 พร้อมที่จะเริ่มต้นการเปลี่ยนแปลงชีวิตของคุณแล้วหรือยัง?
               </Typography>
               <Link href="/custom" className="inline-block bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-8 py-3 rounded-full font-semibold hover:from-yellow-500 hover:to-yellow-700 transition-all duration-300 ">
-                สั่งออกแบบสายหินของคุณ
+                {tCommon('orderDesign')}
               </Link>
             </div>
           </div>

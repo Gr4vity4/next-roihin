@@ -77,5 +77,15 @@
     "wishlist": "รายการโปรด",
     "settings": "ตั้งค่า",
     "signOut": "ออกจากระบบ"
+  },
+  "common": {
+    "signIn": "เข้าสู่ระบบ",
+    "signUp": "สมัครสมาชิก",
+    "orderDesign": "สั่งออกแบบ",
+    "learnMore": "เรียนรู้เพิ่มเติม",
+    "readMore": "อ่านเพิ่มเติม",
+    "viewMoreCharms": "ดูชาร์มเพิ่มเติม",
+    "designByYourself": "ออกแบบด้วยตัวเอง",
+    "designByRoihin": "ออกแบบโดยร้อยหิน"
   }
 }

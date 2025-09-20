@@ -35,6 +35,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
   const { itemCount } = useCart()
   const t = useTranslations('navigation')
   const tUser = useTranslations('userMenu')
+  const tCommon = useTranslations('common')
 
   const navItems = useMemo(() => {
     return [
@@ -325,14 +326,14 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                         onClick={() => openAuthModal('sign-in')}
                         className="font-medium text-sm text-white transition-colors hover:text-gold tracking-widest"
                       >
-                        เข้าสู่ระบบ
+                        {tCommon('signIn')}
                       </button>
                       <span className="text-white/40">|</span>
                       <button
                         onClick={() => openAuthModal('sign-up')}
                         className="font-medium text-sm text-white transition-colors hover:text-gold tracking-widest"
                       >
-                        สมัครสมาชิก
+                        {tCommon('signUp')}
                       </button>
                     </>
                   )}
@@ -457,14 +458,14 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                         onClick={() => openAuthModal('sign-in')}
                         className="font-medium text-sm text-white transition-colors hover:text-gold tracking-widest"
                       >
-                        เข้าสู่ระบบ
+                        {tCommon('signIn')}
                       </button>
                       <span className="text-white/40">|</span>
                       <button
                         onClick={() => openAuthModal('sign-up')}
                         className="font-medium text-sm text-white transition-colors hover:text-gold tracking-widest"
                       >
-                        สมัครสมาชิก
+                        {tCommon('signUp')}
                       </button>
                     </>
                   )}
@@ -647,13 +648,13 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                       onClick={() => openAuthModal('sign-in')}
                       className="block w-full text-left py-3 text-white hover:text-gold transition-colors"
                     >
-                      เข้าสู่ระบบ
+                      {tCommon('signIn')}
                     </button>
                     <button
                       onClick={() => openAuthModal('sign-up')}
                       className="block w-full text-left py-3 text-white hover:text-gold transition-colors"
                     >
-                      สมัครสมาชิก
+                      {tCommon('signUp')}
                     </button>
                   </>
                 )}
