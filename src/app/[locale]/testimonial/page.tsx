@@ -1,5 +1,3 @@
-'use client'
-
 import ChatWidget from '@/components/ChatWidget'
 import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import Footer from '@/components/sections/Footer'
@@ -7,13 +5,14 @@ import TestimonialsClient from '@/components/TestimonialsClient'
 import { Typography } from '@/components/ui'
 import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
-import { useTranslations } from 'next-intl'
+import { getTranslations } from 'next-intl/server'
+
 // Configure route segment caching for testimonials (dynamic content)
 // Revalidate every 5 minutes
 export const revalidate = 300
 
-export default function TestimonialPage() {
-  const tCommon = useTranslations('common')
+export default async function TestimonialPage() {
+  const tCommon = await getTranslations('common')
 
   return (
     <>

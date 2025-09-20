@@ -47,7 +47,7 @@ export default function Home() {
           backgroundAlt={content.signatureCharm.background.alt}
           title={content.signatureCharm.title}
           subtitle={content.signatureCharm.subtitle}
-          ctaButton={{ ...content.signatureCharm.cta, translationKey: 'viewMoreCharms' }}
+          ctaButton={content.signatureCharm.cta}
         />
 
         {/* Testimonials Section */}

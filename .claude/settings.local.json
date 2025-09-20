@@ -3,7 +3,8 @@
   "permissions": {
     "allow": [
       "Bash(npm run dev:*)",
-      "WebFetch(domain:next-intl.dev)"
+      "WebFetch(domain:next-intl.dev)",
+      "Bash(npm run build:*)"
     ],
     "deny": []
   }
