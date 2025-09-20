@@ -2,7 +2,7 @@ import Container from '@/components/ui/Container'
 import Typography from '@/components/ui/Typography'
 import { Product } from '@/lib/types/products'
 import Image from 'next/image'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 
 interface RelatedProductsProps {
   products: Product[]

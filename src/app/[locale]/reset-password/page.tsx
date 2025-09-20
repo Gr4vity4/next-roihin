@@ -1,12 +1,13 @@
 'use client'
 
 import { useState, useEffect, Suspense } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
+import { useRouter } from '@/i18n/navigation'
 import { Eye, EyeOff, CheckCircle2 } from 'lucide-react'
 import Button from '@/components/Button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 
 function ResetPasswordForm() {
   const router = useRouter()

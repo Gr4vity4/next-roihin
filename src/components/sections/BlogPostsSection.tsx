@@ -9,7 +9,7 @@ import type {
 import { useLocale } from 'next-intl'
 import { formatThaiDate } from '@/lib/utils'
 import Image from 'next/image'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { useEffect, useState } from 'react'
 import Button from '../Button'
 import { Container, Typography } from '../ui'

@@ -1,6 +1,6 @@
 'use client'
 
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import Button from '../Button'
 import ParallaxSection from '../ParallaxSection'
 import { Container, Typography } from '../ui'

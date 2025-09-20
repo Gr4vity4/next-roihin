@@ -7,7 +7,7 @@ import { useCart } from '@/contexts/CartContext'
 import { Category, Product } from '@/lib/types/products'
 import { ChevronLeftIcon, ChevronRightIcon, ShoppingCartIcon } from '@heroicons/react/24/outline'
 import Image from 'next/image'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 

@@ -1,7 +1,7 @@
 'use client'
 
 import { useAuth } from '@/contexts/AuthContext'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 
 export default function MemberDashboard() {
   const { user } = useAuth()

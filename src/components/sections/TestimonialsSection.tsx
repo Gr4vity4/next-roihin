@@ -2,7 +2,7 @@
 
 import { useTranslations } from '@/contexts/TranslationContext'
 import { cn } from '@/lib/utils'
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation'
 import Button from '../Button'
 import TestimonialCard from '../TestimonialCard'
 import { Container, Typography } from '../ui'

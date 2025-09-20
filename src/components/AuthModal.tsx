@@ -6,7 +6,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useAuth } from '@/contexts/AuthContext'
 import { X } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { useRouter } from '@/i18n/navigation'
+import { Link } from '@/i18n/navigation'
 import { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
 
@@ -290,13 +291,13 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
                 />
                 <Label htmlFor="terms" className="ml-2 text-sm text-gray-600">
                   {t('signUp.acceptTerms')}{' '}
-                  <a href="/terms" className="text-[#005635] hover:underline">
+                  <Link href="/terms" className="text-[#005635] hover:underline">
                     {t('signUp.termsOfService')}
-                  </a>{' '}
+                  </Link>{' '}
                   {t('signUp.and')}{' '}
-                  <a href="/privacy" className="text-[#005635] hover:underline">
+                  <Link href="/privacy" className="text-[#005635] hover:underline">
                     {t('signUp.privacyPolicy')}
-                  </a>
+                  </Link>
                 </Label>
               </div>
 

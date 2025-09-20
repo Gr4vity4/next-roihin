@@ -1,7 +1,7 @@
 'use client'
 
-import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import { Link } from '@/i18n/navigation'
+import { usePathname, useRouter } from '@/i18n/navigation'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
 
