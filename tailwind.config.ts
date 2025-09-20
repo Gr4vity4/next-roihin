@@ -77,6 +77,12 @@ const config: Config = {
         '.text-shadow-none': {
           textShadow: 'none',
         },
+        '.font-prompt-important': {
+          fontFamily: 'var(--font-prompt), sans-serif !important',
+        },
+        '.numeric-text': {
+          fontFamily: 'var(--font-prompt), sans-serif !important',
+        },
         '.line-clamp-1': {
           overflow: 'hidden',
           display: '-webkit-box',

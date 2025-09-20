@@ -69,6 +69,26 @@ html {
   font-family: var(--font-prompt), sans-serif !important;
 }
 
+/* Force Prompt font for all form elements */
+select,
+option,
+input[type="number"],
+input[type="tel"],
+input[type="date"],
+input[type="time"] {
+  font-family: var(--font-prompt), sans-serif !important;
+}
+
+/* Force Prompt font for numeric content */
+.numeric-text {
+  font-family: var(--font-prompt), sans-serif !important;
+}
+
+/* Apply Prompt font to elements containing numbers */
+.text-with-numbers {
+  font-family: var(--font-prompt), sans-serif !important;
+}
+
 /* Parallax performance optimization */
 .will-change-transform {
   will-change: transform;

@@ -1,5 +1,6 @@
 import { HTMLAttributes, ReactNode, createElement } from 'react'
 import { cn } from '@/lib/utils'
+import { containsNumbers } from '@/lib/utils/text'
 
 interface TypographyProps extends HTMLAttributes<HTMLElement> {
   variant: 'h1' | 'h2' | 'h3' | 'h4' | 'body' | 'caption'
@@ -53,7 +54,7 @@ export default function Typography({
   ...props
 }: TypographyProps) {
   const Component = component || variantComponents[variant]
-  
+
   // Handle color: use predefined colors if they match, otherwise treat as Tailwind class
   const getColorClass = (color?: string) => {
     if (!color) return undefined
@@ -62,15 +63,19 @@ export default function Typography({
     }
     return color
   }
-  
+
   const colorClass = getColorClass(color)
-  
+
+  // Check if children contains numbers
+  const hasNumbers = typeof children === 'string' && containsNumbers(children)
+
   return createElement(
     Component,
     {
       className: cn(
         variantStyles[variant],
-        'font-mixed-lang', // Always apply mixed-lang as default
+        // Apply font-prompt if text contains numbers, otherwise use mixed-lang
+        hasNumbers ? 'font-prompt' : 'font-mixed-lang',
         textShadow && 'text-shadow',
         align && alignmentClasses[align],
         colorClass,

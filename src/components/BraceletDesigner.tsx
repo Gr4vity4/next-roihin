@@ -1295,15 +1295,15 @@ export default function BraceletDesigner() {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <p className="text-gray-700">
-              การเปลี่ยนขนาดหินจาก <span className="font-bold">{beadSize} mm</span> เป็น{' '}
-              <span className="font-bold">{pendingBeadSize} mm</span>{' '}
+              การเปลี่ยนขนาดหินจาก <span className="font-bold font-prompt">{beadSize} mm</span> เป็น{' '}
+              <span className="font-bold font-prompt">{pendingBeadSize} mm</span>{' '}
               จะทำให้จำนวนหินสูงสุดเหลือเพียง{' '}
-              <span className="font-bold text-red-600">
+              <span className="font-bold text-red-600 font-prompt">
                 {pendingBeadSize ? MAX_BEAD_COUNTS[wristLength]?.[pendingBeadSize] || 0 : 0} เม็ด
               </span>
             </p>
             <p className="text-gray-700">
-              ขณะนี้คุณมีหินอยู่ <span className="font-bold">{beads.length} เม็ด</span>
+              ขณะนี้คุณมีหินอยู่ <span className="font-bold font-prompt">{beads.length} เม็ด</span>
             </p>
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
               <p className="text-sm text-yellow-800">
@@ -1348,15 +1348,15 @@ export default function BraceletDesigner() {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <p className="text-gray-700">
-              การเปลี่ยนความยาวรอบข้อมือจาก <span className="font-bold">{wristLength} cm</span> เป็น{' '}
-              <span className="font-bold">{pendingWristLength} cm</span>{' '}
+              การเปลี่ยนความยาวรอบข้อมือจาก <span className="font-bold font-prompt">{wristLength} cm</span> เป็น{' '}
+              <span className="font-bold font-prompt">{pendingWristLength} cm</span>{' '}
               จะทำให้จำนวนหินสูงสุดเหลือเพียง{' '}
               <span className="font-bold text-red-600">
                 {pendingWristLength ? MAX_BEAD_COUNTS[pendingWristLength]?.[beadSize] || 0 : 0} เม็ด
               </span>
             </p>
             <p className="text-gray-700">
-              ขณะนี้คุณมีหินอยู่ <span className="font-bold">{beads.length} เม็ด</span>
+              ขณะนี้คุณมีหินอยู่ <span className="font-bold font-prompt">{beads.length} เม็ด</span>
             </p>
             <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
               <p className="text-sm text-yellow-800">
