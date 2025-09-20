@@ -8,5 +8,74 @@
     "testimonial": "Testimonial",
     "customerService": "Contact",
     "blog": "Blogs"
+  },
+  "auth": {
+    "signIn": {
+      "title": "Welcome Back",
+      "subtitle": "Sign in to access your account",
+      "email": "Email",
+      "emailPlaceholder": "Enter your email",
+      "password": "Password",
+      "passwordPlaceholder": "Enter your password",
+      "forgotPassword": "Forgot password?",
+      "rememberMe": "Remember me",
+      "signInButton": "Sign In",
+      "noAccount": "Don't have an account?",
+      "signUpLink": "Sign Up"
+    },
+    "signUp": {
+      "title": "Create Account",
+      "subtitle": "Join us to start customizing your bracelet",
+      "firstName": "First Name",
+      "firstNamePlaceholder": "Enter your first name",
+      "lastName": "Last Name",
+      "lastNamePlaceholder": "Enter your last name",
+      "email": "Email",
+      "emailPlaceholder": "Enter your email",
+      "phone": "Phone Number",
+      "phonePlaceholder": "Enter your phone number",
+      "password": "Password",
+      "passwordPlaceholder": "Create a password",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "Re-enter your password",
+      "acceptTerms": "I accept the",
+      "termsOfService": "Terms of Service",
+      "and": "and",
+      "privacyPolicy": "Privacy Policy",
+      "signUpButton": "Create Account",
+      "haveAccount": "Already have an account?",
+      "signInLink": "Sign In"
+    },
+    "forgotPassword": {
+      "title": "Forgot Password",
+      "subtitle": "Enter your email to reset your password",
+      "email": "Email",
+      "emailPlaceholder": "demo@roihin.com",
+      "rememberMe": "Remember me",
+      "resetButton": "Send Reset Link",
+      "noAccount": "Don't have an account?",
+      "signUpLink": "Sign Up",
+      "backToSignIn": "Back to Sign In",
+      "testCredentials": "Test credentials: demo@roihin.com / password123",
+      "successTitle": "Email Sent Successfully!",
+      "successMessage": "We've sent a password reset link to",
+      "successInstruction": "Please check your email and click the link to reset your password",
+      "successButton": "Back to Sign In"
+    },
+    "errors": {
+      "loginFailed": "Login failed",
+      "signUpFailed": "Sign up failed",
+      "passwordMismatch": "Passwords don't match",
+      "acceptTermsRequired": "Please accept the terms of service"
+    }
+  },
+  "userMenu": {
+    "dashboard": "Dashboard",
+    "profile": "Profile",
+    "orders": "Orders",
+    "addresses": "Shipping Addresses",
+    "wishlist": "Wishlist",
+    "settings": "Settings",
+    "signOut": "Sign Out"
   }
 }

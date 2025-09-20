@@ -8,5 +8,74 @@
     "testimonial": "รีวิวจริง",
     "customerService": "บริการลูกค้า",
     "blog": "บทความ"
+  },
+  "auth": {
+    "signIn": {
+      "title": "ยินดีต้อนรับกลับ",
+      "subtitle": "เข้าสู่ระบบเพื่อเข้าถึงบัญชีของคุณ",
+      "email": "อีเมล",
+      "emailPlaceholder": "กรอกอีเมลของคุณ",
+      "password": "รหัสผ่าน",
+      "passwordPlaceholder": "กรอกรหัสผ่านของคุณ",
+      "forgotPassword": "ลืมรหัสผ่าน?",
+      "rememberMe": "จดจำฉัน",
+      "signInButton": "เข้าสู่ระบบ",
+      "noAccount": "ยังไม่มีบัญชี?",
+      "signUpLink": "สมัครสมาชิก"
+    },
+    "signUp": {
+      "title": "สร้างบัญชี",
+      "subtitle": "เข้าร่วมกับเราเพื่อเริ่มต้นการปรับแต่งกำไลของคุณ",
+      "firstName": "ชื่อ",
+      "firstNamePlaceholder": "กรอกชื่อของคุณ",
+      "lastName": "นามสกุล",
+      "lastNamePlaceholder": "กรอกนามสกุลของคุณ",
+      "email": "อีเมล",
+      "emailPlaceholder": "กรอกอีเมลของคุณ",
+      "phone": "เบอร์โทรศัพท์",
+      "phonePlaceholder": "กรอกเบอร์โทรศัพท์ของคุณ",
+      "password": "รหัสผ่าน",
+      "passwordPlaceholder": "สร้างรหัสผ่าน",
+      "confirmPassword": "ยืนยันรหัสผ่าน",
+      "confirmPasswordPlaceholder": "กรอกรหัสผ่านอีกครั้ง",
+      "acceptTerms": "ฉันยอมรับ",
+      "termsOfService": "ข้อกำหนดการใช้งาน",
+      "and": "และ",
+      "privacyPolicy": "นโยบายความเป็นส่วนตัว",
+      "signUpButton": "สร้างบัญชี",
+      "haveAccount": "มีบัญชีแล้ว?",
+      "signInLink": "เข้าสู่ระบบ"
+    },
+    "forgotPassword": {
+      "title": "ลืมรหัสผ่าน",
+      "subtitle": "เข้าสู่ระบบเพื่อเข้าถึงบัญชีของคุณ",
+      "email": "อีเมล",
+      "emailPlaceholder": "demo@roihin.com",
+      "rememberMe": "จดจำฉัน",
+      "resetButton": "เข้าสู่ระบบ",
+      "noAccount": "ยังไม่มีบัญชี?",
+      "signUpLink": "สมัครสมาชิก",
+      "backToSignIn": "กลับไปที่หน้าเข้าสู่ระบบ",
+      "testCredentials": "ข้อมูลสำหรับทดสอบ: demo@roihin.com / password123",
+      "successTitle": "ส่งอีเมลสำเร็จ!",
+      "successMessage": "เราได้ส่งลิงก์รีเซ็ตรหัสผ่านไปยัง",
+      "successInstruction": "กรุณาตรวจสอบอีเมลของคุณและคลิกลิงก์เพื่อรีเซ็ตรหัสผ่าน",
+      "successButton": "กลับไปที่หน้าเข้าสู่ระบบ"
+    },
+    "errors": {
+      "loginFailed": "เข้าสู่ระบบไม่สำเร็จ",
+      "signUpFailed": "สมัครสมาชิกไม่สำเร็จ",
+      "passwordMismatch": "รหัสผ่านไม่ตรงกัน",
+      "acceptTermsRequired": "กรุณายอมรับข้อกำหนดการใช้งาน"
+    }
+  },
+  "userMenu": {
+    "dashboard": "แดชบอร์ด",
+    "profile": "โปรไฟล์",
+    "orders": "คำสั่งซื้อ",
+    "addresses": "ที่อยู่จัดส่ง",
+    "wishlist": "รายการโปรด",
+    "settings": "ตั้งค่า",
+    "signOut": "ออกจากระบบ"
   }
 }

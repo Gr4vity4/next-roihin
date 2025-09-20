@@ -13,15 +13,6 @@ import { useTranslations } from 'next-intl'
 import { useLocale } from 'next-intl'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
-const userMenuItems = [
-  { name: 'แดชบอร์ด', href: '/member' },
-  { name: 'โปรไฟล์', href: '/member/profile' },
-  { name: 'คำสั่งซื้อ', href: '/member/orders' },
-  { name: 'ที่อยู่จัดส่ง', href: '/member/addresses' },
-  { name: 'รายการโปรด', href: '/member/wishlist' },
-  { name: 'ตั้งค่า', href: '/member/settings' },
-]
-
 interface NavigationProps {
   position?: 'fixed' | 'static'
 }
@@ -43,6 +34,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
   const { isLoggedIn, user, logout } = useAuth()
   const { itemCount } = useCart()
   const t = useTranslations('navigation')
+  const tUser = useTranslations('userMenu')
 
   const navItems = useMemo(() => {
     return [
@@ -56,6 +48,17 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
       { name: t('blog'), href: '/blog' },
     ]
   }, [t])
+
+  const userMenuItems = useMemo(() => {
+    return [
+      { name: tUser('dashboard'), href: '/member' },
+      { name: tUser('profile'), href: '/member/profile' },
+      { name: tUser('orders'), href: '/member/orders' },
+      { name: tUser('addresses'), href: '/member/addresses' },
+      { name: tUser('wishlist'), href: '/member/wishlist' },
+      { name: tUser('settings'), href: '/member/settings' },
+    ]
+  }, [tUser])
 
   // Calculate the height of the first section (hero section)
   const calculateScrollThreshold = useCallback(() => {
@@ -311,7 +314,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                             onClick={handleLogout}
                             className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 border-t border-gray-200"
                           >
-                            ออกจากระบบ
+                            {tUser('signOut')}
                           </button>
                         </div>
                       )}
@@ -443,7 +446,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                             onClick={handleLogout}
                             className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 border-t border-gray-200"
                           >
-                            ออกจากระบบ
+                            {tUser('signOut')}
                           </button>
                         </div>
                       )}
@@ -635,7 +638,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                       }}
                       className="block w-full text-left py-3 text-red-500 hover:text-red-400 transition-colors border-t border-gray-800 mt-3"
                     >
-                      ออกจากระบบ
+                      {tUser('signOut')}
                     </button>
                   </>
                 ) : (

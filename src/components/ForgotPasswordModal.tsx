@@ -5,6 +5,7 @@ import { X } from 'lucide-react'
 import Button from '@/components/Button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useTranslations } from 'next-intl'
 
 interface ForgotPasswordModalProps {
   isOpen: boolean
@@ -13,6 +14,7 @@ interface ForgotPasswordModalProps {
 }
 
 export default function ForgotPasswordModal({ isOpen, onClose, onBackToSignIn }: ForgotPasswordModalProps) {
+  const t = useTranslations('auth.forgotPassword')
   const [email, setEmail] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
@@ -76,19 +78,19 @@ export default function ForgotPasswordModal({ isOpen, onClose, onBackToSignIn }:
           {!isSubmitted ? (
             <>
               <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">ลืมรหัสผ่าน</h1>
+                <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('title')}</h1>
                 <p className="text-gray-600">
-                  เข้าสู่ระบบเพื่อเข้าถึงบัญชีของคุณ
+                  {t('subtitle')}
                 </p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="reset-email">อีเมล</Label>
+                  <Label htmlFor="reset-email">{t('email')}</Label>
                   <Input
                     id="reset-email"
                     type="email"
-                    placeholder="demo@roihin.com"
+                    placeholder={t('emailPlaceholder')}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -103,7 +105,7 @@ export default function ForgotPasswordModal({ isOpen, onClose, onBackToSignIn }:
                     className="h-4 w-4 text-[#005635] focus:ring-[#005635] border-gray-300 rounded"
                   />
                   <Label htmlFor="remember-reset" className="ml-2 text-sm text-gray-600">
-                    จดจำฉัน
+                    {t('rememberMe')}
                   </Label>
                 </div>
 
@@ -113,25 +115,25 @@ export default function ForgotPasswordModal({ isOpen, onClose, onBackToSignIn }:
                   size="lg"
                   isLoading={isLoading}
                 >
-                  เข้าสู่ระบบ
+                  {t('resetButton')}
                 </Button>
               </form>
 
               <div className="mt-8 text-center">
                 <p className="text-gray-600">
-                  ยังไม่มีบัญชี?{' '}
-                  <button 
+                  {t('noAccount')}{' '}
+                  <button
                     onClick={onBackToSignIn}
                     className="font-semibold text-[#005635] hover:underline"
                   >
-                    สมัครสมาชิก
+                    {t('signUpLink')}
                   </button>
                 </p>
               </div>
 
               <div className="mt-6 pt-6 border-t border-gray-200">
                 <p className="text-xs text-gray-500 text-center">
-                  ข้อมูลสำหรับทดสอบ: demo@roihin.com / password123
+                  {t('testCredentials')}
                 </p>
               </div>
             </>
@@ -143,15 +145,15 @@ export default function ForgotPasswordModal({ isOpen, onClose, onBackToSignIn }:
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">ส่งอีเมลสำเร็จ!</h2>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('successTitle')}</h2>
                 <p className="text-gray-600">
-                  เราได้ส่งลิงก์รีเซ็ตรหัสผ่านไปยัง
+                  {t('successMessage')}
                 </p>
                 <p className="font-semibold text-gray-900 mt-1">{email}</p>
               </div>
               
               <p className="text-sm text-gray-500 mb-6">
-                กรุณาตรวจสอบอีเมลของคุณและคลิกลิงก์เพื่อรีเซ็ตรหัสผ่าน
+                {t('successInstruction')}
               </p>
 
               <Button
@@ -159,7 +161,7 @@ export default function ForgotPasswordModal({ isOpen, onClose, onBackToSignIn }:
                 fullWidth
                 size="lg"
               >
-                กลับไปที่หน้าเข้าสู่ระบบ
+                {t('successButton')}
               </Button>
             </div>
           )}

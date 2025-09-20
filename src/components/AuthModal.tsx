@@ -8,6 +8,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { useTranslations } from 'next-intl'
 
 interface AuthModalProps {
   isOpen: boolean
@@ -19,6 +20,7 @@ interface AuthModalProps {
 export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthModalProps) {
   const router = useRouter()
   const { login, register } = useAuth()
+  const t = useTranslations('auth')
   const [isLoading, setIsLoading] = useState(false)
   const [showForgotPassword, setShowForgotPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -58,7 +60,7 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
       onClose()
       router.push('/member')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'เข้าสู่ระบบไม่สำเร็จ')
+      setError(err instanceof Error ? err.message : t('errors.loginFailed'))
     } finally {
       setIsLoading(false)
     }
@@ -70,13 +72,13 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
     setError(null)
 
     if (signUpData.password !== signUpData.confirmPassword) {
-      setError('รหัสผ่านไม่ตรงกัน')
+      setError(t('errors.passwordMismatch'))
       setIsLoading(false)
       return
     }
 
     if (!signUpData.acceptTerms) {
-      setError('กรุณายอมรับข้อกำหนดการใช้งาน')
+      setError(t('errors.acceptTermsRequired'))
       setIsLoading(false)
       return
     }
@@ -93,7 +95,7 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
       onClose()
       router.push('/member')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'สมัครสมาชิกไม่สำเร็จ')
+      setError(err instanceof Error ? err.message : t('errors.signUpFailed'))
     } finally {
       setIsLoading(false)
     }
@@ -116,17 +118,17 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
         {mode === 'sign-in' ? (
           <div className="p-8">
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">ยินดีต้อนรับกลับ</h1>
-              <p className="text-gray-600">เข้าสู่ระบบเพื่อเข้าถึงบัญชีของคุณ</p>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('signIn.title')}</h1>
+              <p className="text-gray-600">{t('signIn.subtitle')}</p>
             </div>
 
             <form onSubmit={handleSignIn} className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="email">อีเมล</Label>
+                <Label htmlFor="email">{t('signIn.email')}</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="กรอกอีเมลของคุณ"
+                  placeholder={t('signIn.emailPlaceholder')}
                   value={signInData.email}
                   onChange={(e) => setSignInData({ ...signInData, email: e.target.value })}
                   required
@@ -136,19 +138,19 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
 
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="password">รหัสผ่าน</Label>
+                  <Label htmlFor="password">{t('signIn.password')}</Label>
                   <button
                     type="button"
                     onClick={() => setShowForgotPassword(true)}
                     className="text-sm text-[#005635] hover:underline"
                   >
-                    ลืมรหัสผ่าน?
+                    {t('signIn.forgotPassword')}
                   </button>
                 </div>
                 <Input
                   id="password"
                   type="password"
-                  placeholder="กรอกรหัสผ่านของคุณ"
+                  placeholder={t('signIn.passwordPlaceholder')}
                   value={signInData.password}
                   onChange={(e) => setSignInData({ ...signInData, password: e.target.value })}
                   required
@@ -169,23 +171,23 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
                   className="h-4 w-4 text-[#005635] focus:ring-[#005635] border-gray-300 rounded"
                 />
                 <Label htmlFor="remember" className="ml-2 text-sm text-gray-600">
-                  จดจำฉัน
+                  {t('signIn.rememberMe')}
                 </Label>
               </div>
 
               <Button type="submit" fullWidth size="lg" isLoading={isLoading}>
-                เข้าสู่ระบบ
+                {t('signIn.signInButton')}
               </Button>
             </form>
 
             <div className="mt-8 text-center">
               <p className="text-gray-600">
-                ยังไม่มีบัญชี?{' '}
+                {t('signIn.noAccount')}{' '}
                 <button
                   onClick={() => onModeChange('sign-up')}
                   className="font-semibold text-[#005635] hover:underline"
                 >
-                  สมัครสมาชิก
+                  {t('signIn.signUpLink')}
                 </button>
               </p>
             </div>
@@ -193,29 +195,29 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
         ) : (
           <div className="p-8">
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">สร้างบัญชี</h1>
-              <p className="text-gray-600">เข้าร่วมกับเราเพื่อเริ่มต้นการปรับแต่งกำไลของคุณ</p>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('signUp.title')}</h1>
+              <p className="text-gray-600">{t('signUp.subtitle')}</p>
             </div>
 
             <form onSubmit={handleSignUp} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName">ชื่อ</Label>
+                  <Label htmlFor="firstName">{t('signUp.firstName')}</Label>
                   <Input
                     id="firstName"
                     type="text"
-                    placeholder=""
+                    placeholder={t('signUp.firstNamePlaceholder')}
                     value={signUpData.firstName}
                     onChange={(e) => setSignUpData({ ...signUpData, firstName: e.target.value })}
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="lastName">นามสกุล</Label>
+                  <Label htmlFor="lastName">{t('signUp.lastName')}</Label>
                   <Input
                     id="lastName"
                     type="text"
-                    placeholder=""
+                    placeholder={t('signUp.lastNamePlaceholder')}
                     value={signUpData.lastName}
                     onChange={(e) => setSignUpData({ ...signUpData, lastName: e.target.value })}
                     required
@@ -224,11 +226,11 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email">อีเมล</Label>
+                <Label htmlFor="email">{t('signUp.email')}</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder=""
+                  placeholder={t('signUp.emailPlaceholder')}
                   value={signUpData.email}
                   onChange={(e) => setSignUpData({ ...signUpData, email: e.target.value })}
                   required
@@ -237,11 +239,11 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone">เบอร์โทรศัพท์</Label>
+                <Label htmlFor="phone">{t('signUp.phone')}</Label>
                 <Input
                   id="phone"
                   type="tel"
-                  placeholder=""
+                  placeholder={t('signUp.phonePlaceholder')}
                   value={signUpData.phone}
                   onChange={(e) => setSignUpData({ ...signUpData, phone: e.target.value })}
                   required
@@ -250,11 +252,11 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">รหัสผ่าน</Label>
+                <Label htmlFor="password">{t('signUp.password')}</Label>
                 <Input
                   id="password"
                   type="password"
-                  placeholder=""
+                  placeholder={t('signUp.passwordPlaceholder')}
                   value={signUpData.password}
                   onChange={(e) => setSignUpData({ ...signUpData, password: e.target.value })}
                   required
@@ -263,11 +265,11 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">ยืนยันรหัสผ่าน</Label>
+                <Label htmlFor="confirmPassword">{t('signUp.confirmPassword')}</Label>
                 <Input
                   id="confirmPassword"
                   type="password"
-                  placeholder=""
+                  placeholder={t('signUp.confirmPasswordPlaceholder')}
                   value={signUpData.confirmPassword}
                   onChange={(e) =>
                     setSignUpData({ ...signUpData, confirmPassword: e.target.value })
@@ -287,13 +289,13 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
                   className="h-4 w-4 text-[#005635] focus:ring-[#005635] border-gray-300 rounded mt-0.5"
                 />
                 <Label htmlFor="terms" className="ml-2 text-sm text-gray-600">
-                  ฉันยอมรับ{' '}
+                  {t('signUp.acceptTerms')}{' '}
                   <a href="/terms" className="text-[#005635] hover:underline">
-                    ข้อกำหนดการใช้งาน
+                    {t('signUp.termsOfService')}
                   </a>{' '}
-                  และ{' '}
+                  {t('signUp.and')}{' '}
                   <a href="/privacy" className="text-[#005635] hover:underline">
-                    นโยบายความเป็นส่วนตัว
+                    {t('signUp.privacyPolicy')}
                   </a>
                 </Label>
               </div>
@@ -305,18 +307,18 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
               )}
 
               <Button type="submit" fullWidth size="lg" isLoading={isLoading}>
-                สร้างบัญชี
+                {t('signUp.signUpButton')}
               </Button>
             </form>
 
             <div className="mt-6 text-center">
               <p className="text-gray-600">
-                มีบัญชีแล้ว?{' '}
+                {t('signUp.haveAccount')}{' '}
                 <button
                   onClick={() => onModeChange('sign-in')}
                   className="font-semibold text-[#005635] hover:underline"
                 >
-                  เข้าสู่ระบบ
+                  {t('signUp.signInLink')}
                 </button>
               </p>
             </div>
