@@ -86,30 +86,16 @@ export default async function CharmspacerPage() {
           })}
 
           {productsByCategory.length === 0 && (
-            <>
-              <ProductSection
-                id={charmspacerPage.sections.charm.id}
-                title={charmspacerPage.sections.charm.title}
-                description={charmspacerPage.sections.charm.description}
-                images={charmspacerPage.sections.charm.images}
-              />
-              
-              <ProductSection
-                id={charmspacerPage.sections.spacer.id}
-                title={charmspacerPage.sections.spacer.title}
-                description={charmspacerPage.sections.spacer.description}
-                images={charmspacerPage.sections.spacer.images}
-                className="pt-24"
-              />
-              
-              <ProductSection
-                id={charmspacerPage.sections.pendant.id}
-                title={charmspacerPage.sections.pendant.title}
-                description={charmspacerPage.sections.pendant.description}
-                images={charmspacerPage.sections.pendant.images}
-                className="pt-24 pb-24"
-              />
-            </>
+            <div className="flex items-center justify-center min-h-[400px] text-center px-4">
+              <div className="max-w-md">
+                <p className="text-gray-400 text-lg">
+                  กำลังอัพเดตข้อมูลสินค้า กรุณากลับมาใหม่อีกครั้ง
+                </p>
+                <p className="text-gray-500 text-sm mt-2">
+                  Products are being updated. Please check back later.
+                </p>
+              </div>
+            </div>
           )}
         </div>
       </main>
