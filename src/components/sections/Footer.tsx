@@ -1,9 +1,12 @@
+'use client'
+
 import { VibrantDestinySection } from '@/components/sections'
 import { content } from '@/config/content.config'
 import { cn } from '@/lib/utils'
 import { MapPin } from 'lucide-react'
 import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
+import { useTranslations } from 'next-intl'
 import FooterColumn, { type FooterLink } from '../FooterColumn'
 import SocialLinks, { type SocialLink } from '../SocialLinks'
 import { Container, Typography } from '../ui'
@@ -24,22 +27,26 @@ export default function Footer({
   textColor = 'text-white',
   className = '',
 }: FooterProps) {
-  // Hardcoded footer data
+  const t = useTranslations('navigation')
+  const tCommon = useTranslations('common')
+
+  // Use same navigation items as navbar
   const columns: FooterColumnData[] = [
     {
-      title: 'ข้อมูลร้าน',
+      title: t('about'),
       links: [
-        { text: 'เกี่ยวกับร้อยหิน', href: '#about' },
-        { text: 'นโยบายความเป็นส่วนตัว', href: '#privacy' },
+        { text: t('about'), href: '/about' },
+        { text: t('personalized'), href: '/personalized' },
+        { text: t('charmspacer'), href: '/charmspacer' },
+        { text: t('diy'), href: '/custom' },
       ],
     },
     {
-      title: 'บริการลูกค้า',
+      title: t('customerService'),
       links: [
-        { text: 'ติดต่อสอบถาม', href: '#contact' },
-        { text: 'การจัดส่ง', href: '#shipping' },
-        { text: 'การคืนสินค้า', href: '#returns' },
-        { text: 'การดูแลรักษา', href: '#care' },
+        { text: t('testimonial'), href: '/testimonial' },
+        { text: t('customerService'), href: '/customer-service' },
+        { text: t('blog'), href: '/blog' },
       ],
     },
   ]
@@ -94,7 +101,7 @@ export default function Footer({
 
             {/* Contact Info Column */}
             <div className="space-y-4">
-              <p className="">ติดต่อเรา</p>
+              <p className="">{t('customerService')}</p>
               <div className="space-y-2 text-gray-400 text-sm">
                 <div className="flex items-start space-x-2">
                   <MapPin size={16} className="mt-1 flex-shrink-0" />
