@@ -11,7 +11,7 @@ interface AboutHeroSectionProps {
 
 export default function AboutHeroSection({ backgroundImage, title }: AboutHeroSectionProps) {
   return (
-    <section className="relative h-screen w-full overflow-hidden">
+    <section className="relative h-[40vh] md:h-[70vh] w-full overflow-hidden pt-24 lg:pt-[280px]">
       {/* Background Image */}
       <div className="absolute inset-0">
         <Image
@@ -23,17 +23,17 @@ export default function AboutHeroSection({ backgroundImage, title }: AboutHeroSe
           sizes="100vw"
         />
         {/* Dark overlay for better text readability */}
-        <div className="absolute inset-0 bg-black/50" />
+        {/* <div className="absolute inset-0 bg-black/50" /> */}
       </div>
 
       {/* Content */}
-      <div className="relative z-10 flex h-full items-center justify-center px-4">
+      <div className="relative z-10 flex h-full  justify-center px-4">
         <div className="text-center max-w-4xl">
           <h1 className="text-white">
-            <span className="block text-[#D4AF37] text-4xl md:text-4xl lg:text-6xl font-light tracking-[0.2em] mb-2">
+            <span className="block text-[#D4AF37] text-3xl md:text-4xl lg:text-5xl font-light mb-2">
               .. {title.line1}
             </span>
-            <span className="block text-white text-3xl md:text-4xl lg:text-5xl font-normal tracking-[0.25em] my-4">
+            <span className="block text-white text-2xl md:text-3xl lg:text-4xl font-normal my-4">
               {title.line2} ..
             </span>
           </h1>
