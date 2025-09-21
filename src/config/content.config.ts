@@ -650,7 +650,7 @@ export const content = {
       buttons: [
         {
           text: 'เริ่มต้นออกแบบ',
-          href: '/custom',
+          href: '/bracelet-order',
           variant: 'gold' as const,
           highlight: true,
         },
