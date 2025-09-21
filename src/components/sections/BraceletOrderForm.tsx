@@ -442,7 +442,7 @@ export default function BraceletOrderForm() {
                 </button>
                 <button
                   type="button"
-                  className="px-12 py-3 bg-[#D4AF37] text-black font-medium rounded-md hover:bg-[#c1a030] transition-colors"
+                  className="px-12 py-3 bg-[#D4AF37] text-white font-medium rounded-md hover:bg-[#c1a030] transition-colors"
                 >
                   รีเซ็ต
                 </button>

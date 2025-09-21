@@ -72,10 +72,10 @@ html {
 /* Force Prompt font for all form elements */
 select,
 option,
-input[type="number"],
-input[type="tel"],
-input[type="date"],
-input[type="time"] {
+input[type='number'],
+input[type='tel'],
+input[type='date'],
+input[type='time'] {
   font-family: var(--font-prompt), sans-serif !important;
 }
 
@@ -99,4 +99,8 @@ input[type="time"] {
   .will-change-transform {
     transform: none !important;
   }
+}
+
+button {
+  cursor: pointer !important;
 }
