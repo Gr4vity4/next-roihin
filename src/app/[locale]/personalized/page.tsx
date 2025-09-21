@@ -62,11 +62,7 @@ export default async function PersonalizedPage({
       />
 
       {/* About Section */}
-      <PersonalizedContentSection
-        title={personalizedPage.aboutSection.title}
-        subtitle={personalizedPage.aboutSection.subtitle}
-        content={personalizedPage.aboutSection.content}
-      />
+      <PersonalizedContentSection />
 
       {/* Gallery Section */}
       <PersonalizedGallerySection
