@@ -24,7 +24,17 @@ export default function MemberDashboard() {
       {/* Header */}
       <div className="mb-8 mt-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          {user?.name ? t('titleWithName', { name: user.name }) : t('title')}
+          {(() => {
+            if (user?.name) {
+              const titleWithName = t('titleWithName', { name: user.name })
+              // Fallback if translation doesn't work properly
+              if (titleWithName.includes('titleWithName')) {
+                return `Welcome back, ${user.name}!`
+              }
+              return titleWithName
+            }
+            return t('title')
+          })()}
         </h1>
         <p className="text-gray-600">{t('subtitle')}</p>
       </div>
