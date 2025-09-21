@@ -249,7 +249,7 @@
     "profile": {
       "title": "ตั้งค่าโปรไฟล์",
       "subtitle": "จัดการข้อมูลบัญชีและการตั้งค่าของคุณ",
-      "memberSince": "สมาชิกตั้งแต่ {{date}}",
+      "memberSince": "สมาชิกตั้งแต่ {date}",
       "editProfile": "แก้ไขโปรไฟล์",
       "cancel": "ยกเลิก",
       "saveChanges": "บันทึกการเปลี่ยนแปลง",
@@ -288,9 +288,9 @@
         "cancelled": "ยกเลิกแล้ว"
       },
       "orderCard": {
-        "orderedOn": "สั่งซื้อเมื่อ {{date}}",
-        "items": "{{count}} ชิ้น",
-        "tracking": "เลขติดตาม: {{number}}",
+        "orderedOn": "สั่งซื้อเมื่อ {date}",
+        "items": "{count} ชิ้น",
+        "tracking": "เลขติดตาม: {number}",
         "viewDetails": "ดูรายละเอียด",
         "writeReview": "เขียนรีวิว",
         "cancelOrder": "ยกเลิกคำสั่งซื้อ"

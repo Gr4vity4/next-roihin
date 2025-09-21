@@ -249,7 +249,7 @@
     "profile": {
       "title": "Profile Settings",
       "subtitle": "Manage your account information and preferences",
-      "memberSince": "Member since {{date}}",
+      "memberSince": "Member since {date}",
       "editProfile": "Edit Profile",
       "cancel": "Cancel",
       "saveChanges": "Save Changes",
@@ -288,9 +288,9 @@
         "cancelled": "Cancelled"
       },
       "orderCard": {
-        "orderedOn": "Ordered on {{date}}",
-        "items": "{{count}} item(s)",
-        "tracking": "Tracking: {{number}}",
+        "orderedOn": "Ordered on {date}",
+        "items": "{count} item(s)",
+        "tracking": "Tracking: {number}",
         "viewDetails": "View Details",
         "writeReview": "Write Review",
         "cancelOrder": "Cancel Order"
