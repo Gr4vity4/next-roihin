@@ -466,5 +466,11 @@
         }
       }
     }
+  },
+  "personalizedPage": {
+    "hero": {
+      "title": "Personalized stone bracelet",
+      "subtitle": "Design the energy of natural stones"
+    }
   }
 }

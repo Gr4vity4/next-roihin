@@ -3,14 +3,8 @@ import { Typography } from '../ui'
 
 interface PersonalizedHeroSectionProps {
   backgroundImage: string
-  title: {
-    line1: string
-    line2: string
-  }
-  subtitle: {
-    thai: string
-    description: string
-  }
+  title: string
+  subtitle: string
 }
 
 export default function PersonalizedHeroSection({
@@ -19,7 +13,7 @@ export default function PersonalizedHeroSection({
   subtitle,
 }: PersonalizedHeroSectionProps) {
   return (
-    <section className="relative h-screen w-full overflow-hidden pt-20 lg:pt-[230px]">
+    <section className="relative h-[40vh] md:h-[70vh] w-full overflow-hidden pt-24 lg:pt-[280px]">
       {/* Background Image */}
       <div className="absolute inset-0">
         <Image
@@ -31,57 +25,32 @@ export default function PersonalizedHeroSection({
           sizes="100vw"
         />
         {/* Dark overlay for better text readability */}
-        <div className="absolute inset-0 bg-black/40" />
+        <div className="absolute inset-0 bg-black/10" />
       </div>
 
       {/* Content */}
-      <div className="relative z-10 flex h-full items-center justify-center">
+      <div className="relative z-10 flex h-full items-center lg:items-start justify-center">
         <div className="text-center px-6 sm:px-8 md:px-12 lg:px-4 max-w-4xl">
-          {/* Main Title */}
+          {/* Title */}
           <Typography
             variant="h1"
-           
             textShadow
             color="text-white"
             align="center"
-            className="mb-6 tracking-[0.2em] leading-tight"
+            className="tracking-wider leading-tight font-normal"
           >
-            {title.line1}
+            {title}
           </Typography>
 
+          {/* Subtitle */}
           <Typography
-            variant="h4"
-           
+            variant="h3"
             textShadow
             color="text-white"
             align="center"
-            className="mb-8 tracking-[0.2em] leading-tight"
+            className="max-w-3xl mx-auto leading-relaxed tracking-wide font-normal"
           >
-            {title.line2}
-          </Typography>
-
-          {/* Thai Subtitle */}
-          <Typography
-            variant="h2"
-           
-            textShadow
-            color="highlight"
-            align="center"
-            className="mb-6 tracking-wider"
-          >
-            &ldquo;{subtitle.thai}&rdquo;
-          </Typography>
-
-          {/* Description */}
-          <Typography
-            variant="h4"
-           
-            textShadow
-            color="text-white"
-            align="center"
-            className="max-w-3xl mx-auto leading-relaxed"
-          >
-            {subtitle.description}
+            {subtitle}
           </Typography>
         </div>
       </div>

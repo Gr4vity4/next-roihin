@@ -8,30 +8,45 @@ import PersonalizedGallerySection from '@/components/sections/PersonalizedGaller
 import PersonalizedHeroSection from '@/components/sections/PersonalizedHeroSection'
 import { content } from '@/config/content.config'
 import { Metadata } from 'next'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 // Configure route segment caching for personalized page (semi-static content)
 // Revalidate every 15 minutes
 export const revalidate = 900
 
-export const metadata: Metadata = {
-  title: 'งานออกแบบเฉพาะบุคคล - ROIHIN STONE & BRACELET',
-  description:
-    'กำไลหินเฉพาะบุคคล เริ่มต้นด้วยการเปิดใจเพื่อให้ตัวเองได้รู้จักพลังที่มิอาจเคยได้สัมผัส มากกว่าคุณค่าทางใจคือคุณค่าทางจิตวิญญาณ',
-  openGraph: {
-    title: 'งานออกแบบเฉพาะบุคคล - ROIHIN STONE & BRACELET',
-    description:
-      'กำไลหินเฉพาะบุคคล เริ่มต้นด้วยการเปิดใจเพื่อให้ตัวเองได้รู้จักพลังที่มิอาจเคยได้สัมผัส มากกว่าคุณค่าทางใจคือคุณค่าทางจิตวิญญาณ',
-    images: [
-      {
-        url: '/images/357c3a_d5bbbe07a2cb43579ad4d33c6279ff5a~mv2.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'Personalized Stone Bracelet',
-      },
-    ],
-  },
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'personalizedPage' })
+
+  return {
+    title: `${t('hero.title')} - ROIHIN STONE & BRACELET`,
+    description: t('hero.subtitle'),
+    openGraph: {
+      title: `${t('hero.title')} - ROIHIN STONE & BRACELET`,
+      description: t('hero.subtitle'),
+      images: [
+        {
+          url: '/images/banner/personalized-banner.avif',
+          width: 1200,
+          height: 630,
+          alt: 'Personalized Stone Bracelet',
+        },
+      ],
+    },
+  }
 }
 
-export default function PersonalizedPage() {
+export default async function PersonalizedPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}) {
+  const { locale } = await params
+  setRequestLocale(locale)
+  const t = await getTranslations('personalizedPage')
   const { personalizedPage } = content
 
   return (
@@ -42,8 +57,8 @@ export default function PersonalizedPage() {
       {/* Hero Section */}
       <PersonalizedHeroSection
         backgroundImage={personalizedPage.hero.backgroundImage}
-        title={personalizedPage.hero.title}
-        subtitle={personalizedPage.hero.subtitle}
+        title={t('hero.title')}
+        subtitle={t('hero.subtitle')}
       />
 
       {/* About Section */}

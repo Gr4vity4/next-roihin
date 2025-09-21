@@ -600,15 +600,7 @@ export const content = {
   // Personalized Page Content
   personalizedPage: {
     hero: {
-      backgroundImage: '/images/357c3a_d82d5da32aa3407ab8bb21e295352b40~mv2.avif', // Landing 1.png equivalent from original site
-      title: {
-        line1: 'PERSONALIZED',
-        line2: 'STONE BRACELET',
-      },
-      subtitle: {
-        thai: 'กำไลหินเฉพาะบุคคล',
-        description: 'เริ่มต้นด้วยการเปิดใจเพื่อให้ตัวเองได้รู้จักพลังที่มิอาจเคยได้สัมผัส',
-      },
+      backgroundImage: '/images/banner/personalized-banner.avif',
     },
     aboutSection: {
       title: {
