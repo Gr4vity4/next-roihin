@@ -24,7 +24,7 @@ export default function SignatureCharmSection({
   id,
   backgroundImage,
   backgroundAlt,
-  overlayOpacity = 0.7,
+  overlayOpacity = 0,
   parallaxSpeed = 0.4,
   title,
   subtitle,

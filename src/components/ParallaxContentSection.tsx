@@ -14,7 +14,7 @@ interface ParallaxContentSectionProps {
   imageAlt: string
   overlayOpacity?: number
   parallaxSpeed?: number
-  
+
   // Content
   title?: string
   subtitle?: string
@@ -27,7 +27,7 @@ interface ParallaxContentSectionProps {
     href?: string
     highlight?: boolean
   }>
-  
+
   // Layout
   contentAlign?: 'left' | 'center' | 'right'
   contentMaxWidth?: 'sm' | 'md' | 'lg' | 'xl'
@@ -67,70 +67,127 @@ export default function ParallaxContentSection({
     >
       <div className="flex items-center justify-center h-full">
         <Container maxWidth={contentMaxWidth} className={alignmentClasses[contentAlign]} padding="lg">
-          <div className="space-y-6 text-white">
-            {title && (
-              <Typography
-                variant="h2"
-                                textShadow
-                align={contentAlign}
-              >
-                {title === 'SIGNATURE CHARM' && translations?.acf?.home_p4 ? (
-                  <span dangerouslySetInnerHTML={{ __html: translations.acf.home_p4.replace(/\\r\\n/g, '<br />') }} />
-                ) : (
-                  title
+          {/* Special layout for Signature Charm section */}
+          {title === 'SIGNATURE CHARM' ? (
+            <div className="flex flex-col justify-between h-full min-h-[600px] text-white">
+              {/* First group: Title and Button */}
+              <div className="flex flex-col items-center space-y-6">
+                {title && (
+                  <Typography
+                    variant="h2"
+                    textShadow
+                    align={contentAlign}
+                  >
+                    {translations?.acf?.home_p4 ? (
+                      <span dangerouslySetInnerHTML={{ __html: translations.acf.home_p4.replace(/\\r\\n/g, '<br />') }} />
+                    ) : (
+                      title
+                    )}
+                  </Typography>
                 )}
-              </Typography>
-            )}
-            
-            {subtitle && (
-              <Typography
-                variant="body"
-                                className="text-gray-300"
-                align={contentAlign}
-              >
-                {title === 'SIGNATURE CHARM' && translations?.acf?.home_p6 ? (
-                  <span dangerouslySetInnerHTML={{ __html: translations.acf.home_p6.replace(/\\r\\n/g, '<br />') }} />
-                ) : (
-                  subtitle
+
+                {ctaButtons && ctaButtons.length > 0 && (
+                  <div className={cn(
+                    'flex gap-4',
+                    contentAlign === 'center' && 'justify-center',
+                    contentAlign === 'left' && 'justify-start',
+                    contentAlign === 'right' && 'justify-end',
+                    ctaButtons.length > 1 && 'flex-col md:flex-row'
+                  )}>
+                    {ctaButtons.map((button, index) => {
+                      const buttonText = button.translationKey ? t(button.translationKey) : button.text
+                      return (
+                        <Button
+                          key={index}
+                          variant={button.variant}
+                          size="lg"
+                          highlight={button.highlight}
+                          onClick={button.onClick}
+                        >
+                          {translations?.acf?.home_p5 ? (
+                            <span dangerouslySetInnerHTML={{ __html: translations.acf.home_p5.replace(/\\r\\n/g, '<br />') }} />
+                          ) : (
+                            buttonText
+                          )}
+                        </Button>
+                      )
+                    })}
+                  </div>
                 )}
-              </Typography>
-            )}
-            
-            {content && (
-              <div className="mt-8">
-                {content}
               </div>
-            )}
-            
-            {ctaButtons && ctaButtons.length > 0 && (
-              <div className={cn(
-                'mt-10 flex gap-4',
-                contentAlign === 'center' && 'justify-center',
-                contentAlign === 'left' && 'justify-start',
-                contentAlign === 'right' && 'justify-end',
-                ctaButtons.length > 1 && 'flex-col md:flex-row'
-              )}>
-                {ctaButtons.map((button, index) => {
-                  const buttonText = button.translationKey ? t(button.translationKey) : button.text
-                  return (
-                    <Button
-                      key={index}
-                      variant={button.variant}
-                      size="lg"
-                      highlight={button.highlight}
-                      onClick={button.onClick}
-                    >
-                      {title === 'SIGNATURE CHARM' && translations?.acf?.home_p5 ? (
-                        <span dangerouslySetInnerHTML={{ __html: translations.acf.home_p5.replace(/\\r\\n/g, '<br />') }} />
-                      ) : (
-                        buttonText
-                      )}
-                    </Button>
-                  )
-                })}
-              </div>
-            )}
-          </div>
+
+              {/* Second group: Subtitle */}
+              {subtitle && (
+                <div className="flex items-end">
+                  <Typography
+                    variant="body"
+                    className="text-gray-100 text-center max-w-3xl mx-auto"
+                    align={contentAlign}
+                  >
+                    {translations?.acf?.home_p6 ? (
+                      <span dangerouslySetInnerHTML={{ __html: translations.acf.home_p6.replace(/\\r\\n/g, '<br />') }} />
+                    ) : (
+                      subtitle
+                    )}
+                  </Typography>
+                </div>
+              )}
+            </div>
+          ) : (
+            /* Default layout for other sections */
+            <div className="space-y-6 text-white">
+              {title && (
+                <Typography
+                  variant="h2"
+                  textShadow
+                  align={contentAlign}
+                >
+                  {title}
+                </Typography>
+              )}
+
+              {subtitle && (
+                <Typography
+                  variant="body"
+                  className="text-gray-300"
+                  align={contentAlign}
+                >
+                  {subtitle}
+                </Typography>
+              )}
+
+              {content && (
+                <div className="mt-8">
+                  {content}
+                </div>
+              )}
+
+              {ctaButtons && ctaButtons.length > 0 && (
+                <div className={cn(
+                  'mt-10 flex gap-4',
+                  contentAlign === 'center' && 'justify-center',
+                  contentAlign === 'left' && 'justify-start',
+                  contentAlign === 'right' && 'justify-end',
+                  ctaButtons.length > 1 && 'flex-col md:flex-row'
+                )}>
+                  {ctaButtons.map((button, index) => {
+                    const buttonText = button.translationKey ? t(button.translationKey) : button.text
+                    return (
+                      <Button
+                        key={index}
+                        variant={button.variant}
+                        size="lg"
+                        highlight={button.highlight}
+                        onClick={button.onClick}
+                      >
+                        {buttonText}
+                      </Button>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          )}
         </Container>
       </div>
     </ParallaxSection>
