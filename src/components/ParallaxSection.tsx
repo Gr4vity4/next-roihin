@@ -10,6 +10,7 @@ interface ParallaxSectionProps {
   overlayOpacity?: number
   parallaxSpeed?: number
   className?: string
+  backgroundPosition?: string
 }
 
 export default function ParallaxSection({
@@ -19,6 +20,7 @@ export default function ParallaxSection({
   overlayOpacity = 0.4,
   parallaxSpeed = 0.5,
   className = '',
+  backgroundPosition = 'center center',
 }: ParallaxSectionProps) {
   const parallaxRef = useRef<HTMLDivElement>(null)
   const imageRef = useRef<HTMLDivElement>(null)
@@ -93,6 +95,7 @@ export default function ParallaxSection({
             alt={imageAlt}
             fill
             className="object-cover"
+            style={{ objectPosition: backgroundPosition }}
             priority={isInView}
             quality={90}
             sizes="100vw"

@@ -1,12 +1,12 @@
 'use client'
 
+import { useTranslations } from '@/contexts/TranslationContext'
+import { cn } from '@/lib/utils'
+import { useTranslations as useNextIntlTranslations } from 'next-intl'
+import { ReactNode } from 'react'
+import Button from './Button'
 import ParallaxSection from './ParallaxSection'
 import { Container, Typography } from './ui'
-import Button from './Button'
-import { ReactNode } from 'react'
-import { cn } from '@/lib/utils'
-import { useTranslations } from '@/contexts/TranslationContext'
-import { useTranslations as useNextIntlTranslations } from 'next-intl'
 
 interface ParallaxContentSectionProps {
   // Parallax configuration
@@ -57,6 +57,10 @@ export default function ParallaxContentSection({
 }: ParallaxContentSectionProps) {
   const { translations } = useTranslations()
   const t = useNextIntlTranslations('common')
+
+  // Add special background positioning for SignatureCharm
+  const backgroundPosition = title === 'SIGNATURE CHARM' ? 'center 20%' : 'center center'
+
   return (
     <ParallaxSection
       imageUrl={imageUrl}
@@ -64,22 +68,27 @@ export default function ParallaxContentSection({
       overlayOpacity={overlayOpacity}
       parallaxSpeed={parallaxSpeed}
       className={cn('py-24', minHeight, className)}
+      backgroundPosition={backgroundPosition}
     >
       <div className="flex items-center justify-center h-full">
-        <Container maxWidth={contentMaxWidth} className={alignmentClasses[contentAlign]} padding="lg">
+        <Container
+          maxWidth={contentMaxWidth}
+          className={alignmentClasses[contentAlign]}
+          padding="lg"
+        >
           {/* Special layout for Signature Charm section */}
           {title === 'SIGNATURE CHARM' ? (
             <div className="flex flex-col justify-between h-full min-h-[600px] text-white">
               {/* First group: Title and Button */}
               <div className="flex flex-col items-center space-y-6">
                 {title && (
-                  <Typography
-                    variant="h2"
-                    textShadow
-                    align={contentAlign}
-                  >
+                  <Typography variant="h2" textShadow align={contentAlign}>
                     {translations?.acf?.home_p4 ? (
-                      <span dangerouslySetInnerHTML={{ __html: translations.acf.home_p4.replace(/\\r\\n/g, '<br />') }} />
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: translations.acf.home_p4.replace(/\\r\\n/g, '<br />'),
+                        }}
+                      />
                     ) : (
                       title
                     )}
@@ -87,29 +96,35 @@ export default function ParallaxContentSection({
                 )}
 
                 {ctaButtons && ctaButtons.length > 0 && (
-                  <div className={cn(
-                    'flex gap-4',
-                    contentAlign === 'center' && 'justify-center',
-                    contentAlign === 'left' && 'justify-start',
-                    contentAlign === 'right' && 'justify-end',
-                    ctaButtons.length > 1 && 'flex-col md:flex-row'
-                  )}>
+                  <div
+                    className={cn(
+                      'flex gap-4',
+                      contentAlign === 'center' && 'justify-center',
+                      contentAlign === 'left' && 'justify-start',
+                      contentAlign === 'right' && 'justify-end',
+                      ctaButtons.length > 1 && 'flex-col md:flex-row',
+                    )}
+                  >
                     {ctaButtons.map((button, index) => {
-                      const buttonText = button.translationKey ? t(button.translationKey) : button.text
+                      const buttonText = button.translationKey
+                        ? t(button.translationKey)
+                        : button.text
                       return (
-                        <Button
+                        <button
                           key={index}
-                          variant={button.variant}
-                          size="lg"
-                          highlight={button.highlight}
                           onClick={button.onClick}
+                          className="px-8 py-3 text-lg font-semibold text-white border-2 border-transparent hover:border-white transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent"
                         >
                           {translations?.acf?.home_p5 ? (
-                            <span dangerouslySetInnerHTML={{ __html: translations.acf.home_p5.replace(/\\r\\n/g, '<br />') }} />
+                            <span
+                              dangerouslySetInnerHTML={{
+                                __html: translations.acf.home_p5.replace(/\\r\\n/g, '<br />'),
+                              }}
+                            />
                           ) : (
                             buttonText
                           )}
-                        </Button>
+                        </button>
                       )
                     })}
                   </div>
@@ -125,7 +140,11 @@ export default function ParallaxContentSection({
                     align={contentAlign}
                   >
                     {translations?.acf?.home_p6 ? (
-                      <span dangerouslySetInnerHTML={{ __html: translations.acf.home_p6.replace(/\\r\\n/g, '<br />') }} />
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: translations.acf.home_p6.replace(/\\r\\n/g, '<br />'),
+                        }}
+                      />
                     ) : (
                       subtitle
                     )}
@@ -137,41 +156,33 @@ export default function ParallaxContentSection({
             /* Default layout for other sections */
             <div className="space-y-6 text-white">
               {title && (
-                <Typography
-                  variant="h2"
-                  textShadow
-                  align={contentAlign}
-                >
+                <Typography variant="h2" textShadow align={contentAlign}>
                   {title}
                 </Typography>
               )}
 
               {subtitle && (
-                <Typography
-                  variant="body"
-                  className="text-gray-300"
-                  align={contentAlign}
-                >
+                <Typography variant="body" className="text-gray-300" align={contentAlign}>
                   {subtitle}
                 </Typography>
               )}
 
-              {content && (
-                <div className="mt-8">
-                  {content}
-                </div>
-              )}
+              {content && <div className="mt-8">{content}</div>}
 
               {ctaButtons && ctaButtons.length > 0 && (
-                <div className={cn(
-                  'mt-10 flex gap-4',
-                  contentAlign === 'center' && 'justify-center',
-                  contentAlign === 'left' && 'justify-start',
-                  contentAlign === 'right' && 'justify-end',
-                  ctaButtons.length > 1 && 'flex-col md:flex-row'
-                )}>
+                <div
+                  className={cn(
+                    'mt-10 flex gap-4',
+                    contentAlign === 'center' && 'justify-center',
+                    contentAlign === 'left' && 'justify-start',
+                    contentAlign === 'right' && 'justify-end',
+                    ctaButtons.length > 1 && 'flex-col md:flex-row',
+                  )}
+                >
                   {ctaButtons.map((button, index) => {
-                    const buttonText = button.translationKey ? t(button.translationKey) : button.text
+                    const buttonText = button.translationKey
+                      ? t(button.translationKey)
+                      : button.text
                     return (
                       <Button
                         key={index}
