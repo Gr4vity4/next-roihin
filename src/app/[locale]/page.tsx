@@ -25,8 +25,6 @@ export default function Home() {
         <HeroSection
           backgroundImage={content.hero.background.image}
           backgroundAlt={content.hero.background.alt}
-          title={content.hero.title}
-          subtitle={content.hero.subtitle}
           ctaButton={{ ...content.hero.cta, translationKey: 'orderDesign' }}
           className="pt-20 lg:pt-[230px]"
         />
@@ -34,9 +32,6 @@ export default function Home() {
         {/* About Section */}
         <AboutSection
           id="about"
-          title={content.about.title}
-          subtitle={content.about.subtitle}
-          content={content.about.content}
           ctaButton={{ ...content.about.cta, translationKey: 'learnMore' }}
         />
 
@@ -53,9 +48,6 @@ export default function Home() {
         {/* Testimonials Section */}
         <TestimonialsSection
           id="reviews"
-          title={content.testimonials.title}
-          subtitle={content.testimonials.subtitle}
-          testimonials={content.testimonials.items}
           ctaButton={{ ...content.testimonials.cta, translationKey: 'readMore' }}
         />
 
@@ -71,11 +63,9 @@ export default function Home() {
         <GallerySection
           backgroundImage=""
           backgroundAlt={content.gallery.background.alt}
-          title={content.gallery.title}
-          subtitle={content.gallery.subtitle}
           ctaButtons={[
             { ...content.gallery.ctaButtons[0], translationKey: 'designByYourself' },
-            { ...content.gallery.ctaButtons[1], translationKey: 'designByRoihin' }
+            { ...content.gallery.ctaButtons[1], translationKey: 'designByRoihin' },
           ]}
         />
 

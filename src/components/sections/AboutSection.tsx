@@ -3,14 +3,10 @@
 import { cn } from '@/lib/utils'
 import Button from '../Button'
 import { Container, Typography } from '../ui'
-import { useTranslations } from '@/contexts/TranslationContext'
-import { useTranslations as useNextIntlTranslations } from 'next-intl'
+import { useTranslations } from 'next-intl'
 
 interface AboutSectionProps {
   id?: string
-  title: string
-  subtitle?: string
-  content?: string
   ctaButton?: {
     text?: string
     translationKey?: string
@@ -27,18 +23,15 @@ interface AboutSectionProps {
 
 export default function AboutSection({
   id,
-  title,
-  content,
   ctaButton,
   backgroundColor = 'bg-light-gray',
   textAlign = 'center',
   maxWidth = 'lg',
   className = '',
 }: AboutSectionProps) {
-  const { translations } = useTranslations()
-  const t = useNextIntlTranslations('common')
+  const t = useTranslations()
 
-  const buttonText = ctaButton?.translationKey ? t(ctaButton.translationKey) : ctaButton?.text
+  const buttonText = ctaButton?.translationKey ? t(`common.${ctaButton.translationKey}`) : ctaButton?.text
 
   return (
     <section id={id} className={cn('py-24', backgroundColor, className)}>
@@ -50,23 +43,17 @@ export default function AboutSection({
             textAlign === 'right' && 'text-right',
           )}
         >
-          <Typography variant="h3" className="mb-10">
-            {translations?.acf?.home_p2 ? (
-              <span dangerouslySetInnerHTML={{ __html: translations.acf.home_p2.replace(/\r\n/g, '<br />') }} />
-            ) : (
-              title
-            )}
+          <Typography variant="h3" className="mb-4">
+            {t('homePage.about.title')}
           </Typography>
 
-          {(content || translations?.acf?.home_p3) && (
-            <Typography variant="body" className="text-gray-600">
-              {translations?.acf?.home_p3 ? (
-                <span dangerouslySetInnerHTML={{ __html: translations.acf.home_p3.replace(/\r\n/g, '<br />') }} />
-              ) : (
-                content
-              )}
-            </Typography>
-          )}
+          <Typography variant="h4" className="mb-10 text-gray-700">
+            {t('homePage.about.subtitle')}
+          </Typography>
+
+          <Typography variant="body" className="text-gray-600 whitespace-pre-line">
+            {t('homePage.about.content')}
+          </Typography>
 
           {ctaButton && (
             <div className="mt-10">

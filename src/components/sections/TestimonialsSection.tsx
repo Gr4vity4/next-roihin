@@ -1,24 +1,16 @@
 'use client'
 
-import { useTranslations } from '@/contexts/TranslationContext'
-import { cn } from '@/lib/utils'
 import { Link } from '@/i18n/navigation'
+import { cn } from '@/lib/utils'
+import { useTranslations } from 'next-intl'
 import Button from '../Button'
 import TestimonialCard from '../TestimonialCard'
 import { Container, Typography } from '../ui'
-import { useTranslations as useNextIntlTranslations } from 'next-intl'
-
-interface TestimonialData {
-  id: string
-  content: string
-  rating?: number
-}
 
 interface TestimonialsSectionProps {
   id?: string
-  title: string
-  subtitle: string
-  testimonials: TestimonialData[]
+  title?: string
+  content?: string
   columns?: 1 | 2 | 3 | 4
   ctaButton?: {
     text?: string
@@ -34,49 +26,37 @@ interface TestimonialsSectionProps {
 
 export default function TestimonialsSection({
   id,
-  title,
   ctaButton,
   backgroundColor = 'bg-black',
   textColor = 'text-white',
   className = '',
 }: TestimonialsSectionProps) {
-  const { translations } = useTranslations()
-  const t = useNextIntlTranslations('common')
+  const t = useTranslations()
 
   return (
     <section id={id} className={cn('py-24', backgroundColor, textColor, className)}>
       <Container>
         <Typography variant="h2" align="center" className="mb-16" color="primary">
-          {translations?.acf?.home_p7 ? (
-            <span
-              dangerouslySetInnerHTML={{
-                __html: translations.acf.home_p7.replace(/\r\n/g, '<br />'),
-              }}
-            />
-          ) : (
-            title
-          )}
+          {t('homePage.testimonials.title')}
         </Typography>
 
-        {/* Featured Testimonial from translations */}
-        {translations?.acf?.home_p8 && (
-          <div className="mb-12">
-            <div className="max-w-4xl mx-auto">
-              <TestimonialCard
-                content={translations.acf.home_p8}
-                variant="dark"
-                enableHtml={true}
-              />
-            </div>
+        {/* Featured Testimonial */}
+        <div className="mb-12">
+          <div className="max-w-4xl mx-auto">
+            <TestimonialCard
+              content={t('homePage.testimonials.content')}
+              variant="dark"
+              enableHtml={false}
+            />
           </div>
-        )}
+        </div>
 
         {ctaButton && (
           <div className="text-center">
             {ctaButton.href ? (
               <Link href={ctaButton.href}>
                 <Button variant={ctaButton.variant} size="lg">
-                  {ctaButton.translationKey ? t(ctaButton.translationKey) : ctaButton.text}
+                  {ctaButton.translationKey ? t(`common.${ctaButton.translationKey}`) : ctaButton.text}
                 </Button>
               </Link>
             ) : (

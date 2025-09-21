@@ -3,14 +3,13 @@
 import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
 import Button from '../Button'
-import { useTranslations } from '@/contexts/TranslationContext'
-import { useTranslations as useNextIntlTranslations } from 'next-intl'
+import { useTranslations } from 'next-intl'
 
 interface GallerySectionProps {
   backgroundImage: string
   backgroundAlt: string
-  title: string
-  subtitle: string
+  title?: string
+  subtitle?: string
   ctaButtons: Array<{
     text?: string
     translationKey?: string
@@ -25,13 +24,10 @@ interface GallerySectionProps {
 }
 
 export default function GallerySection({
-  title,
-  // subtitle,
   ctaButtons,
   className = '',
 }: GallerySectionProps) {
-  const { translations } = useTranslations()
-  const t = useNextIntlTranslations('common')
+  const t = useTranslations()
   const productImages = Array.from({ length: 10 }, (_, i) => ({
     src: `/images/home-page/${i + 1}.png`,
     alt: `Product ${i + 1}`,
@@ -42,18 +38,14 @@ export default function GallerySection({
       <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 max-w-full">
         <div className="text-center mb-12">
           <h2 className="font-mixed-lang text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-4">
-            {translations?.acf?.home_p9 ? (
-              <span dangerouslySetInnerHTML={{ __html: translations.acf.home_p9.replace(/\r\n/g, '<br />') }} />
-            ) : (
-              title
-            )}
+            {t('homePage.gallery.title')}
           </h2>
           {/* <p className="text-base sm:text-lg md:text-xl text-white max-w-3xl mx-auto mb-8 ">
             {subtitle}
           </p> */}
           <div className="flex flex-wrap justify-center gap-4">
             {ctaButtons.map((button, index) => {
-              const buttonText = button.translationKey ? t(button.translationKey) : button.text
+              const buttonText = button.translationKey ? t(`common.${button.translationKey}`) : button.text
               if (button.href) {
                 return (
                   <Link key={index} href={button.href}>

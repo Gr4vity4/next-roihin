@@ -1,8 +1,7 @@
 'use client'
 
-import { useTranslations } from '@/contexts/TranslationContext'
 import { cn } from '@/lib/utils'
-import { useTranslations as useNextIntlTranslations } from 'next-intl'
+import { useTranslations } from 'next-intl'
 import { ReactNode } from 'react'
 import Button from './Button'
 import ParallaxSection from './ParallaxSection'
@@ -55,8 +54,7 @@ export default function ParallaxContentSection({
   className = '',
   minHeight = 'min-h-[750px]',
 }: ParallaxContentSectionProps) {
-  const { translations } = useTranslations()
-  const t = useNextIntlTranslations('common')
+  const t = useTranslations()
 
   // Add special background positioning for SignatureCharm
   const backgroundPosition = title === 'SIGNATURE CHARM' ? 'center 20%' : 'center center'
@@ -83,15 +81,7 @@ export default function ParallaxContentSection({
               <div className="flex flex-col items-center space-y-6">
                 {title && (
                   <Typography variant="h2" textShadow align={contentAlign}>
-                    {translations?.acf?.home_p4 ? (
-                      <span
-                        dangerouslySetInnerHTML={{
-                          __html: translations.acf.home_p4.replace(/\\r\\n/g, '<br />'),
-                        }}
-                      />
-                    ) : (
-                      title
-                    )}
+                    {t('homePage.signatureCharm.title')}
                   </Typography>
                 )}
 
@@ -107,7 +97,7 @@ export default function ParallaxContentSection({
                   >
                     {ctaButtons.map((button, index) => {
                       const buttonText = button.translationKey
-                        ? t(button.translationKey)
+                        ? t(`common.${button.translationKey}`)
                         : button.text
                       return (
                         <button
@@ -115,15 +105,7 @@ export default function ParallaxContentSection({
                           onClick={button.onClick}
                           className="px-8 py-3 text-lg font-semibold text-white border-2 border-transparent hover:border-white transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent"
                         >
-                          {translations?.acf?.home_p5 ? (
-                            <span
-                              dangerouslySetInnerHTML={{
-                                __html: translations.acf.home_p5.replace(/\\r\\n/g, '<br />'),
-                              }}
-                            />
-                          ) : (
-                            buttonText
-                          )}
+                          {buttonText}
                         </button>
                       )
                     })}
@@ -139,15 +121,7 @@ export default function ParallaxContentSection({
                     className="text-gray-100 text-center max-w-3xl mx-auto"
                     align={contentAlign}
                   >
-                    {translations?.acf?.home_p6 ? (
-                      <span
-                        dangerouslySetInnerHTML={{
-                          __html: translations.acf.home_p6.replace(/\\r\\n/g, '<br />'),
-                        }}
-                      />
-                    ) : (
-                      subtitle
-                    )}
+                    {t('homePage.signatureCharm.subtitle')}
                   </Typography>
                 </div>
               )}
@@ -181,7 +155,7 @@ export default function ParallaxContentSection({
                 >
                   {ctaButtons.map((button, index) => {
                     const buttonText = button.translationKey
-                      ? t(button.translationKey)
+                      ? t(`common.${button.translationKey}`)
                       : button.text
                     return (
                       <Button

@@ -4,22 +4,13 @@ import { Link } from '@/i18n/navigation'
 import Button from '../Button'
 import ParallaxSection from '../ParallaxSection'
 import { Container, Typography } from '../ui'
-import { useTranslations } from '@/contexts/TranslationContext'
-import { useTranslations as useNextIntlTranslations } from 'next-intl'
+import { useTranslations } from 'next-intl'
 
 interface HeroSectionProps {
   backgroundImage: string
   backgroundAlt: string
   overlayOpacity?: number
   parallaxSpeed?: number
-  title: {
-    line1: string
-    line2: string
-  }
-  subtitle: {
-    thai: string
-    english: string
-  }
   ctaButton: {
     text?: string
     translationKey?: string
@@ -38,15 +29,13 @@ export default function HeroSection({
   backgroundAlt,
   overlayOpacity = 0.4,
   parallaxSpeed = 0.5,
-  title,
   ctaButton,
   className = '',
   minHeight = 'min-h-screen',
 }: HeroSectionProps) {
-  const { translations } = useTranslations()
-  const t = useNextIntlTranslations('common')
+  const t = useTranslations()
 
-  const buttonText = ctaButton.translationKey ? t(ctaButton.translationKey) : ctaButton.text
+  const buttonText = ctaButton.translationKey ? t(`common.${ctaButton.translationKey}`) : ctaButton.text
 
   return (
     <ParallaxSection
@@ -58,11 +47,11 @@ export default function HeroSection({
     >
       <Container className="text-center text-white">
         <Typography variant="h2" textShadow className="mb-10">
-          {translations?.acf?.home_p1 ? (
-            <span dangerouslySetInnerHTML={{ __html: translations.acf.home_p1.replace(/\r\n/g, '<br />') }} />
-          ) : (
-            title.line1
-          )}
+          {t('homePage.hero.title')}
+          <br />
+          <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl">
+            {t('homePage.hero.subtitle')}
+          </span>
         </Typography>
         {ctaButton.href ? (
           <Link href={ctaButton.href}>

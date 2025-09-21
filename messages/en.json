@@ -267,6 +267,28 @@
       "role": ""
     }
   },
+  "homePage": {
+    "hero": {
+      "title": "Personalized Stone Bracelets",
+      "subtitle": "Awakening your vibrant destiny"
+    },
+    "about": {
+      "title": "More Than Value, it's Spiritual Worth",
+      "subtitle": "More than sentimental value is spiritual value.",
+      "content": "The miracle of natural stones is a phenomenon formed over hundreds of thousands of years, shaped by elements, temperature, and time. These stones hold great wisdom. We arrange them in the correct positions to harness their energy effectively for you.\n\nAt ROIHIN, we connect the natural crystal bracelets with virtue, driving success through merit and prayers. We encourage the wearers of our bracelets to think positively, speak kindly, act virtuously, and consistently uphold moral principles. It is believed that those who follow these practices will achieve their desired success in all aspects of life."
+    },
+    "signatureCharm": {
+      "title": "SIGNATURE CHARM",
+      "subtitle": "Channel the transformative force of life through Roihin unique charms. Every piece is infused with symbolic of power and sacred significance, created through the light ritual."
+    },
+    "testimonials": {
+      "title": "TESTIMONIALS",
+      "content": "I've been one of K.Sun's earliest customers since the beginning of Roihin. I must say from the heart—every bracelet is crafted with such care and intention. You can truly feel the love, gentleness, and good wishes infused into each and every stone.\nEvery piece holds value, and the energy it carries is something you can sense. If you're looking for stones that are made with soul, you'll find them here at Roihin.\n\n- Ariya Nrd"
+    },
+    "gallery": {
+      "title": "INSPIRED ROIHIN"
+    }
+  },
   "member": {
     "dashboard": {
       "title": "Welcome back",
