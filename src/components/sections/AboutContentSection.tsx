@@ -1,5 +1,3 @@
-import { Container, Typography } from '../ui'
-
 interface AboutContentSectionProps {
   title: {
     english: string
@@ -20,60 +18,35 @@ export default function AboutContentSection({
   content,
 }: AboutContentSectionProps) {
   return (
-    <section className="py-12 sm:py-16 md:py-20 bg-white">
-      <Container padding="lg">
-        <div className="max-w-4xl mx-auto">
-          {/* Title Section */}
-          <div className="text-center mb-8 sm:mb-12 md:mb-16">
-            <Typography variant="h2" align="center" className="mb-4">
-              <span className="text-gray-800">{title.english}</span>{' '}
-              <span className="text-black font-bold">{title.thai}</span>
-            </Typography>
+    <section className="py-16 md:py-24 bg-[#FCFCFC]">
+      <div className="max-w-5xl mx-auto px-6 md:px-8">
+        {/* Title Section */}
+        <div className="text-center mb-12 md:mb-16">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl mb-4">
+            <span className="font-light">{title.english}</span>{' '}
+            <span className="text-[#2A5F3E] font-medium">{title.thai}</span>
+          </h2>
 
-            <Typography
-              variant="h4"
-             
-              align="center"
-              color="primary"
-              className="italic"
-            >
-              {subtitle.thai}
-            </Typography>
-          </div>
+          <p className="text-lg md:text-xl text-gray-600 mt-4">
+            {subtitle.thai}
+          </p>
+        </div>
 
-          {/* Content Section - Two Columns */}
-          <div className="grid md:grid-cols-2 gap-8 sm:gap-10 md:gap-12">
-            {/* English Content */}
-            <div className="space-y-4 sm:space-y-5 md:space-y-6">
-              {content.english.map((paragraph, index) => (
-                <Typography
-                  key={`english-${index}`}
-                  variant="body"
-                  className="text-gray-700 leading-relaxed"
-                  align="justify"
-                >
-                  {paragraph}
-                </Typography>
-              ))}
-            </div>
-
-            {/* Thai Content */}
-            <div className="space-y-4 sm:space-y-5 md:space-y-6">
-              {content.thai.map((paragraph, index) => (
-                <Typography
-                  key={`thai-${index}`}
-                  variant="body"
-                 
-                  className="text-gray-700 leading-relaxed"
-                  align="justify"
-                >
-                  {paragraph}
-                </Typography>
-              ))}
-            </div>
+        {/* Content Section - Single Column */}
+        <div className="space-y-8 md:space-y-10">
+          {/* Combined Content */}
+          <div className="space-y-6">
+            {content.thai.map((paragraph, index) => (
+              <p
+                key={`content-${index}`}
+                className="text-gray-700 leading-relaxed text-base md:text-lg text-center"
+              >
+                {paragraph}
+              </p>
+            ))}
           </div>
         </div>
-      </Container>
+      </div>
     </section>
   )
 }

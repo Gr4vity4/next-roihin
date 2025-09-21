@@ -5,6 +5,7 @@ import { Footer } from '@/components/sections'
 import AboutHeroSection from '@/components/sections/AboutHeroSection'
 import AboutContentSection from '@/components/sections/AboutContentSection'
 import AboutFeaturesSection from '@/components/sections/AboutFeaturesSection'
+import AboutTestimonialSection from '@/components/sections/AboutTestimonialSection'
 import { content } from '@/config/content.config'
 // Configure route segment caching for about page (semi-static content)
 // Revalidate every 15 minutes
@@ -50,6 +51,12 @@ export default function AboutPage() {
 
       {/* Features Section */}
       <AboutFeaturesSection features={aboutPage.features} />
+
+      {/* Testimonial Section */}
+      <AboutTestimonialSection
+        testimonial={aboutPage.testimonial}
+        profileImage={aboutPage.testimonial.profileImage}
+      />
 
       {/* Footer */}
       <Footer />

@@ -19,15 +19,15 @@ export default function AboutFeaturesSection({ features }: AboutFeaturesSectionP
   const localFeatures = [
     {
       ...features[0],
-      image: '/images/about/1.jpeg',
+      image: '/images/about/1.avif',
     },
     {
       ...features[1],
-      image: '/images/about/2.jpg',
+      image: '/images/about/2.avif',
     },
     {
       ...features[2],
-      image: '/images/about/3.jpg',
+      image: '/images/about/3.avif',
     },
     {
       ...features[3],
