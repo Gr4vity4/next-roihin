@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Button from '@/components/Button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useTranslations } from 'next-intl'
 import {
   Dialog,
   DialogContent,
@@ -16,6 +17,7 @@ import {
 } from '@/components/ui/dialog'
 
 export default function SettingsPage() {
+  const t = useTranslations('member.settings')
   const router = useRouter()
   const [currentPasswordVisible, setCurrentPasswordVisible] = useState(false)
   const [newPasswordVisible, setNewPasswordVisible] = useState(false)
@@ -24,7 +26,7 @@ export default function SettingsPage() {
   const [isChangingPassword, setIsChangingPassword] = useState(false)
   const [passwordError, setPasswordError] = useState('')
   const [passwordSuccess, setPasswordSuccess] = useState('')
-  
+
   const handlePasswordChange = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setPasswordError('')
@@ -37,13 +39,13 @@ export default function SettingsPage() {
     const confirmPassword = formData.get('confirmPassword') as string
 
     if (!currentPassword || !newPassword || !confirmPassword) {
-      setPasswordError('All fields are required')
+      setPasswordError(t('changePassword.errors.fieldsRequired'))
       setIsChangingPassword(false)
       return
     }
 
     if (newPassword !== confirmPassword) {
-      setPasswordError('New passwords do not match')
+      setPasswordError(t('changePassword.errors.passwordMismatch'))
       setIsChangingPassword(false)
       return
     }
@@ -64,21 +66,21 @@ export default function SettingsPage() {
       const data = await response.json()
 
       if (response.ok) {
-        setPasswordSuccess(data.message || 'Password updated successfully. Please sign in again.')
+        setPasswordSuccess(data.message || t('changePassword.success'))
         setTimeout(() => {
           router.push('/login')
         }, 2000)
       } else {
-        setPasswordError(data.message || 'Failed to update password')
+        setPasswordError(data.message || t('changePassword.errors.updateFailed'))
       }
     } catch (error) {
       console.error('Password change error:', error)
-      setPasswordError('An error occurred while changing password')
+      setPasswordError(t('changePassword.errors.genericError'))
     } finally {
       setIsChangingPassword(false)
     }
   }
-  
+
   const handleDeleteAccount = () => {
     if (deleteConfirmText === 'DELETE') {
       console.log('Deleting account...')
@@ -90,35 +92,35 @@ export default function SettingsPage() {
   return (
     <div className="max-w-4xl mx-auto pt-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Account Settings</h1>
-        <p className="text-gray-600">Manage your account security and preferences</p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('title')}</h1>
+        <p className="text-gray-600">{t('subtitle')}</p>
       </div>
 
       {/* Change Password Section */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-6">Change Password</h2>
-        
+        <h2 className="text-xl font-semibold text-gray-900 mb-6">{t('changePassword.title')}</h2>
+
         {passwordError && (
           <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg">
             {passwordError}
           </div>
         )}
-        
+
         {passwordSuccess && (
           <div className="mb-4 p-3 bg-green-50 border border-green-200 text-green-600 rounded-lg">
             {passwordSuccess}
           </div>
         )}
-        
+
         <form onSubmit={handlePasswordChange} className="space-y-4 max-w-md">
           <div className="space-y-2">
-            <Label htmlFor="currentPassword">Current Password</Label>
+            <Label htmlFor="currentPassword">{t('changePassword.currentPassword')}</Label>
             <div className="relative">
               <Input
                 id="currentPassword"
                 name="currentPassword"
                 type={currentPasswordVisible ? 'text' : 'password'}
-                placeholder="Enter current password"
+                placeholder={t('changePassword.currentPasswordPlaceholder')}
                 className="pr-10"
                 required
               />
@@ -133,13 +135,13 @@ export default function SettingsPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="newPassword">New Password</Label>
+            <Label htmlFor="newPassword">{t('changePassword.newPassword')}</Label>
             <div className="relative">
               <Input
                 id="newPassword"
                 name="newPassword"
                 type={newPasswordVisible ? 'text' : 'password'}
-                placeholder="Enter new password"
+                placeholder={t('changePassword.newPasswordPlaceholder')}
                 className="pr-10"
                 required
               />
@@ -154,43 +156,43 @@ export default function SettingsPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirm New Password</Label>
+            <Label htmlFor="confirmPassword">{t('changePassword.confirmPassword')}</Label>
             <Input
               id="confirmPassword"
               name="confirmPassword"
               type="password"
-              placeholder="Confirm new password"
+              placeholder={t('changePassword.confirmPasswordPlaceholder')}
               required
             />
           </div>
 
           <Button type="submit" disabled={isChangingPassword}>
-            {isChangingPassword ? 'Updating...' : 'Update Password'}
+            {isChangingPassword ? t('changePassword.updating') : t('changePassword.updateButton')}
           </Button>
         </form>
       </div>
 
       {/* Delete Account */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-4">Delete Account</h2>
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('deleteAccount.title')}</h2>
         <p className="text-gray-600 mb-4">
-          Once you delete your account, there is no going back. Please be certain.
+          {t('deleteAccount.description')}
         </p>
         <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
           <DialogTrigger asChild>
             <Button variant="outline" className="border-red-600 text-red-600 hover:bg-red-600 hover:text-white hover:border-red-600">
-              Delete Account
+              {t('deleteAccount.button')}
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle className="text-red-600">Delete Account</DialogTitle>
+              <DialogTitle className="text-red-600">{t('deleteAccount.modal.title')}</DialogTitle>
               <DialogDescription className="space-y-3 pt-2">
                 <p>
-                  This action cannot be undone. This will permanently delete your account and remove all your data from our servers.
+                  {t('deleteAccount.modal.warning')}
                 </p>
                 <p className="font-medium">
-                  To confirm deletion, please type <span className="font-mono bg-gray-100 px-2 py-1 rounded">DELETE</span> below:
+                  {t('deleteAccount.modal.confirmText')}
                 </p>
               </DialogDescription>
             </DialogHeader>
@@ -199,7 +201,7 @@ export default function SettingsPage() {
                 id="confirmDelete"
                 value={deleteConfirmText}
                 onChange={(e) => setDeleteConfirmText(e.target.value)}
-                placeholder="Type DELETE to confirm"
+                placeholder={t('deleteAccount.modal.confirmPlaceholder')}
                 className="font-mono"
               />
             </div>
@@ -211,7 +213,7 @@ export default function SettingsPage() {
                   setDeleteConfirmText('')
                 }}
               >
-                Cancel
+                {t('deleteAccount.modal.cancel')}
               </Button>
               <Button
                 variant="primary"
@@ -219,7 +221,7 @@ export default function SettingsPage() {
                 disabled={deleteConfirmText !== 'DELETE'}
                 className="bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Permanently Delete Account
+                {t('deleteAccount.modal.permanentDelete')}
               </Button>
             </DialogFooter>
           </DialogContent>

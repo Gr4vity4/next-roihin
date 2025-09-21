@@ -2,8 +2,10 @@
 
 import { useAuth } from '@/contexts/AuthContext'
 import { Link } from '@/i18n/navigation'
+import { useTranslations } from 'next-intl'
 
 export default function MemberDashboard() {
+  const t = useTranslations('member.dashboard')
   const { user } = useAuth()
 
   const recentOrders = [
@@ -12,14 +14,19 @@ export default function MemberDashboard() {
     { id: 'ORD-003', date: '2024-01-25', status: 'Shipped', total: '฿4,200' },
   ]
 
+  const getStatusTranslation = (status: string) => {
+    const statusKey = status.toLowerCase() as 'delivered' | 'processing' | 'shipped' | 'cancelled'
+    return t(`recentOrders.statuses.${statusKey}`)
+  }
+
   return (
     <>
       {/* Header */}
       <div className="mb-8 mt-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Welcome back{user?.name ? `, ${user.name}` : ''}!
+          {user?.name ? t('titleWithName', { name: user.name }) : t('title')}
         </h1>
-        <p className="text-gray-600">Here&apos;s what&apos;s happening with your orders today.</p>
+        <p className="text-gray-600">{t('subtitle')}</p>
       </div>
 
       {/* Stats Grid */}
@@ -37,19 +44,19 @@ export default function MemberDashboard() {
       {/* Recent Orders */}
       <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold text-gray-900">Recent Orders</h2>
+          <h2 className="text-xl font-semibold text-gray-900">{t('recentOrders.title')}</h2>
           <Link href="/member/orders" className="text-[#005635] hover:underline text-sm">
-            View all →
+            {t('recentOrders.viewAll')}
           </Link>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="border-b border-gray-200">
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">Order ID</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">Date</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">Status</th>
-                <th className="text-right py-3 px-4 text-sm font-medium text-gray-600">Total</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">{t('recentOrders.columns.orderId')}</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">{t('recentOrders.columns.date')}</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-gray-600">{t('recentOrders.columns.status')}</th>
+                <th className="text-right py-3 px-4 text-sm font-medium text-gray-600">{t('recentOrders.columns.total')}</th>
               </tr>
             </thead>
             <tbody>
@@ -67,7 +74,7 @@ export default function MemberDashboard() {
                           : 'bg-blue-100 text-blue-800'
                       }`}
                     >
-                      {order.status}
+                      {getStatusTranslation(order.status)}
                     </span>
                   </td>
                   <td className="py-3 px-4 text-sm text-gray-900 text-right">{order.total}</td>

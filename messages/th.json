@@ -223,5 +223,183 @@
     "actions": {
       "backToHome": "กลับหน้าหลัก"
     }
+  },
+  "member": {
+    "dashboard": {
+      "title": "ยินดีต้อนรับกลับ",
+      "titleWithName": "ยินดีต้อนรับกลับ, {{name}}!",
+      "subtitle": "นี่คือสิ่งที่เกิดขึ้นกับคำสั่งซื้อของคุณวันนี้",
+      "recentOrders": {
+        "title": "คำสั่งซื้อล่าสุด",
+        "viewAll": "ดูทั้งหมด →",
+        "columns": {
+          "orderId": "เลขคำสั่งซื้อ",
+          "date": "วันที่",
+          "status": "สถานะ",
+          "total": "ยอดรวม"
+        },
+        "statuses": {
+          "delivered": "จัดส่งแล้ว",
+          "processing": "กำลังดำเนินการ",
+          "shipped": "จัดส่งแล้ว",
+          "cancelled": "ยกเลิกแล้ว"
+        }
+      }
+    },
+    "profile": {
+      "title": "ตั้งค่าโปรไฟล์",
+      "subtitle": "จัดการข้อมูลบัญชีและการตั้งค่าของคุณ",
+      "memberSince": "สมาชิกตั้งแต่ {{date}}",
+      "editProfile": "แก้ไขโปรไฟล์",
+      "cancel": "ยกเลิก",
+      "saveChanges": "บันทึกการเปลี่ยนแปลง",
+      "loading": "กำลังโหลดโปรไฟล์...",
+      "success": "บันทึกข้อมูลเรียบร้อยแล้ว",
+      "errors": {
+        "loadFailed": "ไม่สามารถโหลดโปรไฟล์ได้",
+        "updateFailed": "ไม่สามารถอัปเดตโปรไฟล์ได้"
+      },
+      "fields": {
+        "firstName": "ชื่อ",
+        "lastName": "นามสกุล",
+        "email": "อีเมล",
+        "phone": "เบอร์โทรศัพท์",
+        "phonePlaceholder": "กรุณากรอกเบอร์โทรศัพท์ (เช่น 0812345678)",
+        "phoneEmpty": "ยังไม่มีข้อมูลเบอร์โทรศัพท์",
+        "phoneSaved": "✓ เบอร์โทรศัพท์บันทึกแล้ว",
+        "birthDate": "วันเกิด",
+        "gender": "เพศ",
+        "genderOptions": {
+          "male": "ชาย",
+          "female": "หญิง",
+          "other": "อื่นๆ",
+          "preferNotToSay": "ไม่ระบุ"
+        }
+      }
+    },
+    "orders": {
+      "title": "ประวัติคำสั่งซื้อ",
+      "subtitle": "ติดตามและจัดการคำสั่งซื้อของคุณ",
+      "tabs": {
+        "all": "ทั้งหมด",
+        "processing": "กำลังดำเนินการ",
+        "shipped": "จัดส่งแล้ว",
+        "delivered": "ส่งถึงแล้ว",
+        "cancelled": "ยกเลิกแล้ว"
+      },
+      "orderCard": {
+        "orderedOn": "สั่งซื้อเมื่อ {{date}}",
+        "items": "{{count}} ชิ้น",
+        "tracking": "เลขติดตาม: {{number}}",
+        "viewDetails": "ดูรายละเอียด",
+        "writeReview": "เขียนรีวิว",
+        "cancelOrder": "ยกเลิกคำสั่งซื้อ"
+      },
+      "empty": {
+        "title": "ไม่พบคำสั่งซื้อ",
+        "subtitle": "คุณยังไม่มีคำสั่งซื้อในสถานะนี้",
+        "startShopping": "เริ่มช้อปปิ้ง"
+      }
+    },
+    "addresses": {
+      "title": "ที่อยู่จัดส่ง",
+      "subtitle": "จัดการที่อยู่จัดส่งของคุณ",
+      "addNew": "เพิ่มที่อยู่ใหม่",
+      "loading": "กำลังโหลดที่อยู่...",
+      "defaultBadge": "ที่อยู่หลัก",
+      "edit": "แก้ไข",
+      "setAsDefault": "ตั้งเป็นที่อยู่หลัก",
+      "delete": "ลบ",
+      "empty": {
+        "title": "ยังไม่มีที่อยู่",
+        "subtitle": "เพิ่มที่อยู่จัดส่งแรกของคุณเพื่อเริ่มต้น",
+        "addAddress": "เพิ่มที่อยู่"
+      },
+      "form": {
+        "addTitle": "เพิ่มที่อยู่ใหม่",
+        "editTitle": "แก้ไขที่อยู่",
+        "fullName": "ชื่อ-นามสกุล",
+        "phone": "เบอร์โทรศัพท์",
+        "address": "ที่อยู่",
+        "addressPlaceholder": "บ้านเลขที่ ถนน",
+        "subdistrict": "ตำบล/แขวง",
+        "district": "อำเภอ/เขต",
+        "province": "จังหวัด",
+        "postalCode": "รหัสไปรษณีย์",
+        "setDefault": "ตั้งเป็นที่อยู่หลัก",
+        "cancel": "ยกเลิก",
+        "add": "เพิ่มที่อยู่",
+        "update": "อัปเดตที่อยู่"
+      },
+      "errors": {
+        "loadFailed": "ไม่สามารถโหลดที่อยู่ได้",
+        "createFailed": "ไม่สามารถเพิ่มที่อยู่ได้",
+        "updateFailed": "ไม่สามารถอัปเดตที่อยู่ได้",
+        "deleteFailed": "ไม่สามารถลบที่อยู่ได้",
+        "setDefaultFailed": "ไม่สามารถตั้งเป็นที่อยู่หลักได้"
+      }
+    },
+    "wishlist": {
+      "title": "รายการโปรด",
+      "subtitle": "คุณมี {{count}} รายการในรายการโปรด",
+      "subtitleEmpty": "บันทึกสินค้าที่คุณชื่นชอบไว้ที่นี่",
+      "loading": "กำลังโหลด...",
+      "clearAll": "ลบทั้งหมด",
+      "clearing": "กำลังลบ...",
+      "confirmClear": "คุณแน่ใจหรือไม่ที่จะลบสินค้าทั้งหมดในรายการโปรด?",
+      "item": {
+        "color": "สี: {{color}}",
+        "addToCart": "เพิ่มลงตะกร้า",
+        "addedToCart": "เพิ่มลงตะกร้าแล้ว!",
+        "outOfStock": "สินค้าหมด",
+        "remove": "ลบ",
+        "removing": "กำลังลบ..."
+      },
+      "empty": {
+        "title": "รายการโปรดของคุณว่างเปล่า",
+        "subtitle": "บันทึกสินค้าที่คุณชื่นชอบเพื่อดูภายหลัง",
+        "browseProducts": "เลือกดูสินค้า"
+      },
+      "errors": {
+        "loadFailed": "เกิดข้อผิดพลาด: {{error}}",
+        "removeFailed": "ไม่สามารถลบรายการได้",
+        "clearFailed": "ไม่สามารถล้างรายการโปรดได้"
+      }
+    },
+    "settings": {
+      "title": "ตั้งค่าบัญชี",
+      "subtitle": "จัดการความปลอดภัยและการตั้งค่าบัญชีของคุณ",
+      "changePassword": {
+        "title": "เปลี่ยนรหัสผ่าน",
+        "currentPassword": "รหัสผ่านปัจจุบัน",
+        "currentPasswordPlaceholder": "กรอกรหัสผ่านปัจจุบัน",
+        "newPassword": "รหัสผ่านใหม่",
+        "newPasswordPlaceholder": "กรอกรหัสผ่านใหม่",
+        "confirmPassword": "ยืนยันรหัสผ่านใหม่",
+        "confirmPasswordPlaceholder": "ยืนยันรหัสผ่านใหม่",
+        "updateButton": "อัปเดตรหัสผ่าน",
+        "updating": "กำลังอัปเดต...",
+        "success": "อัปเดตรหัสผ่านสำเร็จ กรุณาเข้าสู่ระบบอีกครั้ง",
+        "errors": {
+          "fieldsRequired": "กรุณากรอกข้อมูลให้ครบทุกช่อง",
+          "passwordMismatch": "รหัสผ่านใหม่ไม่ตรงกัน",
+          "updateFailed": "ไม่สามารถอัปเดตรหัสผ่านได้",
+          "genericError": "เกิดข้อผิดพลาดในการเปลี่ยนรหัสผ่าน"
+        }
+      },
+      "deleteAccount": {
+        "title": "ลบบัญชี",
+        "description": "เมื่อคุณลบบัญชีแล้ว จะไม่สามารถกู้คืนได้ กรุณาพิจารณาให้แน่ใจ",
+        "button": "ลบบัญชี",
+        "modal": {
+          "title": "ลบบัญชี",
+          "warning": "การดำเนินการนี้ไม่สามารถยกเลิกได้ บัญชีของคุณและข้อมูลทั้งหมดจะถูกลบออกจากระบบอย่างถาวร",
+          "confirmText": "เพื่อยืนยันการลบ กรุณาพิมพ์ DELETE ด้านล่าง:",
+          "confirmPlaceholder": "พิมพ์ DELETE เพื่อยืนยัน",
+          "cancel": "ยกเลิก",
+          "permanentDelete": "ลบบัญชีถาวร"
+        }
+      }
+    }
   }
 }

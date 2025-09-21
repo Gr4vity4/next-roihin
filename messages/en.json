@@ -223,5 +223,183 @@
     "actions": {
       "backToHome": "Back to Home"
     }
+  },
+  "member": {
+    "dashboard": {
+      "title": "Welcome back",
+      "titleWithName": "Welcome back, {{name}}!",
+      "subtitle": "Here's what's happening with your orders today.",
+      "recentOrders": {
+        "title": "Recent Orders",
+        "viewAll": "View all →",
+        "columns": {
+          "orderId": "Order ID",
+          "date": "Date",
+          "status": "Status",
+          "total": "Total"
+        },
+        "statuses": {
+          "delivered": "Delivered",
+          "processing": "Processing",
+          "shipped": "Shipped",
+          "cancelled": "Cancelled"
+        }
+      }
+    },
+    "profile": {
+      "title": "Profile Settings",
+      "subtitle": "Manage your account information and preferences",
+      "memberSince": "Member since {{date}}",
+      "editProfile": "Edit Profile",
+      "cancel": "Cancel",
+      "saveChanges": "Save Changes",
+      "loading": "Loading profile...",
+      "success": "Profile updated successfully",
+      "errors": {
+        "loadFailed": "Failed to load profile",
+        "updateFailed": "Failed to update profile"
+      },
+      "fields": {
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "email": "Email Address",
+        "phone": "Phone Number",
+        "phonePlaceholder": "Enter your phone number (e.g., 0812345678)",
+        "phoneEmpty": "No phone number provided",
+        "phoneSaved": "✓ Phone number saved",
+        "birthDate": "Birth Date",
+        "gender": "Gender",
+        "genderOptions": {
+          "male": "Male",
+          "female": "Female",
+          "other": "Other",
+          "preferNotToSay": "Prefer not to say"
+        }
+      }
+    },
+    "orders": {
+      "title": "Order History",
+      "subtitle": "Track and manage your orders",
+      "tabs": {
+        "all": "All",
+        "processing": "Processing",
+        "shipped": "Shipped",
+        "delivered": "Delivered",
+        "cancelled": "Cancelled"
+      },
+      "orderCard": {
+        "orderedOn": "Ordered on {{date}}",
+        "items": "{{count}} item(s)",
+        "tracking": "Tracking: {{number}}",
+        "viewDetails": "View Details",
+        "writeReview": "Write Review",
+        "cancelOrder": "Cancel Order"
+      },
+      "empty": {
+        "title": "No orders found",
+        "subtitle": "You haven't placed any orders with this status yet.",
+        "startShopping": "Start Shopping"
+      }
+    },
+    "addresses": {
+      "title": "Delivery Addresses",
+      "subtitle": "Manage your shipping addresses",
+      "addNew": "Add New Address",
+      "loading": "Loading addresses...",
+      "defaultBadge": "Default Address",
+      "edit": "Edit",
+      "setAsDefault": "Set as Default",
+      "delete": "Delete",
+      "empty": {
+        "title": "No addresses yet",
+        "subtitle": "Add your first delivery address to get started.",
+        "addAddress": "Add Address"
+      },
+      "form": {
+        "addTitle": "Add New Address",
+        "editTitle": "Edit Address",
+        "fullName": "Full Name",
+        "phone": "Phone Number",
+        "address": "Address",
+        "addressPlaceholder": "House number, street name",
+        "subdistrict": "Sub-district",
+        "district": "District",
+        "province": "Province",
+        "postalCode": "Postal Code",
+        "setDefault": "Set as default address",
+        "cancel": "Cancel",
+        "add": "Add Address",
+        "update": "Update Address"
+      },
+      "errors": {
+        "loadFailed": "Failed to load addresses",
+        "createFailed": "Failed to create address",
+        "updateFailed": "Failed to update address",
+        "deleteFailed": "Failed to delete address",
+        "setDefaultFailed": "Failed to set default address"
+      }
+    },
+    "wishlist": {
+      "title": "Wishlist",
+      "subtitle": "You have {{count}} items in your wishlist",
+      "subtitleEmpty": "Save your favorite items here",
+      "loading": "Loading...",
+      "clearAll": "Clear All",
+      "clearing": "Clearing...",
+      "confirmClear": "Are you sure you want to clear all items from your wishlist?",
+      "item": {
+        "color": "Color: {{color}}",
+        "addToCart": "Add to Cart",
+        "addedToCart": "Added to Cart!",
+        "outOfStock": "Out of Stock",
+        "remove": "Remove",
+        "removing": "Removing..."
+      },
+      "empty": {
+        "title": "Your wishlist is empty",
+        "subtitle": "Save items you love for later",
+        "browseProducts": "Browse Products"
+      },
+      "errors": {
+        "loadFailed": "Error: {{error}}",
+        "removeFailed": "Failed to remove item",
+        "clearFailed": "Failed to clear wishlist"
+      }
+    },
+    "settings": {
+      "title": "Account Settings",
+      "subtitle": "Manage your account security and preferences",
+      "changePassword": {
+        "title": "Change Password",
+        "currentPassword": "Current Password",
+        "currentPasswordPlaceholder": "Enter current password",
+        "newPassword": "New Password",
+        "newPasswordPlaceholder": "Enter new password",
+        "confirmPassword": "Confirm New Password",
+        "confirmPasswordPlaceholder": "Confirm new password",
+        "updateButton": "Update Password",
+        "updating": "Updating...",
+        "success": "Password updated successfully. Please sign in again.",
+        "errors": {
+          "fieldsRequired": "All fields are required",
+          "passwordMismatch": "New passwords do not match",
+          "updateFailed": "Failed to update password",
+          "genericError": "An error occurred while changing password"
+        }
+      },
+      "deleteAccount": {
+        "title": "Delete Account",
+        "description": "Once you delete your account, there is no going back. Please be certain.",
+        "button": "Delete Account",
+        "modal": {
+          "title": "Delete Account",
+          "warning": "This action cannot be undone. This will permanently delete your account and remove all your data from our servers.",
+          "confirmText": "To confirm deletion, please type DELETE below:",
+          "confirmPlaceholder": "Type DELETE to confirm",
+          "cancel": "Cancel",
+          "permanentDelete": "Permanently Delete Account"
+        }
+      }
+    }
   }
 }

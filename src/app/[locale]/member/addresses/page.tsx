@@ -5,6 +5,7 @@ import Button from '@/components/Button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { useTranslations } from 'next-intl'
 
 interface Address {
   id: string
@@ -22,6 +23,7 @@ interface Address {
 }
 
 export default function AddressesPage() {
+  const t = useTranslations('member.addresses')
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [editingAddress, setEditingAddress] = useState<Address | null>(null)
   const [addresses, setAddresses] = useState<Address[]>([])
@@ -48,19 +50,19 @@ export default function AddressesPage() {
     try {
       setIsFetching(true)
       setError(null)
-      
+
       const response = await fetch('/api/addresses')
-      
+
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to fetch addresses')
+        throw new Error(errorData.error || t('errors.loadFailed'))
       }
-      
+
       const data = await response.json()
       setAddresses(data.items || [])
     } catch (err) {
       console.error('Failed to fetch addresses:', err)
-      setError(err instanceof Error ? err.message : 'Failed to load addresses')
+      setError(err instanceof Error ? err.message : t('errors.loadFailed'))
     } finally {
       setIsFetching(false)
     }
@@ -99,7 +101,7 @@ export default function AddressesPage() {
     e.preventDefault()
     setIsLoading(true)
     setError(null)
-    
+
     try {
       if (editingAddress) {
         const response = await fetch(`/api/addresses/${editingAddress.id}`, {
@@ -109,12 +111,12 @@ export default function AddressesPage() {
           },
           body: JSON.stringify(formData),
         })
-        
+
         if (!response.ok) {
           const errorData = await response.json()
-          throw new Error(errorData.error || 'Failed to update address')
+          throw new Error(errorData.error || t('errors.updateFailed'))
         }
-        
+
         await fetchAddresses()
       } else {
         const response = await fetch('/api/addresses', {
@@ -128,19 +130,19 @@ export default function AddressesPage() {
             set_default: setAsDefault,
           }),
         })
-        
+
         if (!response.ok) {
           const errorData = await response.json()
-          throw new Error(errorData.error || 'Failed to create address')
+          throw new Error(errorData.error || t('errors.createFailed'))
         }
-        
+
         await fetchAddresses()
       }
-      
+
       setIsAddModalOpen(false)
     } catch (err) {
       console.error('Failed to save address:', err)
-      setError(err instanceof Error ? err.message : 'Failed to save address')
+      setError(err instanceof Error ? err.message : editingAddress ? t('errors.updateFailed') : t('errors.createFailed'))
     } finally {
       setIsLoading(false)
     }
@@ -149,40 +151,40 @@ export default function AddressesPage() {
   const handleSetDefault = async (id: string) => {
     try {
       setError(null)
-      
+
       const response = await fetch(`/api/addresses/${id}/default`, {
         method: 'POST',
       })
-      
+
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to set default address')
+        throw new Error(errorData.error || t('errors.setDefaultFailed'))
       }
-      
+
       await fetchAddresses()
     } catch (err) {
       console.error('Failed to set default:', err)
-      setError(err instanceof Error ? err.message : 'Failed to set default address')
+      setError(err instanceof Error ? err.message : t('errors.setDefaultFailed'))
     }
   }
 
   const handleDelete = async (id: string) => {
     try {
       setError(null)
-      
+
       const response = await fetch(`/api/addresses/${id}`, {
         method: 'DELETE',
       })
-      
+
       if (!response.ok) {
         const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to delete address')
+        throw new Error(errorData.error || t('errors.deleteFailed'))
       }
-      
+
       await fetchAddresses()
     } catch (err) {
       console.error('Failed to delete:', err)
-      setError(err instanceof Error ? err.message : 'Failed to delete address')
+      setError(err instanceof Error ? err.message : t('errors.deleteFailed'))
     }
   }
 
@@ -190,7 +192,7 @@ export default function AddressesPage() {
     return (
       <div className="max-w-7xl mx-auto pt-8">
         <div className="flex items-center justify-center py-12">
-          <div className="text-gray-500">Loading addresses...</div>
+          <div className="text-gray-500">{t('loading')}</div>
         </div>
       </div>
     )
@@ -200,11 +202,11 @@ export default function AddressesPage() {
     <div className="max-w-7xl mx-auto pt-8">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Delivery Addresses</h1>
-          <p className="text-gray-600">Manage your shipping addresses</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('title')}</h1>
+          <p className="text-gray-600">{t('subtitle')}</p>
         </div>
         <Button onClick={handleAddAddress}>
-          Add New Address
+          {t('addNew')}
         </Button>
       </div>
 
@@ -220,10 +222,10 @@ export default function AddressesPage() {
           <div key={address.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
             {address.is_default && (
               <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 mb-3">
-                Default Address
+                {t('defaultBadge')}
               </span>
             )}
-            
+
             <div className="space-y-2 mb-4">
               <p className="font-semibold text-gray-900">{address.full_name}</p>
               <p className="text-gray-600">{address.phone}</p>
@@ -235,29 +237,29 @@ export default function AddressesPage() {
             </div>
 
             <div className="flex space-x-2">
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 size="sm"
                 onClick={() => handleEditAddress(address)}
               >
-                Edit
+                {t('edit')}
               </Button>
               {!address.is_default && (
                 <>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     size="sm"
                     onClick={() => handleSetDefault(address.id)}
                   >
-                    Set as Default
+                    {t('setAsDefault')}
                   </Button>
-                  <Button 
-                    variant="ghost" 
+                  <Button
+                    variant="ghost"
                     size="sm"
                     onClick={() => handleDelete(address.id)}
                     className="text-red-600 hover:text-red-700 hover:bg-red-50"
                   >
-                    Delete
+                    {t('delete')}
                   </Button>
                 </>
               )}
@@ -274,10 +276,10 @@ export default function AddressesPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No addresses yet</h3>
-          <p className="text-gray-500 mb-6">Add your first delivery address to get started.</p>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">{t('empty.title')}</h3>
+          <p className="text-gray-500 mb-6">{t('empty.subtitle')}</p>
           <Button onClick={handleAddAddress}>
-            Add Address
+            {t('empty.addAddress')}
           </Button>
         </div>
       )}
@@ -287,13 +289,13 @@ export default function AddressesPage() {
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>
-              {editingAddress ? 'Edit Address' : 'Add New Address'}
+              {editingAddress ? t('form.editTitle') : t('form.addTitle')}
             </DialogTitle>
           </DialogHeader>
-          
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="full_name">Full Name</Label>
+              <Label htmlFor="full_name">{t('form.fullName')}</Label>
               <Input
                 id="full_name"
                 type="text"
@@ -304,7 +306,7 @@ export default function AddressesPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone Number</Label>
+              <Label htmlFor="phone">{t('form.phone')}</Label>
               <Input
                 id="phone"
                 type="tel"
@@ -315,11 +317,11 @@ export default function AddressesPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="address">Address</Label>
+              <Label htmlFor="address">{t('form.address')}</Label>
               <Input
                 id="address"
                 type="text"
-                placeholder="House number, street name"
+                placeholder={t('form.addressPlaceholder')}
                 value={formData.address}
                 onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                 required
@@ -328,7 +330,7 @@ export default function AddressesPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="subdistrict">Sub-district</Label>
+                <Label htmlFor="subdistrict">{t('form.subdistrict')}</Label>
                 <Input
                   id="subdistrict"
                   type="text"
@@ -338,7 +340,7 @@ export default function AddressesPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="district">District</Label>
+                <Label htmlFor="district">{t('form.district')}</Label>
                 <Input
                   id="district"
                   type="text"
@@ -351,7 +353,7 @@ export default function AddressesPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="province">Province</Label>
+                <Label htmlFor="province">{t('form.province')}</Label>
                 <Input
                   id="province"
                   type="text"
@@ -361,7 +363,7 @@ export default function AddressesPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="postal_code">Postal Code</Label>
+                <Label htmlFor="postal_code">{t('form.postalCode')}</Label>
                 <Input
                   id="postal_code"
                   type="text"
@@ -382,7 +384,7 @@ export default function AddressesPage() {
                   className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
                 />
                 <Label htmlFor="setDefault" className="text-sm font-medium text-gray-700">
-                  Set as default address
+                  {t('form.setDefault')}
                 </Label>
               </div>
             )}
@@ -393,10 +395,10 @@ export default function AddressesPage() {
                 variant="outline"
                 onClick={() => setIsAddModalOpen(false)}
               >
-                Cancel
+                {t('form.cancel')}
               </Button>
               <Button type="submit" isLoading={isLoading}>
-                {editingAddress ? 'Update Address' : 'Add Address'}
+                {editingAddress ? t('form.update') : t('form.add')}
               </Button>
             </div>
           </form>

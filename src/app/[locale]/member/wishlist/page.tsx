@@ -6,13 +6,16 @@ import Button from '@/components/Button'
 import { useWishlist } from '@/contexts/WishlistContext'
 import { useCart } from '@/contexts/CartContext'
 import { useState, useEffect } from 'react'
+import { useTranslations } from 'next-intl'
+
 export default function WishlistPage() {
+  const t = useTranslations('member.wishlist')
   const { items, loading, error, removeItem, clearWishlist, refreshWishlist } = useWishlist()
   const { addItem } = useCart()
   const [removingItem, setRemovingItem] = useState<string | null>(null)
   const [clearing, setClearing] = useState(false)
   const [addingToCart, setAddingToCart] = useState<string | null>(null)
-  
+
   // Refresh wishlist data when page mounts to ensure we have latest data
   useEffect(() => {
     refreshWishlist()
@@ -30,10 +33,10 @@ export default function WishlistPage() {
   }
 
   const handleClearWishlist = async () => {
-    if (!window.confirm('คุณแน่ใจหรือไม่ที่จะลบสินค้าทั้งหมดในรายการโปรด?')) {
+    if (!window.confirm(t('confirmClear'))) {
       return
     }
-    
+
     setClearing(true)
     try {
       await clearWishlist()
@@ -60,7 +63,7 @@ export default function WishlistPage() {
     }
   }) => {
     setAddingToCart(item.id)
-    
+
     // Prepare cart item data
     const cartItem = {
       id: item.color ? `${item.product_id}-${item.color}` : String(item.product_id),
@@ -71,10 +74,10 @@ export default function WishlistPage() {
       color: item.color,
       category: item.product?.category
     }
-    
+
     // Add item to cart
     addItem(cartItem)
-    
+
     // Show success feedback
     setTimeout(() => {
       setAddingToCart(null)
@@ -94,8 +97,8 @@ export default function WishlistPage() {
     return (
       <div className="max-w-7xl mx-auto pt-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">รายการโปรด</h1>
-          <p className="text-gray-600">กำลังโหลด...</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('title')}</h1>
+          <p className="text-gray-600">{t('loading')}</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3].map((i) => (
@@ -120,8 +123,8 @@ export default function WishlistPage() {
     return (
       <div className="max-w-7xl mx-auto pt-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">รายการโปรด</h1>
-          <p className="text-red-600">เกิดข้อผิดพลาด: {error}</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('title')}</h1>
+          <p className="text-red-600">{t('errors.loadFailed', { error })}</p>
         </div>
       </div>
     )
@@ -131,11 +134,11 @@ export default function WishlistPage() {
     <div className="max-w-7xl mx-auto pt-8">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">รายการโปรด</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('title')}</h1>
           <p className="text-gray-600">
-            {items.length > 0 
-              ? `คุณมี ${items.length} รายการในรายการโปรด`
-              : 'บันทึกสินค้าที่คุณชื่นชอบไว้ที่นี่'
+            {items.length > 0
+              ? t('subtitle', { count: items.length })
+              : t('subtitleEmpty')
             }
           </p>
         </div>
@@ -147,7 +150,7 @@ export default function WishlistPage() {
             disabled={clearing}
             className="text-red-600 border-red-600 hover:bg-red-50"
           >
-            {clearing ? 'กำลังลบ...' : 'ลบทั้งหมด'}
+            {clearing ? t('clearing') : t('clearAll')}
           </Button>
         )}
       </div>
@@ -163,8 +166,8 @@ export default function WishlistPage() {
             const isAvailable = item.is_available !== false
 
             return (
-              <div 
-                key={item.id} 
+              <div
+                key={item.id}
                 className={`bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-opacity ${
                   isRemoving ? 'opacity-50' : ''
                 }`}
@@ -186,7 +189,7 @@ export default function WishlistPage() {
                     {!isAvailable && (
                       <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
                         <span className="text-white font-semibold bg-black/70 px-4 py-2 rounded">
-                          สินค้าหมด
+                          {t('item.outOfStock')}
                         </span>
                       </div>
                     )}
@@ -199,41 +202,41 @@ export default function WishlistPage() {
                     </h3>
                   </Link>
                   {item.color && (
-                    <p className="text-sm text-gray-600 mb-2">สี: {item.color}</p>
+                    <p className="text-sm text-gray-600 mb-2">{t('item.color', { color: item.color })}</p>
                   )}
                   <p className="text-xl font-bold text-[#005635] mb-3">
                     {formatPrice(displayPrice)}
                   </p>
                   <div className="space-y-2">
                     {isAvailable ? (
-                      <Button 
-                        fullWidth 
+                      <Button
+                        fullWidth
                         size="sm"
                         onClick={() => handleAddToCart(item)}
                         disabled={addingToCart === item.id}
                         className={addingToCart === item.id ? 'bg-green-600 hover:bg-green-600' : ''}
                       >
-                        {addingToCart === item.id ? 'เพิ่มลงตะกร้าแล้ว!' : 'เพิ่มลงตะกร้า'}
+                        {addingToCart === item.id ? t('item.addedToCart') : t('item.addToCart')}
                       </Button>
                     ) : (
-                      <Button 
-                        fullWidth 
-                        size="sm" 
-                        variant="outline" 
+                      <Button
+                        fullWidth
+                        size="sm"
+                        variant="outline"
                         disabled
                       >
-                        สินค้าหมด
+                        {t('item.outOfStock')}
                       </Button>
                     )}
-                    <Button 
-                      fullWidth 
-                      size="sm" 
-                      variant="ghost" 
+                    <Button
+                      fullWidth
+                      size="sm"
+                      variant="ghost"
                       className="text-red-600 hover:bg-red-50"
                       onClick={() => handleRemoveItem(item.id)}
                       disabled={isRemoving}
                     >
-                      {isRemoving ? 'กำลังลบ...' : 'ลบ'}
+                      {isRemoving ? t('item.removing') : t('item.remove')}
                     </Button>
                   </div>
                 </div>
@@ -248,10 +251,10 @@ export default function WishlistPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">รายการโปรดของคุณว่างเปล่า</h3>
-          <p className="text-gray-500 mb-6">บันทึกสินค้าที่คุณชื่นชอบเพื่อดูภายหลัง</p>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">{t('empty.title')}</h3>
+          <p className="text-gray-500 mb-6">{t('empty.subtitle')}</p>
           <Link href="/charmspacer">
-            <Button>เลือกดูสินค้า</Button>
+            <Button>{t('empty.browseProducts')}</Button>
           </Link>
         </div>
       )}

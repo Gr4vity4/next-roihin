@@ -4,6 +4,7 @@ import Button from '@/components/Button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useEffect, useState } from 'react'
+import { useTranslations } from 'next-intl'
 
 interface ProfileData {
   id: number
@@ -22,6 +23,7 @@ interface ProfileData {
 }
 
 export default function ProfilePage() {
+  const t = useTranslations('member.profile')
   const [isEditing, setIsEditing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [isFetching, setIsFetching] = useState(true)
@@ -84,7 +86,7 @@ export default function ProfilePage() {
       }
     } catch (err) {
       console.error('Failed to fetch profile:', err)
-      setError(err instanceof Error ? err.message : 'Failed to load profile')
+      setError(err instanceof Error ? err.message : t('errors.loadFailed'))
     } finally {
       setIsFetching(false)
     }
@@ -115,7 +117,7 @@ export default function ProfilePage() {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to update profile')
+        throw new Error(data.error || t('errors.updateFailed'))
       }
 
       // Update form data with the response, ensuring phone number is preserved
@@ -139,11 +141,11 @@ export default function ProfilePage() {
       })
 
       setIsEditing(false)
-      setSuccess('บันทึกข้อมูลเรียบร้อยแล้ว')
+      setSuccess(t('success'))
       setTimeout(() => setSuccess(null), 3000)
     } catch (err) {
       console.error('Failed to update profile:', err)
-      setError(err instanceof Error ? err.message : 'Failed to update profile')
+      setError(err instanceof Error ? err.message : t('errors.updateFailed'))
     } finally {
       setIsLoading(false)
     }
@@ -153,7 +155,7 @@ export default function ProfilePage() {
     return (
       <div className="max-w-4xl mx-auto pt-8">
         <div className="flex items-center justify-center py-12">
-          <div className="text-gray-500">Loading profile...</div>
+          <div className="text-gray-500">{t('loading')}</div>
         </div>
       </div>
     )
@@ -162,8 +164,8 @@ export default function ProfilePage() {
   return (
     <div className="max-w-4xl mx-auto pt-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Profile Settings</h1>
-        <p className="text-gray-600">Manage your account information and preferences</p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('title')}</h1>
+        <p className="text-gray-600">{t('subtitle')}</p>
       </div>
 
       {error && (
@@ -186,13 +188,13 @@ export default function ProfilePage() {
               <h2 className="text-xl font-semibold text-gray-900">
                 {formData.firstName} {formData.lastName}
               </h2>
-              <p className="text-gray-500">Member since {memberSince}</p>
+              <p className="text-gray-500">{t('memberSince', { date: memberSince })}</p>
             </div>
             <Button
               onClick={() => (isEditing ? setIsEditing(false) : setIsEditing(true))}
               variant="outline"
             >
-              {isEditing ? 'Cancel' : 'Edit Profile'}
+              {isEditing ? t('cancel') : t('editProfile')}
             </Button>
           </div>
         </div>
@@ -201,7 +203,7 @@ export default function ProfilePage() {
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label htmlFor="firstName">First Name</Label>
+              <Label htmlFor="firstName">{t('fields.firstName')}</Label>
               <Input
                 id="firstName"
                 type="text"
@@ -212,7 +214,7 @@ export default function ProfilePage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="lastName">Last Name</Label>
+              <Label htmlFor="lastName">{t('fields.lastName')}</Label>
               <Input
                 id="lastName"
                 type="text"
@@ -225,7 +227,7 @@ export default function ProfilePage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email">Email Address</Label>
+            <Label htmlFor="email">{t('fields.email')}</Label>
             <Input
               id="email"
               type="email"
@@ -237,7 +239,7 @@ export default function ProfilePage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="phone">เบอร์โทรศัพท์</Label>
+            <Label htmlFor="phone">{t('fields.phone')}</Label>
             <div className="relative">
               <Input
                 id="phone"
@@ -248,21 +250,21 @@ export default function ProfilePage() {
                 className="w-full"
                 placeholder={
                   isEditing
-                    ? 'กรุณากรอกเบอร์โทรศัพท์ (เช่น 0812345678)'
+                    ? t('fields.phonePlaceholder')
                     : !formData.phone || formData.phone.trim() === ''
-                    ? 'ยังไม่มีข้อมูลเบอร์โทรศัพท์'
+                    ? t('fields.phoneEmpty')
                     : ''
                 }
               />
               {formData.phone && formData.phone.trim() !== '' && !isEditing && (
-                <div className="text-sm text-green-600 mt-1">✓ เบอร์โทรศัพท์บันทึกแล้ว</div>
+                <div className="text-sm text-green-600 mt-1">{t('fields.phoneSaved')}</div>
               )}
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <Label htmlFor="birthDate">Birth Date</Label>
+              <Label htmlFor="birthDate">{t('fields.birthDate')}</Label>
               <Input
                 id="birthDate"
                 type="date"
@@ -273,7 +275,7 @@ export default function ProfilePage() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="gender">Gender</Label>
+              <Label htmlFor="gender">{t('fields.gender')}</Label>
               <select
                 id="gender"
                 value={formData.gender}
@@ -286,10 +288,10 @@ export default function ProfilePage() {
                 disabled={!isEditing}
                 className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-gray-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 font-prompt"
               >
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
-                <option value="prefer_not_to_say">Prefer not to say</option>
+                <option value="male">{t('fields.genderOptions.male')}</option>
+                <option value="female">{t('fields.genderOptions.female')}</option>
+                <option value="other">{t('fields.genderOptions.other')}</option>
+                <option value="prefer_not_to_say">{t('fields.genderOptions.preferNotToSay')}</option>
               </select>
             </div>
           </div>
@@ -297,10 +299,10 @@ export default function ProfilePage() {
           {isEditing && (
             <div className="flex justify-end space-x-3 pt-4">
               <Button type="button" variant="outline" onClick={() => setIsEditing(false)}>
-                Cancel
+                {t('cancel')}
               </Button>
               <Button type="submit" isLoading={isLoading}>
-                Save Changes
+                {t('saveChanges')}
               </Button>
             </div>
           )}

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Link } from '@/i18n/navigation'
 import Button from '@/components/Button'
+import { useTranslations } from 'next-intl'
 
 type OrderStatus = 'All' | 'Processing' | 'Shipped' | 'Delivered' | 'Cancelled'
 
@@ -16,6 +17,7 @@ interface Order {
 }
 
 export default function OrdersPage() {
+  const t = useTranslations('member.orders')
   const [filterStatus, setFilterStatus] = useState<OrderStatus>('All')
 
   const orders: Order[] = [
@@ -26,8 +28,8 @@ export default function OrdersPage() {
     { id: 'ORD-005', date: '2024-01-05', status: 'Cancelled', items: 2, total: '฿2,100' },
   ]
 
-  const filteredOrders = filterStatus === 'All' 
-    ? orders 
+  const filteredOrders = filterStatus === 'All'
+    ? orders
     : orders.filter(order => order.status === filterStatus)
 
   const statusTabs: OrderStatus[] = ['All', 'Processing', 'Shipped', 'Delivered', 'Cancelled']
@@ -42,11 +44,21 @@ export default function OrdersPage() {
     }
   }
 
+  const getStatusTranslation = (status: string) => {
+    const statusKey = status.toLowerCase() as 'delivered' | 'processing' | 'shipped' | 'cancelled'
+    return t(`tabs.${statusKey}`)
+  }
+
+  const getTabTranslation = (tab: string) => {
+    const tabKey = tab.toLowerCase() as 'all' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
+    return t(`tabs.${tabKey}`)
+  }
+
   return (
     <div className="max-w-7xl mx-auto pt-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Order History</h1>
-        <p className="text-gray-600">Track and manage your orders</p>
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('title')}</h1>
+        <p className="text-gray-600">{t('subtitle')}</p>
       </div>
 
       {/* Status Tabs */}
@@ -62,7 +74,7 @@ export default function OrdersPage() {
                   : 'text-gray-600 hover:bg-gray-100'
               }`}
             >
-              {status}
+              {getTabTranslation(status)}
             </button>
           ))}
         </div>
@@ -77,10 +89,10 @@ export default function OrdersPage() {
                 <div className="flex items-center space-x-3 mb-2">
                   <h3 className="text-lg font-semibold text-gray-900">{order.id}</h3>
                   <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(order.status)}`}>
-                    {order.status}
+                    {getStatusTranslation(order.status)}
                   </span>
                 </div>
-                <p className="text-sm text-gray-500">Ordered on {order.date}</p>
+                <p className="text-sm text-gray-500">{t('orderCard.orderedOn', { date: order.date })}</p>
               </div>
               <p className="text-xl font-bold text-gray-900">{order.total}</p>
             </div>
@@ -89,26 +101,26 @@ export default function OrdersPage() {
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
                   <p className="text-sm text-gray-600">
-                    <span className="font-medium">{order.items}</span> item(s)
+                    {t('orderCard.items', { count: order.items })}
                   </p>
                   {order.trackingNumber && (
                     <p className="text-sm text-gray-600">
-                      Tracking: <span className="font-medium">{order.trackingNumber}</span>
+                      {t('orderCard.tracking', { number: order.trackingNumber })}
                     </p>
                   )}
                 </div>
                 <div className="flex space-x-2">
                   <Button variant="outline" size="sm">
-                    View Details
+                    {t('orderCard.viewDetails')}
                   </Button>
                   {order.status === 'Delivered' && (
                     <Button variant="outline" size="sm">
-                      Write Review
+                      {t('orderCard.writeReview')}
                     </Button>
                   )}
                   {order.status === 'Processing' && (
                     <Button variant="outline" size="sm">
-                      Cancel Order
+                      {t('orderCard.cancelOrder')}
                     </Button>
                   )}
                 </div>
@@ -125,10 +137,10 @@ export default function OrdersPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
             </svg>
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No orders found</h3>
-          <p className="text-gray-500 mb-6">You haven&apos;t placed any orders with this status yet.</p>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">{t('empty.title')}</h3>
+          <p className="text-gray-500 mb-6">{t('empty.subtitle')}</p>
           <Link href="/custom">
-            <Button>Start Shopping</Button>
+            <Button>{t('empty.startShopping')}</Button>
           </Link>
         </div>
       )}
