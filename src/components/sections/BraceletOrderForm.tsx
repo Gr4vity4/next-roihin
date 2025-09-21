@@ -39,25 +39,25 @@ export default function BraceletOrderForm() {
     },
     {
       number: 2,
-      title: 'ยื่นยันวันข้อมูล',
-      subtitle: 'เดือนที่เกิด / วันที่เกิดหรือใช้เวลาเกิดในกรณีที่ขอใส่อย่างละเอียด',
+      title: 'ยืนยันรับข้อมูล',
+      subtitle: 'เพิ่มเพื่อนใน LINE\n@roihin4289\nแจ้งให้ดูเพื่อยืนยันรับข้อมูล',
     },
     {
       number: 3,
       title: 'ส่งแบบ',
-      subtitle: 'ส่งแบบ พร้อมกับข้อมูลเพื่อการตรวจสอบในขั้นตอนแรกถัดไปในอีก 1-2 วัน',
+      subtitle: 'ส่งแบบ พร้อมคำอธิบายพลังงาน ผ่านช่องทางโลกไซต์ภายใน 2 - 4 วัน',
     },
     {
       number: 4,
       title: 'ปรับปรุงแบบ',
-      subtitle: 'ลูกค้าจับการทำอีกครั้งหนึ่งหลังจากเจ้าหน้าที่ส่งแบบขั้นแรก',
+      subtitle: 'ลูกค้าเลือกหรือปรับแบบแบบได้ท่อนดัดสิ่นใจซื้อระงิน',
     },
     {
       number: 5,
       title: 'เตรียมกำไลหิน',
-      subtitle: 'ลำหินดิจิตอลเตรียม / หากผ่านกำไลหินลูกค้าเห็นชอบเห็นความเรียบร้อย',
+      subtitle: 'ชำระสำพลังงานหิน / ผ่านพิธีปลุกพลังหินบางคุณ ก่อนจัดส่ง',
     },
-    { number: 6, title: 'จัดส่ง', subtitle: 'จัดส่งที่ผ่านขั้นตอนจาก SMS โดยมะเคียรี' },
+    { number: 6, title: 'จัดส่ง', subtitle: 'จัดส่งฟรีทั่วประเทศโดย EMS ไปรษณีย์ไทย' },
   ]
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -95,7 +95,7 @@ export default function BraceletOrderForm() {
           {/* Info Bar */}
           <div className="text-center mb-8">
             <p className="text-gray-700">
-              6 ขั้นตอนเรียบง่าย แต่ประกัดเพื่อพลังงานที่ดีที่สุด สำหรับคุณคนพิเศษ
+              6 ขั้นตอนเรียบง่าย แต่ปราณีตเพื่อพลังงานที่ดีที่สุด สำหรับคุณคนพิเศษ
             </p>
           </div>
 
@@ -120,7 +120,7 @@ export default function BraceletOrderForm() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  นามสกุล (First Name)
+                  นามสกุล (Last Name)
                 </label>
                 <input
                   type="text"
@@ -135,7 +135,7 @@ export default function BraceletOrderForm() {
             {/* Birth Date */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                วัน เดือน ปี เกิด วัน (Date of Birth)
+                วัน เดือน ปี เกิด (Date of Birth)
               </label>
               <div className="grid grid-cols-3 gap-4">
                 <select
@@ -229,7 +229,7 @@ export default function BraceletOrderForm() {
             {/* Phone */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                เบอร์มือถือ - เชื่อกระวอการผินลาและการแจ้ง (Mobile No.)
+                เบอร์ติดต่อ - เพื่อตรวจอัพเดทแบบเลขศาสตร์ (Mobile No.)
               </label>
               <input
                 type="tel"
@@ -278,7 +278,7 @@ export default function BraceletOrderForm() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  งบประมาณที่ทำได้โดย
+                  งบประมาณจำกำไลหิน
                 </label>
                 <select
                   value={formData.budget}
@@ -297,7 +297,7 @@ export default function BraceletOrderForm() {
             {/* Stone Options */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                ต้องการหินตัวของแลผสิทชนื่น (อันเก่น 1 อย่าง)
+                ต้องการเสริมดวงและพลังงานในด้านนี้ (ระบุได้มากกว่า 1 อย่าง)
               </label>
               <div className="space-y-2">
                 <label className="flex items-center">
@@ -306,7 +306,7 @@ export default function BraceletOrderForm() {
                     name="stoneType"
                     className="mr-3 text-[#006039] focus:ring-[#006039]"
                   />
-                  <span>การชื่อ โดยสาก</span>
+                  <span>การเงิน โชคลาภ</span>
                 </label>
                 <label className="flex items-center">
                   <input
@@ -314,7 +314,7 @@ export default function BraceletOrderForm() {
                     name="stoneType"
                     className="mr-3 text-[#006039] focus:ring-[#006039]"
                   />
-                  <span>การาย ความทำหารมี</span>
+                  <span>การงาน ความก้าวหน้า</span>
                 </label>
                 <label className="flex items-center">
                   <input
@@ -322,7 +322,7 @@ export default function BraceletOrderForm() {
                     name="stoneType"
                     className="mr-3 text-[#006039] focus:ring-[#006039]"
                   />
-                  <span>ความที่ แล้อาชานาวีย</span>
+                  <span>ความรัก เมตตามหานิยม</span>
                 </label>
                 <label className="flex items-center">
                   <input
@@ -330,7 +330,7 @@ export default function BraceletOrderForm() {
                     name="stoneType"
                     className="mr-3 text-[#006039] focus:ring-[#006039]"
                   />
-                  <span>อุตสาส การที่ส์</span>
+                  <span>สุขภาพ กายใจ</span>
                 </label>
                 <label className="flex items-center">
                   <input
@@ -338,7 +338,7 @@ export default function BraceletOrderForm() {
                     name="stoneType"
                     className="mr-3 text-[#006039] focus:ring-[#006039]"
                   />
-                  <span>และไร ไมลี่ยมาคม</span>
+                  <span>สมาธิ จิตวิญญาณ</span>
                 </label>
               </div>
             </div>
@@ -346,7 +346,7 @@ export default function BraceletOrderForm() {
             {/* Special Requests */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                สามารถระบุลายละเอียตอื่อการได้ตกองการได้เลขาเดิม
+                สามารถระบุรายละเอียดเรื่องที่ต้องการได้เพิ่มเติม
               </label>
               <textarea
                 value={formData.specialRequests}
@@ -359,7 +359,7 @@ export default function BraceletOrderForm() {
             {/* Notes/Instructions */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                ใด้ออะไรบอกทิ่ม / โทรสานีคื่อเอม (ค่ลมั)
+                โปรดแจ้งชนิดหิน / โทนสีหินที่ชอบ (ถ้ามี)
               </label>
               <textarea
                 value={formData.notes}
@@ -389,14 +389,14 @@ export default function BraceletOrderForm() {
                 }}
               />
               <span className="ml-4 text-sm text-gray-600">
-                รูปทางหน้อรูปอบอยองล์าอท่หีน (กระวิกความดีในต์อื่อเด้ม)
+                รูปถ่ายปัจจุบันของเจ้าของหำไลหิน (ตรวจโหงวเองเมื่องต้น)
               </span>
             </div>
 
             {/* Terms */}
             <div className="mb-8">
               <p className="text-sm font-medium text-gray-700 mb-3">
-                ใม้อเงื่อต &ldquo;ชลนทื่&rdquo; หรือนัยเผาะไม่ผานมีเยายา ๅ อึองไปห์
+                โปรดเลือก &ldquo;ยอมรับ&rdquo; เพื่อนใหและข้อกำหนดต่าง ๆ ดังต่อไปนี้
               </p>
               <label className="flex items-start">
                 <input
@@ -406,10 +406,7 @@ export default function BraceletOrderForm() {
                   className="mr-3 mt-1 text-[#006039] focus:ring-[#006039]"
                 />
                 <span className="text-sm text-gray-600">
-                  เข้าผากินมูลความแบอทั่งพ์งอบมแท้โรเบื่อมมี3 เมลื่อแบบไอใค้รัดเยทม สีรื่อมยอนื่
-                  แองลลค ส์ามารถได์ อึองทื่ใด้เพื่อาการาวอลออกับข์หัถา การไหีถ์โอารเอมรผภาชา
-                  ผลวนระแนกามารถ ของเหนื่อได็รี ถาเหนื่อ ไม่มีเอเลนท์ม รีเจพ
-                  ประใส่อมรักอยที่หนาองการดแผนเอเรี่ทแก่ม
+                  ข้าพเจ้ารับรองความถูกต้องในข้อมูลที่ได้ระบุไว้ และยินยอมให้ร้อยหิน สโตนแอนด์ เบรสเลล สามารถนำข้อมูลไปใช้เพื่อการวางแบบกำไลหิน การให้บริการหลังการขายรวมถึงการบริหารความสัมพันธ์เพื่อลิทธิประโยชน์กับลูกค้าของทางแบรนด์เท่านั้น
                 </span>
               </label>
             </div>
@@ -419,8 +416,7 @@ export default function BraceletOrderForm() {
               <label className="flex items-start">
                 <input type="checkbox" className="mr-3 mt-1 text-[#006039] focus:ring-[#006039]" />
                 <span className="text-sm text-gray-600">
-                  ยืินยี สคื่อมยอนื่ แองลลค
-                  ได้ตลารบูปแผังตบมคราและองากท่าใสืืให็บีกความเอินสอทั้อัยน
+                  ร้อยหิน สโตนแอนด์ เบรสเลล ได้รักษาข้อมูลส่วนบุคคลของลูกค้าไว้เป็นความลับอย่างที่สุด
                 </span>
               </label>
             </div>
@@ -444,11 +440,11 @@ export default function BraceletOrderForm() {
             {/* Reference */}
             <div className="mt-8 text-center">
               <p className="text-sm text-gray-500">
-                ไม้ออเดียพื่อป้าม LINE Official{' '}
+                โปรดเพิ่มเพื่อนใน LINE Official{' '}
                 <a href="#" className="text-[#006039] font-semibold">
                   @roihin4289
                 </a>{' '}
-                เพื่อยื่นยันข้อมูลและเย็บมื่องการฟังจากบคคลทดทาไดลีถม
+                เพื่อยืนยันข้อมูลและเป็นช่องทางติดตามแบบกำไลหิน
               </p>
             </div>
           </form>
@@ -457,23 +453,21 @@ export default function BraceletOrderForm() {
           <div className="mt-12 space-y-4 text-sm text-gray-600">
             <h3 className="font-semibold text-base text-gray-800">งบประมาณกำไลหิน</h3>
             <p>
-              งบประมาณเจื่นเกิด 1,500 - 3,000 บาท
+              งบประมาณเริ่มต้น 1,500 - 3,000 บาท
               <br />
-              เชื่อการจื้นงอมการมาร ความพารายมูลไม้มะมนที่หิน โปตดีกวาเทือเกดทานช์กการมี
-              โดียส์ลอลการที่หิน โดียม 2 - 3 ออในิการรอบาย
+              เลือกใช้หินคุณภาพ ความหายากอยู่ในระดับหาวัวไป มีพลังงานเรียบง่ายซัดเจน ให้ผลโดยตรงกับผู้ใช้ ใช้หิน 2 - 3 ชนิดในการจัดวาง
             </p>
             <p>
-              งบประมาณตั้งกาถาช 4,000 - 6,000 บาท
+              งบประมาณระดับกลาง 4,000 - 6,000 บาท
               <br />
-              เชื่อการจื้นงอมการมาร ความพารายมูลไม้อตีกรารา โปตดีกวาเทือนื้มตือหิน
-              โดียส์ลอลการระอะรอสีหันพื์หิน โกราผแสันนแผลปลอยจย โดียม 2 - 4 อื่นบิการกอบาย
+              เลือกใช้หินคุณภาพ ความหายากอยู่ในระดับกลาง มีพลังงานเรียบซับซ้อน ให้ผลโดยตรงและรวดเร็วกับผู้ใช้ มีความเปลี่ยนแปลงชัดเจน
+              ใช้หิน 2 - 4 ชนิดในการจัดวาง
             </p>
             <p>
-              งบประมาณตั้งกาถาช 8,000 - 12,000 บาท
+              งบประมาณระดับกลาง 8,000 - 12,000 บาท
               <br />
-              เชื่อการจื้นงอมาลออกมี ปองกรีเปอนกลสา ความพารายมูลไหก็มผทิุการ หรือเด้เมแืพื่อเตียหิน
-              ปรูไผแลพื้อาระเอื่อเรื่อม เจิบ เจิ โดียม หแลจื่อมการออมราอมผนื้อ ปรูงออมลอเผลรา
-              ระามเรื่องการีโด้แองงการา ปาท โดียม 2 - 6 อื่นบิการกอบาย
+              เลือกใช้หินคุณภาพสูง มีเอกลักษณ์โฉพาะ ความหายากอยู่ในระดับสูง หรือมีเพียงชิ้นเดียว มีรูปแบบพลังงานซับซ้อน เข็มขัน ให้ผล
+              เปลี่ยนแปลงซัดเจนรวดเร็ว มีรูปแบบแปลกตา รวมถึงมิวิธีใช้แบบเฉพาะทาง ใช้หิน 2 - 6 ชนิดในการจัดวาง
             </p>
           </div>
         </div>
