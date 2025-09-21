@@ -307,40 +307,70 @@ export default function BraceletOrderForm() {
                 <div className="space-y-2">
                   <label className="flex items-center">
                     <input
-                      type="radio"
-                      name="stoneType"
+                      type="checkbox"
+                      checked={formData.stoneOptions.birthStone}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          stoneOptions: { ...formData.stoneOptions, birthStone: e.target.checked },
+                        })
+                      }
                       className="mr-3 text-[#006039] focus:ring-[#006039]"
                     />
                     <span>การเงิน โชคลาภ</span>
                   </label>
                   <label className="flex items-center">
                     <input
-                      type="radio"
-                      name="stoneType"
+                      type="checkbox"
+                      checked={formData.stoneOptions.careerStone}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          stoneOptions: { ...formData.stoneOptions, careerStone: e.target.checked },
+                        })
+                      }
                       className="mr-3 text-[#006039] focus:ring-[#006039]"
                     />
                     <span>การงาน ความก้าวหน้า</span>
                   </label>
                   <label className="flex items-center">
                     <input
-                      type="radio"
-                      name="stoneType"
+                      type="checkbox"
+                      checked={formData.stoneOptions.loveStone}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          stoneOptions: { ...formData.stoneOptions, loveStone: e.target.checked },
+                        })
+                      }
                       className="mr-3 text-[#006039] focus:ring-[#006039]"
                     />
                     <span>ความรัก เมตตามหานิยม</span>
                   </label>
                   <label className="flex items-center">
                     <input
-                      type="radio"
-                      name="stoneType"
+                      type="checkbox"
+                      checked={formData.stoneOptions.healthStone}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          stoneOptions: { ...formData.stoneOptions, healthStone: e.target.checked },
+                        })
+                      }
                       className="mr-3 text-[#006039] focus:ring-[#006039]"
                     />
                     <span>สุขภาพ กายใจ</span>
                   </label>
                   <label className="flex items-center">
                     <input
-                      type="radio"
-                      name="stoneType"
+                      type="checkbox"
+                      checked={formData.stoneOptions.luckStone}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          stoneOptions: { ...formData.stoneOptions, luckStone: e.target.checked },
+                        })
+                      }
                       className="mr-3 text-[#006039] focus:ring-[#006039]"
                     />
                     <span>สมาธิ จิตวิญญาณ</span>
