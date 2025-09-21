@@ -107,7 +107,7 @@ export const content = {
   // About Page Content
   aboutPage: {
     hero: {
-      backgroundImage: '/images/357c3a_39f0c2c0d57f4da1a70dee7117de782f~mv2.jpg', // Cover.jpg equivalent
+      backgroundImage: '/images/banner/about-banner.avif',
       title: {
         line1: 'WE AIM TO',
         line2: 'VIBRANT YOUR DESTINY',
