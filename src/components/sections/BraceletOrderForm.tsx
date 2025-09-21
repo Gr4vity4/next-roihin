@@ -87,11 +87,11 @@ export default function BraceletOrderForm() {
             {/* Steps */}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-12">
               {steps.map((step) => (
-                <div key={step.number} className="text-center">
-                  <div className="bg-[#f5f3ef] rounded-lg p-4 mb-2">
+                <div key={step.number} className="text-center h-full">
+                  <div className="bg-[#FCEFDE] rounded-lg p-4 mb-2 h-full flex flex-col">
                     <div className="text-3xl font-bold text-[#006039] mb-2">{step.number}</div>
                     <h3 className="text-sm font-semibold mb-1">{step.title}</h3>
-                    <p className="text-xs text-gray-600 leading-tight">{step.subtitle}</p>
+                    <p className="text-xs text-gray-600 leading-tight flex-grow">{step.subtitle}</p>
                   </div>
                 </div>
               ))}
