@@ -224,6 +224,49 @@
       "backToHome": "Back to Home"
     }
   },
+  "aboutPage": {
+    "meta": {
+      "title": "About ROIHIN - ROIHIN STONE & BRACELET",
+      "description": "The story of ROIHIN - The art of connecting natural elemental energy, spirit, and desires together"
+    },
+    "hero": {
+      "line1": "Awaken Life",
+      "line2": "Shake Your Destiny"
+    },
+    "content": {
+      "title": "ROIHIN",
+      "titlePrefix": "About",
+      "subtitle": "The Power of Vibration at the Spiritual Level",
+      "paragraph1": "ROIHIN Stone and Bracelet is the art of connecting natural elemental energy, spirit, and desires. It involves connecting gemstones to create narratives that reflect energy, resulting in transformations for those who possess them.",
+      "paragraph2": "Natural elements possess powerful energies that can continuously create vibrations both externally and internally. When connected with care by experts, these energies can enhance your destiny, turning misfortune into opportunity, like unlocking a door to rapid success.",
+      "paragraph3": "We adhere to ethical principles and embrace the philosophy of nature to cultivate wisdom in living virtuously. We share our knowledge to foster positive changes, both physically and spiritually.",
+      "paragraph4": "Let go of ego, open your heart, and explore energies you've never experienced before. We believe that this connection brings us together in meaningful ways. . . ."
+    },
+    "features": {
+      "uniqueDesign": {
+        "title": "Unique Design",
+        "subtitle": "Distinctive Identity"
+      },
+      "naturalPurifying": {
+        "title": "Natural Purifying",
+        "subtitle": "Pure with Natural Energy"
+      },
+      "premiumCare": {
+        "title": "Premium Care",
+        "subtitle": "Quality Packaging Care"
+      },
+      "empoweringRitual": {
+        "title": "Empowering Ritual",
+        "subtitle": "Advanced Ritual Awakening"
+      }
+    },
+    "testimonial": {
+      "quote": "ROIHIN was created with good intentions from the beginning, to be a friend, an encouragement, and positive energy for those around. When real changes occurred in their lives, this was passed on and gradually grew to what it is today.",
+      "additionalText": "#The Art of ROIHIN is not just about choosing stones, but the integration of the creator's good intentions, proper energy allocation, and the wearer's determination to see life flourish.",
+      "author": "Sun Roihin",
+      "role": ""
+    }
+  },
   "member": {
     "dashboard": {
       "title": "Welcome back",

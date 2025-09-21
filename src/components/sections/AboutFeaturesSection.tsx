@@ -1,37 +1,38 @@
 import Image from 'next/image'
+import { getTranslations } from 'next-intl/server'
 import { Typography } from '../ui'
 
-interface Feature {
-  id: string
-  image: string
-  title: {
-    english: string
-    thai: string
-  }
-}
-
 interface AboutFeaturesSectionProps {
-  features: Feature[]
+  locale: string
 }
 
-export default function AboutFeaturesSection({ features }: AboutFeaturesSectionProps) {
-  // Map the features to use local images from /public/images/about/
-  const localFeatures = [
+export default async function AboutFeaturesSection({ locale }: AboutFeaturesSectionProps) {
+  const t = await getTranslations({ locale, namespace: 'aboutPage.features' })
+
+  const features = [
     {
-      ...features[0],
+      id: 'unique-design',
       image: '/images/about/1.avif',
+      title: t('uniqueDesign.title'),
+      subtitle: t('uniqueDesign.subtitle'),
     },
     {
-      ...features[1],
+      id: 'natural-purifying',
       image: '/images/about/2.avif',
+      title: t('naturalPurifying.title'),
+      subtitle: t('naturalPurifying.subtitle'),
     },
     {
-      ...features[2],
+      id: 'premium-care',
       image: '/images/about/3.avif',
+      title: t('premiumCare.title'),
+      subtitle: t('premiumCare.subtitle'),
     },
     {
-      ...features[3],
+      id: 'empowering-ritual',
       image: '/images/about/4.avif',
+      title: t('empoweringRitual.title'),
+      subtitle: t('empoweringRitual.subtitle'),
     },
   ]
 
@@ -39,13 +40,13 @@ export default function AboutFeaturesSection({ features }: AboutFeaturesSectionP
     <section className="w-full bg-gray-50 py-8 sm:py-12 md:py-0">
       <div className="px-4 sm:px-6 md:px-0">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-0">
-          {localFeatures.map((feature) => (
+          {features.map((feature) => (
             <div key={feature.id} className="group">
               {/* Feature Image with Text Overlay */}
               <div className="relative aspect-[3/4] overflow-hidden bg-white group-hover:shadow-xl transition-shadow duration-300">
                 <Image
                   src={feature.image}
-                  alt={feature.title.english}
+                  alt={feature.title}
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                   sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw"
@@ -58,20 +59,18 @@ export default function AboutFeaturesSection({ features }: AboutFeaturesSectionP
                 <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5 md:p-6 text-white">
                   <Typography
                     variant="h4"
-                   
                     align="center"
                     className="text-white font-semibold tracking-wide mb-2 text-lg md:text-xl"
                   >
-                    {feature.title.english}
+                    {feature.title}
                   </Typography>
 
                   <Typography
                     variant="body"
-                   
                     align="center"
                     className="text-white/90 text-sm md:text-base leading-relaxed"
                   >
-                    {feature.title.thai}
+                    {feature.subtitle}
                   </Typography>
                 </div>
               </div>
