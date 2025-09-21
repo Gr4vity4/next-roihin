@@ -3,6 +3,7 @@
 import { Calendar } from 'lucide-react'
 import { useState } from 'react'
 import { Container } from '../ui'
+import Modal from '../ui/Modal'
 
 export default function BraceletOrderForm() {
   const [formData, setFormData] = useState({
@@ -29,7 +30,12 @@ export default function BraceletOrderForm() {
     notes: '',
     uploadFile: null as File | null,
     consent: false,
+    consent2: false,
   })
+
+  const [validationErrors, setValidationErrors] = useState<string[]>([])
+  const [showValidationModal, setShowValidationModal] = useState(false)
+  const [fieldErrors, setFieldErrors] = useState<Record<string, boolean>>({})
 
   const steps = [
     {
@@ -60,9 +66,131 @@ export default function BraceletOrderForm() {
     { number: 6, title: 'จัดส่ง', subtitle: 'จัดส่งฟรีทั่วประเทศโดย EMS ไปรษณีย์ไทย' },
   ]
 
+  const validateForm = () => {
+    const errors: string[] = []
+    const fields: Record<string, boolean> = {}
+
+    // Check First Name
+    if (!formData.firstName.trim()) {
+      errors.push('กรุณากรอกชื่อ (First Name)')
+      fields.firstName = true
+    }
+
+    // Check Last Name
+    if (!formData.lastName.trim()) {
+      errors.push('กรุณากรอกนามสกุล (Last Name)')
+      fields.lastName = true
+    }
+
+    // Check Date of Birth
+    if (!formData.birthDate.day || !formData.birthDate.month || !formData.birthDate.year) {
+      errors.push('กรุณาเลือกวัน เดือน ปี เกิด (Date of Birth)')
+      fields.birthDate = true
+    }
+
+    // Check Email
+    if (!formData.email.trim()) {
+      errors.push('กรุณากรอกอีเมล (E-mail Address)')
+      fields.email = true
+    } else {
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailRegex.test(formData.email)) {
+        errors.push('กรุณากรอกอีเมลให้ถูกต้อง (Invalid E-mail format)')
+        fields.email = true
+      }
+    }
+
+    // Check Phone
+    if (!formData.phone.trim()) {
+      errors.push('กรุณากรอกเบอร์ติดต่อ (Mobile No.)')
+      fields.phone = true
+    }
+
+    // Check Wrist Size
+    if (!formData.wristSize) {
+      errors.push('กรุณาเลือกขนาดรอบข้อมือ (Wrist size)')
+      fields.wristSize = true
+    }
+
+    // Check Bead Size
+    if (!formData.beadSize) {
+      errors.push('กรุณาเลือกขนาดเม็ดหิน (Bead size)')
+      fields.beadSize = true
+    }
+
+    // Check Budget
+    if (!formData.budget) {
+      errors.push('กรุณาเลือกงบประมาณ (Budget)')
+      fields.budget = true
+    }
+
+    // Check at least one stone option is selected
+    const hasStoneSelected = Object.values(formData.stoneOptions).some(value => value === true)
+    if (!hasStoneSelected) {
+      errors.push('กรุณาเลือกอย่างน้อย 1 ด้านที่ต้องการเสริมดวงและพลังงาน')
+      fields.stoneOptions = true
+    }
+
+    // Check both consent checkboxes
+    if (!formData.consent) {
+      errors.push('กรุณายอมรับข้อกำหนดการใช้ข้อมูลส่วนบุคคล (ข้อที่ 1)')
+      fields.consent = true
+    }
+
+    if (!formData.consent2) {
+      errors.push('กรุณายอมรับข้อกำหนดการรักษาความลับ (ข้อที่ 2)')
+      fields.consent2 = true
+    }
+
+    setValidationErrors(errors)
+    setFieldErrors(fields)
+
+    return errors.length === 0
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Form submitted:', formData)
+
+    if (validateForm()) {
+      console.log('Form submitted:', formData)
+      // TODO: Submit form to API
+      // For now, just log the data
+      alert('ส่งข้อมูลเรียบร้อยแล้ว')
+    } else {
+      setShowValidationModal(true)
+    }
+  }
+
+  const handleReset = () => {
+    setFormData({
+      firstName: '',
+      lastName: '',
+      birthDate: {
+        day: '',
+        month: '',
+        year: '',
+      },
+      email: '',
+      phone: '',
+      wristSize: '',
+      beadSize: '',
+      budget: '',
+      stoneOptions: {
+        birthStone: false,
+        luckStone: false,
+        healthStone: false,
+        careerStone: false,
+        loveStone: false,
+      },
+      specialRequests: '',
+      notes: '',
+      uploadFile: null,
+      consent: false,
+      consent2: false,
+    })
+    setValidationErrors([])
+    setFieldErrors({})
   }
 
   return (
@@ -113,25 +241,39 @@ export default function BraceletOrderForm() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    ชื่อ (First Name)
+                    ชื่อ (First Name) <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
                     value={formData.firstName}
-                    onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#006039] focus:border-transparent"
+                    onChange={(e) => {
+                      setFormData({ ...formData, firstName: e.target.value })
+                      if (fieldErrors.firstName) {
+                        setFieldErrors({ ...fieldErrors, firstName: false })
+                      }
+                    }}
+                    className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#006039] focus:border-transparent ${
+                      fieldErrors.firstName ? 'border-red-500' : 'border-gray-300'
+                    }`}
                     placeholder="First Name"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    นามสกุล (Last Name)
+                    นามสกุล (Last Name) <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
                     value={formData.lastName}
-                    onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#006039] focus:border-transparent"
+                    onChange={(e) => {
+                      setFormData({ ...formData, lastName: e.target.value })
+                      if (fieldErrors.lastName) {
+                        setFieldErrors({ ...fieldErrors, lastName: false })
+                      }
+                    }}
+                    className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#006039] focus:border-transparent ${
+                      fieldErrors.lastName ? 'border-red-500' : 'border-gray-300'
+                    }`}
                     placeholder="Last Name"
                   />
                 </div>
@@ -140,18 +282,23 @@ export default function BraceletOrderForm() {
               {/* Birth Date */}
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  วัน เดือน ปี เกิด (Date of Birth)
+                  วัน เดือน ปี เกิด (Date of Birth) <span className="text-red-500">*</span>
                 </label>
                 <div className="grid grid-cols-3 gap-4">
                   <select
                     value={formData.birthDate.day}
-                    onChange={(e) =>
+                    onChange={(e) => {
                       setFormData({
                         ...formData,
                         birthDate: { ...formData.birthDate, day: e.target.value },
                       })
-                    }
-                    className="px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#006039] focus:border-transparent"
+                      if (fieldErrors.birthDate) {
+                        setFieldErrors({ ...fieldErrors, birthDate: false })
+                      }
+                    }}
+                    className={`px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#006039] focus:border-transparent ${
+                      fieldErrors.birthDate ? 'border-red-500' : 'border-gray-300'
+                    }`}
                   >
                     <option value="">Day</option>
                     {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
@@ -162,13 +309,18 @@ export default function BraceletOrderForm() {
                   </select>
                   <select
                     value={formData.birthDate.month}
-                    onChange={(e) =>
+                    onChange={(e) => {
                       setFormData({
                         ...formData,
                         birthDate: { ...formData.birthDate, month: e.target.value },
                       })
-                    }
-                    className="px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#006039] focus:border-transparent"
+                      if (fieldErrors.birthDate) {
+                        setFieldErrors({ ...fieldErrors, birthDate: false })
+                      }
+                    }}
+                    className={`px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#006039] focus:border-transparent ${
+                      fieldErrors.birthDate ? 'border-red-500' : 'border-gray-300'
+                    }`}
                   >
                     <option value="">Month</option>
                     {[
@@ -192,13 +344,18 @@ export default function BraceletOrderForm() {
                   </select>
                   <select
                     value={formData.birthDate.year}
-                    onChange={(e) =>
+                    onChange={(e) => {
                       setFormData({
                         ...formData,
                         birthDate: { ...formData.birthDate, year: e.target.value },
                       })
-                    }
-                    className="px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#006039] focus:border-transparent"
+                      if (fieldErrors.birthDate) {
+                        setFieldErrors({ ...fieldErrors, birthDate: false })
+                      }
+                    }}
+                    className={`px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#006039] focus:border-transparent ${
+                      fieldErrors.birthDate ? 'border-red-500' : 'border-gray-300'
+                    }`}
                   >
                     <option value="">Year</option>
                     {Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i).map(
@@ -220,13 +377,20 @@ export default function BraceletOrderForm() {
               {/* Email */}
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  อีเมล (E-mail Address)
+                  อีเมล (E-mail Address) <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="email"
                   value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#006039] focus:border-transparent"
+                  onChange={(e) => {
+                    setFormData({ ...formData, email: e.target.value })
+                    if (fieldErrors.email) {
+                      setFieldErrors({ ...fieldErrors, email: false })
+                    }
+                  }}
+                  className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#006039] focus:border-transparent ${
+                    fieldErrors.email ? 'border-red-500' : 'border-gray-300'
+                  }`}
                   placeholder="Email Address"
                 />
               </div>
@@ -234,13 +398,20 @@ export default function BraceletOrderForm() {
               {/* Phone */}
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  เบอร์ติดต่อ - เพื่อตรวจอัพเดทแบบเลขศาสตร์ (Mobile No.)
+                  เบอร์ติดต่อ - เพื่อตรวจอัพเดทแบบเลขศาสตร์ (Mobile No.) <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="tel"
                   value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#006039] focus:border-transparent"
+                  onChange={(e) => {
+                    setFormData({ ...formData, phone: e.target.value })
+                    if (fieldErrors.phone) {
+                      setFieldErrors({ ...fieldErrors, phone: false })
+                    }
+                  }}
+                  className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#006039] focus:border-transparent ${
+                    fieldErrors.phone ? 'border-red-500' : 'border-gray-300'
+                  }`}
                   placeholder="Mobile No."
                 />
               </div>
@@ -249,12 +420,19 @@ export default function BraceletOrderForm() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    ขนาดรอบข้อมือ (Wrist size)
+                    ขนาดรอบข้อมือ (Wrist size) <span className="text-red-500">*</span>
                   </label>
                   <select
                     value={formData.wristSize}
-                    onChange={(e) => setFormData({ ...formData, wristSize: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#006039] focus:border-transparent"
+                    onChange={(e) => {
+                      setFormData({ ...formData, wristSize: e.target.value })
+                      if (fieldErrors.wristSize) {
+                        setFieldErrors({ ...fieldErrors, wristSize: false })
+                      }
+                    }}
+                    className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#006039] focus:border-transparent ${
+                      fieldErrors.wristSize ? 'border-red-500' : 'border-gray-300'
+                    }`}
                   >
                     <option value="">Wrist size (cm.)</option>
                     {Array.from({ length: 10 }, (_, i) => 14 + i).map((size) => (
@@ -266,12 +444,19 @@ export default function BraceletOrderForm() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    ขนาดเม็ดหิน (Bead size)
+                    ขนาดเม็ดหิน (Bead size) <span className="text-red-500">*</span>
                   </label>
                   <select
                     value={formData.beadSize}
-                    onChange={(e) => setFormData({ ...formData, beadSize: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#006039] focus:border-transparent"
+                    onChange={(e) => {
+                      setFormData({ ...formData, beadSize: e.target.value })
+                      if (fieldErrors.beadSize) {
+                        setFieldErrors({ ...fieldErrors, beadSize: false })
+                      }
+                    }}
+                    className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#006039] focus:border-transparent ${
+                      fieldErrors.beadSize ? 'border-red-500' : 'border-gray-300'
+                    }`}
                   >
                     <option value="">Bead size (mm.)</option>
                     {[6, 8, 10, 12].map((size) => (
@@ -283,12 +468,19 @@ export default function BraceletOrderForm() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    งบประมาณจำกำไลหิน
+                    งบประมาณจำกำไลหิน <span className="text-red-500">*</span>
                   </label>
                   <select
                     value={formData.budget}
-                    onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#006039] focus:border-transparent"
+                    onChange={(e) => {
+                      setFormData({ ...formData, budget: e.target.value })
+                      if (fieldErrors.budget) {
+                        setFieldErrors({ ...fieldErrors, budget: false })
+                      }
+                    }}
+                    className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#006039] focus:border-transparent ${
+                      fieldErrors.budget ? 'border-red-500' : 'border-gray-300'
+                    }`}
                   >
                     <option value="">Budget</option>
                     <option value="1000-3000">1,000-3,000 บาท</option>
@@ -302,19 +494,22 @@ export default function BraceletOrderForm() {
               {/* Stone Options */}
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  ต้องการเสริมดวงและพลังงานในด้านนี้ (ระบุได้มากกว่า 1 อย่าง)
+                  ต้องการเสริมดวงและพลังงานในด้านนี้ (ระบุได้มากกว่า 1 อย่าง) <span className="text-red-500">*</span>
                 </label>
-                <div className="space-y-2">
+                <div className={`space-y-2 ${fieldErrors.stoneOptions ? 'p-2 border border-red-500 rounded-md' : ''}` }>
                   <label className="flex items-center">
                     <input
                       type="checkbox"
                       checked={formData.stoneOptions.birthStone}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         setFormData({
                           ...formData,
                           stoneOptions: { ...formData.stoneOptions, birthStone: e.target.checked },
                         })
-                      }
+                        if (fieldErrors.stoneOptions) {
+                          setFieldErrors({ ...fieldErrors, stoneOptions: false })
+                        }
+                      }}
                       className="mr-3 text-[#006039] focus:ring-[#006039]"
                     />
                     <span>การเงิน โชคลาภ</span>
@@ -323,12 +518,15 @@ export default function BraceletOrderForm() {
                     <input
                       type="checkbox"
                       checked={formData.stoneOptions.careerStone}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         setFormData({
                           ...formData,
                           stoneOptions: { ...formData.stoneOptions, careerStone: e.target.checked },
                         })
-                      }
+                        if (fieldErrors.stoneOptions) {
+                          setFieldErrors({ ...fieldErrors, stoneOptions: false })
+                        }
+                      }}
                       className="mr-3 text-[#006039] focus:ring-[#006039]"
                     />
                     <span>การงาน ความก้าวหน้า</span>
@@ -337,12 +535,15 @@ export default function BraceletOrderForm() {
                     <input
                       type="checkbox"
                       checked={formData.stoneOptions.loveStone}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         setFormData({
                           ...formData,
                           stoneOptions: { ...formData.stoneOptions, loveStone: e.target.checked },
                         })
-                      }
+                        if (fieldErrors.stoneOptions) {
+                          setFieldErrors({ ...fieldErrors, stoneOptions: false })
+                        }
+                      }}
                       className="mr-3 text-[#006039] focus:ring-[#006039]"
                     />
                     <span>ความรัก เมตตามหานิยม</span>
@@ -351,12 +552,15 @@ export default function BraceletOrderForm() {
                     <input
                       type="checkbox"
                       checked={formData.stoneOptions.healthStone}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         setFormData({
                           ...formData,
                           stoneOptions: { ...formData.stoneOptions, healthStone: e.target.checked },
                         })
-                      }
+                        if (fieldErrors.stoneOptions) {
+                          setFieldErrors({ ...fieldErrors, stoneOptions: false })
+                        }
+                      }}
                       className="mr-3 text-[#006039] focus:ring-[#006039]"
                     />
                     <span>สุขภาพ กายใจ</span>
@@ -365,12 +569,15 @@ export default function BraceletOrderForm() {
                     <input
                       type="checkbox"
                       checked={formData.stoneOptions.luckStone}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         setFormData({
                           ...formData,
                           stoneOptions: { ...formData.stoneOptions, luckStone: e.target.checked },
                         })
-                      }
+                        if (fieldErrors.stoneOptions) {
+                          setFieldErrors({ ...fieldErrors, stoneOptions: false })
+                        }
+                      }}
                       className="mr-3 text-[#006039] focus:ring-[#006039]"
                     />
                     <span>สมาธิ จิตวิญญาณ</span>
@@ -431,13 +638,18 @@ export default function BraceletOrderForm() {
               {/* Terms */}
               <div className="mb-8">
                 <p className="text-sm font-medium text-gray-700 mb-3">
-                  โปรดเลือก &ldquo;ยอมรับ&rdquo; เพื่อนใหและข้อกำหนดต่าง ๆ ดังต่อไปนี้
+                  โปรดเลือก &ldquo;ยอมรับ&rdquo; เพื่อนใหและข้อกำหนดต่าง ๆ ดังต่อไปนี้ <span className="text-red-500">*</span>
                 </p>
-                <label className="flex items-start">
+                <label className={`flex items-start ${fieldErrors.consent ? 'p-2 border border-red-500 rounded-md' : ''}` }>
                   <input
                     type="checkbox"
                     checked={formData.consent}
-                    onChange={(e) => setFormData({ ...formData, consent: e.target.checked })}
+                    onChange={(e) => {
+                      setFormData({ ...formData, consent: e.target.checked })
+                      if (fieldErrors.consent) {
+                        setFieldErrors({ ...fieldErrors, consent: false })
+                      }
+                    }}
                     className="mr-3 mt-1 text-[#006039] focus:ring-[#006039]"
                   />
                   <span className="text-sm text-gray-600">
@@ -450,9 +662,16 @@ export default function BraceletOrderForm() {
 
               {/* Additional Agreement */}
               <div className="mb-8">
-                <label className="flex items-start">
+                <label className={`flex items-start ${fieldErrors.consent2 ? 'p-2 border border-red-500 rounded-md' : ''}` }>
                   <input
                     type="checkbox"
+                    checked={formData.consent2}
+                    onChange={(e) => {
+                      setFormData({ ...formData, consent2: e.target.checked })
+                      if (fieldErrors.consent2) {
+                        setFieldErrors({ ...fieldErrors, consent2: false })
+                      }
+                    }}
                     className="mr-3 mt-1 text-[#006039] focus:ring-[#006039]"
                   />
                   <span className="text-sm text-gray-600">
@@ -472,6 +691,7 @@ export default function BraceletOrderForm() {
                 </button>
                 <button
                   type="button"
+                  onClick={handleReset}
                   className="px-12 py-3 bg-[#D4AF37] text-white font-medium rounded-md hover:bg-[#c1a030] transition-colors"
                 >
                   รีเซ็ต
@@ -516,6 +736,33 @@ export default function BraceletOrderForm() {
           </div>
         </Container>
       </section>
+
+      {/* Validation Modal */}
+      <Modal
+        isOpen={showValidationModal}
+        onClose={() => setShowValidationModal(false)}
+        title="กรุณากรอกข้อมูลให้ครบถ้วน"
+        size="md"
+      >
+        <div className="py-4">
+          <p className="text-sm text-gray-600 mb-4">
+            กรุณาตรวจสอบและกรอกข้อมูลต่อไปนี้ให้ครบถ้วน:
+          </p>
+          <ul className="space-y-1 text-sm text-red-600 list-disc list-inside">
+            {validationErrors.map((error, index) => (
+              <li key={index}>{error}</li>
+            ))}
+          </ul>
+          <div className="mt-6 flex justify-center">
+            <button
+              onClick={() => setShowValidationModal(false)}
+              className="px-6 py-2 bg-[#006039] text-white font-medium rounded-md hover:bg-[#004d2e] transition-colors"
+            >
+              ตกลง
+            </button>
+          </div>
+        </div>
+      </Modal>
     </>
   )
 }
