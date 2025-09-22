@@ -65,11 +65,7 @@ export default async function PersonalizedPage({
       <PersonalizedContentSection />
 
       {/* Gallery Section */}
-      <PersonalizedGallerySection
-        title={personalizedPage.gallerySection.title}
-        subtitle={personalizedPage.gallerySection.subtitle}
-        cta={personalizedPage.gallerySection.cta}
-      />
+      <PersonalizedGallerySection />
 
       {/* Expertise Section */}
       <PersonalizedExpertiseSection content={personalizedPage.expertiseSection.content} />
