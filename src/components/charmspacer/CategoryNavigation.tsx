@@ -14,7 +14,7 @@ export default function CategoryNavigation({ categories }: CategoryNavigationPro
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections = categories.map(cat => document.getElementById(cat.id))
+      const sections = categories.map((cat) => document.getElementById(cat.id))
       const scrollPosition = window.scrollY + 150
 
       for (let i = sections.length - 1; i >= 0; i--) {
@@ -38,13 +38,13 @@ export default function CategoryNavigation({ categories }: CategoryNavigationPro
       const elementPosition = element.getBoundingClientRect().top + window.scrollY
       window.scrollTo({
         top: elementPosition - offset,
-        behavior: 'smooth'
+        behavior: 'smooth',
       })
     }
   }
 
   return (
-    <div className="sticky top-16 z-40 bg-black border-b border-gray-800">
+    <div className="sticky top-16 z-40 bg-black border-gray-800 pt-10">
       <div className="container mx-auto px-4">
         <nav className="flex justify-center items-center h-16 space-x-8 md:space-x-16">
           {categories.map((category) => (
@@ -52,11 +52,8 @@ export default function CategoryNavigation({ categories }: CategoryNavigationPro
               key={category.id}
               onClick={() => handleCategoryClick(category.id)}
               className={`
-                relative py-4 text-sm md:text-base font-medium transition-colors duration-200
-                ${activeCategory === category.id
-                  ? 'text-white'
-                  : 'text-gray-400 hover:text-white'
-                }
+                relative py-4 text-sm md:text-xl font-medium transition-colors duration-200
+                ${activeCategory === category.id ? 'text-gold-400' : 'text-white hover:text-white'}
               `}
             >
               {category.name}
