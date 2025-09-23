@@ -1,5 +1,34 @@
 @import 'tailwindcss';
 
+/* Tailwind CSS v4 Theme Configuration */
+@theme {
+  --color-gold-50: #F9F5E7;
+  --color-gold-100: #F3EAD0;
+  --color-gold-200: #E7D5A1;
+  --color-gold-300: #DBC072;
+  --color-gold-400: #D4AF37;
+  --color-gold-500: #B8941F;
+  --color-gold-600: #9B7A1A;
+  --color-gold-700: #7E6015;
+  --color-gold-800: #614610;
+  --color-gold-900: #442C0B;
+  --color-gold: #D4AF37;
+
+  --color-green-50: #E6F4EE;
+  --color-green-100: #CCE9DD;
+  --color-green-200: #99D3BB;
+  --color-green-300: #66BD99;
+  --color-green-400: #33A777;
+  --color-green-500: #009155;
+  --color-green-600: #006039;
+  --color-green-700: #004D2E;
+  --color-green-800: #003A23;
+  --color-green-900: #002718;
+  --color-green: #006039;
+
+  --color-light-gray: #F5F5F5;
+}
+
 /* Mixed Language Font System - Using Google Fonts */
 /* Playfair Display for English/Latin characters */
 /* Prompt for Thai characters */
