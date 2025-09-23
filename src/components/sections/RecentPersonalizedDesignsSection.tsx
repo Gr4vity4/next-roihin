@@ -1,7 +1,7 @@
+import { Link } from '@/i18n/navigation'
 import { getRecentPersonalizedDesigns } from '@/lib/api/gallery'
 import { getTranslations } from 'next-intl/server'
 import Image from 'next/image'
-import Link from 'next/link'
 import { Container } from '../ui'
 
 export default async function RecentPersonalizedDesignsSection() {
