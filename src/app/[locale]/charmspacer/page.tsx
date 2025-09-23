@@ -1,9 +1,8 @@
 import ChatWidget from '@/components/ChatWidget'
 import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import { Footer } from '@/components/sections'
-import CharmspacerHero from '@/components/sections/CharmspacerHero'
+import PersonalizedHeroSection from '@/components/sections/PersonalizedHeroSection'
 import ProductSection from '@/components/sections/ProductSection'
-import { content } from '@/config/content.config'
 import { getAllProducts } from '@/lib/api/products'
 import { Product } from '@/lib/types/products'
 import { Metadata } from 'next'
@@ -29,8 +28,6 @@ export async function generateMetadata({ params }: CharmspacerPageProps): Promis
 export default async function CharmspacerPage({ params }: CharmspacerPageProps) {
   const { locale } = await params
   const t = await getTranslations({ locale, namespace: 'charmspacer' })
-
-  const { charmspacerPage } = content
 
   let products: Product[] = []
 
@@ -77,10 +74,10 @@ export default async function CharmspacerPage({ params }: CharmspacerPageProps) 
       <NavigationWithSuspense />
 
       <main className="min-h-screen">
-        <CharmspacerHero
-          title={charmspacerPage.hero.title}
-          tabs={charmspacerPage.hero.tabs}
-          backgroundImage={charmspacerPage.hero.backgroundImage}
+        <PersonalizedHeroSection
+          backgroundImage="/images/banner/charmspacer-banner.avif"
+          title={t('hero.title')}
+          subtitle={t('hero.subtitle')}
         />
 
         <div className="bg-black">
