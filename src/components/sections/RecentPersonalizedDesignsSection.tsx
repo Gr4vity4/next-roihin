@@ -67,7 +67,7 @@ export default async function RecentPersonalizedDesignsSection() {
             >
               {t('orderButton')}
             </Link>
-            <button className="w-full sm:w-auto px-8 py-3 bg-gold-600 hover:bg-gold-700 text-white font-prompt rounded-md transition-colors">
+            <button className="w-full sm:w-auto px-8 py-3 bg-[#D4AF37] hover:bg-[#B8941F] text-white font-prompt rounded-md transition-colors">
               {t('viewMoreButton')}
             </button>
           </div>
