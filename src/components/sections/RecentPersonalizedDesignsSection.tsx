@@ -22,9 +22,14 @@ export default async function RecentPersonalizedDesignsSection() {
   }
 
   return (
-    <section className="py-16 sm:py-20 md:py-24 bg-gray-50">
+    <section className="py-16 sm:py-20 md:py-24">
       <Container padding="lg">
         <div className="max-w-6xl mx-auto">
+          {/* Top Divider */}
+          <div className="flex justify-center mb-12">
+            <div className="w-32 sm:w-48 md:w-64 h-[1px] bg-gray-300" />
+          </div>
+
           {/* Section Title */}
           <div className="text-center mb-12">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-playfair font-light text-gray-800 mb-2">
