@@ -12,26 +12,11 @@ interface CategoryNavigationProps {
 export default function CategoryNavigation({ categories }: CategoryNavigationProps) {
   const [activeCategory, setActiveCategory] = useState(categories[0]?.id || '')
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const sections = categories.map((cat) => document.getElementById(cat.id))
-      const scrollPosition = window.scrollY + 150
-
-      for (let i = sections.length - 1; i >= 0; i--) {
-        const section = sections[i]
-        if (section && section.offsetTop <= scrollPosition) {
-          setActiveCategory(categories[i].id)
-          break
-        }
-      }
-    }
-
-    window.addEventListener('scroll', handleScroll)
-    handleScroll()
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [categories])
+  // Removed scroll-based active state updates
+  // Active state only changes when clicking on a category
 
   const handleCategoryClick = (categoryId: string) => {
+    setActiveCategory(categoryId)
     const element = document.getElementById(categoryId)
     if (element) {
       const offset = 120
