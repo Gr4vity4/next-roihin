@@ -29,14 +29,14 @@ export default function PersonalizedHeroSection({
       </div>
 
       {/* Content */}
-      <div className="relative z-10 flex h-full items-center lg:items-start justify-center">
-        <div className="text-center px-6 sm:px-8 md:px-12 lg:px-4 max-w-4xl">
+      <div className="relative z-10 flex h-full container max-w-5xl mx-auto">
+        <div className="px-6 sm:px-8 md:px-12 lg:px-4 max-w-4xl">
           {/* Title */}
           <Typography
             variant="h1"
             textShadow
             color="text-white"
-            align="center"
+            // align="center"
             className="tracking-wider leading-tight font-normal"
           >
             {title}
@@ -47,8 +47,8 @@ export default function PersonalizedHeroSection({
             variant="h3"
             textShadow
             color="text-white"
-            align="center"
-            className="max-w-3xl mx-auto leading-relaxed tracking-wide font-normal"
+            // align="center"
+            className="max-w-3xl mx-auto leading-relaxed tracking-wide font-normal text-lg md:text-2xl"
           >
             {subtitle}
           </Typography>

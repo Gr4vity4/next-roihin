@@ -44,7 +44,7 @@ export default function CategoryNavigation({ categories }: CategoryNavigationPro
   }
 
   return (
-    <div className="sticky top-16 z-40 bg-black border-gray-800 pt-10">
+    <div className="sticky top-16 z-40 bg-black pt-10">
       <div className="container mx-auto px-4">
         <nav className="flex justify-center items-center h-16 space-x-8 md:space-x-16">
           {categories.map((category) => (
