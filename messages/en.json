@@ -95,6 +95,23 @@
       "title": "Charm & Spacer",
       "subtitle": "Enhance your stone bracelet's energy with unique charms and spacers"
     },
+    "categories": {
+      "charm": {
+        "name": "Charm",
+        "title": "Lucky Charm",
+        "description": "Roihin crafts charms based on ancient legends and teachings from revered masters. Each charm undergoes sacred rituals to invoke divine blessings and bring the highest fortune to its owner."
+      },
+      "spacer": {
+        "name": "Spacer",
+        "title": "Spacer",
+        "description": "Roihin provides quality spacers allowing you to customize your stone bracelet freely. Our spacers represent positive energy and beautiful symbolic meanings."
+      },
+      "pendant": {
+        "name": "Pendant",
+        "title": "Pendant",
+        "description": "Special pendant charms for those who love freedom and movement. The gentle sounds energize and keep you alert. Each pendant is uniquely crafted with quality materials, bringing positive energy."
+      }
+    },
     "noProducts": "Product information is being updated. Please come back later."
   },
   "checkout": {

@@ -1,8 +1,9 @@
+import CategoryNavigation from '@/components/charmspacer/CategoryNavigation'
+import ProductGrid from '@/components/charmspacer/ProductGrid'
 import ChatWidget from '@/components/ChatWidget'
 import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import { Footer } from '@/components/sections'
 import PersonalizedHeroSection from '@/components/sections/PersonalizedHeroSection'
-import ProductSection from '@/components/sections/ProductSection'
 import { getAllProducts } from '@/lib/api/products'
 import { Product } from '@/lib/types/products'
 import { Metadata } from 'next'
@@ -38,36 +39,46 @@ export default async function CharmspacerPage({ params }: CharmspacerPageProps) 
     products = []
   }
 
-  // Group products by their category from ACF
-  const categoryMap = new Map<string, Product[]>()
+  // Define category mappings
+  const categoryMappings = {
+    'Lucky Charm': 'charm',
+    'Spacer': 'spacer',
+    'Pendant': 'pendant'
+  }
+
+  // Group products by their category
+  const productsByCategory = {
+    charm: [] as Product[],
+    spacer: [] as Product[],
+    pendant: [] as Product[]
+  }
 
   products.forEach((product) => {
-    const categoryName = product.product_category?.name || 'Uncategorized'
-    if (!categoryMap.has(categoryName)) {
-      categoryMap.set(categoryName, [])
+    const categoryName = product.product_category?.name || ''
+    const categoryKey = categoryMappings[categoryName as keyof typeof categoryMappings]
+
+    if (categoryKey && productsByCategory[categoryKey]) {
+      productsByCategory[categoryKey].push(product)
     }
-    categoryMap.get(categoryName)?.push(product)
   })
 
-  const productsByCategory = Array.from(categoryMap.entries()).map(
-    ([categoryName, categoryProducts]) => ({
-      category: {
-        slug: categoryName.toLowerCase().replace(/\s+/g, '-'),
-        name_en: categoryName,
-        name_th:
-          categoryName === 'Lucky Charm'
-            ? 'ชาร์ม'
-            : categoryName === 'Spacer'
-            ? 'ตัวคั่น'
-            : categoryName === 'Pendant'
-            ? 'จี้'
-            : categoryName,
-        intro_th: '',
-        intro_en: '',
-      },
-      products: categoryProducts,
-    }),
-  )
+  // Prepare category navigation data
+  const categories = [
+    { id: 'charm', name: t('categories.charm.name') },
+    { id: 'spacer', name: t('categories.spacer.name') },
+    { id: 'pendant', name: t('categories.pendant.name') }
+  ]
+
+  // Prepare products with prices for ProductGrid
+  const prepareProductsForGrid = (categoryProducts: Product[]) => {
+    return categoryProducts.map(product => ({
+      id: product.id.toString(),
+      slug: product.slug,
+      title: product.title,
+      featured_image_url: product.featured_image_url,
+      price: product.acf.color_prices?.[0]?.price || 0
+    }))
+  }
 
   return (
     <>
@@ -80,35 +91,77 @@ export default async function CharmspacerPage({ params }: CharmspacerPageProps) 
           subtitle={t('hero.subtitle')}
         />
 
+        <CategoryNavigation categories={categories} />
+
         <div className="bg-black">
-          {productsByCategory.map((section, index) => {
-            const productImages = section.products.map((product) => ({
-              src: product.featured_image_url,
-              alt: product.title,
-              href: `/charmspacer/product/${product.slug}`,
-              title: product.title,
-              price: product.acf.color_prices?.[0]?.price,
-            }))
-
-            return (
-              <ProductSection
-                key={section.category.slug}
-                id={section.category.slug}
-                title={section.category.name_th || section.category.name_en}
-                description={section.category.intro_th || section.category.intro_en || ''}
-                images={productImages}
-                className={
-                  index === 0
-                    ? ''
-                    : index === productsByCategory.length - 1
-                    ? 'pt-24 pb-24'
-                    : 'pt-24'
-                }
+          {/* Charm Section */}
+          <section id="charm" className="container mx-auto px-4 py-16 md:py-24">
+            <div className="mb-12 text-center">
+              <h2 className="text-2xl md:text-3xl font-light text-white mb-4">
+                {t('categories.charm.title')}
+              </h2>
+              <p className="text-gray-400 max-w-4xl mx-auto text-sm md:text-base leading-relaxed">
+                {t('categories.charm.description')}
+              </p>
+            </div>
+            {productsByCategory.charm.length > 0 ? (
+              <ProductGrid
+                products={prepareProductsForGrid(productsByCategory.charm)}
+                currentLocale={locale}
               />
-            )
-          })}
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-gray-500">{t('noProducts')}</p>
+              </div>
+            )}
+          </section>
 
-          {productsByCategory.length === 0 && (
+          {/* Spacer Section */}
+          <section id="spacer" className="container mx-auto px-4 py-16 md:py-24 border-t border-gray-800">
+            <div className="mb-12 text-center">
+              <h2 className="text-2xl md:text-3xl font-light text-white mb-4">
+                {t('categories.spacer.title')}
+              </h2>
+              <p className="text-gray-400 max-w-4xl mx-auto text-sm md:text-base leading-relaxed">
+                {t('categories.spacer.description')}
+              </p>
+            </div>
+            {productsByCategory.spacer.length > 0 ? (
+              <ProductGrid
+                products={prepareProductsForGrid(productsByCategory.spacer)}
+                currentLocale={locale}
+              />
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-gray-500">{t('noProducts')}</p>
+              </div>
+            )}
+          </section>
+
+          {/* Pendant Section */}
+          <section id="pendant" className="container mx-auto px-4 py-16 md:py-24 border-t border-gray-800">
+            <div className="mb-12 text-center">
+              <h2 className="text-2xl md:text-3xl font-light text-white mb-4">
+                {t('categories.pendant.title')}
+              </h2>
+              <p className="text-gray-400 max-w-4xl mx-auto text-sm md:text-base leading-relaxed">
+                {t('categories.pendant.description')}
+              </p>
+            </div>
+            {productsByCategory.pendant.length > 0 ? (
+              <ProductGrid
+                products={prepareProductsForGrid(productsByCategory.pendant)}
+                currentLocale={locale}
+              />
+            ) : (
+              <div className="text-center py-12">
+                <p className="text-gray-500">{t('noProducts')}</p>
+              </div>
+            )}
+          </section>
+
+          {/* Show message if no products at all */}
+          {products.length === 0 && (
             <div className="flex items-center justify-center min-h-[400px] text-center px-4">
               <div className="max-w-md">
                 <p className="text-gray-400 text-lg">
