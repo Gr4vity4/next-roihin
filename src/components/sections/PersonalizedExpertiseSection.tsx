@@ -7,7 +7,7 @@ export default function PersonalizedExpertiseSection() {
   const t = useTranslations('personalizedPage.expertise')
 
   return (
-    <section className="pb-16 sm:pb-20 md:pb-24 bg-white">
+    <section className="bg-white">
       <Container padding="lg">
         <div className="max-w-4xl mx-auto">
           {/* Content Section */}
