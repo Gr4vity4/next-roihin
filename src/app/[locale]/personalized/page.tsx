@@ -3,10 +3,11 @@ import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import { FontProvider } from '@/components/providers/FontProvider'
 import { Footer } from '@/components/sections'
 import PersonalizedContentSection from '@/components/sections/PersonalizedContentSection'
-import PersonalizedCTASection from '@/components/sections/PersonalizedCTASection'
+// import PersonalizedCTASection from '@/components/sections/PersonalizedCTASection'
 import PersonalizedExpertiseSection from '@/components/sections/PersonalizedExpertiseSection'
 import PersonalizedGallerySection from '@/components/sections/PersonalizedGallerySection'
 import PersonalizedHeroSection from '@/components/sections/PersonalizedHeroSection'
+import RecentPersonalizedDesignsSection from '@/components/sections/RecentPersonalizedDesignsSection'
 import { content } from '@/config/content.config'
 import { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
@@ -72,8 +73,11 @@ export default async function PersonalizedPage({
         {/* Expertise Section */}
         <PersonalizedExpertiseSection />
 
+        {/* Recent Personalized Designs Section */}
+        <RecentPersonalizedDesignsSection />
+
         {/* CTA Section */}
-        <PersonalizedCTASection buttons={personalizedPage.ctaSection.buttons} />
+        {/* <PersonalizedCTASection buttons={personalizedPage.ctaSection.buttons} /> */}
 
         {/* Footer */}
         <Footer />
