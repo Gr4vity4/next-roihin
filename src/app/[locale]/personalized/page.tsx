@@ -1,5 +1,6 @@
 import ChatWidget from '@/components/ChatWidget'
 import NavigationWithSuspense from '@/components/NavigationWithSuspense'
+import { FontProvider } from '@/components/providers/FontProvider'
 import { Footer } from '@/components/sections'
 import PersonalizedContentSection from '@/components/sections/PersonalizedContentSection'
 import PersonalizedCTASection from '@/components/sections/PersonalizedCTASection'
@@ -50,34 +51,36 @@ export default async function PersonalizedPage({
   const { personalizedPage } = content
 
   return (
-    <main className="min-h-screen">
-      {/* Navigation */}
-      <NavigationWithSuspense />
+    <FontProvider fonts={{ th: 'font-prompt', en: 'font-playfair' }}>
+      <main className="min-h-screen">
+        {/* Navigation */}
+        <NavigationWithSuspense />
 
-      {/* Hero Section */}
-      <PersonalizedHeroSection
-        backgroundImage={personalizedPage.hero.backgroundImage}
-        title={t('hero.title')}
-        subtitle={t('hero.subtitle')}
-      />
+        {/* Hero Section */}
+        <PersonalizedHeroSection
+          backgroundImage={personalizedPage.hero.backgroundImage}
+          title={t('hero.title')}
+          subtitle={t('hero.subtitle')}
+        />
 
-      {/* About Section */}
-      <PersonalizedContentSection />
+        {/* About Section */}
+        <PersonalizedContentSection />
 
-      {/* Gallery Section */}
-      <PersonalizedGallerySection />
+        {/* Gallery Section */}
+        <PersonalizedGallerySection />
 
-      {/* Expertise Section */}
-      <PersonalizedExpertiseSection />
+        {/* Expertise Section */}
+        <PersonalizedExpertiseSection />
 
-      {/* CTA Section */}
-      <PersonalizedCTASection buttons={personalizedPage.ctaSection.buttons} />
+        {/* CTA Section */}
+        <PersonalizedCTASection buttons={personalizedPage.ctaSection.buttons} />
 
-      {/* Footer */}
-      <Footer />
+        {/* Footer */}
+        <Footer />
 
-      {/* Chat Widget */}
-      <ChatWidget />
-    </main>
+        {/* Chat Widget */}
+        <ChatWidget />
+      </main>
+    </FontProvider>
   )
 }

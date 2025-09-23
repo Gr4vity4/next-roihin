@@ -1,6 +1,9 @@
+'use client'
+
 import { cn } from '@/lib/utils'
 import { containsNumbers } from '@/lib/utils/text'
 import { HTMLAttributes, ReactNode, createElement, isValidElement } from 'react'
+import { useFontContext } from '@/components/providers/FontProvider'
 
 interface TypographyProps extends HTMLAttributes<HTMLElement> {
   variant: 'h1' | 'h2' | 'h3' | 'h4' | 'body' | 'caption'
@@ -10,6 +13,7 @@ interface TypographyProps extends HTMLAttributes<HTMLElement> {
   textShadow?: boolean
   color?: 'primary' | 'highlight' | string
   align?: 'left' | 'center' | 'right' | 'justify'
+  fontOverride?: string // Allow manual font override
 }
 
 const variantStyles = {
@@ -50,9 +54,11 @@ export default function Typography({
   textShadow = false,
   color,
   align,
+  fontOverride,
   ...props
 }: TypographyProps) {
   const Component = component || variantComponents[variant]
+  const fontContext = useFontContext()
 
   // Handle color: use predefined colors if they match, otherwise treat as Tailwind class
   const getColorClass = (color?: string) => {
@@ -85,16 +91,29 @@ export default function Typography({
     return false
   }
 
-  // Check if children contains numbers (handles complex JSX children)
-  const hasNumbers = checkChildrenForNumbers(children)
+  // Determine font class to use
+  const getFontClass = () => {
+    // 1. If fontOverride is provided, use it
+    if (fontOverride) {
+      return fontOverride
+    }
+
+    // 2. If within FontProvider context, use context font
+    if (fontContext?.fontClass) {
+      return fontContext.fontClass
+    }
+
+    // 3. Otherwise, use default logic
+    const hasNumbers = checkChildrenForNumbers(children)
+    return hasNumbers ? 'font-prompt' : 'font-mixed-lang'
+  }
 
   return createElement(
     Component,
     {
       className: cn(
         variantStyles[variant],
-        // Apply font-prompt if text contains numbers, otherwise use mixed-lang
-        hasNumbers ? 'font-prompt' : 'font-mixed-lang',
+        getFontClass(),
         textShadow && 'text-shadow',
         align && alignmentClasses[align],
         colorClass,
