@@ -22,7 +22,10 @@ export async function generateMetadata({ params }: CharmspacerPageProps): Promis
   return {
     title: t('pageTitle'),
     description: t('pageDescription'),
-    keywords: locale === 'th' ? 'ชาร์ม, สเปเซอร์, ชาร์มจี้, หินมงคล, ร้อยหิน' : 'charm, spacer, pendant, lucky stone, roihin',
+    keywords:
+      locale === 'th'
+        ? 'ชาร์ม, สเปเซอร์, ชาร์มจี้, หินมงคล, ร้อยหิน'
+        : 'charm, spacer, pendant, lucky stone, roihin',
   }
 }
 
@@ -42,15 +45,15 @@ export default async function CharmspacerPage({ params }: CharmspacerPageProps) 
   // Define category mappings
   const categoryMappings = {
     'Lucky Charm': 'charm',
-    'Spacer': 'spacer',
-    'Pendant': 'pendant'
+    Spacer: 'spacer',
+    Pendant: 'pendant',
   }
 
   // Group products by their category
   const productsByCategory = {
     charm: [] as Product[],
     spacer: [] as Product[],
-    pendant: [] as Product[]
+    pendant: [] as Product[],
   }
 
   products.forEach((product) => {
@@ -66,17 +69,17 @@ export default async function CharmspacerPage({ params }: CharmspacerPageProps) 
   const categories = [
     { id: 'charm', name: t('categories.charm.name') },
     { id: 'spacer', name: t('categories.spacer.name') },
-    { id: 'pendant', name: t('categories.pendant.name') }
+    { id: 'pendant', name: t('categories.pendant.name') },
   ]
 
   // Prepare products with prices for ProductGrid
   const prepareProductsForGrid = (categoryProducts: Product[]) => {
-    return categoryProducts.map(product => ({
+    return categoryProducts.map((product) => ({
       id: product.id.toString(),
       slug: product.slug,
       title: product.title,
       featured_image_url: product.featured_image_url,
-      price: product.acf.color_prices?.[0]?.price || 0
+      price: product.acf.color_prices?.[0]?.price || 0,
     }))
   }
 
@@ -95,12 +98,12 @@ export default async function CharmspacerPage({ params }: CharmspacerPageProps) 
 
         <div className="bg-black">
           {/* Charm Section */}
-          <section id="charm" className="container mx-auto px-4 py-16 md:py-24">
-            <div className="mb-12 text-center">
-              <h2 className="text-2xl md:text-3xl font-light text-white mb-4">
+          <section id="charm" className="container max-w-5xl mx-auto px-4 py-16 md:py-24">
+            <div className="mb-12">
+              <h2 className="text-2xl md:text-3xl font-medium text-gold-500 mb-4">
                 {t('categories.charm.title')}
               </h2>
-              <p className="text-gray-400 max-w-4xl mx-auto text-sm md:text-base leading-relaxed">
+              <p className="text-white text-sm md:text-base leading-relaxed">
                 {t('categories.charm.description')}
               </p>
             </div>
@@ -117,12 +120,12 @@ export default async function CharmspacerPage({ params }: CharmspacerPageProps) 
           </section>
 
           {/* Spacer Section */}
-          <section id="spacer" className="container mx-auto px-4 py-16 md:py-24 border-t border-gray-800">
-            <div className="mb-12 text-center">
-              <h2 className="text-2xl md:text-3xl font-light text-white mb-4">
+          <section id="spacer" className="container max-w-5xl mx-auto px-4 py-16 md:py-24">
+            <div className="mb-12">
+              <h2 className="text-2xl md:text-3xl font-medium text-gold-500 mb-4">
                 {t('categories.spacer.title')}
               </h2>
-              <p className="text-gray-400 max-w-4xl mx-auto text-sm md:text-base leading-relaxed">
+              <p className="text-white text-sm md:text-base leading-relaxed">
                 {t('categories.spacer.description')}
               </p>
             </div>
@@ -139,12 +142,12 @@ export default async function CharmspacerPage({ params }: CharmspacerPageProps) 
           </section>
 
           {/* Pendant Section */}
-          <section id="pendant" className="container mx-auto px-4 py-16 md:py-24 border-t border-gray-800">
-            <div className="mb-12 text-center">
-              <h2 className="text-2xl md:text-3xl font-light text-white mb-4">
+          <section id="pendant" className="containe max-w-5xl mx-auto px-4 py-16 md:py-24 border-t">
+            <div className="mb-12">
+              <h2 className="text-2xl md:text-3xl font-medium text-gold-500 mb-4">
                 {t('categories.pendant.title')}
               </h2>
-              <p className="text-gray-400 max-w-4xl mx-auto text-sm md:text-base leading-relaxed">
+              <p className="text-white text-sm md:text-base leading-relaxed">
                 {t('categories.pendant.description')}
               </p>
             </div>
@@ -164,9 +167,7 @@ export default async function CharmspacerPage({ params }: CharmspacerPageProps) 
           {products.length === 0 && (
             <div className="flex items-center justify-center min-h-[400px] text-center px-4">
               <div className="max-w-md">
-                <p className="text-gray-400 text-lg">
-                  {t('noProducts')}
-                </p>
+                <p className="text-gray-400 text-lg">{t('noProducts')}</p>
               </div>
             </div>
           )}
