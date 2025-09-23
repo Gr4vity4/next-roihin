@@ -1,37 +1,28 @@
+'use client'
+
+import { useTranslations } from 'next-intl'
 import { Container, Typography } from '../ui'
 
-interface PersonalizedExpertiseSectionProps {
-  content: {
-    thai: string[]
-  }
-}
+export default function PersonalizedExpertiseSection() {
+  const t = useTranslations('personalizedPage.expertise')
 
-export default function PersonalizedExpertiseSection({
-  content,
-}: PersonalizedExpertiseSectionProps) {
   return (
-    <section className="py-16 sm:py-20 md:py-24 bg-white">
+    <section className="pb-16 sm:pb-20 md:pb-24 bg-white">
       <Container padding="lg">
         <div className="max-w-4xl mx-auto">
           {/* Content Section */}
           <div className="space-y-6 sm:space-y-8 md:space-y-10">
-            {content.thai.map((paragraph, index) => {
-              // Handle empty paragraphs as spacing
-              if (paragraph.trim() === '') {
-                return <div key={`spacing-${index}`} className="h-4" />
-              }
+            <Typography variant="body" className="text-gray-700 leading-relaxed">
+              {t('paragraph1')}
+            </Typography>
 
-              return (
-                <Typography
-                  key={`expertise-${index}`}
-                  variant="body"
-                 
-                  className="text-gray-700 leading-relaxed text-justify"
-                >
-                  {paragraph}
-                </Typography>
-              )
-            })}
+            <Typography variant="body" className="text-gray-700 leading-relaxed">
+              {t('paragraph2')}
+            </Typography>
+
+            <Typography variant="body" className="text-gray-700 leading-relaxed">
+              {t('paragraph3')}
+            </Typography>
           </div>
         </div>
       </Container>
