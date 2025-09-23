@@ -14,11 +14,13 @@ export default function PersonalizedContentSection() {
           <div className="max-w-5xl mx-auto">
             {/* Title Section */}
             <div className="text-center mb-12 sm:mb-16 md:mb-20">
-              <Typography variant="h2" align="center" className="mb-6">
-                <span className="text-gray-800">{t('title')}</span>
-                <br />
-                <span className="text-black font-bold">{t('highlight')}</span>
-              </Typography>
+              <FontProvider fonts={{ th: 'font-playfair', en: 'font-playfair' }}>
+                <Typography variant="h2" align="center" className="mb-6">
+                  <span className="text-gray-800">{t('title')}</span>
+                  <br />
+                  <span className="text-black font-bold">{t('highlight')}</span>
+                </Typography>
+              </FontProvider>
 
               <Typography
                 variant="h3"
