@@ -3,7 +3,7 @@
 import Button from '@/components/Button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useTranslations } from 'next-intl'
 
 interface ProfileData {
@@ -39,11 +39,7 @@ export default function ProfilePage() {
     gender: 'male' as 'male' | 'female' | 'other' | 'prefer_not_to_say',
   })
 
-  useEffect(() => {
-    fetchProfile()
-  }, [])
-
-  const fetchProfile = async () => {
+  const fetchProfile = useCallback(async () => {
     try {
       setIsFetching(true)
       setError(null)
@@ -90,7 +86,11 @@ export default function ProfilePage() {
     } finally {
       setIsFetching(false)
     }
-  }
+  }, [t])
+
+  useEffect(() => {
+    fetchProfile()
+  }, [fetchProfile])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

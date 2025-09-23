@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Button from '@/components/Button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -42,11 +42,7 @@ export default function AddressesPage() {
     postal_code: '',
   })
 
-  useEffect(() => {
-    fetchAddresses()
-  }, [])
-
-  const fetchAddresses = async () => {
+  const fetchAddresses = useCallback(async () => {
     try {
       setIsFetching(true)
       setError(null)
@@ -66,7 +62,11 @@ export default function AddressesPage() {
     } finally {
       setIsFetching(false)
     }
-  }
+  }, [t])
+
+  useEffect(() => {
+    fetchAddresses()
+  }, [fetchAddresses])
 
   const handleAddAddress = () => {
     setFormData({

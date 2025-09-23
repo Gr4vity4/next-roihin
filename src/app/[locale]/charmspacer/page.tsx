@@ -44,9 +44,9 @@ export default async function CharmspacerPage({ params }: CharmspacerPageProps) 
 
   // Define category mappings
   const categoryMappings = {
-    'Lucky Charm': 'charm',
-    Spacer: 'spacer',
-    Pendant: 'pendant',
+    'Lucky Charm': 'charm' as const,
+    Spacer: 'spacer' as const,
+    Pendant: 'pendant' as const,
   }
 
   // Group products by their category
@@ -60,8 +60,8 @@ export default async function CharmspacerPage({ params }: CharmspacerPageProps) 
     const categoryName = product.product_category?.name || ''
     const categoryKey = categoryMappings[categoryName as keyof typeof categoryMappings]
 
-    if (categoryKey && productsByCategory[categoryKey]) {
-      productsByCategory[categoryKey].push(product)
+    if (categoryKey && categoryKey in productsByCategory) {
+      productsByCategory[categoryKey as keyof typeof productsByCategory].push(product)
     }
   })
 
