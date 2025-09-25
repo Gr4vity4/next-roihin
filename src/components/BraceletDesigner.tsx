@@ -20,7 +20,6 @@ import {
 } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import type { Bank, Stone } from '@/lib/types/api-types'
-import { cn } from '@/lib/utils'
 import { ArrowLeft, Check, GripVertical, RefreshCw, Upload } from 'lucide-react'
 import { useLocale } from 'next-intl'
 import Image from 'next/image'
@@ -728,18 +727,17 @@ export default function BraceletDesigner() {
               {/* preview single bead image */}
               <div className="col-span-full md:col-span-3 flex justify-center">
                 {lastSelectedBead ? (
-                  <div
-                    className={cn(
-                      'relative w-24 h-24',
-                      lastSelectedBead.preview_image ? 'bg-transparent' : 'bg-gray-200 p-4',
+                  <div className="relative w-24 h-24 bg-transparent">
+                    {lastSelectedBead.preview_image ? (
+                      <Image
+                        src={lastSelectedBead.preview_image || '/images/logo.avif'}
+                        alt={lastSelectedBead.title}
+                        width={96}
+                        height={96}
+                      />
+                    ) : (
+                      <></>
                     )}
-                  >
-                    <Image
-                      src={lastSelectedBead.preview_image || '/images/logo.avif'}
-                      alt={lastSelectedBead.title}
-                      width={96}
-                      height={96}
-                    />
                   </div>
                 ) : (
                   <div className="w-24 h-24 bg-gray-200 flex items-center justify-center text-gray-400">
