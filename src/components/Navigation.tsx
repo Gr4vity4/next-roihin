@@ -504,7 +504,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
       </div>
 
       {/* Mobile Navigation */}
-      <div className="min-[1408px]:hidden relative">
+      <div className="min-[1408px]:hidden relative bg-black">
         <div
           className={cn(
             'flex items-center justify-between h-20 px-4 transition-all duration-300',

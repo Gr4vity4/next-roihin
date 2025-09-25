@@ -3,9 +3,9 @@ import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import Footer from '@/components/sections/Footer'
 import TestimonialsClient from '@/components/TestimonialsClient'
 import { Typography } from '@/components/ui'
-import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
 import { getTranslations } from 'next-intl/server'
+import Image from 'next/image'
 
 // Configure route segment caching for testimonials (dynamic content)
 // Revalidate every 5 minutes
@@ -20,7 +20,7 @@ export default async function TestimonialPage() {
 
       <main>
         {/* Full-width image section */}
-        <section className="w-full pt-20 lg:pt-[230px]">
+        <section className="w-full pt-20 min-[1408px]:pt-[230px]">
           <div className="relative w-full h-[290px]">
             <Image
               src="/images/357c3a_c78543e690504fdd80ac15754320656b~mv2.avif"
@@ -53,7 +53,10 @@ export default async function TestimonialPage() {
               <Typography variant="body" className="text-gray-400 mb-4">
                 พร้อมที่จะเริ่มต้นการเปลี่ยนแปลงชีวิตของคุณแล้วหรือยัง?
               </Typography>
-              <Link href="/custom" className="inline-block bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-8 py-3 rounded-full font-semibold hover:from-yellow-500 hover:to-yellow-700 transition-all duration-300 ">
+              <Link
+                href="/custom"
+                className="inline-block bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-8 py-3 rounded-full font-semibold hover:from-yellow-500 hover:to-yellow-700 transition-all duration-300 "
+              >
                 {tCommon('orderDesign')}
               </Link>
             </div>

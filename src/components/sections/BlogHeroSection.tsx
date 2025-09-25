@@ -15,7 +15,7 @@ export default function BlogHeroSection({
   className = '',
 }: BlogHeroSectionProps) {
   return (
-    <section className={`relative w-full pt-20 lg:pt-[230px] ${className}`}>
+    <section className={`relative w-full pt-20 min-[1408px]:pt-[230px] ${className}`}>
       {/* Background Image */}
       <div className="relative w-full h-[400px] lg:h-[500px]">
         <Image
@@ -27,23 +27,15 @@ export default function BlogHeroSection({
         />
         {/* Overlay */}
         <div className="absolute inset-0 bg-black/30" />
-        
+
         {/* Content */}
         <div className="absolute inset-0 flex items-center justify-center">
           <Container className="text-center text-white">
-            <Typography
-              variant="h2"
-             
-              className="mb-2"
-            >
+            <Typography variant="h2" className="mb-2">
               {title}
             </Typography>
             <div className="mt-6 max-w-2xl mx-auto">
-              <Typography
-                variant="body"
-               
-                className="text-gray-200"
-              >
+              <Typography variant="body" className="text-gray-200">
                 {subtitle}
               </Typography>
             </div>

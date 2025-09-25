@@ -1,8 +1,8 @@
 'use client'
 
+import ChatWidget from '@/components/ChatWidget'
 import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import Footer from '@/components/sections/Footer'
-import ChatWidget from '@/components/ChatWidget'
 import { Container, Typography } from '@/components/ui'
 import Image from 'next/image'
 
@@ -12,7 +12,7 @@ export default function CustomerServicePage() {
       <NavigationWithSuspense />
 
       {/* Main content wrapper with top padding to account for navigation */}
-      <main className="pt-20 lg:pt-[230px]">
+      <main className="pt-20 min-[1408px]:pt-[230px]">
         {/* Full Width Image Section */}
         <section className="relative w-full h-[420px] overflow-hidden">
           <Image
@@ -52,7 +52,7 @@ export default function CustomerServicePage() {
                 <div className="space-y-8">
                   <Typography
                     variant="h2"
-                              className="text-4xl lg:text-5xl font-bold text-white mb-8"
+                    className="text-4xl lg:text-5xl font-bold text-white mb-8"
                     textShadow
                   >
                     ติดต่อสอบถาม
@@ -61,19 +61,20 @@ export default function CustomerServicePage() {
                   <div className="space-y-6">
                     <Typography
                       variant="body"
-                                  className="text-lg text-white leading-relaxed"
+                      className="text-lg text-white leading-relaxed"
                       textShadow
                     >
                       <strong className="text-xl">ที่อยู่:</strong>
                       <br />
                       ร้อยหิน Stone & Bracelet
                       <br />
-                      101/54 หมู่บ้าน ภัสสร 70 (เกาะแก้ว) หมู่ที่ 4 ตำบลเกาะแก้ว อำเภอเมืองภูเก็ต จังหวัดภูเก็ต 83000
+                      101/54 หมู่บ้าน ภัสสร 70 (เกาะแก้ว) หมู่ที่ 4 ตำบลเกาะแก้ว อำเภอเมืองภูเก็ต
+                      จังหวัดภูเก็ต 83000
                     </Typography>
 
                     <Typography
                       variant="body"
-                                  className="text-lg text-white leading-relaxed"
+                      className="text-lg text-white leading-relaxed"
                       textShadow
                     >
                       <strong className="text-xl">โทรศัพท์:</strong>
@@ -83,7 +84,7 @@ export default function CustomerServicePage() {
 
                     <Typography
                       variant="body"
-                                  className="text-lg text-white leading-relaxed"
+                      className="text-lg text-white leading-relaxed"
                       textShadow
                     >
                       <strong className="text-xl">อีเมล์:</strong>
@@ -97,7 +98,7 @@ export default function CustomerServicePage() {
                 <div className="space-y-8">
                   <Typography
                     variant="h3"
-                              className="text-3xl lg:text-4xl font-bold text-white mb-8"
+                    className="text-3xl lg:text-4xl font-bold text-white mb-8"
                     textShadow
                   >
                     บริการหลังการขาย
@@ -106,7 +107,7 @@ export default function CustomerServicePage() {
                   <div className="space-y-6">
                     <Typography
                       variant="body"
-                                  className="text-lg text-white leading-relaxed"
+                      className="text-lg text-white leading-relaxed"
                       textShadow
                     >
                       <strong className="text-xl">รับประกันภายใน 7 วัน</strong>
@@ -116,15 +117,22 @@ export default function CustomerServicePage() {
 
                     <Typography
                       variant="body"
-                                  className="text-lg text-white leading-relaxed"
+                      className="text-lg text-white leading-relaxed"
                       textShadow
                     >
-                      กำไลหินมงคลได้รับการออกแบบอย่างปราณีตและตรวจสอบสินค้าก่อนนำส่งลูกค้าทุกครั้ง อนึ่งหากสินค้าเกิดข้อผิดพลาดทั้งที่ตัวของหินที่อาจบิ่น ชำรุดหรือเสียหาย หรือไหมยืดเกิดการขาด ย้วยหรือเสียหายซึ่งเหตุอันมิได้เกิดจากลูกค้า ทางร้านยินดีรับเปลี่ยนหิน ดูแล ดดยไม่เรียกร้องค่าเสียหายใด ๆ จากลูกค้าหรือยินดีคืนเงินเต็มจำนวนในกรณีสเหตุสุดวิสัย (ทั้งนี้ทางร้อยหินขอสงวนสิทธิ์ในการตรวจสอบเหตุอันพิสูจน์แล้วว่ามิใดเป็นการกระทำใด ๆ อันไม่เหมาะสมต่อสินค้าจากลูกค้า จึงดำเนินการคืนเงินภายใน 15 วันหลังได้ทำการตกลงกับลูกค้า)
+                      กำไลหินมงคลได้รับการออกแบบอย่างปราณีตและตรวจสอบสินค้าก่อนนำส่งลูกค้าทุกครั้ง
+                      อนึ่งหากสินค้าเกิดข้อผิดพลาดทั้งที่ตัวของหินที่อาจบิ่น ชำรุดหรือเสียหาย
+                      หรือไหมยืดเกิดการขาด ย้วยหรือเสียหายซึ่งเหตุอันมิได้เกิดจากลูกค้า
+                      ทางร้านยินดีรับเปลี่ยนหิน ดูแล ดดยไม่เรียกร้องค่าเสียหายใด ๆ
+                      จากลูกค้าหรือยินดีคืนเงินเต็มจำนวนในกรณีสเหตุสุดวิสัย
+                      (ทั้งนี้ทางร้อยหินขอสงวนสิทธิ์ในการตรวจสอบเหตุอันพิสูจน์แล้วว่ามิใดเป็นการกระทำใด
+                      ๆ อันไม่เหมาะสมต่อสินค้าจากลูกค้า จึงดำเนินการคืนเงินภายใน 15
+                      วันหลังได้ทำการตกลงกับลูกค้า)
                     </Typography>
 
                     <Typography
                       variant="body"
-                                  className="text-lg text-white leading-relaxed"
+                      className="text-lg text-white leading-relaxed"
                       textShadow
                     >
                       <strong className="text-xl">ยินดีดูแลสินค้า ตลอดอายุการใช้งาน</strong>
@@ -132,10 +140,12 @@ export default function CustomerServicePage() {
 
                     <Typography
                       variant="body"
-                                  className="text-lg text-white leading-relaxed"
+                      className="text-lg text-white leading-relaxed"
                       textShadow
                     >
-                      เมื่อไหมยืดร้อยหินหมดอายุการใช้งาน ทางร้อยหินยินดีให้บริการดูแล ทำความสะอาดหิน เปลี่ยนไหมร้อยให้โดยไม่มีค่าใช้จ่ายใด ๆ เว้นแต่ค่าบริการส่งสินค้าคืนลูกค้า (ค่าบริการจัดส่งในประเทศ 60 บาท หรือ 120 บาทสำหรับพื้นที่ห่างไกล)
+                      เมื่อไหมยืดร้อยหินหมดอายุการใช้งาน ทางร้อยหินยินดีให้บริการดูแล ทำความสะอาดหิน
+                      เปลี่ยนไหมร้อยให้โดยไม่มีค่าใช้จ่ายใด ๆ เว้นแต่ค่าบริการส่งสินค้าคืนลูกค้า
+                      (ค่าบริการจัดส่งในประเทศ 60 บาท หรือ 120 บาทสำหรับพื้นที่ห่างไกล)
                     </Typography>
                   </div>
                 </div>
