@@ -993,16 +993,37 @@ export default function BraceletDesigner() {
                         <div className="flex items-center justify-center w-6 h-6 text-gray-400">
                           <GripVertical className="w-4 h-4" />
                         </div>
-                        <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
-                          {bead.imageUrl && (
-                            <Image
-                              src={bead.imageUrl}
-                              alt={bead.stoneSetting?.title || 'Bead'}
-                              width={40}
-                              height={40}
-                              className="w-full h-full object-cover"
-                            />
-                          )}
+                        <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-gray-100">
+                          {(() => {
+                            const stoneImageUrl = getValidStoneImageUrl(bead.stoneSetting!)
+                            if (stoneImageUrl) {
+                              return (
+                                <Image
+                                  src={stoneImageUrl}
+                                  alt={bead.stoneSetting?.title || 'Bead'}
+                                  width={40}
+                                  height={40}
+                                  className="w-full h-full object-contain"
+                                  onError={(e) => {
+                                    const target = e.currentTarget
+                                    target.style.display = 'none'
+                                    const parent = target.parentElement
+                                    if (parent) {
+                                      const fallback = document.createElement('div')
+                                      fallback.className = 'w-full h-full flex items-center justify-center bg-gray-200 text-gray-600 text-xs'
+                                      fallback.textContent = bead.stoneSetting?.title?.substring(0, 2).toUpperCase() || 'NA'
+                                      parent.appendChild(fallback)
+                                    }
+                                  }}
+                                />
+                              )
+                            }
+                            return (
+                              <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-600 text-xs">
+                                {bead.stoneSetting?.title?.substring(0, 2).toUpperCase() || 'NA'}
+                              </div>
+                            )
+                          })()}
                         </div>
                         <div className="flex-1 text-sm">
                           <div className="font-medium">{bead.stoneSetting?.title || 'Unknown'}</div>
@@ -1038,9 +1059,41 @@ export default function BraceletDesigner() {
                       return Object.entries(groupedBeads).map(([key, group]) => (
                         <div
                           key={key}
-                          className="flex items-center justify-between text-xs text-gray-600 py-1"
+                          className="flex items-center gap-2 text-xs text-gray-600 py-1"
                         >
-                          <span>
+                          <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0 bg-gray-100">
+                            {(() => {
+                              const stoneImageUrl = group.stoneSetting ? getValidStoneImageUrl(group.stoneSetting) : null
+                              if (stoneImageUrl) {
+                                return (
+                                  <Image
+                                    src={stoneImageUrl}
+                                    alt={group.stoneSetting?.title || 'Stone'}
+                                    width={24}
+                                    height={24}
+                                    className="w-full h-full object-contain"
+                                    onError={(e) => {
+                                      const target = e.currentTarget
+                                      target.style.display = 'none'
+                                      const parent = target.parentElement
+                                      if (parent) {
+                                        const fallback = document.createElement('div')
+                                        fallback.className = 'w-full h-full flex items-center justify-center bg-gray-200 text-gray-600 text-[8px]'
+                                        fallback.textContent = group.stoneSetting?.title?.substring(0, 2).toUpperCase() || 'NA'
+                                        parent.appendChild(fallback)
+                                      }
+                                    }}
+                                  />
+                                )
+                              }
+                              return (
+                                <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-600 text-[8px]">
+                                  {group.stoneSetting?.title?.substring(0, 2).toUpperCase() || 'NA'}
+                                </div>
+                              )
+                            })()}
+                          </div>
+                          <span className="flex-1">
                             {group.stoneSetting?.title || 'Unknown'} ({group.size}mm)
                           </span>
                           <span className="font-prompt">
