@@ -345,15 +345,22 @@ export default function BraceletDesigner() {
     el.style.width = imageWidth + 'px'
     el.style.height = imageHeight + 'px'
     el.style.cursor = 'move'
+    el.style.position = 'relative'
+    el.style.overflow = 'hidden'
     el.draggable = true
     el.dataset.beadId = beadId
 
-    // Use image if available
+    // Use image element instead of background for better html2canvas compatibility
     if (stone.stone_image) {
-      el.style.backgroundImage = `url(${stone.stone_image})`
-      el.style.backgroundSize = 'contain'
-      el.style.backgroundPosition = 'center'
-      el.style.backgroundRepeat = 'no-repeat'
+      const img = document.createElement('img')
+      img.src = stone.stone_image
+      img.style.width = '100%'
+      img.style.height = '100%'
+      img.style.objectFit = 'contain'
+      img.style.pointerEvents = 'none'
+      img.draggable = false
+      img.crossOrigin = 'anonymous' // Enable CORS for html2canvas
+      el.appendChild(img)
     }
 
     // Add drag event listeners to the bead element
@@ -470,6 +477,15 @@ export default function BraceletDesigner() {
     setIsAddingToCart(true)
 
     try {
+      // Ensure all beads are rendered before capturing
+      await new Promise(resolve => setTimeout(resolve, 500))
+
+      // Force a reflow to ensure all styles are applied
+      if (stageRef.current) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        stageRef.current.offsetHeight
+      }
+
       // Generate thumbnail image of the bracelet design
       const thumbnailImage = stageRef.current
         ? await generateBraceletThumbnail(stageRef.current)
@@ -616,6 +632,7 @@ export default function BraceletDesigner() {
           {/* Stage */}
           <section
             ref={stageRef}
+            data-stage="true"
             className="relative w-[520px] h-[320px] md:h-[360px] max-w-[90vw] aspect-square overflow-hidden"
           >
             <div className="absolute inset-0 grid place-items-center">
