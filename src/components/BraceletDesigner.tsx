@@ -82,6 +82,52 @@ export default function BraceletDesigner() {
   const beadsLayerRef = useRef<HTMLDivElement>(null)
   const draggedBeadRef = useRef<string | null>(null)
 
+  // Helper function to validate if a string is a valid URL
+  const isValidImageUrl = (url: string | undefined | null): boolean => {
+    if (!url) return false
+    // Check if it's a valid URL or a relative path
+    try {
+      // Check if it starts with http/https
+      if (url.startsWith('http://') || url.startsWith('https://')) {
+        new URL(url)
+        return true
+      }
+      // Check if it's a relative path (starts with /)
+      if (url.startsWith('/')) {
+        return true
+      }
+      // Check if it's a data URL
+      if (url.startsWith('data:')) {
+        return true
+      }
+      // If it's just a CSS class name or invalid string, return false
+      if (url.startsWith('jss-') || url.includes('{') || url.includes('}')) {
+        return false
+      }
+      return false
+    } catch {
+      return false
+    }
+  }
+
+  // Get valid image URL from stone data
+  const getValidStoneImageUrl = (stone: Stone['acf']): string | null => {
+    // First try stone_image
+    if (isValidImageUrl(stone.stone_image)) {
+      return stone.stone_image
+    }
+    // Fallback to preview_image
+    if (isValidImageUrl(stone.preview_image)) {
+      return stone.preview_image
+    }
+    // Log warning for debugging
+    console.warn('No valid image URL found for stone:', stone.title, {
+      stone_image: stone.stone_image,
+      preview_image: stone.preview_image
+    })
+    return null
+  }
+
   // Geometry state - adjust radius based on wrist length
   const geometryRef = useRef({
     cx: 260,
@@ -97,6 +143,14 @@ export default function BraceletDesigner() {
         const response = await fetch(`/api/stones?lang=${locale}`)
         if (response.ok) {
           const data = await response.json()
+          // Log first stone data for debugging
+          if (data.length > 0) {
+            console.log('Sample stone data:', {
+              title: data[0].acf?.title,
+              stone_image: data[0].acf?.stone_image,
+              preview_image: data[0].acf?.preview_image,
+            })
+          }
           setStoneSettings(data)
         }
       } catch (error) {
@@ -351,16 +405,55 @@ export default function BraceletDesigner() {
     el.dataset.beadId = beadId
 
     // Use image element instead of background for better html2canvas compatibility
-    if (stone.stone_image) {
+    const validImageUrl = getValidStoneImageUrl(stone)
+    if (validImageUrl) {
       const img = document.createElement('img')
-      img.src = stone.stone_image
+      img.src = validImageUrl
       img.style.width = '100%'
       img.style.height = '100%'
       img.style.objectFit = 'contain'
       img.style.pointerEvents = 'none'
       img.draggable = false
       img.crossOrigin = 'anonymous' // Enable CORS for html2canvas
+
+      // Add error handler for failed image loads
+      img.onerror = () => {
+        console.error('Failed to load stone image:', validImageUrl, 'for stone:', stone.title)
+        // Create a placeholder div with the stone title
+        const placeholder = document.createElement('div')
+        placeholder.style.width = '100%'
+        placeholder.style.height = '100%'
+        placeholder.style.display = 'flex'
+        placeholder.style.alignItems = 'center'
+        placeholder.style.justifyContent = 'center'
+        placeholder.style.backgroundColor = '#e5e7eb'
+        placeholder.style.borderRadius = '50%'
+        placeholder.style.fontSize = '10px'
+        placeholder.style.color = '#6b7280'
+        placeholder.style.textAlign = 'center'
+        placeholder.style.padding = '2px'
+        placeholder.textContent = stone.title.substring(0, 2).toUpperCase()
+        el.innerHTML = ''
+        el.appendChild(placeholder)
+      }
+
       el.appendChild(img)
+    } else {
+      // Create a placeholder if no valid image URL
+      const placeholder = document.createElement('div')
+      placeholder.style.width = '100%'
+      placeholder.style.height = '100%'
+      placeholder.style.display = 'flex'
+      placeholder.style.alignItems = 'center'
+      placeholder.style.justifyContent = 'center'
+      placeholder.style.backgroundColor = '#e5e7eb'
+      placeholder.style.borderRadius = '50%'
+      placeholder.style.fontSize = '10px'
+      placeholder.style.color = '#6b7280'
+      placeholder.style.textAlign = 'center'
+      placeholder.style.padding = '2px'
+      placeholder.textContent = stone.title.substring(0, 2).toUpperCase()
+      el.appendChild(placeholder)
     }
 
     // Add drag event listeners to the bead element
@@ -432,7 +525,7 @@ export default function BraceletDesigner() {
       el,
       r: imageWidth / 2,
       theta: 0, // Will be calculated by renderBeads
-      imageUrl: stone.stone_image,
+      imageUrl: getValidStoneImageUrl(stone) || '',
       imageWidth,
       imageHeight,
       shape,
@@ -695,20 +788,32 @@ export default function BraceletDesigner() {
                           // Hide stone if not available for selected size
                           if (!isAvailable) return null
 
+                          const validImageUrl = getValidStoneImageUrl(stoneInfo)
                           return (
                             <div key={stoneInfo.title} className="relative group">
                               <button
-                                className="w-11 h-11 transition-transform overflow-hidden cursor-pointer active:scale-95"
-                                style={{
-                                  backgroundImage: `url(${stoneInfo.stone_image})`,
+                                className="w-11 h-11 transition-transform overflow-hidden cursor-pointer active:scale-95 rounded-lg"
+                                style={validImageUrl ? {
+                                  backgroundImage: `url(${validImageUrl})`,
                                   backgroundSize: 'contain',
                                   backgroundPosition: 'center',
                                   backgroundRepeat: 'no-repeat',
+                                } : {
+                                  backgroundColor: '#e5e7eb',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
                                 }}
                                 title={`${stoneInfo.title} - ฿${price}`}
                                 onClick={() => addBead(stoneInfo)}
                                 aria-label={`Add ${stoneInfo.title} - ฿${price}`}
-                              />
+                              >
+                                {!validImageUrl && (
+                                  <span className="text-xs text-gray-600">
+                                    {stoneInfo.title.substring(0, 2).toUpperCase()}
+                                  </span>
+                                )}
+                              </button>
                               {/* Price tooltip */}
                               <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-1 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                                 ฿{price}
@@ -729,16 +834,31 @@ export default function BraceletDesigner() {
               <div className="col-span-full md:col-span-3 flex justify-center">
                 {lastSelectedBead ? (
                   <div className="relative w-24 h-24 bg-transparent">
-                    {lastSelectedBead.preview_image ? (
-                      <Image
-                        src={lastSelectedBead.preview_image || '/images/logo.avif'}
-                        alt={lastSelectedBead.title}
-                        width={96}
-                        height={96}
-                      />
-                    ) : (
-                      <></>
-                    )}
+                    {(() => {
+                      const validImageUrl = getValidStoneImageUrl(lastSelectedBead)
+                      if (validImageUrl) {
+                        return (
+                          <Image
+                            src={validImageUrl}
+                            alt={lastSelectedBead.title}
+                            width={96}
+                            height={96}
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement
+                              target.style.display = 'none'
+                            }}
+                          />
+                        )
+                      } else {
+                        return (
+                          <div className="w-24 h-24 bg-gray-200 rounded-lg flex items-center justify-center">
+                            <span className="text-2xl text-gray-500">
+                              {lastSelectedBead.title.substring(0, 2).toUpperCase()}
+                            </span>
+                          </div>
+                        )
+                      }
+                    })()}
                   </div>
                 ) : (
                   <div className="w-24 h-24 bg-gray-200 flex items-center justify-center text-gray-400">
