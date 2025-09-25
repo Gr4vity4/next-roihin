@@ -3,14 +3,12 @@
 import AuthModal from '@/components/AuthModal'
 import { useAuth } from '@/contexts/AuthContext'
 import { useCart } from '@/contexts/CartContext'
+import { Link, usePathname, useRouter } from '@/i18n/navigation'
 import { cn } from '@/lib/utils'
 import { ShoppingCartIcon } from '@heroicons/react/24/outline'
 import { ChevronDown, Menu, X } from 'lucide-react'
+import { useLocale, useTranslations } from 'next-intl'
 import Image from 'next/image'
-import { usePathname, useRouter } from '@/i18n/navigation'
-import { Link } from '@/i18n/navigation'
-import { useTranslations } from 'next-intl'
-import { useLocale } from 'next-intl'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 interface NavigationProps {
@@ -159,7 +157,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
       {/* Desktop Navigation with Video Background */}
       <div
         className={cn(
-          'hidden lg:block relative transition-all duration-300',
+          'hidden min-[1408px]:block relative transition-all duration-300',
           isScrolled ? 'h-20' : 'h-[230px]',
         )}
       >
@@ -506,7 +504,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
       </div>
 
       {/* Mobile Navigation */}
-      <div className="lg:hidden relative">
+      <div className="min-[1408px]:hidden relative">
         <div
           className={cn(
             'flex items-center justify-between h-20 px-4 transition-all duration-300',
