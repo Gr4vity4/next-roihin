@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bracelet Designer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      /* Custom scrollbar for a cleaner look */
+      .custom-scrollbar::-webkit-scrollbar {
+        height: 8px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #d1d5db;
+        border-radius: 10px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #9ca3af;
+      }
+      /* Styling for the range slider thumb */
+      input[type='range']::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        background: #4f46e5;
+        cursor: pointer;
+        border-radius: 50%;
+        margin-top: -6px; /* Adjust to center */
+      }
+      input[type='range']::-moz-range-thumb {
+        width: 20px;
+        height: 20px;
+        background: #4f46e5;
+        cursor: pointer;
+        border-radius: 50%;
+      }
+      /* Tab indicator line */
+      .tab-indicator {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50 text-gray-800">
+    <div id="app" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main class="bg-white rounded-2xl shadow-sm p-6 md:p-8">
+        <!-- Info Bar -->
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8 text-center md:text-left">
+          <div>
+            <span class="block text-xs text-gray-500 mb-1">Length</span>
+            <select
+              id="length-select"
+              class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+            >
+              <option value="15" selected>15 cm</option>
+              <option value="16">16 cm</option>
+              <option value="17">17 cm</option>
+              <option value="18">18 cm</option>
+              <option value="19">19 cm</option>
+              <option value="20">20 cm</option>
+            </select>
+          </div>
+          <div>
+            <span class="block text-xs text-gray-500 mb-1">Pieces</span>
+            <p class="text-sm font-semibold"><span id="piece-count">0</span></p>
+          </div>
+          <div class="col-span-2 md:col-span-1">
+            <span class="block text-xs text-gray-500 mb-1">Price</span>
+            <p class="text-2xl font-bold text-indigo-600">$<span id="price-total">0.00</span></p>
+          </div>
+        </div>
+
+        <!-- Bracelet Visualizer and Controls -->
+        <div class="relative flex flex-col md:flex-row items-center justify-center gap-8 mb-12">
+          <div
+            id="bracelet-visualizer-container"
+            class="flex items-center justify-center relative transition-all duration-300"
+          >
+            <!-- A permanent circle to represent the bracelet base -->
+            <div
+              id="bracelet-circle"
+              class="w-full h-full relative border-2 border-gray-800 rounded-full"
+            >
+              <!-- Bracelet items will be injected here -->
+            </div>
+          </div>
+          <div
+            class="flex items-center space-x-2 absolute bottom-0 right-0 md:relative md:bottom-auto md:right-auto"
+          >
+            <button
+              id="undo-btn"
+              title="Undo"
+              class="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <svg
+                class="w-5 h-5 text-gray-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M3 10h10a8 8 0 018 8v2M3 10l4-4m-4 4l4 4"
+                ></path>
+              </svg>
+            </button>
+            <button
+              id="clear-btn"
+              title="Clear All"
+              class="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M3 6h18" />
+                <path
+                  d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                />
+                <path d="M10 11v6" />
+                <path d="M14 11v6" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Item Selector -->
+        <div id="item-selector" class="border-t pt-6">
+          <!-- Category Tabs -->
+          <div class="relative border-b border-gray-200">
+            <div id="tabs-container" class="flex space-x-6 text-sm font-medium text-gray-500">
+              <button class="tab-btn py-3" data-category="crystal">Crystal</button>
+              <button class="tab-btn py-3" data-category="accessories">Accessories</button>
+              <button class="tab-btn py-3" data-category="shapedCrystal">Shaped Crystal</button>
+            </div>
+            <div
+              id="tab-indicator"
+              class="tab-indicator h-0.5 bg-indigo-600 absolute bottom-0"
+            ></div>
+          </div>
+
+          <!-- Size Slider (for Crystals) -->
+          <div id="size-slider-container" class="my-6 hidden">
+            <div class="relative w-full max-w-sm mx-auto">
+              <input
+                id="size-slider"
+                type="range"
+                min="0"
+                max="3"
+                value="0"
+                step="1"
+                class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+              />
+              <div class="flex justify-between text-xs text-gray-500 mt-2 px-1">
+                <span>6mm</span>
+                <span>8mm</span>
+                <span>10mm</span>
+                <span>12mm</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Item Gallery -->
+          <div
+            id="item-gallery"
+            class="custom-scrollbar flex items-center gap-4 mt-6 pb-4 overflow-x-auto min-h-[80px]"
+          >
+            <!-- Gallery items will be injected here -->
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        // --- DATA ---
+        const crystalImages = [
+          'https://www.prismbracelet.com/web-file/1923211650504966144.png',
+          'https://www.prismbracelet.com/web-file/1923212914219401216.png',
+          'https://www.prismbracelet.com/web-file/1923213625678217216.png',
+          'https://www.prismbracelet.com/web-file/1923213778187304960.png',
+          'https://www.prismbracelet.com/web-file/1923214812750135296.png',
+          'https://www.prismbracelet.com/web-file/1923215046448365568.png',
+          // New crystal images
+          'https://wp-roihin.precisiondevlab.com/wp-content/uploads/2025/09/Untitled-1-02.png',
+          'https://wp-roihin.precisiondevlab.com/wp-content/uploads/2025/09/Untitled-1-03.png',
+          'https://wp-roihin.precisiondevlab.com/wp-content/uploads/2025/09/Untitled-1-04.png',
+        ]
+
+        const mockData = {
+          crystal: [
+            // 6mm
+            {
+              id: 'c6-1',
+              size: 6,
+              price: 0.8,
+              name: 'Purple Crystal',
+              imageUrl: crystalImages[0],
+              imageWidth: 24,
+              imageHeight: 24,
+            },
+            {
+              id: 'c6-2',
+              size: 6,
+              price: 0.7,
+              name: 'Dark Purple Crystal',
+              imageUrl: crystalImages[1],
+              imageWidth: 24,
+              imageHeight: 24,
+            },
+            {
+              id: 'c6-3',
+              size: 6,
+              price: 0.9,
+              name: 'Light Amethyst',
+              imageUrl: crystalImages[2],
+              imageWidth: 24,
+              imageHeight: 24,
+            },
+            {
+              id: 'c6-4',
+              size: 6,
+              price: 0.8,
+              name: 'Red Agate',
+              imageUrl: crystalImages[3],
+              imageWidth: 24,
+              imageHeight: 24,
+            },
+            {
+              id: 'c6-5',
+              size: 6,
+              price: 1.0,
+              name: 'Yellow Crystal',
+              imageUrl: crystalImages[4],
+              imageWidth: 24,
+              imageHeight: 24,
+            },
+            {
+              id: 'c6-6',
+              size: 6,
+              price: 1.1,
+              name: 'Green Crystal',
+              imageUrl: crystalImages[5],
+              imageWidth: 24,
+              imageHeight: 24,
+            },
+            // New 6mm crystals
+            {
+              id: 'c6-7',
+              size: 6,
+              price: 0.9,
+              name: 'Blue Crystal',
+              imageUrl: crystalImages[6],
+              imageWidth: 24,
+              imageHeight: 24,
+            },
+            {
+              id: 'c6-8',
+              size: 6,
+              price: 0.85,
+              name: 'Orange Crystal',
+              imageUrl: crystalImages[7],
+              imageWidth: 24,
+              imageHeight: 24,
+            },
+            {
+              id: 'c6-9',
+              size: 6,
+              price: 0.95,
+              name: 'Pink Crystal',
+              imageUrl: crystalImages[8],
+              imageWidth: 24,
+              imageHeight: 24,
+            },
+            // 8mm
+            {
+              id: 'c8-1',
+              size: 8,
+              price: 1.2,
+              name: 'Purple Crystal',
+              imageUrl: crystalImages[0],
+              imageWidth: 32,
+              imageHeight: 32,
+            },
+            {
+              id: 'c8-2',
+              size: 8,
+              price: 1.1,
+              name: 'Dark Purple Crystal',
+              imageUrl: crystalImages[1],
+              imageWidth: 32,
+              imageHeight: 32,
+            },
+            {
+              id: 'c8-3',
+              size: 8,
+              price: 1.4,
+              name: 'Light Amethyst',
+              imageUrl: crystalImages[2],
+              imageWidth: 32,
+              imageHeight: 32,
+            },
+            {
+              id: 'c8-4',
+              size: 8,
+              price: 1.2,
+              name: 'Red Agate',
+              imageUrl: crystalImages[3],
+              imageWidth: 32,
+              imageHeight: 32,
+            },
+            {
+              id: 'c8-5',
+              size: 8,
+              price: 1.5,
+              name: 'Yellow Crystal',
+              imageUrl: crystalImages[4],
+              imageWidth: 32,
+              imageHeight: 32,
+            },
+            {
+              id: 'c8-6',
+              size: 8,
+              price: 1.6,
+              name: 'Green Crystal',
+              imageUrl: crystalImages[5],
+              imageWidth: 32,
+              imageHeight: 32,
+            },
+            // New 8mm crystals
+            {
+              id: 'c8-7',
+              size: 8,
+              price: 1.3,
+              name: 'Blue Crystal',
+              imageUrl: crystalImages[6],
+              imageWidth: 32,
+              imageHeight: 32,
+            },
+            {
+              id: 'c8-8',
+              size: 8,
+              price: 1.25,
+              name: 'Orange Crystal',
+              imageUrl: crystalImages[7],
+              imageWidth: 32,
+              imageHeight: 32,
+            },
+            {
+              id: 'c8-9',
+              size: 8,
+              price: 1.35,
+              name: 'Pink Crystal',
+              imageUrl: crystalImages[8],
+              imageWidth: 32,
+              imageHeight: 32,
+            },
+            // 10mm
+            {
+              id: 'c10-1',
+              size: 10,
+              price: 1.8,
+              name: 'Purple Crystal',
+              imageUrl: crystalImages[0],
+              imageWidth: 40,
+              imageHeight: 40,
+            },
+            {
+              id: 'c10-2',
+              size: 10,
+              price: 1.6,
+              name: 'Dark Purple Crystal',
+              imageUrl: crystalImages[1],
+              imageWidth: 40,
+              imageHeight: 40,
+            },
+            {
+              id: 'c10-3',
+              size: 10,
+              price: 2.0,
+              name: 'Light Amethyst',
+              imageUrl: crystalImages[2],
+              imageWidth: 40,
+              imageHeight: 40,
+            },
+            {
+              id: 'c10-4',
+              size: 10,
+              price: 1.8,
+              name: 'Red Agate',
+              imageUrl: crystalImages[3],
+              imageWidth: 40,
+              imageHeight: 40,
+            },
+            {
+              id: 'c10-5',
+              size: 10,
+              price: 2.2,
+              name: 'Yellow Crystal',
+              imageUrl: crystalImages[4],
+              imageWidth: 40,
+              imageHeight: 40,
+            },
+            {
+              id: 'c10-6',
+              size: 10,
+              price: 2.4,
+              name: 'Green Crystal',
+              imageUrl: crystalImages[5],
+              imageWidth: 40,
+              imageHeight: 40,
+            },
+            // New 10mm crystals
+            {
+              id: 'c10-7',
+              size: 10,
+              price: 1.9,
+              name: 'Blue Crystal',
+              imageUrl: crystalImages[6],
+              imageWidth: 40,
+              imageHeight: 40,
+            },
+            {
+              id: 'c10-8',
+              size: 10,
+              price: 1.85,
+              name: 'Orange Crystal',
+              imageUrl: crystalImages[7],
+              imageWidth: 40,
+              imageHeight: 40,
+            },
+            {
+              id: 'c10-9',
+              size: 10,
+              price: 1.95,
+              name: 'Pink Crystal',
+              imageUrl: crystalImages[8],
+              imageWidth: 40,
+              imageHeight: 40,
+            },
+            // 12mm
+            {
+              id: 'c12-1',
+              size: 12,
+              price: 2.5,
+              name: 'Purple Crystal',
+              imageUrl: crystalImages[0],
+              imageWidth: 48,
+              imageHeight: 48,
+            },
+            {
+              id: 'c12-2',
+              size: 12,
+              price: 2.2,
+              name: 'Dark Purple Crystal',
+              imageUrl: crystalImages[1],
+              imageWidth: 48,
+              imageHeight: 48,
+            },
+            {
+              id: 'c12-3',
+              size: 12,
+              price: 2.8,
+              name: 'Light Amethyst',
+              imageUrl: crystalImages[2],
+              imageWidth: 48,
+              imageHeight: 48,
+            },
+            {
+              id: 'c12-4',
+              size: 12,
+              price: 2.5,
+              name: 'Red Agate',
+              imageUrl: crystalImages[3],
+              imageWidth: 48,
+              imageHeight: 48,
+            },
+            {
+              id: 'c12-5',
+              size: 12,
+              price: 3.0,
+              name: 'Yellow Crystal',
+              imageUrl: crystalImages[4],
+              imageWidth: 48,
+              imageHeight: 48,
+            },
+            {
+              id: 'c12-6',
+              size: 12,
+              price: 3.2,
+              name: 'Green Crystal',
+              imageUrl: crystalImages[5],
+              imageWidth: 48,
+              imageHeight: 48,
+            },
+            // New 12mm crystals
+            {
+              id: 'c12-7',
+              size: 12,
+              price: 2.6,
+              name: 'Blue Crystal',
+              imageUrl: crystalImages[6],
+              imageWidth: 48,
+              imageHeight: 48,
+            },
+            {
+              id: 'c12-8',
+              size: 12,
+              price: 2.55,
+              name: 'Orange Crystal',
+              imageUrl: crystalImages[7],
+              imageWidth: 48,
+              imageHeight: 48,
+            },
+            {
+              id: 'c12-9',
+              size: 12,
+              price: 2.65,
+              name: 'Pink Crystal',
+              imageUrl: crystalImages[8],
+              imageWidth: 48,
+              imageHeight: 48,
+            },
+          ],
+          accessories: [
+            {
+              id: 'a1',
+              size: 6,
+              price: 2.5,
+              imageUrl: 'https://www.prismbracelet.com/web-file/1909859916840189952.png',
+              imageWidth: 12,
+              imageHeight: 24,
+            },
+            {
+              id: 'a2',
+              size: 8,
+              price: 3.5,
+              imageUrl: 'https://www.prismbracelet.com/web-file/1909860298467328000.png',
+              imageWidth: 12,
+              imageHeight: 24,
+            },
+            {
+              id: 'a3',
+              size: 4,
+              price: 1.5,
+              imageUrl: 'https://www.prismbracelet.com/web-file/1916682588378730496.png',
+              imageWidth: 12,
+              imageHeight: 48,
+            },
+            {
+              id: 'a4',
+              size: 10,
+              price: 4.0,
+              imageUrl: 'https://www.prismbracelet.com/web-file/1917064318633742336.png',
+              imageWidth: 12,
+              imageHeight: 32,
+            },
+            {
+              id: 'a5',
+              size: 7,
+              price: 3.0,
+              imageUrl: 'https://www.prismbracelet.com/web-file/1917064494677069824.png',
+              imageWidth: 12,
+              imageHeight: 40,
+            },
+            {
+              id: 'a6',
+              size: 5,
+              price: 2.0,
+              imageUrl: 'https://www.prismbracelet.com/web-file/1909859686476431360.png',
+              imageWidth: 16,
+              imageHeight: 16,
+            },
+            {
+              id: 'a7',
+              size: 5,
+              price: 2.0,
+              imageUrl: 'https://www.prismbracelet.com/web-file/1909860468252753920.png',
+              imageWidth: 16,
+              imageHeight: 16,
+            },
+            {
+              id: 'a8',
+              size: 10,
+              price: 4.5,
+              imageUrl: 'https://www.prismbracelet.com/web-file/1922847517880205312.png',
+              imageWidth: 40,
+              imageHeight: 36,
+            },
+            // New accessories
+            {
+              id: 'a9',
+              size: 15,
+              price: 5.5,
+              imageUrl: 'https://wp-roihin.precisiondevlab.com/wp-content/uploads/2025/09/Untitled-1-05.png',
+              imageWidth: 88,
+              imageHeight: 118,
+            },
+            {
+              id: 'a10',
+              size: 12,
+              price: 4.8,
+              imageUrl: 'https://wp-roihin.precisiondevlab.com/wp-content/uploads/2025/09/Untitled-1-06.png',
+              imageWidth: 88,
+              imageHeight: 96,
+            },
+            {
+              id: 'a11',
+              size: 6,
+              price: 2.2,
+              imageUrl: 'https://wp-roihin.precisiondevlab.com/wp-content/uploads/2025/09/Untitled-1-07.png',
+              imageWidth: 21,
+              imageHeight: 62,
+            },
+            {
+              id: 'a12',
+              size: 18,
+              price: 6.5,
+              imageUrl: 'https://wp-roihin.precisiondevlab.com/wp-content/uploads/2025/09/Untitled-1.png',
+              imageWidth: 47,
+              imageHeight: 149,
+            },
+            {
+              id: 'a13',
+              size: 10,
+              price: 5.0,
+              imageUrl: 'https://wp-roihin.precisiondevlab.com/wp-content/uploads/2025/09/Ganesh.png',
+              imageWidth: 40,
+              imageHeight: 45,
+            },
+          ],
+          shapedCrystal: [
+            {
+              id: 's1',
+              size: 12,
+              price: 4.0,
+              imageUrl: 'https://www.prismbracelet.com/web-file/1916682448679047168.png',
+              imageWidth: 32,
+              imageHeight: 32,
+            },
+            {
+              id: 's2',
+              size: 15,
+              price: 5.5,
+              imageUrl: 'https://www.prismbracelet.com/web-file/1919312475639889920.png',
+              imageWidth: 32,
+              imageHeight: 64,
+            },
+            {
+              id: 's3',
+              size: 10,
+              price: 3.5,
+              imageUrl: 'https://www.prismbracelet.com/web-file/1916682414579355648.png',
+              imageWidth: 40,
+              imageHeight: 40,
+            },
+            {
+              id: 's4',
+              size: 18,
+              price: 6.0,
+              imageUrl: 'https://www.prismbracelet.com/web-file/1919313102029832192.png',
+              imageWidth: 40,
+              imageHeight: 36,
+            },
+            {
+              id: 's5',
+              size: 14,
+              price: 5.0,
+              imageUrl: 'https://www.prismbracelet.com/web-file/1916682780830175232.png',
+              imageWidth: 48,
+              imageHeight: 28,
+            },
+            {
+              id: 's6',
+              size: 16,
+              price: 5.2,
+              imageUrl: 'https://www.prismbracelet.com/web-file/1916682658213892096.png',
+              imageWidth: 52,
+              imageHeight: 36,
+            },
+            {
+              id: 's7',
+              size: 18,
+              price: 5.8,
+              imageUrl: 'https://www.prismbracelet.com/web-file/1916682690874937344.png',
+              imageWidth: 60,
+              imageHeight: 40,
+            },
+          ],
+        }
+
+        const visualizerSizeMap = {
+          15: 225.975,
+          16: 238.529,
+          17: 251.083,
+          18: 263.637,
+          19: 276.191,
+          20: 288.745,
+        }
+
+        // --- STATE ---
+        let state = {
+          braceletLength: 150, // in mm
+          braceletItems: [], // array of { id, category, data }
+          history: [],
+          currentCategory: 'crystal',
+          currentCrystalSize: 6,
+        }
+
+        // --- DOM ELEMENTS ---
+        const lengthSelect = document.getElementById('length-select')
+        const pieceCountEl = document.getElementById('piece-count')
+        const priceTotalEl = document.getElementById('price-total')
+        const braceletCircle = document.getElementById('bracelet-circle')
+        const braceletVisualizerContainer = document.getElementById('bracelet-visualizer-container')
+        const undoBtn = document.getElementById('undo-btn')
+        const clearBtn = document.getElementById('clear-btn')
+        const tabsContainer = document.getElementById('tabs-container')
+        const tabIndicator = document.getElementById('tab-indicator')
+        const sizeSliderContainer = document.getElementById('size-slider-container')
+        const sizeSlider = document.getElementById('size-slider')
+        const itemGallery = document.getElementById('item-gallery')
+
+        // --- FUNCTIONS ---
+
+        const saveHistory = () => {
+          state.history.push(JSON.parse(JSON.stringify(state.braceletItems)))
+        }
+
+        const undo = () => {
+          if (state.history.length > 1) {
+            state.history.pop() // remove current state
+            state.braceletItems = state.history[state.history.length - 1]
+            renderAll()
+          }
+        }
+
+        const clearBracelet = () => {
+          if (state.braceletItems.length > 0) {
+            saveHistory()
+            state.braceletItems = []
+            renderAll()
+          }
+        }
+
+        const calculateTotalAngleSpan = (items) => {
+          const radius = braceletCircle.offsetWidth / 2
+          if (radius === 0 || !items || items.length === 0) return 0
+
+          return items.reduce((totalAngle, item) => {
+            const itemVisualWidth = item.data.imageWidth
+            const chordToRadiusRatio = Math.min(itemVisualWidth / (2 * radius), 1)
+            const itemAngleSpan = 2 * Math.asin(chordToRadiusRatio)
+            return totalAngle + itemAngleSpan
+          }, 0)
+        }
+
+        const addItem = (category, itemData) => {
+          const currentAngleSpan = calculateTotalAngleSpan(state.braceletItems)
+          const newItemAngleSpan = calculateTotalAngleSpan([{ data: itemData }])
+
+          // Check if adding the new item would exceed the total circle angle (2 * PI radians)
+          if (currentAngleSpan + newItemAngleSpan > 2 * Math.PI) {
+            const notification = document.createElement('div')
+            notification.className =
+              'fixed top-5 right-5 bg-red-500 text-white py-2 px-4 rounded-lg shadow-lg animate-pulse'
+            notification.textContent = 'Bracelet is full!'
+            document.body.appendChild(notification)
+            setTimeout(() => notification.remove(), 2000)
+            return
+          }
+
+          saveHistory()
+          state.braceletItems.push({
+            id: `${itemData.id}-${Date.now()}`,
+            category,
+            data: itemData,
+          })
+          renderAll()
+        }
+
+        const removeItem = (itemId) => {
+          saveHistory()
+          state.braceletItems = state.braceletItems.filter((item) => item.id !== itemId)
+          renderAll()
+        }
+
+        const updateVisualizerSize = () => {
+          const selectedLength = state.braceletLength / 10 // convert mm to cm
+          const size = visualizerSizeMap[selectedLength]
+          if (size) {
+            braceletVisualizerContainer.style.width = `${size}px`
+            braceletVisualizerContainer.style.height = `${size}px`
+          }
+        }
+
+        // --- RENDER FUNCTIONS ---
+
+        const renderInfo = () => {
+          const totalPieces = state.braceletItems.length
+          const totalPrice = state.braceletItems.reduce((acc, item) => acc + item.data.price, 0)
+
+          pieceCountEl.textContent = totalPieces
+          priceTotalEl.textContent = totalPrice.toFixed(2)
+
+          undoBtn.disabled = state.history.length <= 1
+          clearBtn.disabled = state.braceletItems.length === 0
+        }
+
+        const renderBracelet = () => {
+          braceletCircle.innerHTML = ''
+          const itemCount = state.braceletItems.length
+
+          if (itemCount === 0) {
+            return // Nothing to render
+          }
+
+          const radius = braceletCircle.offsetWidth / 2
+          if (radius === 0) return // Avoid calculations if element isn't rendered yet
+
+          let currentAngle = Math.PI / 2 // Start at the bottom (6 o'clock)
+
+          state.braceletItems.forEach((item, index) => {
+            // Calculate the angle span based on the item's fixed visual width (as a chord on the circle).
+            // This ensures items with fixed pixel sizes touch each other perfectly without gaps.
+            const itemVisualWidth = item.data.imageWidth
+            // Prevent Math.asin error if the item is wider than the circle diameter
+            const chordToRadiusRatio = Math.min(itemVisualWidth / (2 * radius), 1)
+            const itemAngleSpan = 2 * Math.asin(chordToRadiusRatio)
+
+            const angle = currentAngle + itemAngleSpan / 2
+
+            const x = radius * Math.cos(angle)
+            const y = radius * Math.sin(angle)
+
+            const itemEl = document.createElement('div')
+            itemEl.className =
+              'absolute cursor-pointer flex items-center justify-center transition-transform duration-200 hover:scale-110 hover:z-10'
+            itemEl.style.left = `calc(50% + ${x}px)`
+            itemEl.style.top = `calc(50% + ${y}px)`
+
+            const rotationInDegrees = (angle * 180) / Math.PI - 90
+            itemEl.style.transform = `translate(-50%, -50%) rotate(${rotationInDegrees}deg)`
+
+            // --- SIZING LOGIC ---
+            // Use the original, fixed image dimensions from the data to match the gallery size.
+            itemEl.style.width = `${item.data.imageWidth}px`
+            itemEl.style.height = `${item.data.imageHeight}px`
+
+            itemEl.title = `Click to remove. Size: ${item.data.size}mm, Price: $${item.data.price}`
+
+            // Use background images for all items
+            itemEl.style.backgroundImage = `url('${item.data.imageUrl}')`
+            itemEl.style.backgroundSize = item.data.imageHeight >= 64 ? 'contain' : 'cover'
+            itemEl.style.backgroundPosition = 'center'
+            itemEl.style.backgroundRepeat = 'no-repeat'
+
+            itemEl.addEventListener('click', () => removeItem(item.id))
+            braceletCircle.appendChild(itemEl)
+
+            currentAngle += itemAngleSpan
+          })
+        }
+
+        const renderGallery = () => {
+          itemGallery.innerHTML = ''
+          let itemsToRender = []
+
+          if (state.currentCategory === 'crystal') {
+            itemsToRender = mockData.crystal.filter(
+              (item) => item.size === state.currentCrystalSize,
+            )
+          } else {
+            itemsToRender = mockData[state.currentCategory]
+          }
+
+          if (itemsToRender.length === 0) {
+            itemGallery.innerHTML = `<p class="text-sm text-gray-400 w-full text-center">No items available in this category.</p>`
+            return
+          }
+
+          itemsToRender.forEach((itemData) => {
+            const itemEl = document.createElement('div')
+            itemEl.className =
+              'flex-shrink-0 cursor-pointer flex items-center justify-center transition-transform duration-200 hover:scale-110 ring-2 ring-transparent hover:ring-indigo-400 p-1'
+            itemEl.title = `Add to bracelet. Size: ${itemData.size}mm, Price: $${itemData.price}`
+
+            let imageWidth, imageHeight
+
+            if (itemData.imageWidth && itemData.imageHeight) {
+              imageWidth = itemData.imageWidth
+              imageHeight = itemData.imageHeight
+            } else if (state.currentCategory === 'crystal') {
+              // For crystals, derive gallery size from their actual size
+              const gallerySize = itemData.size * 4
+              imageWidth = gallerySize
+              imageHeight = gallerySize
+            } else {
+              // Fallback size
+              imageWidth = 48
+              imageHeight = 48
+            }
+
+            itemEl.style.width = `${imageWidth}px`
+            itemEl.style.height = `${imageHeight}px`
+
+            const img = document.createElement('img')
+            img.src = itemData.imageUrl
+            img.alt = itemData.name || 'Bracelet component'
+            img.className = `w-full h-full ${
+              itemData.imageHeight >= 64 ? 'object-contain' : 'object-cover'
+            }`
+            img.onerror = () => {
+              img.style.display = 'none'
+              itemEl.innerHTML = '<span class="text-xs text-red-500">Img</span>'
+            } // Handle broken images
+            itemEl.appendChild(img)
+
+            itemEl.addEventListener('click', () => addItem(state.currentCategory, itemData))
+            itemGallery.appendChild(itemEl)
+          })
+        }
+
+        const updateTabs = () => {
+          const tabs = document.querySelectorAll('.tab-btn')
+          let activeTab
+          tabs.forEach((tab) => {
+            if (tab.dataset.category === state.currentCategory) {
+              tab.classList.add('text-indigo-600')
+              tab.classList.remove('text-gray-500')
+              activeTab = tab
+            } else {
+              tab.classList.remove('text-indigo-600')
+              tab.classList.add('text-gray-500')
+            }
+          })
+
+          if (activeTab) {
+            tabIndicator.style.width = `${activeTab.offsetWidth}px`
+            tabIndicator.style.left = `${activeTab.offsetLeft}px`
+          }
+
+          sizeSliderContainer.style.display = state.currentCategory === 'crystal' ? 'block' : 'none'
+        }
+
+        const renderAll = () => {
+          renderInfo()
+          renderBracelet()
+          updateTabs()
+          renderGallery()
+        }
+
+        // --- EVENT LISTENERS ---
+
+        lengthSelect.addEventListener('change', (e) => {
+          state.braceletLength = parseInt(e.target.value)
+          updateVisualizerSize()
+          renderAll()
+        })
+
+        tabsContainer.addEventListener('click', (e) => {
+          if (e.target.classList.contains('tab-btn')) {
+            state.currentCategory = e.target.dataset.category
+            renderAll()
+          }
+        })
+
+        sizeSlider.addEventListener('input', (e) => {
+          const sizes = [6, 8, 10, 12]
+          state.currentCrystalSize = sizes[e.target.value]
+          renderGallery()
+        })
+
+        undoBtn.addEventListener('click', undo)
+        clearBtn.addEventListener('click', clearBracelet)
+
+        // Resize observer for responsive bracelet rendering
+        new ResizeObserver(renderBracelet).observe(braceletCircle)
+
+        // --- INITIALIZATION ---
+
+        const init = () => {
+          saveHistory()
+          updateVisualizerSize()
+          renderAll()
+        }
+
+        init()
+      })
+    </script>
+  </body>
+</html>

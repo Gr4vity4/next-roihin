@@ -31,15 +31,15 @@ const STONE_CATEGORIES = {
   Pendant: 'Pendant',
 } as const
 
-// Maximum bead counts based on wrist length (cm) and bead size (mm)
-const MAX_BEAD_COUNTS: Record<string, Record<number, number>> = {
-  '14': { 6: 26, 8: 20, 10: 16, 12: 13 },
-  '15': { 6: 28, 8: 21, 10: 17, 12: 14 },
-  '16': { 6: 30, 8: 22, 10: 18, 12: 15 }, // Using max value for 16cm 6mm
-  '17': { 6: 31, 8: 23, 10: 19, 12: 16 },
-  '18': { 6: 33, 8: 25, 10: 20, 12: 16 },
-  '19': { 6: 35, 8: 26, 10: 21, 12: 17 }, // Using max value for 19cm 6mm
-  '20': { 6: 36, 8: 27, 10: 22, 12: 18 },
+// Circle size mapping based on wrist length (px)
+const CIRCLE_SIZE_MAP: Record<string, number> = {
+  '14': 213,
+  '15': 226,
+  '16': 238,
+  '17': 251,
+  '18': 264,
+  '19': 276,
+  '20': 289,
 }
 
 type BeadShape = 'circle' | 'square' | 'triangle'
@@ -51,6 +51,8 @@ interface Bead {
   theta: number
   backgroundImage?: string
   imageUrl?: string
+  imageWidth: number
+  imageHeight: number
   shape: BeadShape
   stoneSetting?: Stone['acf']
   price: number
@@ -85,10 +87,6 @@ export default function BraceletDesigner() {
   const [paymentSlipPreview, setPaymentSlipPreview] = useState<string>('')
   const [draggedBead, setDraggedBead] = useState<string | null>(null)
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
-  const [showSizeWarning, setShowSizeWarning] = useState(false)
-  const [pendingBeadSize, setPendingBeadSize] = useState<number | null>(null)
-  const [showWristWarning, setShowWristWarning] = useState(false)
-  const [pendingWristLength, setPendingWristLength] = useState<string | null>(null)
   const stageRef = useRef<HTMLDivElement>(null)
   const ringRef = useRef<HTMLDivElement>(null)
   const beadsLayerRef = useRef<HTMLDivElement>(null)
@@ -177,26 +175,17 @@ export default function BraceletDesigner() {
     return price && price !== '-1' ? parseInt(price, 10) : 0
   }
 
-  // Get maximum bead count for current wrist length and bead size
-  const getMaxBeadCount = (): number => {
-    return MAX_BEAD_COUNTS[wristLength]?.[beadSize] || 30
-  }
+  // Calculate total angle span for all beads
+  const calculateTotalAngleSpan = (items: Bead[]) => {
+    const radius = geometryRef.current.R
+    if (radius === 0 || !items || items.length === 0) return 0
 
-  // Calculate optimal radius for perfect fit with max beads
-  const calculateOptimalRadius = (beadCount: number, beadSizeMm: number): number => {
-    if (beadCount === 0) return geometryRef.current.R
-
-    const beadDiameterPx = mmToPx(beadSizeMm)
-
-    // For perfect fit without gaps, calculate circumference needed
-    // Add small gap between beads for visual clarity
-    const gapBetweenBeads = 0.5 // Small gap in pixels
-    const requiredCircumference = beadCount * (beadDiameterPx + gapBetweenBeads)
-
-    // Radius = Circumference / (2π)
-    const optimalRadius = requiredCircumference / (2 * Math.PI)
-
-    return optimalRadius
+    return items.reduce((totalAngle, item) => {
+      const itemVisualWidth = item.imageWidth
+      const chordToRadiusRatio = Math.min(itemVisualWidth / (2 * radius), 1)
+      const itemAngleSpan = 2 * Math.asin(chordToRadiusRatio)
+      return totalAngle + itemAngleSpan
+    }, 0)
   }
 
   // Calculate total price
@@ -204,10 +193,8 @@ export default function BraceletDesigner() {
     return beads.reduce((total, bead) => total + bead.price, 0)
   }
 
-  const mmToPx = (mm: number) => mm * 3.4
-  const GAP_PX = 1.0
-  const EPS = 0.002
-  const START = Math.PI / 2
+  const mmToPx = (mm: number) => mm * 4 // Updated to match gallery size from HTML
+  const START = Math.PI / 2 // Start at bottom (6 o'clock)
 
   const computeGeometry = useCallback(() => {
     if (!stageRef.current) return
@@ -224,286 +211,57 @@ export default function BraceletDesigner() {
     return () => window.removeEventListener('resize', computeGeometry)
   }, [computeGeometry])
 
-  // Calculate total angles including closing gap
-  const totalAnglesWithClosing = (Rloc: number) => {
-    if (beads.length <= 1) return 0
-    let s = 0
-    for (let i = 1; i < beads.length; i++) {
-      s += deltaTheta(beads[i - 1].r, beads[i].r, Rloc)
-    }
-    s += deltaTheta(beads[beads.length - 1].r, beads[0].r, Rloc) // closing gap
-    return s
-  }
 
-  // Calculate minimum radius that can fit all beads
-  const minRadiusForCurrentBeads = () => {
-    if (beads.length === 0) return 0
-    if (beads.length === 1) {
-      return beads[0].r + GAP_PX
-    }
+  // Render all beads using angle-based placement
+  const renderBeads = () => {
+    if (beads.length === 0) return
 
-    // Hard lower bound so asin() is defined for every adjacent pair
-    let lower = 0
-    for (let i = 1; i < beads.length; i++) {
-      lower = Math.max(lower, (beads[i - 1].r + beads[i].r + GAP_PX) / 2)
-    }
-    lower = Math.max(lower, (beads[beads.length - 1].r + beads[0].r + GAP_PX) / 2)
+    const radius = geometryRef.current.R
+    if (radius === 0) return
 
-    let upper = 10000 // big number for binary search
-    // if already fits at lower, that's the minimum
-    if (totalAnglesWithClosing(lower + 1e-6) <= 2 * Math.PI) return lower + 1e-6
+    let currentAngle = START // Start at bottom (6 o'clock)
 
-    // Binary search for minimum radius
-    for (let iter = 0; iter < 40; iter++) {
-      const mid = (lower + upper) / 2
-      const used = totalAnglesWithClosing(mid)
-      if (used > 2 * Math.PI) {
-        lower = mid // too tight -> need larger radius
-      } else {
-        upper = mid // fits -> try smaller
-      }
-    }
-    return upper
-  }
+    beads.forEach((bead, index) => {
+      // Calculate angle span based on item's fixed visual width
+      const itemVisualWidth = bead.imageWidth
+      const chordToRadiusRatio = Math.min(itemVisualWidth / (2 * radius), 1)
+      const itemAngleSpan = 2 * Math.asin(chordToRadiusRatio)
 
-  // Relayout all beads for new radius
-  const relayoutForRadius = (Rnew: number) => {
-    setBeads((prevBeads) => {
-      if (prevBeads.length === 0) return prevBeads
+      const angle = currentAngle + itemAngleSpan / 2
+      bead.theta = angle
 
-      const maxBeads = getMaxBeadCount()
-      const isMaxCapacity = prevBeads.length === maxBeads
+      if (bead.el) {
+        const x = geometryRef.current.cx + radius * Math.cos(angle)
+        const y = geometryRef.current.cy + radius * Math.sin(angle)
 
-      // If at max capacity, use equal spacing
-      if (isMaxCapacity) {
-        const anglePerBead = (2 * Math.PI) / maxBeads
-        const updatedBeads = [...prevBeads]
+        bead.el.style.left = `${x - bead.imageWidth / 2}px`
+        bead.el.style.top = `${y - bead.imageHeight / 2}px`
 
-        for (let i = 0; i < updatedBeads.length; i++) {
-          const theta = START + i * anglePerBead // Counter-clockwise placement
-          updatedBeads[i].theta = theta
-
-          if (updatedBeads[i].el) {
-            const element = updatedBeads[i].el!
-            const isPendant = updatedBeads[i].stoneSetting?.category === 'Pendant'
-            const pendantOffset = isPendant
-              ? updatedBeads[i].size === 6
-                ? 4
-                : updatedBeads[i].size === 8
-                ? 6
-                : updatedBeads[i].size === 10
-                ? 8
-                : updatedBeads[i].size === 12
-                ? 10
-                : 0
-              : 0
-
-            const baseX = geometryRef.current.cx + Rnew * Math.cos(theta)
-            const baseY = geometryRef.current.cy + Rnew * Math.sin(theta)
-            const offsetX = pendantOffset * Math.cos(theta)
-            const offsetY = pendantOffset * Math.sin(theta)
-
-            element.style.left = baseX + offsetX - updatedBeads[i].r + 'px'
-            element.style.top = baseY + offsetY - updatedBeads[i].r + 'px'
-            // Apply rotation to align tangentially with circle
-            const rotationAngle = (theta * 180) / Math.PI - 90
-            element.style.transform = `rotate(${rotationAngle}deg) scale(1)`
-            // Ensure dataset is set for drag and drop
-            element.dataset.beadId = updatedBeads[i].id
-          }
-        }
-
-        return updatedBeads
+        const rotationAngle = (angle * 180) / Math.PI - 90
+        bead.el.style.transform = `rotate(${rotationAngle}deg)`
+        bead.el.dataset.beadId = bead.id
       }
 
-      // Normal layout for non-max capacity
-      let theta = START
-      const updatedBeads = [...prevBeads]
-      updatedBeads[0].theta = theta
-
-      // Position first bead
-      if (updatedBeads[0].el) {
-        const element = updatedBeads[0].el!
-        const isPendant = updatedBeads[0].stoneSetting?.category === 'Pendant'
-        const pendantOffset = isPendant
-          ? updatedBeads[0].size === 6
-            ? 4
-            : updatedBeads[0].size === 8
-            ? 6
-            : updatedBeads[0].size === 10
-            ? 8
-            : updatedBeads[0].size === 12
-            ? 10
-            : 0
-          : 0
-
-        const baseX = geometryRef.current.cx + Rnew * Math.cos(theta)
-        const baseY = geometryRef.current.cy + Rnew * Math.sin(theta)
-        const offsetX = pendantOffset * Math.cos(theta)
-        const offsetY = pendantOffset * Math.sin(theta)
-
-        element.style.left = baseX + offsetX - updatedBeads[0].r + 'px'
-        element.style.top = baseY + offsetY - updatedBeads[0].r + 'px'
-        // Apply rotation to align tangentially with circle
-        const rotationAngle = (theta * 180) / Math.PI - 90
-        element.style.transform = `rotate(${rotationAngle}deg) scale(1)`
-        // Ensure dataset is set for drag and drop
-        element.dataset.beadId = updatedBeads[0].id
-      }
-
-      // Place the rest CCW (left)
-      for (let i = 1; i < updatedBeads.length; i++) {
-        theta += deltaTheta(updatedBeads[i - 1].r, updatedBeads[i].r, Rnew)
-        updatedBeads[i].theta = theta
-
-        if (updatedBeads[i].el) {
-          const element = updatedBeads[i].el!
-          const isPendant = updatedBeads[i].stoneSetting?.category === 'Pendant'
-          const pendantOffset = isPendant
-            ? updatedBeads[i].size === 6
-              ? 4
-              : updatedBeads[i].size === 8
-              ? 6
-              : updatedBeads[i].size === 10
-              ? 8
-              : updatedBeads[i].size === 12
-              ? 10
-              : 0
-            : 0
-
-          const baseX = geometryRef.current.cx + Rnew * Math.cos(theta)
-          const baseY = geometryRef.current.cy + Rnew * Math.sin(theta)
-          const offsetX = pendantOffset * Math.cos(theta)
-          const offsetY = pendantOffset * Math.sin(theta)
-
-          element.style.left = baseX + offsetX - updatedBeads[i].r + 'px'
-          element.style.top = baseY + offsetY - updatedBeads[i].r + 'px'
-          // Apply rotation to align tangentially with circle
-          const rotationAngle = (theta * 180) / Math.PI - 90
-          element.style.transform = `rotate(${rotationAngle}deg) scale(1)`
-          // Ensure dataset is set for drag and drop
-          element.dataset.beadId = updatedBeads[i].id
-        }
-      }
-
-      return updatedBeads
+      currentAngle += itemAngleSpan
     })
   }
 
-  // Update ring size when wrist length, bead size, or mobile state changes
+  // Update ring size based on wrist length
   useEffect(() => {
     if (!ringRef.current || !stageRef.current) return
 
-    const maxBeads = getMaxBeadCount()
+    const size = CIRCLE_SIZE_MAP[wristLength] || 238 // Default to 16cm size
 
-    // If we have reached max beads, calculate perfect fit radius
-    if (beads.length === maxBeads) {
-      const optimalRadius = calculateOptimalRadius(maxBeads, beadSize)
-
-      ringRef.current.style.width = `${optimalRadius * 2}px`
-      ringRef.current.style.height = `${optimalRadius * 2}px`
-
-      geometryRef.current.R = optimalRadius
-      relayoutForRadius(optimalRadius)
-      return
-    }
-
-    const wristLengthNum = parseInt(wristLength)
-    let scale = 1.0
-
-    if (wristLengthNum === 16) {
-      // Base scale for 16cm
-      scale = 1.0
-    } else if (wristLengthNum === 17) {
-      // Progressive increase: 0.5% from 16cm base
-      scale = 1.0 * 1.005
-    } else if (wristLengthNum === 18) {
-      // Progressive increase: 1% from 16cm base (2 * 0.5%)
-      scale = 1.0 * 1.01
-    } else if (wristLengthNum === 19) {
-      // Progressive increase: 1.5% from 16cm base (3 * 0.5%)
-      scale = 1.0 * 1.015
-    } else if (wristLengthNum === 20) {
-      // Progressive increase: 2% from 16cm base (4 * 0.5%)
-      scale = 1.0 * 1.02
-    } else if (wristLengthNum === 15) {
-      // Smaller size for 15cm
-      scale = 0.95
-    } else if (wristLengthNum === 14) {
-      // Smaller size for 14cm
-      scale = 0.85
-    }
-
-    // Apply mobile scaling (1.5 times smaller)
-    if (isMobile) {
-      scale = scale / 1.5
-    }
-
-    // Desktop: decrease default radius by 20% (0.8 times)
-    const baseSize = isMobile ? 380 : 380 * 0.8
-    const newSize = baseSize * scale
-
-    // Check minimum radius needed for current beads
-    const minR = minRadiusForCurrentBeads()
-    const targetRadius = Math.max(newSize / 2, minR)
-    const actualSize = targetRadius * 2
-
-    // If requested size is too small for beads, use minimum size and nudge
-    if (newSize / 2 < minR) {
-      nudgeFull()
-    }
-
-    ringRef.current.style.width = `${actualSize}px`
-    ringRef.current.style.height = `${actualSize}px`
+    ringRef.current.style.width = `${size}px`
+    ringRef.current.style.height = `${size}px`
 
     // Update geometry with new radius
-    geometryRef.current.R = targetRadius
+    geometryRef.current.R = size / 2
 
-    // Relayout beads with smooth transition
-    relayoutForRadius(targetRadius)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wristLength, isMobile, beadSize, beads.length])
+    // Re-render beads with new radius
+    renderBeads()
+  }, [wristLength, beads])
 
-  const clamp01m = (x: number) => Math.min(0.999999, Math.max(0, x))
-
-  const deltaTheta = (rA: number, rB: number, Rloc = geometryRef.current.R) => {
-    const ratio = clamp01m((rA + rB + GAP_PX) / (2 * Rloc))
-    return 2 * Math.asin(ratio)
-  }
-
-  const getThetaNext = () => {
-    if (beads.length === 0) return START
-    return beads[beads.length - 1].theta
-  }
-
-  const getLastRadius = () => {
-    if (beads.length === 0) return 0
-    return beads[beads.length - 1].r
-  }
-
-  const remainingArc = () => {
-    const thetaNext = getThetaNext()
-    return START + 2 * Math.PI - thetaNext
-  }
-
-  const canPlaceWithRadius = (rNext: number) => {
-    if (beads.length === 0) return true
-
-    // Check if we're at max capacity
-    const maxBeads = getMaxBeadCount()
-    if (beads.length >= maxBeads) return false
-
-    const lastRadius = getLastRadius()
-    const needBetweenPrevAndNext = deltaTheta(lastRadius, rNext)
-    const rFirst = beads[0].r
-    const needNextToFirst = deltaTheta(rNext, rFirst)
-
-    // Ensure we don't exceed the circle
-    const totalAngleNeeded = needBetweenPrevAndNext + needNextToFirst
-    const available = remainingArc()
-
-    return available >= totalAngleNeeded - EPS
-  }
 
   const nudgeFull = () => {
     if (!stageRef.current) return
@@ -563,122 +321,8 @@ export default function BraceletDesigner() {
   }
 
   const relayoutBeadsWithNewOrder = (newBeads: Bead[]) => {
-    if (newBeads.length === 0) return
-
-    const R = geometryRef.current.R
-    const maxBeads = getMaxBeadCount()
-    const isMaxCapacity = newBeads.length === maxBeads
-
-    // If at max capacity, use equal spacing
-    if (isMaxCapacity) {
-      const anglePerBead = (2 * Math.PI) / maxBeads
-
-      for (let i = 0; i < newBeads.length; i++) {
-        const theta = START + i * anglePerBead // Counter-clockwise placement
-        const beadEl = newBeads[i].el
-
-        if (beadEl) {
-          newBeads[i].theta = theta
-          const isPendant = newBeads[i].stoneSetting?.category === 'Pendant'
-          const pendantOffset = isPendant
-            ? newBeads[i].size === 6
-              ? 4
-              : newBeads[i].size === 8
-              ? 6
-              : newBeads[i].size === 10
-              ? 8
-              : newBeads[i].size === 12
-              ? 10
-              : 0
-            : 0
-
-          const baseX = geometryRef.current.cx + R * Math.cos(theta)
-          const baseY = geometryRef.current.cy + R * Math.sin(theta)
-          const offsetX = pendantOffset * Math.cos(theta)
-          const offsetY = pendantOffset * Math.sin(theta)
-
-          beadEl.style.left = baseX + offsetX - newBeads[i].r + 'px'
-          beadEl.style.top = baseY + offsetY - newBeads[i].r + 'px'
-          // Apply rotation to align tangentially with circle
-          const rotationAngle = (theta * 180) / Math.PI - 90
-          beadEl.style.transform = `rotate(${rotationAngle}deg) scale(1)`
-
-          // Update dataset for drag and drop
-          beadEl.dataset.beadId = newBeads[i].id
-        }
-      }
-      return
-    }
-
-    // Normal layout for non-max capacity
-    let theta = START
-
-    // Update first bead position
-    const firstBeadEl = newBeads[0].el
-    if (firstBeadEl) {
-      newBeads[0].theta = theta
-      const isPendant = newBeads[0].stoneSetting?.category === 'Pendant'
-      const pendantOffset = isPendant
-        ? newBeads[0].size === 6
-          ? 4
-          : newBeads[0].size === 8
-          ? 6
-          : newBeads[0].size === 10
-          ? 8
-          : newBeads[0].size === 12
-          ? 10
-          : 0
-        : 0
-
-      const baseX = geometryRef.current.cx + R * Math.cos(theta)
-      const baseY = geometryRef.current.cy + R * Math.sin(theta)
-      const offsetX = pendantOffset * Math.cos(theta)
-      const offsetY = pendantOffset * Math.sin(theta)
-
-      firstBeadEl.style.left = baseX + offsetX - newBeads[0].r + 'px'
-      firstBeadEl.style.top = baseY + offsetY - newBeads[0].r + 'px'
-      // Apply rotation to align tangentially with circle
-      const rotationAngle = (theta * 180) / Math.PI - 90
-      firstBeadEl.style.transform = `rotate(${rotationAngle}deg) scale(1)`
-
-      // Update dataset for drag and drop
-      firstBeadEl.dataset.beadId = newBeads[0].id
-    }
-
-    // Update remaining beads
-    for (let i = 1; i < newBeads.length; i++) {
-      theta += deltaTheta(newBeads[i - 1].r, newBeads[i].r, R)
-      const beadEl = newBeads[i].el
-      if (beadEl) {
-        newBeads[i].theta = theta
-        const isPendant = newBeads[i].stoneSetting?.category === 'Pendant'
-        const pendantOffset = isPendant
-          ? newBeads[i].size === 6
-            ? 4
-            : newBeads[i].size === 8
-            ? 6
-            : newBeads[i].size === 10
-            ? 8
-            : newBeads[i].size === 12
-            ? 10
-            : 0
-          : 0
-
-        const baseX = geometryRef.current.cx + R * Math.cos(theta)
-        const baseY = geometryRef.current.cy + R * Math.sin(theta)
-        const offsetX = pendantOffset * Math.cos(theta)
-        const offsetY = pendantOffset * Math.sin(theta)
-
-        beadEl.style.left = baseX + offsetX - newBeads[i].r + 'px'
-        beadEl.style.top = baseY + offsetY - newBeads[i].r + 'px'
-        // Apply rotation to align tangentially with circle
-        const rotationAngle = (theta * 180) / Math.PI - 90
-        beadEl.style.transform = `rotate(${rotationAngle}deg) scale(1)`
-
-        // Update dataset for drag and drop
-        beadEl.dataset.beadId = newBeads[i].id
-      }
-    }
+    setBeads(newBeads)
+    renderBeads()
   }
 
   // Update the ref whenever draggedBead changes
@@ -687,46 +331,32 @@ export default function BraceletDesigner() {
   }, [draggedBead])
 
   const addBead = (stone: Stone['acf']) => {
-    const maxBeads = getMaxBeadCount()
+    // Calculate image dimensions based on bead size (like HTML: size * 4)
+    const imageWidth = mmToPx(beadSize)
+    const imageHeight = mmToPx(beadSize)
 
-    // Check if we've reached the maximum bead count
-    if (beads.length >= maxBeads) {
-      // Show nudge animation instead of alert for better UX
-      nudgeFull()
-      // Optionally, you could add a toast notification here
-      console.log(
-        `Maximum ${maxBeads} beads reached for ${wristLength}cm wrist with ${beadSize}mm beads`,
-      )
-      return
-    }
+    // Check if adding this bead would exceed the circle
+    const currentAngleSpan = calculateTotalAngleSpan(beads)
+    const newItemAngleSpan = calculateTotalAngleSpan([{
+      id: '',
+      el: null,
+      r: imageWidth / 2,
+      theta: 0,
+      imageWidth,
+      imageHeight,
+      shape: 'circle',
+      stoneSetting: stone,
+      price: 0,
+      size: beadSize
+    }])
 
-    const d = mmToPx(beadSize)
-    const r = d / 2
-
-    // If adding this bead would reach max, calculate perfect fit
-    if (beads.length === maxBeads - 1) {
-      // This will be the last bead, so we'll adjust radius for perfect fit
-      const optimalRadius = calculateOptimalRadius(maxBeads, beadSize)
-      geometryRef.current.R = optimalRadius
-
-      if (ringRef.current) {
-        ringRef.current.style.width = `${optimalRadius * 2}px`
-        ringRef.current.style.height = `${optimalRadius * 2}px`
-      }
-    }
-
-    if (!canPlaceWithRadius(r)) {
-      nudgeFull()
+    if (currentAngleSpan + newItemAngleSpan > 2 * Math.PI) {
+      nudgeFull() // Bracelet is full
       return
     }
 
     // Track the last selected bead
     setLastSelectedBead(stone)
-
-    const lastRadius = getLastRadius()
-    const thetaNext = getThetaNext()
-    const dTheta = beads.length === 0 ? 0 : deltaTheta(lastRadius, r)
-    const theta = beads.length === 0 ? START : thetaNext + dTheta
 
     // Always use circle shape for all categories
     const shape: BeadShape = 'circle'
@@ -734,8 +364,8 @@ export default function BraceletDesigner() {
     const beadId = Date.now().toString()
     const el = document.createElement('div')
     el.className = 'bead'
-    el.style.width = d + 'px'
-    el.style.height = d + 'px'
+    el.style.width = imageWidth + 'px'
+    el.style.height = imageHeight + 'px'
     el.style.cursor = 'move'
     el.draggable = true
     el.dataset.beadId = beadId
@@ -803,97 +433,16 @@ export default function BraceletDesigner() {
       setDragOverIndex(null)
     })
 
-    // Check if radius needs to be increased after adding this bead
-    const tempBeads = [
-      ...beads,
-      {
-        id: Date.now().toString(),
-        el: null,
-        r,
-        theta,
-        shape,
-        stoneSetting: stone,
-        price: getStonePrice(stone, beadSize),
-        imageUrl: stone.stone_image,
-        size: beadSize, // Store the actual size when bead was added
-      },
-    ]
-    const minRAfterAdd = (() => {
-      if (tempBeads.length <= 1) return 0
-      let lower = 0
-      for (let i = 1; i < tempBeads.length; i++) {
-        lower = Math.max(lower, (tempBeads[i - 1].r + tempBeads[i].r + GAP_PX) / 2)
-      }
-      lower = Math.max(lower, (tempBeads[tempBeads.length - 1].r + tempBeads[0].r + GAP_PX) / 2)
-
-      const calcAngles = (Rloc: number) => {
-        let s = 0
-        for (let i = 1; i < tempBeads.length; i++) {
-          s += deltaTheta(tempBeads[i - 1].r, tempBeads[i].r, Rloc)
-        }
-        s += deltaTheta(tempBeads[tempBeads.length - 1].r, tempBeads[0].r, Rloc)
-        return s
-      }
-
-      if (calcAngles(lower + 1e-6) <= 2 * Math.PI) return lower + 1e-6
-
-      let upper = 10000
-      for (let iter = 0; iter < 40; iter++) {
-        const mid = (lower + upper) / 2
-        if (calcAngles(mid) > 2 * Math.PI) {
-          lower = mid
-        } else {
-          upper = mid
-        }
-      }
-      return upper
-    })()
-
-    // If radius needs to be increased, update ring and geometry
-    if (minRAfterAdd > geometryRef.current.R) {
-      geometryRef.current.R = minRAfterAdd
-      if (ringRef.current) {
-        const newDiameter = minRAfterAdd * 2
-        ringRef.current.style.width = `${newDiameter}px`
-        ringRef.current.style.height = `${newDiameter}px`
-      }
-    }
-
-    // Calculate position with offset for pendants
-    const isPendant = stone.category === 'Pendant'
-    const pendantOffset = isPendant
-      ? beadSize === 6
-        ? 4
-        : beadSize === 8
-        ? 6
-        : beadSize === 10
-        ? 8
-        : beadSize === 12
-        ? 10
-        : 0
-      : 0 // Dynamic offset based on bead size
-
-    const baseX = geometryRef.current.cx + geometryRef.current.R * Math.cos(theta)
-    const baseY = geometryRef.current.cy + geometryRef.current.R * Math.sin(theta)
-
-    // Apply offset in the direction of the radius (outward from center)
-    const offsetX = pendantOffset * Math.cos(theta)
-    const offsetY = pendantOffset * Math.sin(theta)
-
-    el.style.left = baseX + offsetX - r + 'px'
-    el.style.top = baseY + offsetY - r + 'px'
-    // Apply rotation to align tangentially with circle
-    const rotationAngle = (theta * 180) / Math.PI - 90
-    el.style.transform = `rotate(${rotationAngle}deg) scale(0.6)`
-
-    // Display image without border radius to show original shape
+    // Initial position (will be adjusted by renderBeads)
+    el.style.position = 'absolute'
+    el.style.transition = 'all 0.35s ease'
+    el.style.transform = 'scale(0.6)'
 
     if (beadsLayerRef.current) {
       beadsLayerRef.current.appendChild(el)
       requestAnimationFrame(() => {
         el.classList.add('show')
-        // Update transform to include rotation and scale
-        el.style.transform = `rotate(${rotationAngle}deg) scale(1)`
+        el.style.transform = 'scale(1)'
       })
     }
 
@@ -901,35 +450,21 @@ export default function BraceletDesigner() {
     const newBead: Bead = {
       id: beadId,
       el,
-      r,
-      theta,
+      r: imageWidth / 2,
+      theta: 0, // Will be calculated by renderBeads
       imageUrl: stone.stone_image,
+      imageWidth,
+      imageHeight,
       shape,
       stoneSetting: stone,
       price,
-      size: beadSize, // Store the actual size when bead was added
+      size: beadSize,
     }
 
     setBeads((prev) => {
       const updatedBeads = [...prev, newBead]
-
-      // Check if we've reached max capacity after adding this bead
-      if (updatedBeads.length === maxBeads) {
-        // Force immediate relayout with optimal spacing
-        setTimeout(() => {
-          const optimalR = calculateOptimalRadius(maxBeads, beadSize)
-          geometryRef.current.R = optimalR
-          if (ringRef.current) {
-            ringRef.current.style.width = `${optimalR * 2}px`
-            ringRef.current.style.height = `${optimalR * 2}px`
-          }
-          relayoutForRadius(optimalR)
-        }, 10)
-      } else if (minRAfterAdd > geometryRef.current.R - 1) {
-        // If radius was increased, reflow all beads
-        setTimeout(() => relayoutForRadius(geometryRef.current.R), 10)
-      }
-
+      // Render all beads with new positions
+      setTimeout(() => renderBeads(), 10)
       return updatedBeads
     })
   }
@@ -942,7 +477,11 @@ export default function BraceletDesigner() {
       lastBead.el.remove()
     }
 
-    setBeads((prev) => prev.slice(0, -1))
+    setBeads((prev) => {
+      const newBeads = prev.slice(0, -1)
+      setTimeout(() => renderBeads(), 10)
+      return newBeads
+    })
   }
 
   const clearBeads = () => {
@@ -951,6 +490,7 @@ export default function BraceletDesigner() {
     })
     setBeads([])
     setLastSelectedBead(null)
+    // No need to call renderBeads when array is empty
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -998,15 +538,7 @@ export default function BraceletDesigner() {
           <Select
             value={wristLength}
             onValueChange={(value) => {
-              const newMaxCount = MAX_BEAD_COUNTS[value]?.[beadSize] || 30
-
-              // Check if current bead count exceeds new maximum
-              if (beads.length > newMaxCount) {
-                setPendingWristLength(value)
-                setShowWristWarning(true)
-              } else {
-                setWristLength(value)
-              }
+              setWristLength(value)
             }}
           >
             <SelectTrigger className="w-[100px] font-prompt">
@@ -1029,16 +561,7 @@ export default function BraceletDesigner() {
           <Select
             value={String(beadSize)}
             onValueChange={(value) => {
-              const newSize = Number(value)
-              const newMaxCount = MAX_BEAD_COUNTS[wristLength]?.[newSize] || 30
-
-              // Check if current bead count exceeds new maximum
-              if (beads.length > newMaxCount) {
-                setPendingBeadSize(newSize)
-                setShowSizeWarning(true)
-              } else {
-                setBeadSize(newSize)
-              }
+              setBeadSize(Number(value))
             }}
           >
             <SelectTrigger className="w-[100px] font-prompt">
@@ -1056,9 +579,6 @@ export default function BraceletDesigner() {
         <div className="col-span-12 md:col-span-4 flex justify-center flex-col">
           <span className="text-[#006039] text-lg">ราคารวม</span>
           <span className="font-prompt text-2xl font-bold">฿{calculateTotalPrice()}</span>
-          <span className="text-sm text-gray-600 mt-1 font-prompt">
-            จำนวนหิน: {beads.length}/{getMaxBeadCount()} เม็ด
-          </span>
         </div>
       </div>
 
@@ -1159,34 +679,24 @@ export default function BraceletDesigner() {
                           // Hide stone if not available for selected size
                           if (!isAvailable) return null
 
-                          const isMaxReached = beads.length >= getMaxBeadCount()
 
                           return (
                             <div key={stoneInfo.title} className="relative group">
                               <button
-                                className={`w-11 h-11 transition-transform overflow-hidden ${
-                                  isMaxReached
-                                    ? 'opacity-50 cursor-not-allowed'
-                                    : 'cursor-pointer active:scale-95'
-                                }`}
+                                className="w-11 h-11 transition-transform overflow-hidden cursor-pointer active:scale-95"
                                 style={{
                                   backgroundImage: `url(${stoneInfo.stone_image})`,
                                   backgroundSize: 'contain',
                                   backgroundPosition: 'center',
                                   backgroundRepeat: 'no-repeat',
                                 }}
-                                title={
-                                  isMaxReached
-                                    ? `จำนวนหินเต็มแล้ว (${getMaxBeadCount()} เม็ด)`
-                                    : `${stoneInfo.title} - ฿${price}`
-                                }
-                                onClick={() => !isMaxReached && addBead(stoneInfo)}
+                                title={`${stoneInfo.title} - ฿${price}`}
+                                onClick={() => addBead(stoneInfo)}
                                 aria-label={`Add ${stoneInfo.title} - ฿${price}`}
-                                disabled={isMaxReached}
                               />
                               {/* Price tooltip */}
                               <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-1 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                                {isMaxReached ? 'เต็ม' : `฿${price}`}
+                                ฿{price}
                               </div>
                             </div>
                           )
@@ -1287,111 +797,6 @@ export default function BraceletDesigner() {
         </div>
       </div>
 
-      {/* Size Change Warning Dialog */}
-      <Dialog open={showSizeWarning} onOpenChange={setShowSizeWarning}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-xl">คำเตือน</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <p className="text-gray-700">
-              การเปลี่ยนขนาดหินจาก <span className="font-bold font-prompt">{beadSize} mm</span> เป็น{' '}
-              <span className="font-bold font-prompt">{pendingBeadSize} mm</span>{' '}
-              จะทำให้จำนวนหินสูงสุดเหลือเพียง{' '}
-              <span className="font-bold text-red-600 font-prompt">
-                {pendingBeadSize ? MAX_BEAD_COUNTS[wristLength]?.[pendingBeadSize] || 0 : 0} เม็ด
-              </span>
-            </p>
-            <p className="text-gray-700">
-              ขณะนี้คุณมีหินอยู่ <span className="font-bold font-prompt">{beads.length} เม็ด</span>
-            </p>
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-              <p className="text-sm text-yellow-800">
-                หากต้องการเปลี่ยนขนาด คุณต้องลบหินออกให้เหลือไม่เกิน{' '}
-                {pendingBeadSize ? MAX_BEAD_COUNTS[wristLength]?.[pendingBeadSize] || 0 : 0} เม็ด
-              </p>
-            </div>
-          </div>
-          <DialogFooter className="flex gap-2">
-            <Button
-              variant="ghost"
-              onClick={() => {
-                setShowSizeWarning(false)
-                setPendingBeadSize(null)
-              }}
-            >
-              ยกเลิก
-            </Button>
-            <Button
-              variant="primary"
-              onClick={() => {
-                // Clear all beads and change size
-                clearBeads()
-                if (pendingBeadSize) {
-                  setBeadSize(pendingBeadSize)
-                }
-                setShowSizeWarning(false)
-                setPendingBeadSize(null)
-              }}
-            >
-              ลบหินทั้งหมดและเปลี่ยนขนาด
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Wrist Length Change Warning Dialog */}
-      <Dialog open={showWristWarning} onOpenChange={setShowWristWarning}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-xl">คำเตือน</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <p className="text-gray-700">
-              การเปลี่ยนความยาวรอบข้อมือจาก <span className="font-bold font-prompt">{wristLength} cm</span> เป็น{' '}
-              <span className="font-bold font-prompt">{pendingWristLength} cm</span>{' '}
-              จะทำให้จำนวนหินสูงสุดเหลือเพียง{' '}
-              <span className="font-bold text-red-600">
-                {pendingWristLength ? MAX_BEAD_COUNTS[pendingWristLength]?.[beadSize] || 0 : 0} เม็ด
-              </span>
-            </p>
-            <p className="text-gray-700">
-              ขณะนี้คุณมีหินอยู่ <span className="font-bold font-prompt">{beads.length} เม็ด</span>
-            </p>
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-              <p className="text-sm text-yellow-800">
-                หากต้องการเปลี่ยนความยาวรอบข้อมือ คุณต้องลบหินออกให้เหลือไม่เกิน{' '}
-                {pendingWristLength ? MAX_BEAD_COUNTS[pendingWristLength]?.[beadSize] || 0 : 0} เม็ด
-              </p>
-            </div>
-          </div>
-          <DialogFooter className="flex gap-2">
-            <Button
-              variant="ghost"
-              onClick={() => {
-                setShowWristWarning(false)
-                setPendingWristLength(null)
-              }}
-            >
-              ยกเลิก
-            </Button>
-            <Button
-              variant="primary"
-              onClick={() => {
-                // Clear all beads and change wrist length
-                clearBeads()
-                if (pendingWristLength) {
-                  setWristLength(pendingWristLength)
-                }
-                setShowWristWarning(false)
-                setPendingWristLength(null)
-              }}
-            >
-              ลบหินทั้งหมดและเปลี่ยนความยาว
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       {/* Confirmation Dialog */}
       <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
