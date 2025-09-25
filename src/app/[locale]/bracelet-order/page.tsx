@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     description: 'ฟอร์มสั่งออกแบบกำไลหินตามเดือนเกิด และพลังหินที่เหมาะกับคุณ',
     images: [
       {
-        url: '/images/357c3a_d5bbbe07a2cb43579ad4d33c6279ff5a~mv2.jpg',
+        url: '/images/banner/personalized-banner.avif',
         width: 1200,
         height: 630,
         alt: 'Personalized Stone Bracelet Order Form',

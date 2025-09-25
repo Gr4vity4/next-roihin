@@ -16,8 +16,7 @@ export const content = {
       href: '/custom',
     },
     background: {
-      image:
-        'https://static.wixstatic.com/media/357c3a_d5bbbe07a2cb43579ad4d33c6279ff5a~mv2.jpg/v1/fill/w_1265,h_1328,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/357c3a_d5bbbe07a2cb43579ad4d33c6279ff5a~mv2.jpg',
+      image: '/images/background/357c3a_d5bbbe07a2cb43579ad4d33c6279ff5a~mv2.avif',
       alt: 'Stone bracelets background',
     },
   },
@@ -149,7 +148,7 @@ export const content = {
     features: [
       {
         id: 'unique-design',
-        image: '/images/357c3a_c78543e690504fdd80ac15754320656b~mv2.avif', // IMG_7665.jpeg equivalent
+        image: '/images/357c3a_c78543e690504fdd80ac15754320656b~mv2.avif',
         title: {
           english: 'Unique Design',
           thai: 'รูปแบบอันเป็นอัตลักษณ์เฉพาะ',
@@ -157,7 +156,7 @@ export const content = {
       },
       {
         id: 'natural-purifying',
-        image: '/images/357c3a_2013cc64ddf74b35b6a0d668ae5effb8~mv2.avif', // IMG_5343.JPG equivalent
+        image: '/images/357c3a_2013cc64ddf74b35b6a0d668ae5effb8~mv2.avif',
         title: {
           english: 'Natural Purifying',
           thai: 'บริสุทธิ์ด้วยพลังธรรมชาติ',
@@ -165,7 +164,7 @@ export const content = {
       },
       {
         id: 'premium-care',
-        image: '/images/357c3a_449b1b790747456cb742616cdedb4af0~mv2.avif', // LINE_ALBUM equivalent
+        image: '/images/357c3a_449b1b790747456cb742616cdedb4af0~mv2.avif',
         title: {
           english: 'Premium Care',
           thai: 'รักษาด้วยบรรจุภัณฑ์คุณภาพ',
@@ -173,7 +172,7 @@ export const content = {
       },
       {
         id: 'empowering-ritual',
-        image: '/images/357c3a_155e041dcebb4320b8cb23202c8441e8~mv2.avif', // 01011500-01.jpeg equivalent
+        image: '/images/357c3a_155e041dcebb4320b8cb23202c8441e8~mv2.avif',
         title: {
           english: 'Empowering Ritual',
           thai: 'ปลุกพลังด้วยพิธีกรรมขั้นสูง',
