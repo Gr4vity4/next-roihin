@@ -408,7 +408,9 @@ export default function BraceletDesigner() {
     const validImageUrl = getValidStoneImageUrl(stone)
     if (validImageUrl) {
       const img = document.createElement('img')
-      img.src = validImageUrl
+      // Use Next.js image optimization endpoint to bypass CORS
+      const encodedUrl = encodeURIComponent(validImageUrl)
+      img.src = `/_next/image?url=${encodedUrl}&w=${imageWidth * 2}&q=75`
       img.style.width = '100%'
       img.style.height = '100%'
       img.style.objectFit = 'contain'
@@ -520,12 +522,18 @@ export default function BraceletDesigner() {
     }
 
     const price = getStonePrice(stone, beadSize)
+    const originalImageUrl = getValidStoneImageUrl(stone)
+    // Use proxied URL for consistency
+    const imageUrl = originalImageUrl
+      ? `/_next/image?url=${encodeURIComponent(originalImageUrl)}&w=${imageWidth * 2}&q=75`
+      : ''
+
     const newBead: Bead = {
       id: beadId,
       el,
       r: imageWidth / 2,
       theta: 0, // Will be calculated by renderBeads
-      imageUrl: getValidStoneImageUrl(stone) || '',
+      imageUrl,
       imageWidth,
       imageHeight,
       shape,
@@ -792,27 +800,33 @@ export default function BraceletDesigner() {
                           return (
                             <div key={stoneInfo.title} className="relative group">
                               <button
-                                className="w-11 h-11 transition-transform overflow-hidden cursor-pointer active:scale-95 rounded-lg"
-                                style={validImageUrl ? {
-                                  backgroundImage: `url(${validImageUrl})`,
-                                  backgroundSize: 'contain',
-                                  backgroundPosition: 'center',
-                                  backgroundRepeat: 'no-repeat',
-                                } : {
-                                  backgroundColor: '#e5e7eb',
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                }}
+                                className="w-11 h-11 transition-transform overflow-hidden cursor-pointer active:scale-95 rounded-lg relative bg-gray-100"
                                 title={`${stoneInfo.title} - ฿${price}`}
                                 onClick={() => addBead(stoneInfo)}
                                 aria-label={`Add ${stoneInfo.title} - ฿${price}`}
                               >
-                                {!validImageUrl && (
-                                  <span className="text-xs text-gray-600">
-                                    {stoneInfo.title.substring(0, 2).toUpperCase()}
-                                  </span>
-                                )}
+                                {validImageUrl ? (
+                                  <Image
+                                    src={validImageUrl}
+                                    alt={stoneInfo.title}
+                                    width={44}
+                                    height={44}
+                                    className="w-full h-full object-contain"
+                                    onError={(e) => {
+                                      const target = e.currentTarget
+                                      target.style.display = 'none'
+                                      // Show fallback
+                                      const fallback = target.nextElementSibling as HTMLElement
+                                      if (fallback) fallback.style.display = 'flex'
+                                    }}
+                                  />
+                                ) : null}
+                                <span
+                                  className="text-xs text-gray-600 absolute inset-0 flex items-center justify-center"
+                                  style={{ display: validImageUrl ? 'none' : 'flex' }}
+                                >
+                                  {stoneInfo.title.substring(0, 2).toUpperCase()}
+                                </span>
                               </button>
                               {/* Price tooltip */}
                               <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-1 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
