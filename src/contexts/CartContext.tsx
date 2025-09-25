@@ -1,6 +1,7 @@
 'use client'
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
+import { createContext, useContext, ReactNode } from 'react'
+import { useLocalStorage } from '@/hooks/useLocalStorage'
 
 interface CartItem {
   id: string
@@ -26,28 +27,7 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined)
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>([])
-  const [isHydrated, setIsHydrated] = useState(false)
-
-  // Load cart from localStorage on mount
-  useEffect(() => {
-    const savedCart = localStorage.getItem('cart')
-    if (savedCart) {
-      try {
-        setItems(JSON.parse(savedCart))
-      } catch (error) {
-        console.error('Failed to load cart from localStorage:', error)
-      }
-    }
-    setIsHydrated(true)
-  }, [])
-
-  // Save cart to localStorage whenever it changes (only after hydration)
-  useEffect(() => {
-    if (isHydrated) {
-      localStorage.setItem('cart', JSON.stringify(items))
-    }
-  }, [items, isHydrated])
+  const [items, setItems] = useLocalStorage<CartItem[]>('cart', [])
 
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0)
   const totalAmount = items.reduce((sum, item) => sum + (item.price * item.quantity), 0)

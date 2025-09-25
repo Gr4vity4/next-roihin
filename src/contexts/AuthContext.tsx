@@ -1,6 +1,7 @@
 'use client'
 
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState } from 'react'
+import { useLocalStorage } from '@/hooks/useLocalStorage'
 
 interface User {
   name: string
@@ -29,19 +30,10 @@ interface RegisterData {
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useLocalStorage<User | null>('user', null)
+  const [isLoggedIn, setIsLoggedIn] = useState(!!user)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem('user')
-    
-    if (storedUser) {
-      setUser(JSON.parse(storedUser))
-      setIsLoggedIn(true)
-    }
-  }, [])
 
   const login = async (email: string, password: string) => {
     setLoading(true)
@@ -69,8 +61,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       setUser(userData)
       setIsLoggedIn(true)
-      
-      localStorage.setItem('user', JSON.stringify(userData))
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed')
       throw err
@@ -118,8 +108,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoggedIn(false)
     setUser(null)
     setError(null)
-    localStorage.removeItem('user')
-    
+
     await fetch('/api/auth/logout', {
       method: 'POST',
     })
