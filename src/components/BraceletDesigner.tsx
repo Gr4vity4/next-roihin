@@ -594,9 +594,9 @@ export default function BraceletDesigner() {
         <div className="col-span-12 md:col-span-4 flex justify-center flex-col">
           <span className="text-[#006039] text-lg">ราคารวม</span>
           <span className="font-prompt text-2xl font-bold">฿{calculateTotalPrice()}</span>
-          {basePrice > 0 && (
+          {/* {basePrice > 0 && (
             <span className="text-xs text-gray-600">รวมค่าดีไซน์ ฿{basePrice}</span>
-          )}
+          )} */}
         </div>
       </div>
 
