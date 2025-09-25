@@ -1,6 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react'
+import { useAuth } from '@/contexts/AuthContext'
 
 interface WishlistItem {
   id: string
@@ -46,6 +47,7 @@ interface WishlistContextType {
 const WishlistContext = createContext<WishlistContextType | undefined>(undefined)
 
 export function WishlistProvider({ children }: { children: ReactNode }) {
+  const { isLoggedIn } = useAuth()
   const [items, setItems] = useState<WishlistItem[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -79,8 +81,14 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
   }, [])
 
   useEffect(() => {
-    refreshWishlist()
-  }, [refreshWishlist])
+    if (isLoggedIn) {
+      refreshWishlist()
+    } else {
+      // Clear items when logged out
+      setItems([])
+      setLoading(false)
+    }
+  }, [isLoggedIn, refreshWishlist])
 
   const addItem = async (productId: number, color?: string) => {
     try {
