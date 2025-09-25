@@ -455,15 +455,10 @@ export default function BraceletDesigner() {
 
     // Initial position (will be adjusted by renderBeads)
     el.style.position = 'absolute'
-    el.style.transition = 'all 0.35s ease'
-    el.style.transform = 'scale(0.6)'
 
     if (beadsLayerRef.current) {
       beadsLayerRef.current.appendChild(el)
-      requestAnimationFrame(() => {
-        el.classList.add('show')
-        el.style.transform = 'scale(1)'
-      })
+      el.classList.add('show')
     }
 
     const price = getStonePrice(stone, beadSize)
@@ -608,9 +603,7 @@ export default function BraceletDesigner() {
       <style jsx global>{`
         .bead {
           position: absolute;
-          transition: top 0.35s ease, left 0.35s ease,
-            transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
-          transform: scale(0.6);
+          transition: top 0.35s ease, left 0.35s ease;
           pointer-events: auto !important;
           transform-origin: center;
         }
