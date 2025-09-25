@@ -19,9 +19,10 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useLocale } from 'next-intl'
 import type { Bank, Stone } from '@/lib/types/api-types'
+import { cn } from '@/lib/utils'
 import { ArrowLeft, Check, GripVertical, RefreshCw, Upload } from 'lucide-react'
+import { useLocale } from 'next-intl'
 import Image from 'next/image'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
@@ -211,7 +212,6 @@ export default function BraceletDesigner() {
     return () => window.removeEventListener('resize', computeGeometry)
   }, [computeGeometry])
 
-
   // Render all beads using angle-based placement
   const renderBeads = () => {
     if (beads.length === 0) return
@@ -261,7 +261,6 @@ export default function BraceletDesigner() {
     // Re-render beads with new radius
     renderBeads()
   }, [wristLength, beads])
-
 
   const nudgeFull = () => {
     if (!stageRef.current) return
@@ -337,18 +336,20 @@ export default function BraceletDesigner() {
 
     // Check if adding this bead would exceed the circle
     const currentAngleSpan = calculateTotalAngleSpan(beads)
-    const newItemAngleSpan = calculateTotalAngleSpan([{
-      id: '',
-      el: null,
-      r: imageWidth / 2,
-      theta: 0,
-      imageWidth,
-      imageHeight,
-      shape: 'circle',
-      stoneSetting: stone,
-      price: 0,
-      size: beadSize
-    }])
+    const newItemAngleSpan = calculateTotalAngleSpan([
+      {
+        id: '',
+        el: null,
+        r: imageWidth / 2,
+        theta: 0,
+        imageWidth,
+        imageHeight,
+        shape: 'circle',
+        stoneSetting: stone,
+        price: 0,
+        size: beadSize,
+      },
+    ])
 
     if (currentAngleSpan + newItemAngleSpan > 2 * Math.PI) {
       nudgeFull() // Bracelet is full
@@ -679,7 +680,6 @@ export default function BraceletDesigner() {
                           // Hide stone if not available for selected size
                           if (!isAvailable) return null
 
-
                           return (
                             <div key={stoneInfo.title} className="relative group">
                               <button
@@ -713,9 +713,14 @@ export default function BraceletDesigner() {
               {/* preview single bead image */}
               <div className="col-span-full md:col-span-3 flex justify-center">
                 {lastSelectedBead ? (
-                  <div className="relative w-24 h-24">
+                  <div
+                    className={cn(
+                      'relative w-24 h-24',
+                      lastSelectedBead.preview_image ? 'bg-transparent' : 'bg-black p-4',
+                    )}
+                  >
                     <Image
-                      src={lastSelectedBead.stone_image}
+                      src={lastSelectedBead.preview_image || '/images/logo.avif'}
                       alt={lastSelectedBead.title}
                       width={96}
                       height={96}
@@ -796,7 +801,6 @@ export default function BraceletDesigner() {
           </div>
         </div>
       </div>
-
 
       {/* Confirmation Dialog */}
       <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>

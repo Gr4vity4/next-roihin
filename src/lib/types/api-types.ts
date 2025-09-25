@@ -88,6 +88,7 @@ export const StoneSchema = z.object({
     story: StoneStorySchema,
     category: z.string(),
     size: StoneSizeSchema,
+    preview_image: z.string(),
   }),
 })
 
