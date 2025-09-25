@@ -731,7 +731,7 @@ export default function BraceletDesigner() {
                   <div
                     className={cn(
                       'relative w-24 h-24',
-                      lastSelectedBead.preview_image ? 'bg-transparent' : 'bg-black p-4',
+                      lastSelectedBead.preview_image ? 'bg-transparent' : 'bg-gray-200 p-4',
                     )}
                   >
                     <Image
