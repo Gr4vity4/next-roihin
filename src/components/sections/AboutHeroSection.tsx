@@ -16,7 +16,7 @@ export default function AboutHeroSection({ backgroundImage, title }: AboutHeroSe
       backgroundAlt="About ROIHIN Hero Background"
       overlayOpacity={0}
     >
-      <div className="flex h-full items-center lg:items-start justify-center px-4">
+      <div className="flex w-full h-full items-center lg:items-start justify-center px-4">
         <div className="text-center max-w-4xl">
           <h1 className="text-white">
             <span className="block text-[#D4AF37] text-3xl md:text-4xl lg:text-5xl font-light mb-2">

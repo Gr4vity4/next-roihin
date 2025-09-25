@@ -1,5 +1,5 @@
-import BaseHeroSection from './BaseHeroSection'
 import { Typography } from '../ui'
+import BaseHeroSection from './BaseHeroSection'
 
 interface PersonalizedHeroSectionProps {
   backgroundImage: string
@@ -18,7 +18,7 @@ export default function PersonalizedHeroSection({
       backgroundAlt="Personalized Stone Bracelet Hero Background"
       overlayOpacity={0.1}
     >
-      <div className="container max-w-5xl mx-auto">
+      <div className="container flex justify-center items-center md:items-start">
         <div className="px-6 sm:px-8 md:px-12 lg:px-4 max-w-4xl">
           {/* Title */}
           <Typography
