@@ -9,8 +9,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
@@ -19,8 +17,14 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import type { Bank, Stone } from '@/lib/types/api-types'
-import { ArrowLeft, Check, GripVertical, RefreshCw, Upload } from 'lucide-react'
+import { useCart } from '@/contexts/CartContext'
+import type { Stone } from '@/lib/types/api-types'
+import {
+  generateBraceletThumbnail,
+  generateBraceletTitle,
+  generateBraceletId,
+} from '@/lib/utils/braceletImageGenerator'
+import { ArrowLeft, Check, GripVertical, RefreshCw, ShoppingCartIcon } from 'lucide-react'
 import { useLocale } from 'next-intl'
 import Image from 'next/image'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -59,39 +63,23 @@ interface Bead {
   size: number // Size in mm when the bead was added
 }
 
-interface CustomerInfo {
-  name: string
-  phone: string
-  email: string
-  address: string
-}
-
 export default function BraceletDesigner() {
   const locale = useLocale() as 'en' | 'th'
+  const { addItem } = useCart()
   const [beadSize, setBeadSize] = useState(6)
   const [wristLength, setWristLength] = useState('14')
   const [beads, setBeads] = useState<Bead[]>([])
   const [lastSelectedBead, setLastSelectedBead] = useState<Stone['acf'] | null>(null)
   const [stoneSettings, setStoneSettings] = useState<Stone[]>([])
   const [loading, setLoading] = useState(true)
-  const [isMobile, setIsMobile] = useState(false)
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
-  const [banks, setBanks] = useState<Bank[]>([])
   const [basePrice, setBasePrice] = useState(0)
-  const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
-    name: '',
-    phone: '',
-    email: '',
-    address: '',
-  })
-  const [paymentSlip, setPaymentSlip] = useState<File | null>(null)
-  const [paymentSlipPreview, setPaymentSlipPreview] = useState<string>('')
   const [draggedBead, setDraggedBead] = useState<string | null>(null)
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
+  const [isAddingToCart, setIsAddingToCart] = useState(false)
   const stageRef = useRef<HTMLDivElement>(null)
   const ringRef = useRef<HTMLDivElement>(null)
   const beadsLayerRef = useRef<HTMLDivElement>(null)
-  const fileInputRef = useRef<HTMLInputElement>(null)
   const draggedBeadRef = useRef<string | null>(null)
 
   // Geometry state - adjust radius based on wrist length
@@ -101,19 +89,6 @@ export default function BraceletDesigner() {
     R: 190,
   })
 
-  // Detect mobile device
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768)
-    }
-
-    // Check on mount
-    checkMobile()
-
-    // Check on resize
-    window.addEventListener('resize', checkMobile)
-    return () => window.removeEventListener('resize', checkMobile)
-  }, [])
 
   // Fetch stone settings from API
   useEffect(() => {
@@ -151,23 +126,6 @@ export default function BraceletDesigner() {
     fetchBasePrice()
   }, [locale])
 
-  // Fetch banks when dialog opens
-  useEffect(() => {
-    if (showConfirmDialog && banks.length === 0) {
-      const fetchBanks = async () => {
-        try {
-          const response = await fetch(`/api/banks?lang=${locale}`)
-          if (response.ok) {
-            const data = await response.json()
-            setBanks(data)
-          }
-        } catch (error) {
-          console.error('Error fetching banks:', error)
-        }
-      }
-      fetchBanks()
-    }
-  }, [showConfirmDialog, banks.length, locale])
 
   // Get stones by category
   const getStonesByCategory = (category: string) => {
@@ -239,7 +197,7 @@ export default function BraceletDesigner() {
 
     let currentAngle = START // Start at bottom (6 o'clock)
 
-    beads.forEach((bead, index) => {
+    beads.forEach((bead) => {
       // Calculate angle span based on item's fixed visual width
       const itemVisualWidth = bead.imageWidth
       const chordToRadiusRatio = Math.min(itemVisualWidth / (2 * radius), 1)
@@ -278,6 +236,7 @@ export default function BraceletDesigner() {
 
     // Re-render beads with new radius
     renderBeads()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wristLength, beads])
 
   const nudgeFull = () => {
@@ -507,33 +466,58 @@ export default function BraceletDesigner() {
     // No need to call renderBeads when array is empty
   }
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      setPaymentSlip(file)
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setPaymentSlipPreview(reader.result as string)
-      }
-      reader.readAsDataURL(file)
+  const handleConfirmOrder = async () => {
+    setIsAddingToCart(true)
+
+    try {
+      // Generate thumbnail image of the bracelet design
+      const thumbnailImage = stageRef.current
+        ? await generateBraceletThumbnail(stageRef.current)
+        : '/images/bracelet-placeholder.png'
+
+      // Create bracelet design data
+      const braceletBeads = beads.map(bead => ({
+        id: bead.id,
+        stoneName: bead.stoneSetting?.title || 'Unknown',
+        stoneImage: bead.stoneSetting?.stone_image,
+        size: bead.size,
+        price: bead.price,
+      }))
+
+      // Generate unique ID for this bracelet design
+      const designId = generateBraceletId()
+
+      // Add to cart
+      addItem({
+        id: designId,
+        slug: 'custom-bracelet',
+        title: generateBraceletTitle(beads.length, wristLength, locale),
+        price: calculateTotalPrice(),
+        image: thumbnailImage,
+        category: locale === 'th' ? 'สร้อยข้อมือออกแบบเอง' : 'Custom Bracelet',
+        isCustomBracelet: true,
+        braceletDesign: {
+          beads: braceletBeads,
+          wristLength,
+          beadSize,
+          totalPrice: calculateTotalPrice(),
+          designId,
+        },
+      })
+
+      // Close dialog and reset
+      setShowConfirmDialog(false)
+      clearBeads()
+
+      // Show success message (optional)
+      alert(locale === 'th' ? 'เพิ่มลงตะกร้าแล้ว!' : 'Added to cart!')
+
+    } catch (error) {
+      console.error('Error adding bracelet to cart:', error)
+      alert(locale === 'th' ? 'เกิดข้อผิดพลาด กรุณาลองใหม่' : 'An error occurred. Please try again.')
+    } finally {
+      setIsAddingToCart(false)
     }
-  }
-
-  const handleCustomerInfoChange = (field: keyof CustomerInfo, value: string) => {
-    setCustomerInfo((prev) => ({ ...prev, [field]: value }))
-  }
-
-  const handleConfirmOrder = () => {
-    // Here you would handle the order submission
-    console.log('Order confirmed:', {
-      customerInfo,
-      beads,
-      wristLength,
-      totalPrice: calculateTotalPrice(),
-      paymentSlip,
-    })
-    // You can add API call to submit the order here
-    setShowConfirmDialog(false)
   }
 
   const openConfirmDialog = () => {
@@ -819,8 +803,8 @@ export default function BraceletDesigner() {
       <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>ยืนยันการสั่งซื้อ</DialogTitle>
-            <DialogDescription>กรุณาตรวจสอบรายละเอียดและกรอกข้อมูลการติดต่อ</DialogDescription>
+            <DialogTitle>{locale === 'th' ? 'ยืนยันการเพิ่มลงตะกร้า' : 'Confirm Add to Cart'}</DialogTitle>
+            <DialogDescription>{locale === 'th' ? 'กรุณาตรวจสอบรายละเอียดสร้อยข้อมือของคุณ' : 'Please review your bracelet design details'}</DialogDescription>
           </DialogHeader>
 
           <div className="space-y-6">
@@ -936,162 +920,24 @@ export default function BraceletDesigner() {
                 </div>
               </div>
             </div>
-
-            {/* Customer Information Form */}
-            <div className="space-y-4">
-              <h3 className="font-semibold text-lg">ข้อมูลการติดต่อ</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name">ชื่อ-นามสกุล *</Label>
-                  <Input
-                    id="name"
-                    value={customerInfo.name}
-                    onChange={(e) => handleCustomerInfoChange('name', e.target.value)}
-                    placeholder="กรอกชื่อ-นามสกุล"
-                    required
-                    autoFocus={false}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="phone">เบอร์โทรศัพท์ *</Label>
-                  <Input
-                    id="phone"
-                    value={customerInfo.phone}
-                    onChange={(e) => handleCustomerInfoChange('phone', e.target.value)}
-                    placeholder="กรอกเบอร์โทรศัพท์"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">อีเมล</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={customerInfo.email}
-                    onChange={(e) => handleCustomerInfoChange('email', e.target.value)}
-                    placeholder="กรอกอีเมล"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="address">ที่อยู่จัดส่ง *</Label>
-                  <Input
-                    id="address"
-                    value={customerInfo.address}
-                    onChange={(e) => handleCustomerInfoChange('address', e.target.value)}
-                    placeholder="กรอกที่อยู่จัดส่ง"
-                    required
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Bank Details */}
-            <div className="space-y-4">
-              <h3 className="font-semibold text-lg">ข้อมูลการชำระเงิน</h3>
-              {banks.length > 0 ? (
-                <div className="space-y-3">
-                  {banks.map((bank, index) => (
-                    <div key={index} className="border rounded-lg p-4 bg-gray-50">
-                      <div className="flex items-start gap-4">
-                        {bank.acf.bank_image && (
-                          <div className="w-16 h-16 flex-shrink-0">
-                            <Image
-                              src={bank.acf.bank_image}
-                              alt={bank.acf.bank_name}
-                              width={64}
-                              height={64}
-                              className="w-full h-full object-contain"
-                            />
-                          </div>
-                        )}
-                        <div className="flex-1 space-y-1">
-                          <div className="font-medium">{bank.acf.bank_name}</div>
-                          <div className="text-sm text-gray-600">
-                            สาขา: {bank.acf.bank_branch_name}
-                          </div>
-                          <div className="text-sm text-gray-600">
-                            ชื่อบัญชี: {bank.acf.bank_account_name}
-                          </div>
-                          <div className="text-sm font-medium">
-                            เลขบัญชี: {bank.acf.bank_account_number}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center text-gray-500">กำลังโหลดข้อมูลธนาคาร...</div>
-              )}
-            </div>
-
-            {/* Payment Slip Upload */}
-            <div className="space-y-4">
-              <h3 className="font-semibold text-lg">แนบสลิปการโอนเงิน</h3>
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
-                {paymentSlipPreview ? (
-                  <div className="space-y-4">
-                    <div className="relative w-full max-w-xs mx-auto">
-                      <Image
-                        src={paymentSlipPreview}
-                        alt="Payment slip"
-                        width={300}
-                        height={400}
-                        className="w-full h-auto rounded-lg"
-                      />
-                    </div>
-                    <div className="text-center">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {
-                          setPaymentSlip(null)
-                          setPaymentSlipPreview('')
-                          if (fileInputRef.current) {
-                            fileInputRef.current.value = ''
-                          }
-                        }}
-                      >
-                        เปลี่ยนรูป
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="text-center">
-                    <Upload className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-                    <p className="text-gray-600 mb-2">คลิกเพื่อเลือกไฟล์หรือลากไฟล์มาวางที่นี่</p>
-                    <p className="text-xs text-gray-500">
-                      รองรับไฟล์ JPG, PNG, PDF (ขนาดไม่เกิน 5MB)
-                    </p>
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/*,.pdf"
-                      onChange={handleFileChange}
-                      className="hidden"
-                      id="payment-slip"
-                    />
-                    <Label
-                      htmlFor="payment-slip"
-                      className="inline-block mt-4 px-4 py-2 bg-gray-900 text-white rounded-md cursor-pointer hover:bg-gray-800"
-                    >
-                      เลือกไฟล์
-                    </Label>
-                  </div>
-                )}
-              </div>
-            </div>
           </div>
 
           <DialogFooter className="gap-2">
             <Button variant="ghost" onClick={() => setShowConfirmDialog(false)}>
-              ยกเลิก
+              {locale === 'th' ? 'ยกเลิก' : 'Cancel'}
             </Button>
             <Button
               onClick={handleConfirmOrder}
-              disabled={!customerInfo.name || !customerInfo.phone || !customerInfo.address}
+              disabled={isAddingToCart || beads.length === 0}
             >
-              ยืนยันการสั่งซื้อ
+              {isAddingToCart ? (
+                <>{locale === 'th' ? 'กำลังเพิ่ม...' : 'Adding...'}</>
+              ) : (
+                <>
+                  <ShoppingCartIcon className="w-4 h-4 mr-2" />
+                  {locale === 'th' ? 'เพิ่มลงตะกร้า' : 'Add to Cart'}
+                </>
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>

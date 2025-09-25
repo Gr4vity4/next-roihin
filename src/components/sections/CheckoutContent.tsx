@@ -104,6 +104,13 @@ export default function CheckoutContent() {
                           {item.category && (
                             <p className="text-gray-500 text-xs mt-1">{t('product.category')}: {item.category}</p>
                           )}
+                          {item.isCustomBracelet && item.braceletDesign && (
+                            <div className="mt-2 text-sm text-gray-600">
+                              <p>• {item.braceletDesign.beads.length} stones</p>
+                              <p>• Wrist: {item.braceletDesign.wristLength} cm</p>
+                              <p>• Bead size: {item.braceletDesign.beadSize} mm</p>
+                            </div>
+                          )}
                         </div>
                         <button
                           onClick={() => removeItem(item.id)}

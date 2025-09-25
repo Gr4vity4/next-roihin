@@ -3,6 +3,22 @@
 import { createContext, useContext, ReactNode } from 'react'
 import { useLocalStorage } from '@/hooks/useLocalStorage'
 
+interface BraceletBead {
+  id: string
+  stoneName: string
+  stoneImage?: string
+  size: number
+  price: number
+}
+
+interface BraceletDesign {
+  beads: BraceletBead[]
+  wristLength: string
+  beadSize: number
+  totalPrice: number
+  designId: string
+}
+
 interface CartItem {
   id: string
   slug: string
@@ -12,6 +28,8 @@ interface CartItem {
   image: string
   color?: string
   category?: string
+  isCustomBracelet?: boolean
+  braceletDesign?: BraceletDesign
 }
 
 interface CartContextType {
