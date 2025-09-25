@@ -78,6 +78,7 @@ export default function BraceletDesigner() {
   const [isMobile, setIsMobile] = useState(false)
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
   const [banks, setBanks] = useState<Bank[]>([])
+  const [basePrice, setBasePrice] = useState(0)
   const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
     name: '',
     phone: '',
@@ -131,6 +132,24 @@ export default function BraceletDesigner() {
       }
     }
     fetchStoneSettings()
+  }, [locale])
+
+  // Fetch base price from API
+  useEffect(() => {
+    const fetchBasePrice = async () => {
+      try {
+        const response = await fetch(`/api/bracelet-base-price?lang=${locale}`)
+        if (response.ok) {
+          const data = await response.json()
+          const price = parseInt(data.bracelet_design_base_price || '0', 10)
+          setBasePrice(price)
+        }
+      } catch (error) {
+        console.error('Error fetching base price:', error)
+        setBasePrice(0) // Fallback to 0 if fetch fails
+      }
+    }
+    fetchBasePrice()
   }, [locale])
 
   // Fetch banks when dialog opens
@@ -191,7 +210,7 @@ export default function BraceletDesigner() {
 
   // Calculate total price
   const calculateTotalPrice = () => {
-    return beads.reduce((total, bead) => total + bead.price, 0)
+    return basePrice + beads.reduce((total, bead) => total + bead.price, 0)
   }
 
   const mmToPx = (mm: number) => mm * 4 // Updated to match gallery size from HTML
@@ -580,6 +599,9 @@ export default function BraceletDesigner() {
         <div className="col-span-12 md:col-span-4 flex justify-center flex-col">
           <span className="text-[#006039] text-lg">ราคารวม</span>
           <span className="font-prompt text-2xl font-bold">฿{calculateTotalPrice()}</span>
+          {basePrice > 0 && (
+            <span className="text-xs text-gray-600">รวมค่าดีไซน์ ฿{basePrice}</span>
+          )}
         </div>
       </div>
 
@@ -903,8 +925,20 @@ export default function BraceletDesigner() {
                     })()}
                   </div>
                 </div>
+                {basePrice > 0 && (
+                  <div className="flex justify-between pt-2 text-sm">
+                    <span>ค่าดีไซน์สร้อยข้อมือ:</span>
+                    <span className="font-prompt">฿{basePrice}</span>
+                  </div>
+                )}
+                <div className="flex justify-between">
+                  <span>ราคาหิน:</span>
+                  <span className="font-prompt">
+                    ฿{beads.reduce((total, bead) => total + bead.price, 0)}
+                  </span>
+                </div>
                 <div className="flex justify-between border-t pt-2">
-                  <span className="font-semibold">ราคารวม:</span>
+                  <span className="font-semibold">ราคารวมทั้งหมด:</span>
                   <span className="font-prompt font-bold text-lg text-green-600">
                     ฿{calculateTotalPrice()}
                   </span>
