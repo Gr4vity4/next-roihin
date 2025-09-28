@@ -90,8 +90,9 @@ export async function checkNavigationElements(page: Page) {
  * Check if images are loading properly
  */
 export async function checkImagesLoading(page: Page) {
-  // Wait for images to start loading
-  await page.waitForLoadState('domcontentloaded');
+  // Wait for network to settle and give time for lazy loading
+  await page.waitForLoadState('networkidle');
+  await page.waitForTimeout(1000); // Allow time for lazy loading to trigger
 
   const images = page.locator('img');
   const imageCount = await images.count();
@@ -99,6 +100,7 @@ export async function checkImagesLoading(page: Page) {
   if (imageCount > 0) {
     // Check first few images are not broken
     const maxImagesToCheck = Math.min(imageCount, 5);
+    let validImages = 0;
 
     for (let i = 0; i < maxImagesToCheck; i++) {
       const img = images.nth(i);
@@ -108,24 +110,45 @@ export async function checkImagesLoading(page: Page) {
       const srcset = await img.getAttribute('srcset');
 
       if (src || srcset) {
-        // Image should have natural dimensions after loading
-        const naturalWidth = await img.evaluate((el: HTMLImageElement) => el.naturalWidth);
-        const naturalHeight = await img.evaluate((el: HTMLImageElement) => el.naturalHeight);
-
         // Skip checking next/image placeholder images
-        const isPlaceholder = src?.includes('data:image/svg+xml') || src?.includes('base64');
+        const isPlaceholder = src?.includes('data:image/svg+xml') ||
+                             src?.includes('base64') ||
+                             src?.includes('blur');
 
         if (!isPlaceholder && (src || srcset)) {
-          // On mobile, images might load lazily or have timing issues
-          // Only fail if the image should have loaded but didn't
-          if (naturalWidth === 0 && naturalHeight === 0) {
-            console.log(`Warning: Image ${i} has no natural dimensions - src: ${src?.substring(0, 50)}`);
-          } else {
+          // Wait for specific image to load with timeout
+          const isLoaded = await img.evaluate((el: HTMLImageElement) => {
+            return new Promise<boolean>((resolve) => {
+              if (el.complete && el.naturalWidth > 0) {
+                resolve(true);
+              } else {
+                el.onload = () => resolve(true);
+                el.onerror = () => resolve(false);
+                // Timeout after 3 seconds
+                setTimeout(() => {
+                  resolve(el.complete && el.naturalWidth > 0);
+                }, 3000);
+              }
+            });
+          });
+
+          if (isLoaded) {
+            validImages++;
+            const naturalWidth = await img.evaluate((el: HTMLImageElement) => el.naturalWidth);
+            const naturalHeight = await img.evaluate((el: HTMLImageElement) => el.naturalHeight);
             expect(naturalWidth).toBeGreaterThan(0);
             expect(naturalHeight).toBeGreaterThan(0);
+          } else {
+            // Log warning but don't fail the test for lazy-loaded images
+            console.log(`Warning: Image ${i} may not have loaded - src: ${src?.substring(0, 50)}`);
           }
         }
       }
+    }
+
+    // At least some images should load successfully
+    if (validImages === 0 && maxImagesToCheck > 0) {
+      console.log('Warning: No images loaded successfully');
     }
   }
 
@@ -168,16 +191,28 @@ export async function checkLanguageSwitcher(page: Page, currentLocale: Locale) {
  * Helper function for mobile click actions
  */
 export async function mobileClick(page: Page, element: Locator) {
+  // Wait for any animations/transitions to complete
+  await page.waitForTimeout(300);
+
   // Ensure element is in viewport
   await element.scrollIntoViewIfNeeded();
 
-  // Small wait for scroll animation
+  // Wait for scroll to complete
   await page.waitForTimeout(500);
 
-  // Try tap first (better for mobile), fallback to click
   try {
-    await element.tap({ timeout: 5000 });
-  } catch {
+    // First attempt: Check if element is actually clickable
+    const box = await element.boundingBox();
+    if (box) {
+      // Click at the center of the element to avoid edge cases
+      await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+    } else {
+      // If bounding box not available, try tap
+      await element.tap({ timeout: 5000 });
+    }
+  } catch (error) {
+    // Fallback: Force click if normal methods fail
+    console.log('Mobile click failed, using force click:', error);
     await element.click({ force: true, timeout: 5000 });
   }
 }

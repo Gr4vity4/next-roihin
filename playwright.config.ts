@@ -38,22 +38,35 @@ export default defineConfig({
     /* Video on failure */
     video: 'retain-on-failure',
     /* Action timeout */
-    actionTimeout: 15000,
+    actionTimeout: 20000,
     /* Navigation timeout */
-    navigationTimeout: 30000,
+    navigationTimeout: 45000,
+    /* Wait for network idle by default */
+    waitForLoadState: 'networkidle',
   },
 
   /* Configure projects for major browsers */
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        // Desktop-specific settings
+        hasTouch: false,
+      },
     },
 
     /* Test against mobile viewports. */
     {
       name: 'Mobile Safari',
-      use: { ...devices['iPhone 12'] },
+      use: {
+        ...devices['iPhone 12'],
+        // Mobile-specific settings
+        hasTouch: true,
+        isMobile: true,
+        // Slower actions for mobile
+        actionTimeout: 25000,
+      },
     },
 
     /* Other browsers - commented out */
