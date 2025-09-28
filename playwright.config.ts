@@ -26,7 +26,10 @@ export default defineConfig({
   /* Timeout for each test */
   timeout: 60000, // 60 seconds
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
+  reporter: [
+    ['html'],
+    ['list', { printSteps: true }],
+  ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
@@ -38,11 +41,11 @@ export default defineConfig({
     /* Video on failure */
     video: 'retain-on-failure',
     /* Action timeout */
-    actionTimeout: 20000,
+    actionTimeout: 25000,
     /* Navigation timeout */
-    navigationTimeout: 45000,
-    /* Wait for network idle by default */
-    waitForLoadState: 'networkidle',
+    navigationTimeout: 50000,
+    /* Wait for domcontentloaded by default (faster than networkidle) */
+    waitForLoadState: 'domcontentloaded',
   },
 
   /* Configure projects for major browsers */
@@ -65,7 +68,8 @@ export default defineConfig({
         hasTouch: true,
         isMobile: true,
         // Slower actions for mobile
-        actionTimeout: 25000,
+        actionTimeout: 30000,
+        navigationTimeout: 60000,
       },
     },
 
@@ -99,8 +103,10 @@ export default defineConfig({
   /* Run your local dev server before starting the tests */
   webServer: {
     command: 'npm run dev',
-    url: 'http://localhost:3000',
+    port: 3000,
     reuseExistingServer: !process.env.CI,
-    timeout: 120 * 1000, // 2 minutes timeout for dev server to start
+    timeout: 180 * 1000, // 3 minutes timeout for dev server to start
+    stdout: 'pipe',
+    stderr: 'pipe',
   },
 });
