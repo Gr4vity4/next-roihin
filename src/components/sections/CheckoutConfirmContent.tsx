@@ -8,14 +8,10 @@ import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
 import { useRouter } from '@/i18n/navigation'
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
-import { getBanks } from '@/lib/api/banks'
-import type { BankData } from '@/lib/types/bank'
-import { createOrder, uploadSlipBase64, getBankAccounts } from '@/lib/api/orders.client'
-import type { OrderCreateRequest, BankAccount } from '@/lib/types/order'
 import { getDefaultAddress } from '@/lib/api/addresses.client'
 import { useAuth } from '@/contexts/AuthContext'
 import { useLocale, useTranslations } from 'next-intl'
-import OrderSuccessModal from '@/components/OrderSuccessModal'
+import { getStripe } from '@/lib/stripe-client'
 
 interface ShippingAddress {
   fullName: string
@@ -31,25 +27,12 @@ export default function CheckoutConfirmContent() {
   const router = useRouter()
   const t = useTranslations('checkoutConfirm')
   const tCheckout = useTranslations('checkout')
-  const { items, itemCount, totalAmount, clearCart } = useCart()
+  const { items, itemCount, totalAmount } = useCart()
   const { isLoggedIn, user } = useAuth()
   const locale = useLocale() as 'en' | 'th'
   const [isProcessing, setIsProcessing] = useState(false)
-  const [paymentSlip, setPaymentSlip] = useState<File | null>(null)
-  const [slipPreview, setSlipPreview] = useState<string>('')
-  const [banks, setBanks] = useState<BankData[]>([])
-  const [selectedBank, setSelectedBank] = useState<string>('')
-  const [, setBankAccounts] = useState<BankAccount[]>([])
   const [orderError, setOrderError] = useState<string>('')
   const [addressLoading, setAddressLoading] = useState(false)
-  const [showSuccessModal, setShowSuccessModal] = useState(false)
-  const [orderSuccess, setOrderSuccess] = useState(false)
-  const [orderDetails, setOrderDetails] = useState<{
-    orderId: string
-    orderKey: string
-    orderNumber?: string
-    total?: number
-  } | null>(null)
   const [shippingAddress, setShippingAddress] = useState<ShippingAddress>({
     fullName: '',
     email: '',
@@ -61,11 +44,11 @@ export default function CheckoutConfirmContent() {
   })
 
   useEffect(() => {
-    // Only redirect if cart is empty AND we don't have a successful order
-    if (itemCount === 0 && !orderSuccess) {
+    // Redirect if cart is empty
+    if (itemCount === 0) {
       router.push('/checkout')
     }
-  }, [itemCount, router, orderSuccess])
+  }, [itemCount, router])
 
   useEffect(() => {
     const fetchDefaultAddress = async () => {
@@ -96,27 +79,6 @@ export default function CheckoutConfirmContent() {
     fetchDefaultAddress()
   }, [isLoggedIn, user])
 
-  useEffect(() => {
-    const fetchBanks = async () => {
-      // Fetch banks from existing API for display
-      const banksData = await getBanks(locale)
-      setBanks(banksData)
-      if (banksData.length > 0) {
-        setSelectedBank(banksData[0].acf.bank_account_number)
-      }
-
-      // Also fetch bank accounts from the new REST API
-      try {
-        const bankAccountsResponse = await getBankAccounts()
-        if (bankAccountsResponse.ok) {
-          setBankAccounts(bankAccountsResponse.accounts)
-        }
-      } catch (error) {
-        console.error('Error fetching bank accounts:', error)
-      }
-    }
-    fetchBanks()
-  }, [locale])
 
   const handleAddressChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -126,109 +88,56 @@ export default function CheckoutConfirmContent() {
     }))
   }
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      setPaymentSlip(file)
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setSlipPreview(reader.result as string)
-      }
-      reader.readAsDataURL(file)
-    }
-  }
-
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
     setIsProcessing(true)
     setOrderError('')
 
     try {
-      // Split full name into first and last name
-      const nameParts = shippingAddress.fullName.trim().split(' ')
-      const firstName = nameParts[0] || ''
-      const lastName = nameParts.slice(1).join(' ') || nameParts[0] || ''
-
-      // Prepare order data
-      const orderData: OrderCreateRequest = {
-        items: items.map(item => ({
-          product_id: parseInt(item.id),
-          quantity: item.quantity,
-          color: item.color || undefined,
-          price: item.price,
-          total: item.price * item.quantity,
-        })),
-        billing: {
-          first_name: firstName,
-          last_name: lastName,
-          email: shippingAddress.email || `${shippingAddress.phone}@roihin.temp`, // Use actual email or fallback to temporary
-          phone: shippingAddress.phone,
-          address_1: shippingAddress.address,
-          address_2: '',
-          city: shippingAddress.district,
-          state: shippingAddress.province,
-          postcode: shippingAddress.postalCode,
-          country: 'TH',
+      // Create Stripe checkout session
+      const response = await fetch('/api/stripe/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-        payment_method: 'bacs',
-        shipping_total: 0,
-        total: totalAmount,
-        subtotal: totalAmount,
-        note: '',
-        slip_base64: slipPreview || undefined, // Include slip if available
+        body: JSON.stringify({
+          items: items.map(item => ({
+            id: item.id,
+            title: item.title,
+            price: item.price,
+            quantity: item.quantity,
+            image: item.image,
+          })),
+          shippingAddress,
+          locale,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to create checkout session')
       }
 
-      // Create order
-      const orderResponse = await createOrder(orderData)
+      const { sessionId, url } = await response.json()
 
-      console.log('Order response:', orderResponse) // Debug log
+      // Redirect to Stripe Checkout
+      if (url) {
+        window.location.href = url
+      } else {
+        // Fallback: Use Stripe.js to redirect
+        const stripe = await getStripe()
+        if (!stripe) {
+          throw new Error('Stripe failed to load')
+        }
 
-      if (!orderResponse.ok) {
-        throw new Error('Failed to create order')
-      }
+        const { error } = await stripe.redirectToCheckout({ sessionId })
 
-      // If slip wasn't included in creation and we have one, upload it separately
-      if (!slipPreview && paymentSlip && orderResponse.order) {
-        try {
-          await uploadSlipBase64(
-            orderResponse.order.order_id.toString(),
-            orderResponse.order.order_key,
-            slipPreview
-          )
-        } catch (uploadError) {
-          console.error('Failed to upload slip:', uploadError)
-          // Continue anyway since order was created
+        if (error) {
+          throw error
         }
       }
-
-      // Store order info in sessionStorage for thank you page
-      // Use the total from the response, or fallback to our calculated total
-      const orderTotal = orderResponse.order.total ? parseFloat(orderResponse.order.total) : totalAmount
-      
-      const orderInfo = {
-        orderId: orderResponse.order.order_id.toString(),
-        orderKey: orderResponse.order.order_key,
-        orderNumber: orderResponse.order.order_number,
-        total: orderTotal || totalAmount, // Always fallback to totalAmount if orderTotal is 0 or NaN
-      }
-      
-      sessionStorage.setItem('lastOrder', JSON.stringify(orderInfo))
-
-      // Set order success flag BEFORE clearing cart
-      setOrderSuccess(true)
-      
-      // Set order details and show success modal
-      setOrderDetails(orderInfo)
-      setShowSuccessModal(true)
-      
-      // Clear cart after setting success flag
-      clearCart()
-      
-      setIsProcessing(false)
-
     } catch (error) {
-      console.error('Order creation failed:', error)
-      setOrderError(t('errors.orderFailed'))
+      console.error('Checkout failed:', error)
+      setOrderError(t('errors.checkoutFailed'))
       setIsProcessing(false)
     }
   }
@@ -241,13 +150,11 @@ export default function CheckoutConfirmContent() {
       shippingAddress.address &&
       shippingAddress.district &&
       shippingAddress.province &&
-      shippingAddress.postalCode &&
-      selectedBank &&
-      paymentSlip
+      shippingAddress.postalCode
     )
   }
 
-  if (itemCount === 0 && !orderSuccess) {
+  if (itemCount === 0) {
     return null
   }
 
@@ -416,88 +323,20 @@ export default function CheckoutConfirmContent() {
                   <h3 className="text-xl font-semibold text-gray-900 mb-6">{t('payment.title')}</h3>
 
                   <div className="space-y-4">
-                    <div className="p-4 bg-green-50 border-2 border-green-500 rounded-lg">
-                      <p className="font-medium text-gray-900 mb-2">{t('payment.bankTransfer')}</p>
-                      <p className="text-sm text-gray-600">{t('payment.selectBank')}</p>
+                    <div className="p-4 bg-blue-50 border-2 border-blue-500 rounded-lg">
+                      <div className="flex items-center gap-3 mb-2">
+                        <svg className="w-8 h-8" viewBox="0 0 60 25" xmlns="http://www.w3.org/2000/svg">
+                          <path fill="#635bff" d="M59.64 14.28h-8.06c.19 1.93 1.6 2.55 3.2 2.55 1.64 0 2.96-.37 4.05-.95v3.32a8.33 8.33 0 0 1-4.56 1.1c-4.01 0-6.83-2.5-6.83-7.48 0-4.19 2.39-7.52 6.3-7.52 3.92 0 5.96 3.28 5.96 7.5 0 .4-.04 1.26-.06 1.48zm-5.92-5.62c-1.03 0-2.17.73-2.17 2.58h4.25c0-1.85-1.07-2.58-2.08-2.58zM40.95 20.3c-1.44 0-2.32-.6-2.9-1.04l-.02 4.63-4.12.87V5.57h3.76l.08 1.02a4.7 4.7 0 0 1 3.23-1.29c2.9 0 5.62 2.6 5.62 7.4 0 5.23-2.7 7.6-5.65 7.6zM40 8.95c-.95 0-1.54.34-1.97.81l.02 6.12c.4.44.98.78 1.95.78 1.52 0 2.54-1.65 2.54-3.87 0-2.15-1.04-3.84-2.54-3.84zM28.24 5.57h4.13v14.44h-4.13V5.57zm0-4.7L32.37 0v3.36l-4.13.88V.88zm-4.32 9.35v9.79H19.8V5.57h3.7l.12 1.22c1-1.77 3.07-1.41 3.62-1.22v3.79c-.52-.17-2.29-.43-3.32.86zm-8.55 4.72c0 2.43 2.6 1.68 3.12 1.46v3.36c-.55.3-1.54.54-2.89.54a4.15 4.15 0 0 1-4.27-4.24l.01-13.17 4.02-.86v3.54h3.14V9.1h-3.13v5.85zm-4.91.7c0 2.97-2.31 4.66-5.73 4.66a11.2 11.2 0 0 1-4.46-.93v-3.93c1.38.75 3.1 1.31 4.46 1.31.92 0 1.53-.24 1.53-1C6.26 13.77 0 14.51 0 9.95 0 7.04 2.28 5.3 5.62 5.3c1.36 0 2.72.2 4.09.75v3.88a9.23 9.23 0 0 0-4.1-1.06c-.86 0-1.44.25-1.44.93 0 1.85 6.29.97 6.29 5.88z"/>
+                        </svg>
+                        <p className="font-medium text-gray-900">{t('payment.stripe')}</p>
+                      </div>
+                      <p className="text-sm text-gray-600">{t('payment.stripeDescription')}</p>
                     </div>
 
-                    {/* Bank Selection */}
-                    {banks.length > 0 && (
-                      <div className="space-y-3">
-                        <p className="text-sm font-medium text-gray-700">{t('payment.selectBankLabel')} {t('payment.required')}</p>
-                        {banks.map((bank) => (
-                          <label
-                            key={bank.acf.bank_account_number}
-                            className={`flex items-start gap-3 p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                              selectedBank === bank.acf.bank_account_number
-                                ? 'border-green-500 bg-green-50'
-                                : 'border-gray-200 hover:border-gray-300'
-                            }`}
-                          >
-                            <input
-                              type="radio"
-                              name="bank"
-                              value={bank.acf.bank_account_number}
-                              checked={selectedBank === bank.acf.bank_account_number}
-                              onChange={(e) => setSelectedBank(e.target.value)}
-                              className="mt-1 w-4 h-4 text-green-600 focus:ring-green-500"
-                            />
-                            <div className="flex items-start gap-3 flex-1">
-                              {bank.acf.bank_image && (
-                                <div className="relative w-12 h-12 flex-shrink-0">
-                                  <Image
-                                    src={bank.acf.bank_image}
-                                    alt={bank.acf.bank_name}
-                                    fill
-                                    className="object-contain"
-                                  />
-                                </div>
-                              )}
-                              <div className="flex-1">
-                                <p className="font-medium text-gray-900">{bank.acf.bank_name}</p>
-                                <p className="text-sm text-gray-600">{bank.acf.bank_branch_name}</p>
-                                <p className="text-sm text-gray-700 font-medium mt-1">
-                                  {t('payment.accountName')}: {bank.acf.bank_account_name}
-                                </p>
-                                <p className="text-sm text-gray-700">
-                                  {t('payment.accountNumber')}: {bank.acf.bank_account_number}
-                                </p>
-                              </div>
-                            </div>
-                          </label>
-                        ))}
-                      </div>
-                    )}
-
-                    <div>
-                      <label
-                        htmlFor="paymentSlip"
-                        className="block text-sm font-medium text-gray-700 mb-2"
-                      >
-                        {t('payment.uploadSlip')} {t('payment.required')}
-                      </label>
-                      <input
-                        type="file"
-                        id="paymentSlip"
-                        accept="image/*"
-                        onChange={handleFileChange}
-                        required
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      />
-
-                      {slipPreview && (
-                        <div className="mt-4">
-                          <p className="text-sm text-gray-600 mb-2">{t('payment.slipPreview')}:</p>
-                          <div className="relative w-48 h-64 border border-gray-200 rounded-lg overflow-hidden">
-                            <Image
-                              src={slipPreview}
-                              alt="Payment slip preview"
-                              fill
-                              className="object-contain"
-                            />
-                          </div>
-                        </div>
-                      )}
+                    <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                      <p className="text-sm text-gray-700">
+                        {t('payment.securePayment')}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -557,10 +396,10 @@ export default function CheckoutConfirmContent() {
                     className={`w-full px-6 py-4 font-medium rounded-lg transition-all transform hover:scale-105 shadow-lg ${
                       isProcessing || !isFormValid()
                         ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                        : 'bg-green-600 hover:bg-green-700 text-white'
+                        : 'bg-blue-600 hover:bg-blue-700 text-white'
                     }`}
                   >
-                    {isProcessing ? t('actions.processing') : t('actions.confirmOrder')}
+                    {isProcessing ? t('actions.processing') : t('actions.proceedToPayment')}
                   </button>
 
                   {!isFormValid() && (
@@ -580,18 +419,6 @@ export default function CheckoutConfirmContent() {
           </form>
         </div>
       </Container>
-
-      {/* Order Success Modal */}
-      {orderDetails && (
-        <OrderSuccessModal
-          isOpen={showSuccessModal}
-          onClose={() => setShowSuccessModal(false)}
-          orderId={orderDetails.orderId}
-          orderKey={orderDetails.orderKey}
-          orderNumber={orderDetails.orderNumber}
-          total={orderDetails.total}
-        />
-      )}
     </section>
   )
 }
