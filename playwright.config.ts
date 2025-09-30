@@ -44,8 +44,6 @@ export default defineConfig({
     actionTimeout: 25000,
     /* Navigation timeout */
     navigationTimeout: 50000,
-    /* Wait for domcontentloaded by default (faster than networkidle) */
-    waitForLoadState: 'domcontentloaded',
   },
 
   /* Configure projects for major browsers */
