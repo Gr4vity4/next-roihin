@@ -184,7 +184,10 @@
     },
     "orderItems": {
       "color": "Color",
-      "quantity": "qty"
+      "quantity": "qty",
+      "stones": "stones",
+      "wrist": "Wrist",
+      "beadSize": "Bead size"
     },
     "actions": {
       "processing": "Processing...",

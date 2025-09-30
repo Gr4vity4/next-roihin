@@ -357,7 +357,14 @@ export default function CheckoutConfirmContent() {
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-gray-900 truncate">{item.title}</p>
                           {item.color && <p className="text-xs text-gray-500">{t('orderItems.color')}: {item.color}</p>}
-                          <p className="text-xs text-gray-600">
+                          {item.isCustomBracelet && item.braceletDesign && (
+                            <div className="mt-1 text-xs text-gray-600 space-y-0.5">
+                              <p>• {item.braceletDesign.beads.length} {t('orderItems.stones')}</p>
+                              <p>• {t('orderItems.wrist')}: {item.braceletDesign.wristLength} cm</p>
+                              <p>• {t('orderItems.beadSize')}: {item.braceletDesign.beadSize} mm</p>
+                            </div>
+                          )}
+                          <p className="text-xs text-gray-600 mt-1">
                             {item.quantity} x ฿{item.price.toLocaleString('th-TH')}
                           </p>
                         </div>

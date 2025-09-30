@@ -184,7 +184,10 @@
     },
     "orderItems": {
       "color": "สี",
-      "quantity": "จำนวน"
+      "quantity": "จำนวน",
+      "stones": "เม็ดหิน",
+      "wrist": "รอบข้อมือ",
+      "beadSize": "ขนาดเม็ดหิน"
     },
     "actions": {
       "processing": "กำลังดำเนินการ...",
