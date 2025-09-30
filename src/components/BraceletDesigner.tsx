@@ -24,7 +24,7 @@ import {
   generateBraceletTitle,
   generateBraceletId,
 } from '@/lib/utils/braceletImageGenerator'
-import { ArrowLeft, Check, GripVertical, RefreshCw, ShoppingCartIcon } from 'lucide-react'
+import { ArrowLeft, Check, RefreshCw, ShoppingCartIcon } from 'lucide-react'
 import { useLocale } from 'next-intl'
 import Image from 'next/image'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -75,7 +75,6 @@ export default function BraceletDesigner() {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
   const [basePrice, setBasePrice] = useState(0)
   const [draggedBead, setDraggedBead] = useState<string | null>(null)
-  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
   const [isAddingToCart, setIsAddingToCart] = useState(false)
   const stageRef = useRef<HTMLDivElement>(null)
   const ringRef = useRef<HTMLDivElement>(null)
@@ -306,59 +305,16 @@ export default function BraceletDesigner() {
     )
   }
 
-  const handleDragStart = (e: React.DragEvent, beadId: string) => {
-    setDraggedBead(beadId)
-    e.dataTransfer.effectAllowed = 'move'
-  }
-
-  const handleDragOver = (e: React.DragEvent, index: number) => {
-    e.preventDefault()
-    e.dataTransfer.dropEffect = 'move'
-    setDragOverIndex(index)
-  }
-
-  const handleDragEnd = () => {
-    setDraggedBead(null)
-    setDragOverIndex(null)
-  }
-
-  const handleDrop = (e: React.DragEvent, dropIndex: number) => {
-    e.preventDefault()
-
-    if (!draggedBead) return
-
-    const draggedIndex = beads.findIndex((b) => b.id === draggedBead)
-    if (draggedIndex === -1 || draggedIndex === dropIndex) {
-      setDraggedBead(null)
-      setDragOverIndex(null)
-      return
-    }
-
-    // Reorder beads
-    const newBeads = [...beads]
-    const [removed] = newBeads.splice(draggedIndex, 1)
-    newBeads.splice(dropIndex, 0, removed)
-
-    // Update beads and trigger relayout
-    setBeads(newBeads)
-    setDraggedBead(null)
-    setDragOverIndex(null)
-
-    // Relayout all beads with new order
-    setTimeout(() => {
-      relayoutBeadsWithNewOrder(newBeads)
-    }, 10)
-  }
-
-  const relayoutBeadsWithNewOrder = (newBeads: Bead[]) => {
-    setBeads(newBeads)
-    renderBeads()
-  }
 
   // Update the ref whenever draggedBead changes
   useEffect(() => {
     draggedBeadRef.current = draggedBead
   }, [draggedBead])
+
+  const relayoutBeadsWithNewOrder = (newBeads: Bead[]) => {
+    setBeads(newBeads)
+    renderBeads()
+  }
 
   const addBead = (stone: Stone['acf']) => {
     // Calculate image dimensions based on bead size (like HTML: size * 4)
@@ -468,7 +424,6 @@ export default function BraceletDesigner() {
     el.addEventListener('dragend', () => {
       el.style.opacity = '1'
       setDraggedBead(null)
-      setDragOverIndex(null)
     })
 
     el.addEventListener('dragover', (e) => {
@@ -510,7 +465,6 @@ export default function BraceletDesigner() {
       })
 
       setDraggedBead(null)
-      setDragOverIndex(null)
     })
 
     // Initial position (will be adjusted by renderBeads)

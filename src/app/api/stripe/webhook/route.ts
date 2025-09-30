@@ -45,10 +45,16 @@ export async function POST(request: NextRequest) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session
 
-        // Retrieve session with line items
+        // Retrieve session with line items and shipping details
         const sessionWithLineItems = await stripe.checkout.sessions.retrieve(
           session.id,
-          { expand: ['line_items', 'line_items.data.price.product'] }
+          {
+            expand: [
+              'line_items',
+              'line_items.data.price.product',
+              'shipping_details'
+            ]
+          }
         )
 
         // Create order in your backend
@@ -82,10 +88,28 @@ export async function POST(request: NextRequest) {
   }
 }
 
+// Extended Session type to include shipping_details which exists at runtime when expanded
+interface ExtendedSession extends Stripe.Checkout.Session {
+  shipping_details?: {
+    name?: string | null
+    phone?: string | null
+    address?: {
+      line1?: string | null
+      line2?: string | null
+      city?: string | null
+      state?: string | null
+      postal_code?: string | null
+      country?: string | null
+    } | null
+  } | null
+}
+
 async function createOrderFromSession(session: Stripe.Checkout.Session) {
   try {
     const metadata = session.metadata || {}
-    const shippingDetails = session.shipping_details || session.customer_details
+    // Access shipping_details which is available when session is expanded
+    const extendedSession = session as ExtendedSession
+    const shippingDetails = extendedSession.shipping_details || session.customer_details
 
     if (!shippingDetails) {
       throw new Error('No shipping details found in session')
