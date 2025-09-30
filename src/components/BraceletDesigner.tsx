@@ -976,66 +976,6 @@ export default function BraceletDesigner() {
                   <span className="font-medium">{beads.length} ชิ้น</span>
                 </div>
                 <div className="border-t pt-2">
-                  <div className="font-semibold mb-2">หินที่เลือก: (ลากเพื่อจัดเรียงใหม่)</div>
-                  <div className="space-y-2">
-                    {beads.map((bead, index) => (
-                      <div
-                        key={bead.id}
-                        className={`bead-list-item flex items-center gap-3 p-2 bg-white rounded-lg ${
-                          draggedBead === bead.id ? 'dragging' : ''
-                        } ${dragOverIndex === index ? 'drag-over' : ''}`}
-                        draggable
-                        onDragStart={(e) => handleDragStart(e, bead.id)}
-                        onDragOver={(e) => handleDragOver(e, index)}
-                        onDragEnd={handleDragEnd}
-                        onDrop={(e) => handleDrop(e, index)}
-                      >
-                        <div className="flex items-center justify-center w-6 h-6 text-gray-400">
-                          <GripVertical className="w-4 h-4" />
-                        </div>
-                        <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-gray-100">
-                          {(() => {
-                            const stoneImageUrl = getValidStoneImageUrl(bead.stoneSetting!)
-                            if (stoneImageUrl) {
-                              return (
-                                <Image
-                                  src={stoneImageUrl}
-                                  alt={bead.stoneSetting?.title || 'Bead'}
-                                  width={40}
-                                  height={40}
-                                  className="w-full h-full object-contain"
-                                  onError={(e) => {
-                                    const target = e.currentTarget
-                                    target.style.display = 'none'
-                                    const parent = target.parentElement
-                                    if (parent) {
-                                      const fallback = document.createElement('div')
-                                      fallback.className = 'w-full h-full flex items-center justify-center bg-gray-200 text-gray-600 text-xs'
-                                      fallback.textContent = bead.stoneSetting?.title?.substring(0, 2).toUpperCase() || 'NA'
-                                      parent.appendChild(fallback)
-                                    }
-                                  }}
-                                />
-                              )
-                            }
-                            return (
-                              <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-600 text-xs">
-                                {bead.stoneSetting?.title?.substring(0, 2).toUpperCase() || 'NA'}
-                              </div>
-                            )
-                          })()}
-                        </div>
-                        <div className="flex-1 text-sm">
-                          <div className="font-medium">{bead.stoneSetting?.title || 'Unknown'}</div>
-                          <div className="text-xs text-gray-500">{bead.size} mm</div>
-                        </div>
-                        <div className="text-right text-sm">
-                          <div className="text-xs text-gray-600 font-prompt">฿{bead.price}</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="mt-3 pt-3 border-t">
                     <div className="text-sm text-gray-600 mb-2">สรุปจำนวนหิน:</div>
                     {(() => {
                       // Group beads by stone title and size
@@ -1102,7 +1042,6 @@ export default function BraceletDesigner() {
                         </div>
                       ))
                     })()}
-                  </div>
                 </div>
                 {basePrice > 0 && (
                   <div className="flex justify-between pt-2 text-sm">
