@@ -150,6 +150,12 @@
       "shipping": "ค่าจัดส่ง",
       "shippingFree": "ฟรี",
       "total": "รวมทั้งหมด"
+    },
+    "loginModal": {
+      "title": "กรุณาเข้าสู่ระบบ",
+      "message": "กรุณาเข้าสู่ระบบเพื่อดำเนินการชำระเงิน",
+      "signInButton": "เข้าสู่ระบบ",
+      "cancelButton": "ยกเลิก"
     }
   },
   "checkoutConfirm": {

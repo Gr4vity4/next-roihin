@@ -2,7 +2,9 @@
 
 import Container from '@/components/ui/Container'
 import Typography from '@/components/ui/Typography'
+import Modal from '@/components/ui/Modal'
 import { useCart } from '@/contexts/CartContext'
+import { useAuth } from '@/contexts/AuthContext'
 import { MinusIcon, PlusIcon, ShoppingBagIcon, TrashIcon } from '@heroicons/react/24/outline'
 import Image from 'next/image'
 import { Link, useRouter } from '@/i18n/navigation'
@@ -13,8 +15,10 @@ export default function CheckoutContent() {
   const router = useRouter()
   const t = useTranslations('checkout')
   const { items, itemCount, totalAmount, removeItem, updateQuantity, clearCart } = useCart()
+  const { isAuthenticated } = useAuth()
   const [isProcessing, setIsProcessing] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [showLoginModal, setShowLoginModal] = useState(false)
 
   useEffect(() => {
     // Set loading to false after component mounts (client-side)
@@ -22,10 +26,21 @@ export default function CheckoutContent() {
   }, [])
 
   const handleCheckout = async () => {
+    // Check if user is authenticated
+    if (!isAuthenticated) {
+      setShowLoginModal(true)
+      return
+    }
+
     setIsProcessing(true)
 
     // Navigate to confirmation page
     router.push('/checkout/confirm')
+  }
+
+  const handleSignIn = () => {
+    setShowLoginModal(false)
+    router.push('/signin')
   }
 
   if (isLoading) {
@@ -215,6 +230,34 @@ export default function CheckoutContent() {
           </div>
         </div>
       </Container>
+
+      {/* Login Modal */}
+      <Modal
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+        title={t('loginModal.title')}
+        size="md"
+      >
+        <div className="space-y-6">
+          <p className="text-gray-600 text-base">
+            {t('loginModal.message')}
+          </p>
+          <div className="flex gap-3 justify-end">
+            <button
+              onClick={() => setShowLoginModal(false)}
+              className="px-6 py-2.5 text-gray-700 hover:text-gray-900 font-medium rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors"
+            >
+              {t('loginModal.cancelButton')}
+            </button>
+            <button
+              onClick={handleSignIn}
+              className="px-6 py-2.5 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors shadow-md hover:shadow-lg"
+            >
+              {t('loginModal.signInButton')}
+            </button>
+          </div>
+        </div>
+      </Modal>
     </section>
   )
 }
