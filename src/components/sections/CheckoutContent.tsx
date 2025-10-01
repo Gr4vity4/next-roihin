@@ -2,7 +2,7 @@
 
 import Container from '@/components/ui/Container'
 import Typography from '@/components/ui/Typography'
-import Modal from '@/components/ui/Modal'
+import AuthModal from '@/components/AuthModal'
 import { useCart } from '@/contexts/CartContext'
 import { useAuth } from '@/contexts/AuthContext'
 import { MinusIcon, PlusIcon, ShoppingBagIcon, TrashIcon } from '@heroicons/react/24/outline'
@@ -18,7 +18,8 @@ export default function CheckoutContent() {
   const { isAuthenticated } = useAuth()
   const [isProcessing, setIsProcessing] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
-  const [showLoginModal, setShowLoginModal] = useState(false)
+  const [showAuthModal, setShowAuthModal] = useState(false)
+  const [authMode, setAuthMode] = useState<'sign-in' | 'sign-up'>('sign-in')
 
   useEffect(() => {
     // Set loading to false after component mounts (client-side)
@@ -28,7 +29,8 @@ export default function CheckoutContent() {
   const handleCheckout = async () => {
     // Check if user is authenticated
     if (!isAuthenticated) {
-      setShowLoginModal(true)
+      setAuthMode('sign-in')
+      setShowAuthModal(true)
       return
     }
 
@@ -36,11 +38,6 @@ export default function CheckoutContent() {
 
     // Navigate to confirmation page
     router.push('/checkout/confirm')
-  }
-
-  const handleSignIn = () => {
-    setShowLoginModal(false)
-    router.push('/signin')
   }
 
   if (isLoading) {
@@ -231,33 +228,13 @@ export default function CheckoutContent() {
         </div>
       </Container>
 
-      {/* Login Modal */}
-      <Modal
-        isOpen={showLoginModal}
-        onClose={() => setShowLoginModal(false)}
-        title={t('loginModal.title')}
-        size="md"
-      >
-        <div className="space-y-6">
-          <p className="text-gray-600 text-base">
-            {t('loginModal.message')}
-          </p>
-          <div className="flex gap-3 justify-end">
-            <button
-              onClick={() => setShowLoginModal(false)}
-              className="px-6 py-2.5 text-gray-700 hover:text-gray-900 font-medium rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors"
-            >
-              {t('loginModal.cancelButton')}
-            </button>
-            <button
-              onClick={handleSignIn}
-              className="px-6 py-2.5 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors shadow-md hover:shadow-lg"
-            >
-              {t('loginModal.signInButton')}
-            </button>
-          </div>
-        </div>
-      </Modal>
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        mode={authMode}
+        onModeChange={setAuthMode}
+      />
     </section>
   )
 }

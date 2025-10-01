@@ -150,12 +150,6 @@
       "shipping": "Shipping",
       "shippingFree": "Free",
       "total": "Total"
-    },
-    "loginModal": {
-      "title": "Login Required",
-      "message": "Please sign in to your account to proceed with checkout.",
-      "signInButton": "Sign In",
-      "cancelButton": "Cancel"
     }
   },
   "checkoutConfirm": {
