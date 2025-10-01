@@ -15,7 +15,7 @@ export default function CheckoutContent() {
   const router = useRouter()
   const t = useTranslations('checkout')
   const { items, itemCount, totalAmount, removeItem, updateQuantity, clearCart } = useCart()
-  const { isAuthenticated } = useAuth()
+  const { isLoggedIn } = useAuth()
   const [isProcessing, setIsProcessing] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [showAuthModal, setShowAuthModal] = useState(false)
@@ -28,7 +28,7 @@ export default function CheckoutContent() {
 
   const handleCheckout = async () => {
     // Check if user is authenticated
-    if (!isAuthenticated) {
+    if (!isLoggedIn) {
       setAuthMode('sign-in')
       setShowAuthModal(true)
       return
