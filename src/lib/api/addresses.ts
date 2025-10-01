@@ -1,6 +1,7 @@
-import { cookies } from 'next/headers'
+import { WORDPRESS_API_URL } from '@/config/api.config'
+import { getAuthToken } from '@/lib/auth/get-token'
 
-const API_URL = process.env.WORDPRESS_API_URL || 'https://wp-roihin.precisiondevlab.com'
+const API_URL = WORDPRESS_API_URL
 
 export interface Address {
   id: string
@@ -43,11 +44,6 @@ export interface UpdateAddressData {
   province?: string
   postal_code?: string
   country?: string
-}
-
-async function getAuthToken() {
-  const cookieStore = await cookies()
-  return cookieStore.get('wpToken')?.value
 }
 
 export async function listAddresses(): Promise<AddressesResponse> {

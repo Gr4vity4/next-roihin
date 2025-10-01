@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState } from 'react'
 import { useLocalStorage } from '@/hooks/useLocalStorage'
+import { getErrorMessage } from '@/lib/utils/error-handler'
 
 interface User {
   name: string
@@ -62,7 +63,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(userData)
       setIsLoggedIn(true)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed')
+      setError(getErrorMessage(err, 'Login failed'))
       throw err
     } finally {
       setLoading(false)
@@ -94,10 +95,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!response.ok) {
         throw new Error(result.error || 'Registration failed')
       }
-      
+
       await login(data.email, data.password)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Registration failed')
+      setError(getErrorMessage(err, 'Registration failed'))
       throw err
     } finally {
       setLoading(false)

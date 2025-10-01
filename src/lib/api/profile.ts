@@ -1,6 +1,7 @@
-import { cookies } from 'next/headers'
+import { WORDPRESS_API_URL } from '@/config/api.config'
+import { getAuthToken } from '@/lib/auth/get-token'
 
-const API_URL = process.env.WORDPRESS_API_URL || 'https://wp-roihin.precisiondevlab.com'
+const API_URL = WORDPRESS_API_URL
 
 export interface ProfileData {
   id: number
@@ -23,11 +24,6 @@ export interface UpdateProfileData {
   phone_number?: string
   birth_date?: string
   gender?: 'male' | 'female' | 'other' | 'prefer_not_to_say'
-}
-
-async function getAuthToken() {
-  const cookieStore = await cookies()
-  return cookieStore.get('wpToken')?.value
 }
 
 export async function getProfile(): Promise<ProfileData> {

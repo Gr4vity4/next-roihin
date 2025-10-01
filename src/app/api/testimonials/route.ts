@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getFetchConfig, getCacheHeaders } from '@/config/cache.config'
-import { getWordPressApiUrl, getApiBasePath } from '@/lib/api/api-helper'
+import { getWordPressApiUrl, getApiBasePath } from '@/config/api.config'
 import {
   WordPressTestimonialsResponseSchema,
   type TestimonialsResponse,
