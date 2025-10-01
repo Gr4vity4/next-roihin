@@ -4,7 +4,17 @@
     "allow": [
       "Bash(npm run dev:*)",
       "WebFetch(domain:next-intl.dev)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(npm run test:e2e:*)",
+      "Bash(lsof:*)",
+      "Bash(curl:*)",
+      "Bash(npx playwright test:*)",
+      "Bash(timeout 60 npx playwright test:*)",
+      "mcp__playwright__browser_install",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_resize",
+      "mcp__playwright__browser_snapshot",
+      "Bash(BASE_URL=http://localhost:3000 npx playwright test --reporter=list)"
     ],
     "deny": []
   }

@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
+import { getErrorMessage } from '@/lib/utils/error-handler'
 
 interface WishlistItem {
   id: string
@@ -73,7 +74,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
       setItems(data.items || [])
     } catch (err) {
       console.error('Failed to fetch wishlist:', err)
-      setError(err instanceof Error ? err.message : 'Failed to fetch wishlist')
+      setError(getErrorMessage(err, 'Failed to fetch wishlist'))
       setItems([])
     } finally {
       setLoading(false)
@@ -117,7 +118,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
       await refreshWishlist()
     } catch (err) {
       console.error('Failed to add to wishlist:', err)
-      setError(err instanceof Error ? err.message : 'Failed to add to wishlist')
+      setError(getErrorMessage(err, 'Failed to add to wishlist'))
       throw err
     }
   }
@@ -137,7 +138,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
       setItems(prevItems => prevItems.filter(item => item.id !== itemId))
     } catch (err) {
       console.error('Failed to remove from wishlist:', err)
-      setError(err instanceof Error ? err.message : 'Failed to remove from wishlist')
+      setError(getErrorMessage(err, 'Failed to remove from wishlist'))
       throw err
     }
   }
@@ -173,7 +174,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
       }
     } catch (err) {
       console.error('Failed to remove from wishlist:', err)
-      setError(err instanceof Error ? err.message : 'Failed to remove from wishlist')
+      setError(getErrorMessage(err, 'Failed to remove from wishlist'))
       throw err
     }
   }
@@ -227,11 +228,11 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
         )
         return false
       }
-      
+
       return isInWishlist(productId, color)
     } catch (err) {
       console.error('Failed to toggle wishlist:', err)
-      setError(err instanceof Error ? err.message : 'Failed to toggle wishlist')
+      setError(getErrorMessage(err, 'Failed to toggle wishlist'))
       throw err
     }
   }
@@ -251,7 +252,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
       setItems([])
     } catch (err) {
       console.error('Failed to clear wishlist:', err)
-      setError(err instanceof Error ? err.message : 'Failed to clear wishlist')
+      setError(getErrorMessage(err, 'Failed to clear wishlist'))
       throw err
     }
   }

@@ -1,8 +1,6 @@
 import { getFetchConfig } from '@/config/cache.config'
 import { PhotoGalleryResponseSchema } from '@/lib/types/gallery'
-
-const WORDPRESS_API_URL = process.env.WORDPRESS_API_URL || process.env.NEXT_PUBLIC_WORDPRESS_API_URL
-const WORDPRESS_API_BASE_PATH = process.env.WORDPRESS_API_BASE_PATH || '/wp-json/wp/v2'
+import { WORDPRESS_API_URL, WORDPRESS_API_BASE_PATH } from '@/config/api.config'
 
 /**
  * Get personalized gallery photos from WordPress

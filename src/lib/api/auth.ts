@@ -1,3 +1,5 @@
+import { WORDPRESS_API_URL } from '@/config/api.config'
+
 interface RegisterData {
   first_name: string
   last_name: string
@@ -22,7 +24,7 @@ interface ResetPasswordData {
   password: string
 }
 
-const API_URL = process.env.WORDPRESS_API_URL || 'https://wp-roihin.precisiondevlab.com'
+const API_URL = WORDPRESS_API_URL
 
 export async function register(data: RegisterData) {
   const response = await fetch(`${API_URL}/wp-json/roihin/v1/register`, {

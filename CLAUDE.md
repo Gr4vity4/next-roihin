@@ -20,6 +20,13 @@ npm run start
 
 # Lint code
 npm run lint
+
+# E2E Testing with Playwright
+npm run test:e2e              # Run all tests
+npm run test:e2e:ui           # Open Playwright UI mode
+npm run test:e2e:debug        # Debug tests
+npm run test:e2e:headed       # Run tests in headed mode
+npm run test:e2e:report       # View test report
 ```
 
 ## Architecture
@@ -32,6 +39,8 @@ npm run lint
 - **Styling**: Tailwind CSS v4 with custom Mixed Language font system
 - **UI Components**: Radix UI primitives, Heroicons, Lucide icons
 - **Data Validation**: Zod schemas for API responses
+- **Payments**: Stripe integration for checkout and payment processing
+- **Testing**: Playwright for E2E testing (Chromium & Mobile Safari)
 
 ### Project Structure
 - `/src/app/[locale]/` - Internationalized Next.js App Router pages
@@ -102,6 +111,11 @@ NEXT_PUBLIC_API_URL=http://localhost:3000/api
 # Site URL
 NEXT_PUBLIC_SITE_URL=https://roihin.precisiondevlab.com
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
+
+# Stripe Configuration
+STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key_here
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_publishable_key_here
+STRIPE_WEBHOOK_SECRET=whsec_your_stripe_webhook_secret_here
 ```
 
 ## Path Aliases
@@ -150,7 +164,12 @@ Content Security Policy and security headers configured in `next.config.ts`:
 - Run `npm run lint` before committing
 - TypeScript strict mode enforced
 - ESLint with Next.js configuration
-- No dedicated test framework currently configured
+- **E2E Testing**: Playwright configured in `/tests/` directory
+  - Tests run against Chromium (Desktop) and Mobile Safari (iPhone 12)
+  - Auto-starts dev server on port 3000 before tests
+  - 60s timeout per test, 10min global timeout
+  - Captures screenshots/videos on failure
+  - Use `BASE_URL` env var to test against different environments
 
 ## Important Context Providers
 

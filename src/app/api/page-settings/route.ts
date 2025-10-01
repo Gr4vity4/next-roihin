@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getFetchConfig, getCacheHeaders } from '@/config/cache.config'
-import { getWordPressApiUrl, getApiBasePath } from '@/lib/api/api-helper'
+import { getWordPressApiUrl, getApiBasePath } from '@/config/api.config'
 import { PageSettingsResponseSchema } from '@/lib/types/api-types'
 
 export async function GET(request: NextRequest) {

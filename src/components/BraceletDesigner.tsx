@@ -9,8 +9,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
@@ -19,8 +17,14 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import type { Bank, Stone } from '@/lib/types/api-types'
-import { ArrowLeft, Check, GripVertical, RefreshCw, Upload } from 'lucide-react'
+import { useCart } from '@/contexts/CartContext'
+import type { Stone } from '@/lib/types/api-types'
+import {
+  generateBraceletThumbnail,
+  generateBraceletTitle,
+  generateBraceletId,
+} from '@/lib/utils/braceletImageGenerator'
+import { ArrowLeft, Check, RefreshCw, ShoppingCartIcon } from 'lucide-react'
 import { useLocale } from 'next-intl'
 import Image from 'next/image'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -59,40 +63,69 @@ interface Bead {
   size: number // Size in mm when the bead was added
 }
 
-interface CustomerInfo {
-  name: string
-  phone: string
-  email: string
-  address: string
-}
-
 export default function BraceletDesigner() {
   const locale = useLocale() as 'en' | 'th'
+  const { addItem } = useCart()
   const [beadSize, setBeadSize] = useState(6)
   const [wristLength, setWristLength] = useState('14')
   const [beads, setBeads] = useState<Bead[]>([])
   const [lastSelectedBead, setLastSelectedBead] = useState<Stone['acf'] | null>(null)
   const [stoneSettings, setStoneSettings] = useState<Stone[]>([])
   const [loading, setLoading] = useState(true)
-  const [isMobile, setIsMobile] = useState(false)
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
-  const [banks, setBanks] = useState<Bank[]>([])
   const [basePrice, setBasePrice] = useState(0)
-  const [customerInfo, setCustomerInfo] = useState<CustomerInfo>({
-    name: '',
-    phone: '',
-    email: '',
-    address: '',
-  })
-  const [paymentSlip, setPaymentSlip] = useState<File | null>(null)
-  const [paymentSlipPreview, setPaymentSlipPreview] = useState<string>('')
   const [draggedBead, setDraggedBead] = useState<string | null>(null)
-  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null)
+  const [isAddingToCart, setIsAddingToCart] = useState(false)
   const stageRef = useRef<HTMLDivElement>(null)
   const ringRef = useRef<HTMLDivElement>(null)
   const beadsLayerRef = useRef<HTMLDivElement>(null)
-  const fileInputRef = useRef<HTMLInputElement>(null)
   const draggedBeadRef = useRef<string | null>(null)
+
+  // Helper function to validate if a string is a valid URL
+  const isValidImageUrl = (url: string | undefined | null): boolean => {
+    if (!url) return false
+    // Check if it's a valid URL or a relative path
+    try {
+      // Check if it starts with http/https
+      if (url.startsWith('http://') || url.startsWith('https://')) {
+        new URL(url)
+        return true
+      }
+      // Check if it's a relative path (starts with /)
+      if (url.startsWith('/')) {
+        return true
+      }
+      // Check if it's a data URL
+      if (url.startsWith('data:')) {
+        return true
+      }
+      // If it's just a CSS class name or invalid string, return false
+      if (url.startsWith('jss-') || url.includes('{') || url.includes('}')) {
+        return false
+      }
+      return false
+    } catch {
+      return false
+    }
+  }
+
+  // Get valid image URL from stone data
+  const getValidStoneImageUrl = (stone: Stone['acf']): string | null => {
+    // First try stone_image
+    if (isValidImageUrl(stone.stone_image)) {
+      return stone.stone_image
+    }
+    // Fallback to preview_image
+    if (isValidImageUrl(stone.preview_image)) {
+      return stone.preview_image
+    }
+    // Log warning for debugging
+    console.warn('No valid image URL found for stone:', stone.title, {
+      stone_image: stone.stone_image,
+      preview_image: stone.preview_image
+    })
+    return null
+  }
 
   // Geometry state - adjust radius based on wrist length
   const geometryRef = useRef({
@@ -101,19 +134,6 @@ export default function BraceletDesigner() {
     R: 190,
   })
 
-  // Detect mobile device
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768)
-    }
-
-    // Check on mount
-    checkMobile()
-
-    // Check on resize
-    window.addEventListener('resize', checkMobile)
-    return () => window.removeEventListener('resize', checkMobile)
-  }, [])
 
   // Fetch stone settings from API
   useEffect(() => {
@@ -122,6 +142,14 @@ export default function BraceletDesigner() {
         const response = await fetch(`/api/stones?lang=${locale}`)
         if (response.ok) {
           const data = await response.json()
+          // Log first stone data for debugging
+          if (data.length > 0) {
+            console.log('Sample stone data:', {
+              title: data[0].acf?.title,
+              stone_image: data[0].acf?.stone_image,
+              preview_image: data[0].acf?.preview_image,
+            })
+          }
           setStoneSettings(data)
         }
       } catch (error) {
@@ -151,23 +179,6 @@ export default function BraceletDesigner() {
     fetchBasePrice()
   }, [locale])
 
-  // Fetch banks when dialog opens
-  useEffect(() => {
-    if (showConfirmDialog && banks.length === 0) {
-      const fetchBanks = async () => {
-        try {
-          const response = await fetch(`/api/banks?lang=${locale}`)
-          if (response.ok) {
-            const data = await response.json()
-            setBanks(data)
-          }
-        } catch (error) {
-          console.error('Error fetching banks:', error)
-        }
-      }
-      fetchBanks()
-    }
-  }, [showConfirmDialog, banks.length, locale])
 
   // Get stones by category
   const getStonesByCategory = (category: string) => {
@@ -239,7 +250,7 @@ export default function BraceletDesigner() {
 
     let currentAngle = START // Start at bottom (6 o'clock)
 
-    beads.forEach((bead, index) => {
+    beads.forEach((bead) => {
       // Calculate angle span based on item's fixed visual width
       const itemVisualWidth = bead.imageWidth
       const chordToRadiusRatio = Math.min(itemVisualWidth / (2 * radius), 1)
@@ -278,6 +289,7 @@ export default function BraceletDesigner() {
 
     // Re-render beads with new radius
     renderBeads()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wristLength, beads])
 
   const nudgeFull = () => {
@@ -293,59 +305,16 @@ export default function BraceletDesigner() {
     )
   }
 
-  const handleDragStart = (e: React.DragEvent, beadId: string) => {
-    setDraggedBead(beadId)
-    e.dataTransfer.effectAllowed = 'move'
-  }
-
-  const handleDragOver = (e: React.DragEvent, index: number) => {
-    e.preventDefault()
-    e.dataTransfer.dropEffect = 'move'
-    setDragOverIndex(index)
-  }
-
-  const handleDragEnd = () => {
-    setDraggedBead(null)
-    setDragOverIndex(null)
-  }
-
-  const handleDrop = (e: React.DragEvent, dropIndex: number) => {
-    e.preventDefault()
-
-    if (!draggedBead) return
-
-    const draggedIndex = beads.findIndex((b) => b.id === draggedBead)
-    if (draggedIndex === -1 || draggedIndex === dropIndex) {
-      setDraggedBead(null)
-      setDragOverIndex(null)
-      return
-    }
-
-    // Reorder beads
-    const newBeads = [...beads]
-    const [removed] = newBeads.splice(draggedIndex, 1)
-    newBeads.splice(dropIndex, 0, removed)
-
-    // Update beads and trigger relayout
-    setBeads(newBeads)
-    setDraggedBead(null)
-    setDragOverIndex(null)
-
-    // Relayout all beads with new order
-    setTimeout(() => {
-      relayoutBeadsWithNewOrder(newBeads)
-    }, 10)
-  }
-
-  const relayoutBeadsWithNewOrder = (newBeads: Bead[]) => {
-    setBeads(newBeads)
-    renderBeads()
-  }
 
   // Update the ref whenever draggedBead changes
   useEffect(() => {
     draggedBeadRef.current = draggedBead
   }, [draggedBead])
+
+  const relayoutBeadsWithNewOrder = (newBeads: Bead[]) => {
+    setBeads(newBeads)
+    renderBeads()
+  }
 
   const addBead = (stone: Stone['acf']) => {
     // Calculate image dimensions based on bead size (like HTML: size * 4)
@@ -386,15 +355,63 @@ export default function BraceletDesigner() {
     el.style.width = imageWidth + 'px'
     el.style.height = imageHeight + 'px'
     el.style.cursor = 'move'
+    el.style.position = 'relative'
+    el.style.overflow = 'hidden'
     el.draggable = true
     el.dataset.beadId = beadId
 
-    // Use image if available
-    if (stone.stone_image) {
-      el.style.backgroundImage = `url(${stone.stone_image})`
-      el.style.backgroundSize = 'contain'
-      el.style.backgroundPosition = 'center'
-      el.style.backgroundRepeat = 'no-repeat'
+    // Use image element instead of background for better html2canvas compatibility
+    const validImageUrl = getValidStoneImageUrl(stone)
+    if (validImageUrl) {
+      const img = document.createElement('img')
+      // Use Next.js image optimization endpoint to bypass CORS
+      const encodedUrl = encodeURIComponent(validImageUrl)
+      img.src = `/_next/image?url=${encodedUrl}&w=${imageWidth * 2}&q=75`
+      img.style.width = '100%'
+      img.style.height = '100%'
+      img.style.objectFit = 'contain'
+      img.style.pointerEvents = 'none'
+      img.draggable = false
+      img.crossOrigin = 'anonymous' // Enable CORS for html2canvas
+
+      // Add error handler for failed image loads
+      img.onerror = () => {
+        console.error('Failed to load stone image:', validImageUrl, 'for stone:', stone.title)
+        // Create a placeholder div with the stone title
+        const placeholder = document.createElement('div')
+        placeholder.style.width = '100%'
+        placeholder.style.height = '100%'
+        placeholder.style.display = 'flex'
+        placeholder.style.alignItems = 'center'
+        placeholder.style.justifyContent = 'center'
+        placeholder.style.backgroundColor = '#e5e7eb'
+        placeholder.style.borderRadius = '50%'
+        placeholder.style.fontSize = '10px'
+        placeholder.style.color = '#6b7280'
+        placeholder.style.textAlign = 'center'
+        placeholder.style.padding = '2px'
+        placeholder.textContent = stone.title.substring(0, 2).toUpperCase()
+        el.innerHTML = ''
+        el.appendChild(placeholder)
+      }
+
+      el.appendChild(img)
+    } else {
+      // Create a placeholder if no valid image URL
+      const placeholder = document.createElement('div')
+      placeholder.style.width = '100%'
+      placeholder.style.height = '100%'
+      placeholder.style.display = 'flex'
+      placeholder.style.alignItems = 'center'
+      placeholder.style.justifyContent = 'center'
+      placeholder.style.backgroundColor = '#e5e7eb'
+      placeholder.style.borderRadius = '50%'
+      placeholder.style.fontSize = '10px'
+      placeholder.style.color = '#6b7280'
+      placeholder.style.textAlign = 'center'
+      placeholder.style.padding = '2px'
+      placeholder.textContent = stone.title.substring(0, 2).toUpperCase()
+      el.appendChild(placeholder)
     }
 
     // Add drag event listeners to the bead element
@@ -407,7 +424,6 @@ export default function BraceletDesigner() {
     el.addEventListener('dragend', () => {
       el.style.opacity = '1'
       setDraggedBead(null)
-      setDragOverIndex(null)
     })
 
     el.addEventListener('dragover', (e) => {
@@ -449,7 +465,6 @@ export default function BraceletDesigner() {
       })
 
       setDraggedBead(null)
-      setDragOverIndex(null)
     })
 
     // Initial position (will be adjusted by renderBeads)
@@ -461,12 +476,18 @@ export default function BraceletDesigner() {
     }
 
     const price = getStonePrice(stone, beadSize)
+    const originalImageUrl = getValidStoneImageUrl(stone)
+    // Use proxied URL for consistency
+    const imageUrl = originalImageUrl
+      ? `/_next/image?url=${encodeURIComponent(originalImageUrl)}&w=${imageWidth * 2}&q=75`
+      : ''
+
     const newBead: Bead = {
       id: beadId,
       el,
       r: imageWidth / 2,
       theta: 0, // Will be calculated by renderBeads
-      imageUrl: stone.stone_image,
+      imageUrl,
       imageWidth,
       imageHeight,
       shape,
@@ -507,33 +528,67 @@ export default function BraceletDesigner() {
     // No need to call renderBeads when array is empty
   }
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      setPaymentSlip(file)
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setPaymentSlipPreview(reader.result as string)
+  const handleConfirmOrder = async () => {
+    setIsAddingToCart(true)
+
+    try {
+      // Ensure all beads are rendered before capturing
+      await new Promise(resolve => setTimeout(resolve, 500))
+
+      // Force a reflow to ensure all styles are applied
+      if (stageRef.current) {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+        stageRef.current.offsetHeight
       }
-      reader.readAsDataURL(file)
+
+      // Generate thumbnail image of the bracelet design
+      const thumbnailImage = stageRef.current
+        ? await generateBraceletThumbnail(stageRef.current)
+        : '/images/bracelet-placeholder.png'
+
+      // Create bracelet design data
+      const braceletBeads = beads.map(bead => ({
+        id: bead.id,
+        stoneName: bead.stoneSetting?.title || 'Unknown',
+        stoneImage: bead.stoneSetting?.stone_image,
+        size: bead.size,
+        price: bead.price,
+      }))
+
+      // Generate unique ID for this bracelet design
+      const designId = generateBraceletId()
+
+      // Add to cart
+      addItem({
+        id: designId,
+        slug: 'custom-bracelet',
+        title: generateBraceletTitle(beads.length, wristLength, locale),
+        price: calculateTotalPrice(),
+        image: thumbnailImage,
+        category: locale === 'th' ? 'สร้อยข้อมือออกแบบเอง' : 'Custom Bracelet',
+        isCustomBracelet: true,
+        braceletDesign: {
+          beads: braceletBeads,
+          wristLength,
+          beadSize,
+          totalPrice: calculateTotalPrice(),
+          designId,
+        },
+      })
+
+      // Close dialog and reset
+      setShowConfirmDialog(false)
+      clearBeads()
+
+      // Show success message (optional)
+      alert(locale === 'th' ? 'เพิ่มลงตะกร้าแล้ว!' : 'Added to cart!')
+
+    } catch (error) {
+      console.error('Error adding bracelet to cart:', error)
+      alert(locale === 'th' ? 'เกิดข้อผิดพลาด กรุณาลองใหม่' : 'An error occurred. Please try again.')
+    } finally {
+      setIsAddingToCart(false)
     }
-  }
-
-  const handleCustomerInfoChange = (field: keyof CustomerInfo, value: string) => {
-    setCustomerInfo((prev) => ({ ...prev, [field]: value }))
-  }
-
-  const handleConfirmOrder = () => {
-    // Here you would handle the order submission
-    console.log('Order confirmed:', {
-      customerInfo,
-      beads,
-      wristLength,
-      totalPrice: calculateTotalPrice(),
-      paymentSlip,
-    })
-    // You can add API call to submit the order here
-    setShowConfirmDialog(false)
   }
 
   const openConfirmDialog = () => {
@@ -632,6 +687,7 @@ export default function BraceletDesigner() {
           {/* Stage */}
           <section
             ref={stageRef}
+            data-stage="true"
             className="relative w-[520px] h-[320px] md:h-[360px] max-w-[90vw] aspect-square overflow-hidden"
           >
             <div className="absolute inset-0 grid place-items-center">
@@ -694,20 +750,38 @@ export default function BraceletDesigner() {
                           // Hide stone if not available for selected size
                           if (!isAvailable) return null
 
+                          const validImageUrl = getValidStoneImageUrl(stoneInfo)
                           return (
                             <div key={stoneInfo.title} className="relative group">
                               <button
-                                className="w-11 h-11 transition-transform overflow-hidden cursor-pointer active:scale-95"
-                                style={{
-                                  backgroundImage: `url(${stoneInfo.stone_image})`,
-                                  backgroundSize: 'contain',
-                                  backgroundPosition: 'center',
-                                  backgroundRepeat: 'no-repeat',
-                                }}
+                                className="w-11 h-11 transition-transform overflow-hidden cursor-pointer active:scale-95 rounded-lg relative bg-gray-100"
                                 title={`${stoneInfo.title} - ฿${price}`}
                                 onClick={() => addBead(stoneInfo)}
                                 aria-label={`Add ${stoneInfo.title} - ฿${price}`}
-                              />
+                              >
+                                {validImageUrl ? (
+                                  <Image
+                                    src={validImageUrl}
+                                    alt={stoneInfo.title}
+                                    width={44}
+                                    height={44}
+                                    className="w-full h-full object-contain"
+                                    onError={(e) => {
+                                      const target = e.currentTarget
+                                      target.style.display = 'none'
+                                      // Show fallback
+                                      const fallback = target.nextElementSibling as HTMLElement
+                                      if (fallback) fallback.style.display = 'flex'
+                                    }}
+                                  />
+                                ) : null}
+                                <span
+                                  className="text-xs text-gray-600 absolute inset-0 flex items-center justify-center"
+                                  style={{ display: validImageUrl ? 'none' : 'flex' }}
+                                >
+                                  {stoneInfo.title.substring(0, 2).toUpperCase()}
+                                </span>
+                              </button>
                               {/* Price tooltip */}
                               <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-1 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                                 ฿{price}
@@ -728,16 +802,31 @@ export default function BraceletDesigner() {
               <div className="col-span-full md:col-span-3 flex justify-center">
                 {lastSelectedBead ? (
                   <div className="relative w-24 h-24 bg-transparent">
-                    {lastSelectedBead.preview_image ? (
-                      <Image
-                        src={lastSelectedBead.preview_image || '/images/logo.avif'}
-                        alt={lastSelectedBead.title}
-                        width={96}
-                        height={96}
-                      />
-                    ) : (
-                      <></>
-                    )}
+                    {(() => {
+                      const validImageUrl = getValidStoneImageUrl(lastSelectedBead)
+                      if (validImageUrl) {
+                        return (
+                          <Image
+                            src={validImageUrl}
+                            alt={lastSelectedBead.title}
+                            width={96}
+                            height={96}
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement
+                              target.style.display = 'none'
+                            }}
+                          />
+                        )
+                      } else {
+                        return (
+                          <div className="w-24 h-24 bg-gray-200 rounded-lg flex items-center justify-center">
+                            <span className="text-2xl text-gray-500">
+                              {lastSelectedBead.title.substring(0, 2).toUpperCase()}
+                            </span>
+                          </div>
+                        )
+                      }
+                    })()}
                   </div>
                 ) : (
                   <div className="w-24 h-24 bg-gray-200 flex items-center justify-center text-gray-400">
@@ -819,8 +908,8 @@ export default function BraceletDesigner() {
       <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>ยืนยันการสั่งซื้อ</DialogTitle>
-            <DialogDescription>กรุณาตรวจสอบรายละเอียดและกรอกข้อมูลการติดต่อ</DialogDescription>
+            <DialogTitle>{locale === 'th' ? 'ยืนยันการเพิ่มลงตะกร้า' : 'Confirm Add to Cart'}</DialogTitle>
+            <DialogDescription>{locale === 'th' ? 'กรุณาตรวจสอบรายละเอียดสร้อยข้อมือของคุณ' : 'Please review your bracelet design details'}</DialogDescription>
           </DialogHeader>
 
           <div className="space-y-6">
@@ -841,45 +930,6 @@ export default function BraceletDesigner() {
                   <span className="font-medium">{beads.length} ชิ้น</span>
                 </div>
                 <div className="border-t pt-2">
-                  <div className="font-semibold mb-2">หินที่เลือก: (ลากเพื่อจัดเรียงใหม่)</div>
-                  <div className="space-y-2">
-                    {beads.map((bead, index) => (
-                      <div
-                        key={bead.id}
-                        className={`bead-list-item flex items-center gap-3 p-2 bg-white rounded-lg ${
-                          draggedBead === bead.id ? 'dragging' : ''
-                        } ${dragOverIndex === index ? 'drag-over' : ''}`}
-                        draggable
-                        onDragStart={(e) => handleDragStart(e, bead.id)}
-                        onDragOver={(e) => handleDragOver(e, index)}
-                        onDragEnd={handleDragEnd}
-                        onDrop={(e) => handleDrop(e, index)}
-                      >
-                        <div className="flex items-center justify-center w-6 h-6 text-gray-400">
-                          <GripVertical className="w-4 h-4" />
-                        </div>
-                        <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
-                          {bead.imageUrl && (
-                            <Image
-                              src={bead.imageUrl}
-                              alt={bead.stoneSetting?.title || 'Bead'}
-                              width={40}
-                              height={40}
-                              className="w-full h-full object-cover"
-                            />
-                          )}
-                        </div>
-                        <div className="flex-1 text-sm">
-                          <div className="font-medium">{bead.stoneSetting?.title || 'Unknown'}</div>
-                          <div className="text-xs text-gray-500">{bead.size} mm</div>
-                        </div>
-                        <div className="text-right text-sm">
-                          <div className="text-xs text-gray-600 font-prompt">฿{bead.price}</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="mt-3 pt-3 border-t">
                     <div className="text-sm text-gray-600 mb-2">สรุปจำนวนหิน:</div>
                     {(() => {
                       // Group beads by stone title and size
@@ -903,9 +953,41 @@ export default function BraceletDesigner() {
                       return Object.entries(groupedBeads).map(([key, group]) => (
                         <div
                           key={key}
-                          className="flex items-center justify-between text-xs text-gray-600 py-1"
+                          className="flex items-center gap-2 text-xs text-gray-600 py-1"
                         >
-                          <span>
+                          <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0 bg-gray-100">
+                            {(() => {
+                              const stoneImageUrl = group.stoneSetting ? getValidStoneImageUrl(group.stoneSetting) : null
+                              if (stoneImageUrl) {
+                                return (
+                                  <Image
+                                    src={stoneImageUrl}
+                                    alt={group.stoneSetting?.title || 'Stone'}
+                                    width={24}
+                                    height={24}
+                                    className="w-full h-full object-contain"
+                                    onError={(e) => {
+                                      const target = e.currentTarget
+                                      target.style.display = 'none'
+                                      const parent = target.parentElement
+                                      if (parent) {
+                                        const fallback = document.createElement('div')
+                                        fallback.className = 'w-full h-full flex items-center justify-center bg-gray-200 text-gray-600 text-[8px]'
+                                        fallback.textContent = group.stoneSetting?.title?.substring(0, 2).toUpperCase() || 'NA'
+                                        parent.appendChild(fallback)
+                                      }
+                                    }}
+                                  />
+                                )
+                              }
+                              return (
+                                <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-600 text-[8px]">
+                                  {group.stoneSetting?.title?.substring(0, 2).toUpperCase() || 'NA'}
+                                </div>
+                              )
+                            })()}
+                          </div>
+                          <span className="flex-1">
                             {group.stoneSetting?.title || 'Unknown'} ({group.size}mm)
                           </span>
                           <span className="font-prompt">
@@ -914,7 +996,6 @@ export default function BraceletDesigner() {
                         </div>
                       ))
                     })()}
-                  </div>
                 </div>
                 {basePrice > 0 && (
                   <div className="flex justify-between pt-2 text-sm">
@@ -936,162 +1017,24 @@ export default function BraceletDesigner() {
                 </div>
               </div>
             </div>
-
-            {/* Customer Information Form */}
-            <div className="space-y-4">
-              <h3 className="font-semibold text-lg">ข้อมูลการติดต่อ</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name">ชื่อ-นามสกุล *</Label>
-                  <Input
-                    id="name"
-                    value={customerInfo.name}
-                    onChange={(e) => handleCustomerInfoChange('name', e.target.value)}
-                    placeholder="กรอกชื่อ-นามสกุล"
-                    required
-                    autoFocus={false}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="phone">เบอร์โทรศัพท์ *</Label>
-                  <Input
-                    id="phone"
-                    value={customerInfo.phone}
-                    onChange={(e) => handleCustomerInfoChange('phone', e.target.value)}
-                    placeholder="กรอกเบอร์โทรศัพท์"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">อีเมล</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={customerInfo.email}
-                    onChange={(e) => handleCustomerInfoChange('email', e.target.value)}
-                    placeholder="กรอกอีเมล"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="address">ที่อยู่จัดส่ง *</Label>
-                  <Input
-                    id="address"
-                    value={customerInfo.address}
-                    onChange={(e) => handleCustomerInfoChange('address', e.target.value)}
-                    placeholder="กรอกที่อยู่จัดส่ง"
-                    required
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Bank Details */}
-            <div className="space-y-4">
-              <h3 className="font-semibold text-lg">ข้อมูลการชำระเงิน</h3>
-              {banks.length > 0 ? (
-                <div className="space-y-3">
-                  {banks.map((bank, index) => (
-                    <div key={index} className="border rounded-lg p-4 bg-gray-50">
-                      <div className="flex items-start gap-4">
-                        {bank.acf.bank_image && (
-                          <div className="w-16 h-16 flex-shrink-0">
-                            <Image
-                              src={bank.acf.bank_image}
-                              alt={bank.acf.bank_name}
-                              width={64}
-                              height={64}
-                              className="w-full h-full object-contain"
-                            />
-                          </div>
-                        )}
-                        <div className="flex-1 space-y-1">
-                          <div className="font-medium">{bank.acf.bank_name}</div>
-                          <div className="text-sm text-gray-600">
-                            สาขา: {bank.acf.bank_branch_name}
-                          </div>
-                          <div className="text-sm text-gray-600">
-                            ชื่อบัญชี: {bank.acf.bank_account_name}
-                          </div>
-                          <div className="text-sm font-medium">
-                            เลขบัญชี: {bank.acf.bank_account_number}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center text-gray-500">กำลังโหลดข้อมูลธนาคาร...</div>
-              )}
-            </div>
-
-            {/* Payment Slip Upload */}
-            <div className="space-y-4">
-              <h3 className="font-semibold text-lg">แนบสลิปการโอนเงิน</h3>
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
-                {paymentSlipPreview ? (
-                  <div className="space-y-4">
-                    <div className="relative w-full max-w-xs mx-auto">
-                      <Image
-                        src={paymentSlipPreview}
-                        alt="Payment slip"
-                        width={300}
-                        height={400}
-                        className="w-full h-auto rounded-lg"
-                      />
-                    </div>
-                    <div className="text-center">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => {
-                          setPaymentSlip(null)
-                          setPaymentSlipPreview('')
-                          if (fileInputRef.current) {
-                            fileInputRef.current.value = ''
-                          }
-                        }}
-                      >
-                        เปลี่ยนรูป
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="text-center">
-                    <Upload className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-                    <p className="text-gray-600 mb-2">คลิกเพื่อเลือกไฟล์หรือลากไฟล์มาวางที่นี่</p>
-                    <p className="text-xs text-gray-500">
-                      รองรับไฟล์ JPG, PNG, PDF (ขนาดไม่เกิน 5MB)
-                    </p>
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/*,.pdf"
-                      onChange={handleFileChange}
-                      className="hidden"
-                      id="payment-slip"
-                    />
-                    <Label
-                      htmlFor="payment-slip"
-                      className="inline-block mt-4 px-4 py-2 bg-gray-900 text-white rounded-md cursor-pointer hover:bg-gray-800"
-                    >
-                      เลือกไฟล์
-                    </Label>
-                  </div>
-                )}
-              </div>
-            </div>
           </div>
 
           <DialogFooter className="gap-2">
             <Button variant="ghost" onClick={() => setShowConfirmDialog(false)}>
-              ยกเลิก
+              {locale === 'th' ? 'ยกเลิก' : 'Cancel'}
             </Button>
             <Button
               onClick={handleConfirmOrder}
-              disabled={!customerInfo.name || !customerInfo.phone || !customerInfo.address}
+              disabled={isAddingToCart || beads.length === 0}
             >
-              ยืนยันการสั่งซื้อ
+              {isAddingToCart ? (
+                <>{locale === 'th' ? 'กำลังเพิ่ม...' : 'Adding...'}</>
+              ) : (
+                <>
+                  <ShoppingCartIcon className="w-4 h-4 mr-2" />
+                  {locale === 'th' ? 'เพิ่มลงตะกร้า' : 'Add to Cart'}
+                </>
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>

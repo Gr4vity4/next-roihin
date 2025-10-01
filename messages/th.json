@@ -177,28 +177,25 @@
     },
     "payment": {
       "title": "วิธีการชำระเงิน",
-      "bankTransfer": "โอนเงินผ่านธนาคาร",
-      "selectBank": "กรุณาเลือกบัญชีธนาคารที่ต้องการโอนเงิน",
-      "selectBankLabel": "เลือกบัญชีธนาคาร",
-      "bankName": "ธนาคาร",
-      "branchName": "สาขา",
-      "accountName": "ชื่อบัญชี",
-      "accountNumber": "เลขบัญชี",
-      "uploadSlip": "แนบสลิปการโอนเงิน",
-      "slipPreview": "ตัวอย่างสลิป",
+      "stripe": "บัตรเครดิต/เดบิต (Stripe)",
+      "stripeDescription": "ชำระเงินอย่างปลอดภัยด้วยบัตรเครดิตหรือเดบิตผ่าน Stripe",
+      "securePayment": "🔒 ข้อมูลการชำระเงินของคุณปลอดภัยและเข้ารหัส",
       "required": "*"
     },
     "orderItems": {
       "color": "สี",
-      "quantity": "จำนวน"
+      "quantity": "จำนวน",
+      "stones": "เม็ดหิน",
+      "wrist": "รอบข้อมือ",
+      "beadSize": "ขนาดเม็ดหิน"
     },
     "actions": {
       "processing": "กำลังดำเนินการ...",
-      "confirmOrder": "ยืนยันการสั่งซื้อ",
-      "formIncomplete": "กรุณากรอกข้อมูล เลือกบัญชีธนาคาร และแนบสลิปให้ครบถ้วน"
+      "proceedToPayment": "ดำเนินการชำระเงิน",
+      "formIncomplete": "กรุณากรอกข้อมูลให้ครบถ้วน"
     },
     "errors": {
-      "orderFailed": "เกิดข้อผิดพลาดในการสร้างคำสั่งซื้อ กรุณาลองใหม่อีกครั้ง"
+      "checkoutFailed": "เกิดข้อผิดพลาดในการเริ่มชำระเงิน กรุณาลองใหม่อีกครั้ง"
     }
   },
   "thankYou": {

@@ -1,6 +1,6 @@
 import { cookies } from 'next/headers'
-
-const WORDPRESS_API_URL = process.env.WORDPRESS_API_URL || 'https://wp-roihin.precisiondevlab.com'
+import { NextResponse } from 'next/server'
+import { WORDPRESS_API_URL } from '@/config/api.config'
 
 export async function POST(request: Request) {
   try {
@@ -29,11 +29,11 @@ export async function POST(request: Request) {
       maxAge: 60 * 60 * 24 * 7,
     })
 
-    return Response.json({ 
-      user: { 
-        email: data.user_email, 
-        name: data.user_display_name 
-      } 
+    return NextResponse.json({
+      user: {
+        email: data.user_email,
+        name: data.user_display_name
+      }
     })
   } catch (error) {
     console.error('Login error:', error)

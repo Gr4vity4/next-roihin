@@ -177,28 +177,25 @@
     },
     "payment": {
       "title": "Payment Method",
-      "bankTransfer": "Bank Transfer",
-      "selectBank": "Please select a bank account for transfer",
-      "selectBankLabel": "Select Bank Account",
-      "bankName": "Bank Name",
-      "branchName": "Branch",
-      "accountName": "Account Name",
-      "accountNumber": "Account Number",
-      "uploadSlip": "Upload Payment Slip",
-      "slipPreview": "Slip Preview",
+      "stripe": "Credit/Debit Card (Stripe)",
+      "stripeDescription": "Pay securely with your credit or debit card via Stripe",
+      "securePayment": "🔒 Your payment information is secure and encrypted",
       "required": "*"
     },
     "orderItems": {
       "color": "Color",
-      "quantity": "qty"
+      "quantity": "qty",
+      "stones": "stones",
+      "wrist": "Wrist",
+      "beadSize": "Bead size"
     },
     "actions": {
       "processing": "Processing...",
-      "confirmOrder": "Confirm Order",
-      "formIncomplete": "Please complete all fields, select a bank account, and upload payment slip"
+      "proceedToPayment": "Proceed to Payment",
+      "formIncomplete": "Please complete all required fields"
     },
     "errors": {
-      "orderFailed": "Failed to create order. Please try again."
+      "checkoutFailed": "Failed to initiate checkout. Please try again."
     }
   },
   "thankYou": {

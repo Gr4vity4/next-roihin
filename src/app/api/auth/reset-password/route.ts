@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-
-const WORDPRESS_API_URL = process.env.WORDPRESS_API_URL || 'https://wp-roihin.precisiondevlab.com'
+import { WORDPRESS_API_URL } from '@/config/api.config'
 
 export async function POST(request: NextRequest) {
   try {

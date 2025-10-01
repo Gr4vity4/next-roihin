@@ -1,11 +1,11 @@
-import type { 
-  OrderCreateRequest, 
-  OrderResponse, 
+import type {
+  OrderCreateRequest,
+  OrderResponse,
   BankAccountsResponse,
-  SlipUploadResponse 
+  SlipUploadResponse
 } from '@/lib/types/order'
+import { WORDPRESS_API_URL } from '@/config/api.config'
 
-const WORDPRESS_API_URL = process.env.WORDPRESS_API_URL || 'https://wp-roihin.precisiondevlab.com'
 const API_BASE = `${WORDPRESS_API_URL}/wp-json/roihin-acf/v1`
 
 export async function createOrder(orderData: OrderCreateRequest): Promise<OrderResponse> {

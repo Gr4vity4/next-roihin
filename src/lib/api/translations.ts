@@ -1,6 +1,5 @@
 import type { SiteTranslations } from '@/lib/types/translations'
-
-const WORDPRESS_API_URL = process.env.WORDPRESS_API_URL || 'https://wp-roihin.precisiondevlab.com'
+import { WORDPRESS_API_URL } from '@/config/api.config'
 
 export async function getSiteTranslations(language: 'th' | 'en' = 'th'): Promise<SiteTranslations | null> {
   try {

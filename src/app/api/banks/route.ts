@@ -1,5 +1,5 @@
 import { getCacheHeaders, getFetchConfig } from '@/config/cache.config'
-import { getWordPressApiUrl, getApiBasePath } from '@/lib/api/api-helper'
+import { getWordPressApiUrl, getApiBasePath } from '@/config/api.config'
 import { BanksResponseSchema } from '@/lib/types/api-types'
 import { NextRequest, NextResponse } from 'next/server'
 

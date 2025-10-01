@@ -1,3 +1,5 @@
+import { WORDPRESS_API_URL } from '@/config/api.config'
+
 interface WishlistToggleParams {
   token: string
   productId: number
@@ -60,7 +62,7 @@ interface WishlistFavoriteResponse {
   item_id: string | null
 }
 
-const API_URL = process.env.WORDPRESS_API_URL || 'https://wp-roihin.precisiondevlab.com'
+const API_URL = WORDPRESS_API_URL
 
 export async function toggleWishlist({
   token,

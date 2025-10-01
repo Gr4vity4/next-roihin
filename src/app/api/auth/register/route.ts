@@ -1,4 +1,5 @@
-const WORDPRESS_API_URL = process.env.WORDPRESS_API_URL || 'https://wp-roihin.precisiondevlab.com'
+import { NextResponse } from 'next/server'
+import { WORDPRESS_API_URL } from '@/config/api.config'
 
 export async function POST(request: Request) {
   try {
@@ -42,7 +43,7 @@ export async function POST(request: Request) {
       phone_number: data.phone_number || data.phone || phone || ''
     }
 
-    return Response.json(responseData, { status: 201 })
+    return NextResponse.json(responseData, { status: 201 })
   } catch (error) {
     console.error('Registration error:', error)
     return new Response(

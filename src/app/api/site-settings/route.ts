@@ -4,9 +4,7 @@ import {
   WordPressPageSettingsResponseSchema,
   type SiteSettingsResponse,
 } from '@/lib/types/wordpress-settings'
-
-const WORDPRESS_API_URL = process.env.WORDPRESS_API_URL || 'https://wp-roihin.precisiondevlab.com'
-const WORDPRESS_API_BASE_PATH = process.env.WORDPRESS_API_BASE_PATH || '/wp-json/wp/v2'
+import { WORDPRESS_API_URL, WORDPRESS_API_BASE_PATH } from '@/config/api.config'
 
 /**
  * GET /api/site-settings
