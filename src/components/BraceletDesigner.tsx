@@ -110,15 +110,29 @@ export default function BraceletDesigner() {
   }
 
   // Get valid image URL from stone data
-  const getValidStoneImageUrl = (stone: Stone['acf']): string | null => {
-    // First try stone_image
-    if (isValidImageUrl(stone.stone_image)) {
-      return stone.stone_image
+  const getValidStoneImageUrl = (
+    stone: Stone['acf'],
+    key?: 'stone_image' | 'preview_image',
+  ): string | null => {
+    if (!key) {
+      if (isValidImageUrl(stone.stone_image)) {
+        return stone.stone_image
+      }
+      if (isValidImageUrl(stone.preview_image)) {
+        return stone.preview_image
+      }
+    } else {
+      if (key === 'stone_image') {
+        if (isValidImageUrl(stone.stone_image)) {
+          return stone.stone_image
+        }
+      } else if (key === 'preview_image') {
+        if (isValidImageUrl(stone.preview_image)) {
+          return stone.preview_image
+        }
+      }
     }
-    // Fallback to preview_image
-    if (isValidImageUrl(stone.preview_image)) {
-      return stone.preview_image
-    }
+
     // Log warning for debugging
     console.warn('No valid image URL found for stone:', stone.title, {
       stone_image: stone.stone_image,
@@ -801,7 +815,7 @@ export default function BraceletDesigner() {
                 {lastSelectedBead ? (
                   <div className="relative w-24 h-24 bg-transparent">
                     {(() => {
-                      const validImageUrl = getValidStoneImageUrl(lastSelectedBead)
+                      const validImageUrl = getValidStoneImageUrl(lastSelectedBead, 'preview_image')
                       if (validImageUrl) {
                         return (
                           <Image
