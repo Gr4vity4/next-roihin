@@ -6,6 +6,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ROIHIN STONE & BRACELET - A Next.js 15 e-commerce application for personalized stone bracelets with multi-language support (Thai/English) and WordPress CMS integration.
 
+## Code Architecture & Best Practices
+
+**IMPORTANT**: This codebase follows strict architectural patterns documented in `/APPROACH.md`. You MUST read and follow these guidelines:
+
+- **Configuration Management**: Use centralized config from `/src/config/api.config.ts` - never use scattered `process.env` calls
+- **Error Handling**: Use utilities from `/src/lib/utils/error-handler.ts` - never inline `err instanceof Error` checks
+- **Authentication**: Import `getAuthToken()` from `/src/lib/auth/get-token.ts` - never create local auth functions
+- **API Responses**: Always use `NextResponse.json()` from `next/server` in API routes
+- **Type Definitions**: Use centralized types from `/src/lib/types/` - avoid duplicate interfaces
+- **Code Duplication**: Search for existing implementations before writing new code
+
+Read `/APPROACH.md` for detailed examples, anti-patterns to avoid, and migration guides. Following these patterns is mandatory for maintaining code quality.
+
 ## Development Commands
 
 ```bash
@@ -179,7 +192,11 @@ Content Security Policy and security headers configured in `next.config.ts`:
 
 ## Important Files
 
+- `/APPROACH.md` - **MANDATORY** architectural patterns and best practices (READ FIRST)
 - `/src/config/cache.config.ts` - Cache configuration
+- `/src/config/api.config.ts` - Centralized API configuration (use instead of process.env)
+- `/src/lib/utils/error-handler.ts` - Error handling utilities (use instead of inline checks)
+- `/src/lib/auth/get-token.ts` - Centralized auth token retrieval
 - `/src/lib/types/wordpress.ts` - WordPress blog API types
 - `/src/lib/types/wordpress-settings.ts` - WordPress settings & testimonials types
 - `/src/lib/api/` - API helper functions directory
