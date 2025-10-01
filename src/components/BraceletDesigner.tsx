@@ -20,9 +20,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useCart } from '@/contexts/CartContext'
 import type { Stone } from '@/lib/types/api-types'
 import {
+  generateBraceletId,
   generateBraceletThumbnail,
   generateBraceletTitle,
-  generateBraceletId,
 } from '@/lib/utils/braceletImageGenerator'
 import { ArrowLeft, Check, RefreshCw, ShoppingCartIcon } from 'lucide-react'
 import { useLocale } from 'next-intl'
@@ -110,19 +110,33 @@ export default function BraceletDesigner() {
   }
 
   // Get valid image URL from stone data
-  const getValidStoneImageUrl = (stone: Stone['acf']): string | null => {
-    // First try stone_image
-    if (isValidImageUrl(stone.stone_image)) {
-      return stone.stone_image
+  const getValidStoneImageUrl = (
+    stone: Stone['acf'],
+    key?: 'stone_image' | 'preview_image',
+  ): string | null => {
+    if (!key) {
+      if (isValidImageUrl(stone.stone_image)) {
+        return stone.stone_image
+      }
+      if (isValidImageUrl(stone.preview_image)) {
+        return stone.preview_image
+      }
+    } else {
+      if (key === 'stone_image') {
+        if (isValidImageUrl(stone.stone_image)) {
+          return stone.stone_image
+        }
+      } else if (key === 'preview_image') {
+        if (isValidImageUrl(stone.preview_image)) {
+          return stone.preview_image
+        }
+      }
     }
-    // Fallback to preview_image
-    if (isValidImageUrl(stone.preview_image)) {
-      return stone.preview_image
-    }
+
     // Log warning for debugging
     console.warn('No valid image URL found for stone:', stone.title, {
       stone_image: stone.stone_image,
-      preview_image: stone.preview_image
+      preview_image: stone.preview_image,
     })
     return null
   }
@@ -133,7 +147,6 @@ export default function BraceletDesigner() {
     cy: 260,
     R: 190,
   })
-
 
   // Fetch stone settings from API
   useEffect(() => {
@@ -178,7 +191,6 @@ export default function BraceletDesigner() {
     }
     fetchBasePrice()
   }, [locale])
-
 
   // Get stones by category
   const getStonesByCategory = (category: string) => {
@@ -304,7 +316,6 @@ export default function BraceletDesigner() {
       { duration: 240, easing: 'ease-out' },
     )
   }
-
 
   // Update the ref whenever draggedBead changes
   useEffect(() => {
@@ -533,7 +544,7 @@ export default function BraceletDesigner() {
 
     try {
       // Ensure all beads are rendered before capturing
-      await new Promise(resolve => setTimeout(resolve, 500))
+      await new Promise((resolve) => setTimeout(resolve, 500))
 
       // Force a reflow to ensure all styles are applied
       if (stageRef.current) {
@@ -547,7 +558,7 @@ export default function BraceletDesigner() {
         : '/images/bracelet-placeholder.png'
 
       // Create bracelet design data
-      const braceletBeads = beads.map(bead => ({
+      const braceletBeads = beads.map((bead) => ({
         id: bead.id,
         stoneName: bead.stoneSetting?.title || 'Unknown',
         stoneImage: bead.stoneSetting?.stone_image,
@@ -582,10 +593,11 @@ export default function BraceletDesigner() {
 
       // Show success message (optional)
       alert(locale === 'th' ? 'เพิ่มลงตะกร้าแล้ว!' : 'Added to cart!')
-
     } catch (error) {
       console.error('Error adding bracelet to cart:', error)
-      alert(locale === 'th' ? 'เกิดข้อผิดพลาด กรุณาลองใหม่' : 'An error occurred. Please try again.')
+      alert(
+        locale === 'th' ? 'เกิดข้อผิดพลาด กรุณาลองใหม่' : 'An error occurred. Please try again.',
+      )
     } finally {
       setIsAddingToCart(false)
     }
@@ -754,7 +766,7 @@ export default function BraceletDesigner() {
                           return (
                             <div key={stoneInfo.title} className="relative group">
                               <button
-                                className="w-11 h-11 transition-transform overflow-hidden cursor-pointer active:scale-95 rounded-lg relative bg-gray-100"
+                                className="w-11 h-11 transition-transform overflow-hidden cursor-pointer active:scale-95 rounded-lg relative"
                                 title={`${stoneInfo.title} - ฿${price}`}
                                 onClick={() => addBead(stoneInfo)}
                                 aria-label={`Add ${stoneInfo.title} - ฿${price}`}
@@ -803,7 +815,7 @@ export default function BraceletDesigner() {
                 {lastSelectedBead ? (
                   <div className="relative w-24 h-24 bg-transparent">
                     {(() => {
-                      const validImageUrl = getValidStoneImageUrl(lastSelectedBead)
+                      const validImageUrl = getValidStoneImageUrl(lastSelectedBead, 'preview_image')
                       if (validImageUrl) {
                         return (
                           <Image
@@ -908,8 +920,14 @@ export default function BraceletDesigner() {
       <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{locale === 'th' ? 'ยืนยันการเพิ่มลงตะกร้า' : 'Confirm Add to Cart'}</DialogTitle>
-            <DialogDescription>{locale === 'th' ? 'กรุณาตรวจสอบรายละเอียดสร้อยข้อมือของคุณ' : 'Please review your bracelet design details'}</DialogDescription>
+            <DialogTitle>
+              {locale === 'th' ? 'ยืนยันการเพิ่มลงตะกร้า' : 'Confirm Add to Cart'}
+            </DialogTitle>
+            <DialogDescription>
+              {locale === 'th'
+                ? 'กรุณาตรวจสอบรายละเอียดสร้อยข้อมือของคุณ'
+                : 'Please review your bracelet design details'}
+            </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-6">
@@ -930,72 +948,74 @@ export default function BraceletDesigner() {
                   <span className="font-medium">{beads.length} ชิ้น</span>
                 </div>
                 <div className="border-t pt-2">
-                    <div className="text-sm text-gray-600 mb-2">สรุปจำนวนหิน:</div>
-                    {(() => {
-                      // Group beads by stone title and size
-                      const groupedBeads = beads.reduce((acc, bead) => {
-                        const key = `${bead.stoneSetting?.title || 'Unknown'}_${bead.size}mm`
-                        if (!acc[key]) {
-                          acc[key] = {
-                            stoneSetting: bead.stoneSetting,
-                            imageUrl: bead.imageUrl,
-                            count: 0,
-                            price: bead.price,
-                            totalPrice: 0,
-                            size: bead.size,
-                          }
+                  <div className="text-sm text-gray-600 mb-2">สรุปจำนวนหิน:</div>
+                  {(() => {
+                    // Group beads by stone title and size
+                    const groupedBeads = beads.reduce((acc, bead) => {
+                      const key = `${bead.stoneSetting?.title || 'Unknown'}_${bead.size}mm`
+                      if (!acc[key]) {
+                        acc[key] = {
+                          stoneSetting: bead.stoneSetting,
+                          imageUrl: bead.imageUrl,
+                          count: 0,
+                          price: bead.price,
+                          totalPrice: 0,
+                          size: bead.size,
                         }
-                        acc[key].count++
-                        acc[key].totalPrice += bead.price
-                        return acc
-                      }, {} as Record<string, { stoneSetting: Stone['acf'] | undefined; imageUrl?: string; count: number; price: number; totalPrice: number; size: number }>)
+                      }
+                      acc[key].count++
+                      acc[key].totalPrice += bead.price
+                      return acc
+                    }, {} as Record<string, { stoneSetting: Stone['acf'] | undefined; imageUrl?: string; count: number; price: number; totalPrice: number; size: number }>)
 
-                      return Object.entries(groupedBeads).map(([key, group]) => (
-                        <div
-                          key={key}
-                          className="flex items-center gap-2 text-xs text-gray-600 py-1"
-                        >
-                          <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0 bg-gray-100">
-                            {(() => {
-                              const stoneImageUrl = group.stoneSetting ? getValidStoneImageUrl(group.stoneSetting) : null
-                              if (stoneImageUrl) {
-                                return (
-                                  <Image
-                                    src={stoneImageUrl}
-                                    alt={group.stoneSetting?.title || 'Stone'}
-                                    width={24}
-                                    height={24}
-                                    className="w-full h-full object-contain"
-                                    onError={(e) => {
-                                      const target = e.currentTarget
-                                      target.style.display = 'none'
-                                      const parent = target.parentElement
-                                      if (parent) {
-                                        const fallback = document.createElement('div')
-                                        fallback.className = 'w-full h-full flex items-center justify-center bg-gray-200 text-gray-600 text-[8px]'
-                                        fallback.textContent = group.stoneSetting?.title?.substring(0, 2).toUpperCase() || 'NA'
-                                        parent.appendChild(fallback)
-                                      }
-                                    }}
-                                  />
-                                )
-                              }
+                    return Object.entries(groupedBeads).map(([key, group]) => (
+                      <div key={key} className="flex items-center gap-2 text-xs text-gray-600 py-1">
+                        <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0 bg-gray-100">
+                          {(() => {
+                            const stoneImageUrl = group.stoneSetting
+                              ? getValidStoneImageUrl(group.stoneSetting)
+                              : null
+                            if (stoneImageUrl) {
                               return (
-                                <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-600 text-[8px]">
-                                  {group.stoneSetting?.title?.substring(0, 2).toUpperCase() || 'NA'}
-                                </div>
+                                <Image
+                                  src={stoneImageUrl}
+                                  alt={group.stoneSetting?.title || 'Stone'}
+                                  width={24}
+                                  height={24}
+                                  className="w-full h-full object-contain"
+                                  onError={(e) => {
+                                    const target = e.currentTarget
+                                    target.style.display = 'none'
+                                    const parent = target.parentElement
+                                    if (parent) {
+                                      const fallback = document.createElement('div')
+                                      fallback.className =
+                                        'w-full h-full flex items-center justify-center bg-gray-200 text-gray-600 text-[8px]'
+                                      fallback.textContent =
+                                        group.stoneSetting?.title?.substring(0, 2).toUpperCase() ||
+                                        'NA'
+                                      parent.appendChild(fallback)
+                                    }
+                                  }}
+                                />
                               )
-                            })()}
-                          </div>
-                          <span className="flex-1">
-                            {group.stoneSetting?.title || 'Unknown'} ({group.size}mm)
-                          </span>
-                          <span className="font-prompt">
-                            x{group.count} = ฿{group.totalPrice}
-                          </span>
+                            }
+                            return (
+                              <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-600 text-[8px]">
+                                {group.stoneSetting?.title?.substring(0, 2).toUpperCase() || 'NA'}
+                              </div>
+                            )
+                          })()}
                         </div>
-                      ))
-                    })()}
+                        <span className="flex-1">
+                          {group.stoneSetting?.title || 'Unknown'} ({group.size}mm)
+                        </span>
+                        <span className="font-prompt">
+                          x{group.count} = ฿{group.totalPrice}
+                        </span>
+                      </div>
+                    ))
+                  })()}
                 </div>
                 {basePrice > 0 && (
                   <div className="flex justify-between pt-2 text-sm">
@@ -1023,10 +1043,7 @@ export default function BraceletDesigner() {
             <Button variant="ghost" onClick={() => setShowConfirmDialog(false)}>
               {locale === 'th' ? 'ยกเลิก' : 'Cancel'}
             </Button>
-            <Button
-              onClick={handleConfirmOrder}
-              disabled={isAddingToCart || beads.length === 0}
-            >
+            <Button onClick={handleConfirmOrder} disabled={isAddingToCart || beads.length === 0}>
               {isAddingToCart ? (
                 <>{locale === 'th' ? 'กำลังเพิ่ม...' : 'Adding...'}</>
               ) : (
