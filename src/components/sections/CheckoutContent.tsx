@@ -2,11 +2,12 @@
 
 import Container from '@/components/ui/Container'
 import Typography from '@/components/ui/Typography'
+import AuthModal from '@/components/AuthModal'
 import { useCart } from '@/contexts/CartContext'
+import { useAuth } from '@/contexts/AuthContext'
 import { MinusIcon, PlusIcon, ShoppingBagIcon, TrashIcon } from '@heroicons/react/24/outline'
 import Image from 'next/image'
-import { Link } from '@/i18n/navigation'
-import { useRouter } from 'next/navigation'
+import { Link, useRouter } from '@/i18n/navigation'
 import { useEffect, useState } from 'react'
 import { useTranslations } from 'next-intl'
 
@@ -14,8 +15,11 @@ export default function CheckoutContent() {
   const router = useRouter()
   const t = useTranslations('checkout')
   const { items, itemCount, totalAmount, removeItem, updateQuantity, clearCart } = useCart()
+  const { isLoggedIn } = useAuth()
   const [isProcessing, setIsProcessing] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [showAuthModal, setShowAuthModal] = useState(false)
+  const [authMode, setAuthMode] = useState<'sign-in' | 'sign-up'>('sign-in')
 
   useEffect(() => {
     // Set loading to false after component mounts (client-side)
@@ -23,6 +27,13 @@ export default function CheckoutContent() {
   }, [])
 
   const handleCheckout = async () => {
+    // Check if user is authenticated
+    if (!isLoggedIn) {
+      setAuthMode('sign-in')
+      setShowAuthModal(true)
+      return
+    }
+
     setIsProcessing(true)
 
     // Navigate to confirmation page
@@ -216,6 +227,14 @@ export default function CheckoutContent() {
           </div>
         </div>
       </Container>
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        mode={authMode}
+        onModeChange={setAuthMode}
+      />
     </section>
   )
 }
