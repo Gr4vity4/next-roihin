@@ -1,8 +1,8 @@
-import { Metadata } from 'next'
-import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import ChatWidget from '@/components/ChatWidget'
+import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import { Footer } from '@/components/sections'
 import CheckoutConfirmContent from '@/components/sections/CheckoutConfirmContent'
+import { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 
 interface CheckoutConfirmPageProps {
@@ -23,7 +23,7 @@ export default function CheckoutConfirmPage() {
   return (
     <>
       <NavigationWithSuspense position="static" />
-      
+
       <main className="min-h-screen bg-black">
         <CheckoutConfirmContent />
       </main>
