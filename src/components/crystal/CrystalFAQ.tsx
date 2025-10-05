@@ -1,14 +1,16 @@
 'use client'
 
+import type { CrystalProduct } from '@/lib/types/crystal'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 
 interface CrystalFAQProps {
   crystalName: string
+  product: CrystalProduct
   locale: string
 }
 
-export default function CrystalFAQ({ crystalName, locale }: CrystalFAQProps) {
+export default function CrystalFAQ({ crystalName, product, locale }: CrystalFAQProps) {
   const t = useTranslations('crystalProduct.faq')
 
   return (
@@ -17,7 +19,7 @@ export default function CrystalFAQ({ crystalName, locale }: CrystalFAQProps) {
         <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6">
           {/* View All Products Link */}
           <Link
-            href={`/${locale}/crystal`}
+            href={`/${locale}/products/crystal/${product.nameEn.toLocaleLowerCase()}`}
             className="px-6 py-3 text-sm md:text-base text-gray-900 border border-gray-300 hover:border-gray-900 hover:bg-gray-50 transition-all"
           >
             {t('viewAllProducts', { crystalName })}

@@ -1,17 +1,17 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { notFound, useParams } from 'next/navigation'
-import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import ChatWidget from '@/components/ChatWidget'
-import { Footer } from '@/components/sections'
+import CrystalFAQ from '@/components/crystal/CrystalFAQ'
 import CrystalProductDetail from '@/components/crystal/CrystalProductDetail'
 import CrystalRelatedProducts, {
   RelatedCrystalProduct,
 } from '@/components/crystal/CrystalRelatedProducts'
-import CrystalFAQ from '@/components/crystal/CrystalFAQ'
+import NavigationWithSuspense from '@/components/NavigationWithSuspense'
+import { Footer } from '@/components/sections'
 import { getCrystalBySlug } from '@/lib/api/crystals'
 import type { CrystalProduct } from '@/lib/types/crystal'
+import { notFound, useParams } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 // Mock related products data (to be replaced with real API when available)
 const MOCK_RELATED_PRODUCTS: RelatedCrystalProduct[] = [
@@ -28,7 +28,7 @@ const MOCK_RELATED_PRODUCTS: RelatedCrystalProduct[] = [
     id: '2',
     slug: 'apatite-stone-raw',
     nameEn: 'Apatite Raw Stone',
-    nameTh: 'ทำไสคนดอลาคช่ชั่ "รักมั้บนต์"',
+    nameTh: 'ทำไสคนคอเลคช่ชั่ "รักนิรันดร์"',
     image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400&h=400&fit=crop',
     price: 6890,
     originalPrice: 6890,
@@ -46,7 +46,7 @@ const MOCK_RELATED_PRODUCTS: RelatedCrystalProduct[] = [
     id: '4',
     slug: 'apatite-beads',
     nameEn: 'Apatite Beads',
-    nameTh: 'ทำไสคนดอลาคช่ชั่ "รักมั้บนต์"',
+    nameTh: 'ทำไสคนคอเลคช่ชั่ "รักนิรันดร์"',
     image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400&h=400&fit=crop',
     price: 6890,
     originalPrice: 6890,
@@ -64,7 +64,7 @@ const MOCK_RELATED_PRODUCTS: RelatedCrystalProduct[] = [
     id: '6',
     slug: 'apatite-necklace',
     nameEn: 'Apatite Necklace',
-    nameTh: 'ทำไสคนดอลาคช่ชั่ "รักมั้บนต์"',
+    nameTh: 'ทำไสคนคอเลคช่ชั่ "รักนิรันดร์"',
     image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400&h=400&fit=crop',
     price: 6890,
     originalPrice: 6890,
@@ -82,7 +82,7 @@ const MOCK_RELATED_PRODUCTS: RelatedCrystalProduct[] = [
     id: '8',
     slug: 'apatite-charm-bracelet',
     nameEn: 'Apatite Charm Bracelet',
-    nameTh: 'ทำไสคนดอลาคช่ชั่ "รักมั้บนต์"',
+    nameTh: 'ทำไสคนคอเลคช่ชั่ "รักนิรันดร์"',
     image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400&h=400&fit=crop',
     price: 6890,
     originalPrice: 6890,
@@ -163,6 +163,7 @@ export default function CrystalProductPage() {
 
         <CrystalFAQ
           crystalName={locale === 'th' ? product.nameTh : product.nameEn}
+          product={product}
           locale={locale}
         />
       </main>

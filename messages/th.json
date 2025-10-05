@@ -191,6 +191,28 @@
       "backToCatalog": "กลับหน้าหินและแร่ธาตุ"
     }
   },
+  "productDetail": {
+    "loading": "กำลังโหลดสินค้า...",
+    "description": "รายละเอียดสินค้า",
+    "crystalTags": "คุณสมบัติของหิน",
+    "addToCart": "เพิ่มลงตะกร้า",
+    "adding": "กำลังเพิ่ม...",
+    "addToWishlist": "เพิ่มลงรายการโปรด",
+    "removeFromWishlist": "ลบจากรายการโปรด"
+  },
+  "productListing": {
+    "loading": "กำลังโหลดสินค้า...",
+    "title": "สินค้าหิน{crystalName}",
+    "subtitle": "{count} สินค้า",
+    "noProducts": "ไม่พบสินค้าสำหรับหินชนิดนี้",
+    "breadcrumb": {
+      "home": "หน้าแรก",
+      "crystals": "หินและแร่ธาตุ"
+    },
+    "addToCart": "เพิ่ม",
+    "adding": "กำลังเพิ่ม...",
+    "addToWishlist": "เพิ่มรายการโปรด"
+  },
   "checkout": {
     "title": "ตะกร้าสินค้า",
     "pageTitle": "ตะกร้าสินค้า | Roihin Thailand",

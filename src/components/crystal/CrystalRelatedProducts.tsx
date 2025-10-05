@@ -52,6 +52,7 @@ export default function CrystalRelatedProducts({
 function ProductCard({ product, locale }: { product: RelatedCrystalProduct; locale: string }) {
   const [isWishlisted, setIsWishlisted] = useState(false)
   const t = useTranslations('crystalProduct.actions')
+  const mockupSlug = 'apatite-ring-1'
 
   const handleWishlistToggle = () => {
     setIsWishlisted(!isWishlisted)
@@ -65,7 +66,10 @@ function ProductCard({ product, locale }: { product: RelatedCrystalProduct; loca
   }
 
   return (
-    <Link href={`/${locale}/crystal/product/${product.slug}`} className="group block relative">
+    <Link
+      href={`/${locale}/products/crystal-detail/${mockupSlug}`}
+      className="group block relative"
+    >
       <div className="relative">
         {/* Product Image */}
         <div className="relative aspect-square overflow-hidden bg-gray-50 rounded-lg mb-3">

@@ -191,6 +191,28 @@
       "backToCatalog": "Back to Stones & Minerals"
     }
   },
+  "productDetail": {
+    "loading": "Loading product...",
+    "description": "Product Description",
+    "crystalTags": "Crystal Properties",
+    "addToCart": "Add to Cart",
+    "adding": "Adding...",
+    "addToWishlist": "Add to Wishlist",
+    "removeFromWishlist": "Remove from Wishlist"
+  },
+  "productListing": {
+    "loading": "Loading products...",
+    "title": "{crystalName} Products",
+    "subtitle": "{count, plural, =0 {No products available} =1 {# product available} other {# products available}}",
+    "noProducts": "No products found for this crystal type",
+    "breadcrumb": {
+      "home": "Home",
+      "crystals": "Crystals"
+    },
+    "addToCart": "Add",
+    "adding": "Adding...",
+    "addToWishlist": "Add to wishlist"
+  },
   "checkout": {
     "title": "Shopping Cart",
     "pageTitle": "Shopping Cart | Roihin Thailand",
