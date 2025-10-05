@@ -92,6 +92,12 @@ class Roihin_Crystal_Manager {
 
         // Validation Functions
         require_once ROIHIN_CRYSTAL_PLUGIN_DIR . 'includes/validation.php';
+
+        // Sample Data Installer
+        require_once ROIHIN_CRYSTAL_PLUGIN_DIR . 'includes/sample-data-installer.php';
+
+        // Sample Data Admin Page
+        require_once ROIHIN_CRYSTAL_PLUGIN_DIR . 'includes/admin-sample-data-page.php';
     }
 
     /**
