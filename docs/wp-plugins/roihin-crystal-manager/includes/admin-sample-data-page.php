@@ -39,6 +39,8 @@ function roihin_crystal_sample_data_page() {
 
     $is_installed = Roihin_Crystal_Sample_Data_Installer::is_installed();
     $installed_count = Roihin_Crystal_Sample_Data_Installer::get_installed_count();
+    $unsplash_api_key = get_option('roihin_crystal_unsplash_api_key', '');
+    $api_key_configured = !empty($unsplash_api_key);
     ?>
     <div class="wrap">
         <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
@@ -55,6 +57,64 @@ function roihin_crystal_sample_data_page() {
 
         <!-- Messages container -->
         <div id="sample-data-message" style="display: none;"></div>
+        <div id="api-key-message" style="display: none;"></div>
+
+        <!-- Unsplash API Configuration -->
+        <div class="card" style="max-width: 600px; margin: 20px 0;">
+            <h2><?php _e('Unsplash API Configuration', 'roihin-crystal'); ?></h2>
+            <p class="description">
+                <?php _e('Sample data uses Unsplash to fetch high-quality crystal images. Enter your Unsplash Access Key below.', 'roihin-crystal'); ?>
+                <a href="https://unsplash.com/developers" target="_blank"><?php _e('Get your free API key', 'roihin-crystal'); ?></a>
+            </p>
+
+            <table class="form-table" style="margin-top: 15px;">
+                <tbody>
+                    <tr>
+                        <th scope="row">
+                            <label for="unsplash-api-key"><?php _e('Access Key:', 'roihin-crystal'); ?></label>
+                        </th>
+                        <td>
+                            <input
+                                type="text"
+                                id="unsplash-api-key"
+                                name="unsplash_api_key"
+                                value="<?php echo esc_attr($unsplash_api_key); ?>"
+                                class="regular-text"
+                                placeholder="<?php _e('Enter your Unsplash Access Key', 'roihin-crystal'); ?>"
+                            />
+                            <p class="description">
+                                <?php _e('Your API key is stored securely and only used to fetch images during sample data installation.', 'roihin-crystal'); ?>
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">
+                            <label><?php _e('Status:', 'roihin-crystal'); ?></label>
+                        </th>
+                        <td id="api-key-status">
+                            <?php if ($api_key_configured): ?>
+                                <span class="dashicons dashicons-yes-alt" style="color: #46b450;"></span>
+                                <span style="color: #46b450;"><?php _e('Configured', 'roihin-crystal'); ?></span>
+                            <?php else: ?>
+                                <span class="dashicons dashicons-warning" style="color: #dba617;"></span>
+                                <span style="color: #dba617;"><?php _e('Not Configured', 'roihin-crystal'); ?></span>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p class="submit" style="padding: 0; margin-top: 10px;">
+                <button type="button" id="save-api-key" class="button button-primary">
+                    <?php _e('Save API Key', 'roihin-crystal'); ?>
+                </button>
+                <?php if ($api_key_configured): ?>
+                    <button type="button" id="clear-api-key" class="button button-secondary" style="margin-left: 10px;">
+                        <?php _e('Clear API Key', 'roihin-crystal'); ?>
+                    </button>
+                <?php endif; ?>
+            </p>
+        </div>
 
         <!-- Status Box -->
         <div class="card" style="max-width: 600px; margin: 20px 0;">
@@ -198,10 +258,12 @@ function roihin_crystal_sample_data_page() {
         <div class="card" style="margin-top: 20px; max-width: 800px; background: #f8f9fa;">
             <h2><?php _e('Help & Information', 'roihin-crystal'); ?></h2>
             <ul style="list-style: disc; padding-left: 20px;">
+                <li><strong><?php _e('API Key Required:', 'roihin-crystal'); ?></strong> <?php _e('You must configure your Unsplash API key before installing sample data. Get a free API key at', 'roihin-crystal'); ?> <a href="https://unsplash.com/developers" target="_blank">unsplash.com/developers</a>.</li>
                 <li><strong><?php _e('Safe to Install:', 'roihin-crystal'); ?></strong> <?php _e('Sample data is tagged with a special category for easy identification and removal.', 'roihin-crystal'); ?></li>
-                <li><strong><?php _e('Complete Data:', 'roihin-crystal'); ?></strong> <?php _e('Each crystal includes bilingual names, descriptions, properties, filters, and images from Unsplash.', 'roihin-crystal'); ?></li>
+                <li><strong><?php _e('Complete Data:', 'roihin-crystal'); ?></strong> <?php _e('Each crystal includes bilingual names, descriptions, properties, filters, and high-quality images from Unsplash.', 'roihin-crystal'); ?></li>
                 <li><strong><?php _e('Filter Coverage:', 'roihin-crystal'); ?></strong> <?php _e('Sample data covers all filter options to test the frontend catalog pages.', 'roihin-crystal'); ?></li>
-                <li><strong><?php _e('Images:', 'roihin-crystal'); ?></strong> <?php _e('Crystal images will be downloaded from Unsplash and added to your media library.', 'roihin-crystal'); ?></li>
+                <li><strong><?php _e('Images:', 'roihin-crystal'); ?></strong> <?php _e('Crystal images will be downloaded from Unsplash and added to your media library (3 images per crystal: 1 main + 2 gallery).', 'roihin-crystal'); ?></li>
+                <li><strong><?php _e('Rate Limits:', 'roihin-crystal'); ?></strong> <?php _e('Unsplash demo keys have 50 requests/hour. For 19 crystals, you need 57 requests. Consider getting a production key (5000/hour) if needed.', 'roihin-crystal'); ?></li>
                 <li><strong><?php _e('Related Products:', 'roihin-crystal'); ?></strong> <?php _e('No related products are set - you can add them manually if needed.', 'roihin-crystal'); ?></li>
                 <li><strong><?php _e('Clean Removal:', 'roihin-crystal'); ?></strong> <?php _e('Uninstalling removes all sample posts and images without affecting your real data.', 'roihin-crystal'); ?></li>
             </ul>
@@ -225,6 +287,125 @@ function roihin_crystal_sample_data_page() {
                 scrollTop: $messageDiv.offset().top - 50
             }, 500);
         }
+
+        // Show API key message
+        function showApiKeyMessage(message, type) {
+            var $messageDiv = $('#api-key-message');
+            $messageDiv.removeClass('notice-success notice-error notice-warning notice-info');
+            $messageDiv.addClass('notice is-dismissible notice-' + type);
+            $messageDiv.html('<p>' + message + '</p>');
+            $messageDiv.show();
+
+            // Scroll to message
+            $('html, body').animate({
+                scrollTop: $messageDiv.offset().top - 50
+            }, 500);
+
+            // Auto-hide success messages after 3 seconds
+            if (type === 'success') {
+                setTimeout(function() {
+                    $messageDiv.fadeOut();
+                }, 3000);
+            }
+        }
+
+        // Update API key status
+        function updateApiKeyStatus(configured) {
+            var $status = $('#api-key-status');
+
+            if (configured) {
+                $status.html('<span class="dashicons dashicons-yes-alt" style="color: #46b450;"></span>' +
+                    '<span style="color: #46b450;"><?php _e('Configured', 'roihin-crystal'); ?></span>');
+
+                // Show clear button if not exists
+                if ($('#clear-api-key').length === 0) {
+                    $('#save-api-key').after('<button type="button" id="clear-api-key" class="button button-secondary" style="margin-left: 10px;"><?php _e('Clear API Key', 'roihin-crystal'); ?></button>');
+                    attachClearHandler();
+                }
+            } else {
+                $status.html('<span class="dashicons dashicons-warning" style="color: #dba617;"></span>' +
+                    '<span style="color: #dba617;"><?php _e('Not Configured', 'roihin-crystal'); ?></span>');
+
+                // Hide clear button
+                $('#clear-api-key').remove();
+            }
+        }
+
+        // Save API Key
+        $('#save-api-key').on('click', function() {
+            var apiKey = $('#unsplash-api-key').val().trim();
+
+            if (apiKey === '') {
+                showApiKeyMessage('<?php _e('Please enter an API key.', 'roihin-crystal'); ?>', 'warning');
+                return;
+            }
+
+            var $button = $(this);
+            $button.prop('disabled', true).text('<?php _e('Saving...', 'roihin-crystal'); ?>');
+
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'roihin_crystal_save_unsplash_api_key',
+                    nonce: nonce,
+                    api_key: apiKey
+                },
+                success: function(response) {
+                    $button.prop('disabled', false).text('<?php _e('Save API Key', 'roihin-crystal'); ?>');
+
+                    if (response.success) {
+                        showApiKeyMessage(response.data.message, 'success');
+                        updateApiKeyStatus(true);
+                    } else {
+                        showApiKeyMessage(response.data.message, 'error');
+                    }
+                },
+                error: function() {
+                    $button.prop('disabled', false).text('<?php _e('Save API Key', 'roihin-crystal'); ?>');
+                    showApiKeyMessage('<?php _e('An error occurred. Please try again.', 'roihin-crystal'); ?>', 'error');
+                }
+            });
+        });
+
+        // Clear API Key handler
+        function attachClearHandler() {
+            $('#clear-api-key').off('click').on('click', function() {
+                if (!confirm('<?php _e('Are you sure you want to clear the API key?', 'roihin-crystal'); ?>')) {
+                    return;
+                }
+
+                var $button = $(this);
+                $button.prop('disabled', true);
+
+                $.ajax({
+                    url: ajaxurl,
+                    type: 'POST',
+                    data: {
+                        action: 'roihin_crystal_clear_unsplash_api_key',
+                        nonce: nonce
+                    },
+                    success: function(response) {
+                        $button.prop('disabled', false);
+
+                        if (response.success) {
+                            $('#unsplash-api-key').val('');
+                            showApiKeyMessage(response.data.message, 'success');
+                            updateApiKeyStatus(false);
+                        } else {
+                            showApiKeyMessage(response.data.message, 'error');
+                        }
+                    },
+                    error: function() {
+                        $button.prop('disabled', false);
+                        showApiKeyMessage('<?php _e('An error occurred. Please try again.', 'roihin-crystal'); ?>', 'error');
+                    }
+                });
+            });
+        }
+
+        // Attach clear handler on page load
+        attachClearHandler();
 
         // Show progress
         function showProgress(text, percent) {
@@ -265,7 +446,19 @@ function roihin_crystal_sample_data_page() {
 
         // Install sample data
         $('#install-sample-data').on('click', function() {
-            if (!confirm('<?php _e('Are you sure you want to install sample data? This will create 19 crystal products.', 'roihin-crystal'); ?>')) {
+            // Check if API key is configured
+            var apiKey = $('#unsplash-api-key').val().trim();
+            if (apiKey === '') {
+                showMessage('<?php _e('Please configure your Unsplash API key before installing sample data.', 'roihin-crystal'); ?>', 'warning');
+                // Scroll to API key input
+                $('html, body').animate({
+                    scrollTop: $('#unsplash-api-key').offset().top - 100
+                }, 500);
+                $('#unsplash-api-key').focus();
+                return;
+            }
+
+            if (!confirm('<?php _e('Are you sure you want to install sample data? This will create 19 crystal products with images from Unsplash.', 'roihin-crystal'); ?>')) {
                 return;
             }
 

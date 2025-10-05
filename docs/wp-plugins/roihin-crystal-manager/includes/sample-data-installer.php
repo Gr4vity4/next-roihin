@@ -33,6 +33,13 @@ class Roihin_Crystal_Sample_Data_Installer {
     const CATEGORY_NAME = 'Sample Data';
 
     /**
+     * Unsplash API Configuration
+     * Note: API key is now stored in WordPress options (roihin_crystal_unsplash_api_key)
+     * Configure it via Crystals > Sample Data in the WordPress admin
+     */
+    const UNSPLASH_API_BASE = 'https://api.unsplash.com';
+
+    /**
      * Get the path to sample data JSON file
      */
     private static function get_sample_data_path() {
@@ -323,16 +330,26 @@ class Roihin_Crystal_Sample_Data_Installer {
             wp_set_object_terms($post_id, [$category_id], 'crystal_category');
         }
 
-        // Import and set main image from local file
+        // Import and set main image from Unsplash
         $main_image_id = 0;
         if ($image_stats !== null) {
             $image_stats['total_images_attempted']++;
         }
 
-        $main_image_id = self::import_local_image_to_media_library(
-            $post_id,
-            $data['crystal_name_en'] . ' - Main Image'
-        );
+        // Fetch image URL from Unsplash
+        $search_query = $data['crystal_name_en'] . ' crystal stone';
+        $image_url = self::fetch_unsplash_image_url($search_query, 'main');
+
+        if (!is_wp_error($image_url)) {
+            // Download image to media library
+            $main_image_id = self::download_image_to_media_library(
+                $image_url,
+                $post_id,
+                $data['crystal_name_en'] . ' - Main Image'
+            );
+        } else {
+            $main_image_id = $image_url; // Pass the error through
+        }
 
         if (!is_wp_error($main_image_id)) {
             update_field('crystal_main_image', $main_image_id, $post_id);
@@ -351,19 +368,36 @@ class Roihin_Crystal_Sample_Data_Installer {
             }
         }
 
-        // Import gallery images from local file (2 copies for variety)
+        // Import gallery images from Unsplash (2 images with varied search queries)
         $gallery_count = 2;
         $gallery_ids = [];
+
+        // Use varied search queries for diversity
+        $gallery_queries = [
+            $data['crystal_name_en'] . ' gemstone',
+            $data['crystal_name_en'] . ' healing crystal',
+        ];
 
         for ($i = 0; $i < $gallery_count; $i++) {
             if ($image_stats !== null) {
                 $image_stats['total_images_attempted']++;
             }
 
-            $image_id = self::import_local_image_to_media_library(
-                $post_id,
-                $data['crystal_name_en'] . ' - Gallery Image ' . ($i + 1)
-            );
+            // Fetch image URL from Unsplash with varied query
+            $gallery_search_query = $gallery_queries[$i];
+            $gallery_url = self::fetch_unsplash_image_url($gallery_search_query, 'gallery');
+
+            $image_id = null;
+            if (!is_wp_error($gallery_url)) {
+                // Download image to media library
+                $image_id = self::download_image_to_media_library(
+                    $gallery_url,
+                    $post_id,
+                    $data['crystal_name_en'] . ' - Gallery Image ' . ($i + 1)
+                );
+            } else {
+                $image_id = $gallery_url; // Pass the error through
+            }
 
             if (!is_wp_error($image_id)) {
                 $gallery_ids[] = $image_id;
@@ -411,6 +445,131 @@ class Roihin_Crystal_Sample_Data_Installer {
         }
 
         return $post_id;
+    }
+
+    /**
+     * Fetch image URL from Unsplash API
+     */
+    private static function fetch_unsplash_image_url($search_query = 'crystal', $image_type = 'main') {
+        // Get API key from WordPress options
+        $api_key = get_option('roihin_crystal_unsplash_api_key', '');
+
+        // Validate access key
+        if (empty($api_key)) {
+            error_log('Roihin Crystal: Unsplash access key not configured');
+            return new WP_Error(
+                'unsplash_not_configured',
+                __('Unsplash API access key not configured. Please configure your API key in the Sample Data settings.', 'roihin-crystal')
+            );
+        }
+
+        // Build API URL - use search endpoint for specific queries
+        $search_url = self::UNSPLASH_API_BASE . '/search/photos';
+        $query_params = [
+            'query' => sanitize_text_field($search_query),
+            'per_page' => 1,
+            'orientation' => 'squarish', // Better for product images
+        ];
+
+        $api_url = add_query_arg($query_params, $search_url);
+
+        // Make API request
+        $response = wp_remote_get($api_url, [
+            'timeout' => 15,
+            'headers' => [
+                'Authorization' => 'Client-ID ' . $api_key,
+                'Accept-Version' => 'v1',
+            ],
+        ]);
+
+        // Check for errors
+        if (is_wp_error($response)) {
+            error_log('Roihin Crystal: Unsplash API request failed - ' . $response->get_error_message());
+            return new WP_Error(
+                'unsplash_request_failed',
+                sprintf(
+                    __('Failed to connect to Unsplash API: %s', 'roihin-crystal'),
+                    $response->get_error_message()
+                )
+            );
+        }
+
+        $response_code = wp_remote_retrieve_response_code($response);
+        $response_body = wp_remote_retrieve_body($response);
+
+        // Handle API errors
+        if ($response_code === 401) {
+            error_log('Roihin Crystal: Invalid Unsplash access key');
+            return new WP_Error(
+                'unsplash_invalid_key',
+                __('Invalid Unsplash API access key. Please check your configuration.', 'roihin-crystal')
+            );
+        }
+
+        if ($response_code === 403) {
+            error_log('Roihin Crystal: Unsplash API rate limit exceeded');
+            return new WP_Error(
+                'unsplash_rate_limit',
+                __('Unsplash API rate limit exceeded. Please try again later.', 'roihin-crystal')
+            );
+        }
+
+        if ($response_code !== 200) {
+            error_log('Roihin Crystal: Unsplash API returned error code ' . $response_code);
+            return new WP_Error(
+                'unsplash_api_error',
+                sprintf(__('Unsplash API error (code %d)', 'roihin-crystal'), $response_code)
+            );
+        }
+
+        // Parse JSON response
+        $data = json_decode($response_body, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            error_log('Roihin Crystal: Failed to parse Unsplash API response - ' . json_last_error_msg());
+            return new WP_Error(
+                'unsplash_parse_error',
+                __('Failed to parse Unsplash API response.', 'roihin-crystal')
+            );
+        }
+
+        // Check if we got any results
+        if (empty($data['results']) || !isset($data['results'][0]['urls']['regular'])) {
+            // Fallback to random crystal photo if search returns no results
+            error_log('Roihin Crystal: No results for query "' . $search_query . '", trying random crystal photo');
+
+            $random_url = self::UNSPLASH_API_BASE . '/photos/random';
+            $random_params = ['query' => 'crystal gemstone', 'orientation' => 'squarish'];
+            $random_api_url = add_query_arg($random_params, $random_url);
+
+            $random_response = wp_remote_get($random_api_url, [
+                'timeout' => 15,
+                'headers' => [
+                    'Authorization' => 'Client-ID ' . $api_key,
+                    'Accept-Version' => 'v1',
+                ],
+            ]);
+
+            if (!is_wp_error($random_response) && wp_remote_retrieve_response_code($random_response) === 200) {
+                $random_data = json_decode(wp_remote_retrieve_body($random_response), true);
+                if (!empty($random_data['urls']['regular'])) {
+                    error_log('Roihin Crystal: Using random crystal image as fallback');
+                    return $random_data['urls']['regular'];
+                }
+            }
+
+            return new WP_Error(
+                'unsplash_no_results',
+                sprintf(__('No images found for query: %s', 'roihin-crystal'), $search_query)
+            );
+        }
+
+        // Return the image URL (using 'regular' size - good balance of quality and file size)
+        $image_url = $data['results'][0]['urls']['regular'];
+
+        error_log('Roihin Crystal: Successfully fetched Unsplash image for "' . $search_query . '"');
+
+        return $image_url;
     }
 
     /**
@@ -528,7 +687,8 @@ class Roihin_Crystal_Sample_Data_Installer {
 
         // Validate that downloaded file is an image
         $file_type = wp_check_filetype(basename($image_url));
-        if (!in_array($file_type['type'], ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'])) {
+        $allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/avif'];
+        if (!in_array($file_type['type'], $allowed_types)) {
             @unlink($temp_file);
             return new WP_Error(
                 'invalid_image_type',
@@ -660,6 +820,66 @@ class Roihin_Crystal_Sample_Data_Installer {
             'count' => self::get_installed_count(),
         ]);
     }
+
+    /**
+     * AJAX handler for saving Unsplash API key
+     */
+    public static function ajax_save_unsplash_api_key() {
+        // Check nonce
+        check_ajax_referer('roihin_crystal_sample_data', 'nonce');
+
+        // Check permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error([
+                'message' => __('You do not have permission to perform this action.', 'roihin-crystal'),
+            ]);
+        }
+
+        // Get and sanitize API key
+        $api_key = isset($_POST['api_key']) ? sanitize_text_field($_POST['api_key']) : '';
+
+        if (empty($api_key)) {
+            wp_send_json_error([
+                'message' => __('API key cannot be empty.', 'roihin-crystal'),
+            ]);
+        }
+
+        // Validate API key format (basic validation - alphanumeric and dashes/underscores)
+        if (!preg_match('/^[a-zA-Z0-9_-]+$/', $api_key)) {
+            wp_send_json_error([
+                'message' => __('Invalid API key format. Please check your key and try again.', 'roihin-crystal'),
+            ]);
+        }
+
+        // Save to WordPress options
+        update_option('roihin_crystal_unsplash_api_key', $api_key);
+
+        wp_send_json_success([
+            'message' => __('Unsplash API key saved successfully!', 'roihin-crystal'),
+        ]);
+    }
+
+    /**
+     * AJAX handler for clearing Unsplash API key
+     */
+    public static function ajax_clear_unsplash_api_key() {
+        // Check nonce
+        check_ajax_referer('roihin_crystal_sample_data', 'nonce');
+
+        // Check permissions
+        if (!current_user_can('manage_options')) {
+            wp_send_json_error([
+                'message' => __('You do not have permission to perform this action.', 'roihin-crystal'),
+            ]);
+        }
+
+        // Delete from WordPress options
+        delete_option('roihin_crystal_unsplash_api_key');
+
+        wp_send_json_success([
+            'message' => __('Unsplash API key cleared successfully!', 'roihin-crystal'),
+        ]);
+    }
 }
 
 // Register AJAX handlers
@@ -676,4 +896,14 @@ add_action('wp_ajax_roihin_crystal_uninstall_sample_data', [
 add_action('wp_ajax_roihin_crystal_get_sample_data_status', [
     'Roihin_Crystal_Sample_Data_Installer',
     'ajax_get_status'
+]);
+
+add_action('wp_ajax_roihin_crystal_save_unsplash_api_key', [
+    'Roihin_Crystal_Sample_Data_Installer',
+    'ajax_save_unsplash_api_key'
+]);
+
+add_action('wp_ajax_roihin_crystal_clear_unsplash_api_key', [
+    'Roihin_Crystal_Sample_Data_Installer',
+    'ajax_clear_unsplash_api_key'
 ]);
