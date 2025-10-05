@@ -64,6 +64,36 @@ function roihin_crystal_get_acf_fields($object, $field_name, $request) {
  * Process image field to include all sizes
  */
 function roihin_crystal_process_image_field($image) {
+    // Handle case where ACF returns just the image ID (integer)
+    if (is_numeric($image)) {
+        $image_id = intval($image);
+
+        // Verify the attachment exists
+        if (!wp_attachment_is_image($image_id)) {
+            return null;
+        }
+
+        // Get full image metadata
+        $image_meta = wp_get_attachment_metadata($image_id);
+        $image_url = wp_get_attachment_url($image_id);
+
+        return [
+            'id' => $image_id,
+            'url' => $image_url,
+            'alt' => get_post_meta($image_id, '_wp_attachment_image_alt', true),
+            'title' => get_the_title($image_id),
+            'width' => $image_meta['width'] ?? 0,
+            'height' => $image_meta['height'] ?? 0,
+            'sizes' => [
+                'thumbnail' => wp_get_attachment_image_src($image_id, 'crystal-thumbnail')[0] ?? '',
+                'medium' => wp_get_attachment_image_src($image_id, 'crystal-medium')[0] ?? '',
+                'large' => wp_get_attachment_image_src($image_id, 'crystal-large')[0] ?? '',
+                'full' => wp_get_attachment_image_src($image_id, 'full')[0] ?? $image_url,
+            ],
+        ];
+    }
+
+    // Handle case where ACF returns array format
     if (!is_array($image) || !isset($image['ID'])) {
         return $image;
     }

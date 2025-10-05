@@ -112,13 +112,18 @@ class Roihin_Crystal_Sample_Data_Installer {
         // Create or get sample data category
         $category_id = self::get_or_create_sample_category();
 
-        // Track successfully created posts
+        // Track successfully created posts and image stats
         $created_post_ids = [];
         $errors = [];
+        $image_stats = [
+            'total_images_attempted' => 0,
+            'total_images_downloaded' => 0,
+            'failed_downloads' => [],
+        ];
 
         // Process each crystal
         foreach ($crystals_data as $index => $crystal_data) {
-            $result = self::create_crystal_post($crystal_data, $category_id);
+            $result = self::create_crystal_post($crystal_data, $category_id, $image_stats);
 
             if (is_wp_error($result)) {
                 $errors[] = sprintf(
@@ -144,10 +149,24 @@ class Roihin_Crystal_Sample_Data_Installer {
             );
         }
 
+        // Build detailed success message
         $message = sprintf(
             __('Successfully installed %d crystal products.', 'roihin-crystal'),
             count($created_post_ids)
         );
+
+        // Add image download statistics
+        if ($image_stats['total_images_attempted'] > 0) {
+            $message .= sprintf(
+                ' ' . __('Images: %d/%d downloaded successfully.', 'roihin-crystal'),
+                $image_stats['total_images_downloaded'],
+                $image_stats['total_images_attempted']
+            );
+
+            if (!empty($image_stats['failed_downloads'])) {
+                $message .= ' ' . __('Some images failed to download - check error log for details.', 'roihin-crystal');
+            }
+        }
 
         if (!empty($errors)) {
             $message .= ' ' . __('Errors:', 'roihin-crystal') . ' ' . implode(' ', $errors);
@@ -159,6 +178,7 @@ class Roihin_Crystal_Sample_Data_Installer {
             'message' => $message,
             'post_ids' => $created_post_ids,
             'errors' => $errors,
+            'image_stats' => $image_stats,
         ];
     }
 
@@ -275,7 +295,7 @@ class Roihin_Crystal_Sample_Data_Installer {
     /**
      * Create a crystal post from data
      */
-    private static function create_crystal_post($data, $category_id = 0) {
+    private static function create_crystal_post($data, $category_id = 0, &$image_stats = null) {
         // Validate required fields
         if (empty($data['crystal_name_en']) || empty($data['crystal_name_th'])) {
             return new WP_Error(
@@ -303,39 +323,67 @@ class Roihin_Crystal_Sample_Data_Installer {
             wp_set_object_terms($post_id, [$category_id], 'crystal_category');
         }
 
-        // Download and set main image
+        // Import and set main image from local file
         $main_image_id = 0;
-        if (!empty($data['main_image_url'])) {
-            $main_image_id = self::download_image_to_media_library(
-                $data['main_image_url'],
-                $post_id,
-                $data['crystal_name_en'] . ' - Main Image'
-            );
+        if ($image_stats !== null) {
+            $image_stats['total_images_attempted']++;
+        }
 
-            if (!is_wp_error($main_image_id)) {
-                update_field('crystal_main_image', $main_image_id, $post_id);
-                set_post_thumbnail($post_id, $main_image_id);
+        $main_image_id = self::import_local_image_to_media_library(
+            $post_id,
+            $data['crystal_name_en'] . ' - Main Image'
+        );
+
+        if (!is_wp_error($main_image_id)) {
+            update_field('crystal_main_image', $main_image_id, $post_id);
+            set_post_thumbnail($post_id, $main_image_id);
+
+            if ($image_stats !== null) {
+                $image_stats['total_images_downloaded']++;
+            }
+        } else {
+            if ($image_stats !== null) {
+                $image_stats['failed_downloads'][] = [
+                    'crystal' => $data['crystal_name_en'],
+                    'type' => 'main_image',
+                    'error' => $main_image_id->get_error_message(),
+                ];
             }
         }
 
-        // Download and set gallery images
-        if (!empty($data['gallery_image_urls']) && is_array($data['gallery_image_urls'])) {
-            $gallery_ids = [];
-            foreach ($data['gallery_image_urls'] as $index => $image_url) {
-                $image_id = self::download_image_to_media_library(
-                    $image_url,
-                    $post_id,
-                    $data['crystal_name_en'] . ' - Gallery Image ' . ($index + 1)
-                );
+        // Import gallery images from local file (2 copies for variety)
+        $gallery_count = 2;
+        $gallery_ids = [];
 
-                if (!is_wp_error($image_id)) {
-                    $gallery_ids[] = $image_id;
+        for ($i = 0; $i < $gallery_count; $i++) {
+            if ($image_stats !== null) {
+                $image_stats['total_images_attempted']++;
+            }
+
+            $image_id = self::import_local_image_to_media_library(
+                $post_id,
+                $data['crystal_name_en'] . ' - Gallery Image ' . ($i + 1)
+            );
+
+            if (!is_wp_error($image_id)) {
+                $gallery_ids[] = $image_id;
+
+                if ($image_stats !== null) {
+                    $image_stats['total_images_downloaded']++;
+                }
+            } else {
+                if ($image_stats !== null) {
+                    $image_stats['failed_downloads'][] = [
+                        'crystal' => $data['crystal_name_en'],
+                        'type' => 'gallery_image_' . ($i + 1),
+                        'error' => $image_id->get_error_message(),
+                    ];
                 }
             }
+        }
 
-            if (!empty($gallery_ids)) {
-                update_field('crystal_gallery_images', $gallery_ids, $post_id);
-            }
+        if (!empty($gallery_ids)) {
+            update_field('crystal_gallery_images', $gallery_ids, $post_id);
         }
 
         // Set all ACF fields
@@ -366,6 +414,85 @@ class Roihin_Crystal_Sample_Data_Installer {
     }
 
     /**
+     * Import local image file to WordPress media library
+     */
+    private static function import_local_image_to_media_library($post_id = 0, $description = '') {
+        require_once ABSPATH . 'wp-admin/includes/media.php';
+        require_once ABSPATH . 'wp-admin/includes/file.php';
+        require_once ABSPATH . 'wp-admin/includes/image.php';
+
+        // Path to the local crystal.avif file
+        $local_file_path = ROIHIN_CRYSTAL_PLUGIN_DIR . 'assets/crystal.avif';
+
+        // Verify file exists
+        if (!file_exists($local_file_path)) {
+            error_log('Roihin Crystal: Local image file not found at ' . $local_file_path);
+            return new WP_Error(
+                'file_not_found',
+                __('Local crystal image file not found.', 'roihin-crystal')
+            );
+        }
+
+        // Get WordPress upload directory
+        $upload_dir = wp_upload_dir();
+        if ($upload_dir['error']) {
+            error_log('Roihin Crystal: Upload directory error - ' . $upload_dir['error']);
+            return new WP_Error(
+                'upload_dir_error',
+                sprintf(__('Upload directory error: %s', 'roihin-crystal'), $upload_dir['error'])
+            );
+        }
+
+        // Generate unique filename
+        $filename = sanitize_file_name($description . '-' . uniqid() . '.avif');
+        $dest_file_path = $upload_dir['path'] . '/' . $filename;
+
+        // Copy file to uploads directory
+        if (!copy($local_file_path, $dest_file_path)) {
+            error_log('Roihin Crystal: Failed to copy image file to uploads directory');
+            return new WP_Error(
+                'copy_failed',
+                __('Failed to copy image file to uploads directory.', 'roihin-crystal')
+            );
+        }
+
+        // Prepare attachment data
+        $file_type = wp_check_filetype($filename, null);
+        $attachment_data = [
+            'post_mime_type' => $file_type['type'],
+            'post_title' => $description,
+            'post_content' => '',
+            'post_status' => 'inherit',
+        ];
+
+        // Insert attachment into database
+        $attachment_id = wp_insert_attachment($attachment_data, $dest_file_path, $post_id);
+
+        if (is_wp_error($attachment_id)) {
+            error_log(sprintf(
+                'Roihin Crystal: Failed to insert attachment for post %d - %s',
+                $post_id,
+                $attachment_id->get_error_message()
+            ));
+            @unlink($dest_file_path);
+            return $attachment_id;
+        }
+
+        // Generate attachment metadata
+        $attachment_metadata = wp_generate_attachment_metadata($attachment_id, $dest_file_path);
+        wp_update_attachment_metadata($attachment_id, $attachment_metadata);
+
+        // Log success
+        error_log(sprintf(
+            'Roihin Crystal: Successfully imported local image %d for post %d',
+            $attachment_id,
+            $post_id
+        ));
+
+        return $attachment_id;
+    }
+
+    /**
      * Download image from URL to WordPress media library
      */
     private static function download_image_to_media_library($image_url, $post_id = 0, $description = '') {
@@ -373,17 +500,60 @@ class Roihin_Crystal_Sample_Data_Installer {
         require_once ABSPATH . 'wp-admin/includes/file.php';
         require_once ABSPATH . 'wp-admin/includes/image.php';
 
-        // Download to temp file
-        $temp_file = download_url($image_url);
+        // Validate URL
+        if (!filter_var($image_url, FILTER_VALIDATE_URL)) {
+            return new WP_Error(
+                'invalid_url',
+                sprintf(__('Invalid image URL: %s', 'roihin-crystal'), $image_url)
+            );
+        }
+
+        // Download to temp file with timeout
+        $temp_file = download_url($image_url, 30); // 30 second timeout
 
         if (is_wp_error($temp_file)) {
-            return $temp_file;
+            error_log(sprintf(
+                'Roihin Crystal: Failed to download image from %s - %s',
+                $image_url,
+                $temp_file->get_error_message()
+            ));
+            return new WP_Error(
+                'download_failed',
+                sprintf(
+                    __('Failed to download image: %s', 'roihin-crystal'),
+                    $temp_file->get_error_message()
+                )
+            );
         }
+
+        // Validate that downloaded file is an image
+        $file_type = wp_check_filetype(basename($image_url));
+        if (!in_array($file_type['type'], ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'])) {
+            @unlink($temp_file);
+            return new WP_Error(
+                'invalid_image_type',
+                sprintf(__('Invalid image type: %s', 'roihin-crystal'), $file_type['type'])
+            );
+        }
+
+        // Verify file size (must be > 0 bytes and < 10MB)
+        $file_size = filesize($temp_file);
+        if ($file_size === 0 || $file_size > 10 * 1024 * 1024) {
+            @unlink($temp_file);
+            return new WP_Error(
+                'invalid_file_size',
+                sprintf(__('Invalid file size: %s bytes', 'roihin-crystal'), $file_size)
+            );
+        }
+
+        // Generate a clean filename
+        $filename = sanitize_file_name($description . '-' . time() . '.' . $file_type['ext']);
 
         // Prepare file array
         $file_array = [
-            'name' => basename($image_url),
+            'name' => $filename,
             'tmp_name' => $temp_file,
+            'type' => $file_type['type'],
         ];
 
         // Upload to media library
@@ -395,8 +565,26 @@ class Roihin_Crystal_Sample_Data_Installer {
         }
 
         if (is_wp_error($attachment_id)) {
-            return $attachment_id;
+            error_log(sprintf(
+                'Roihin Crystal: Failed to sideload image for post %d - %s',
+                $post_id,
+                $attachment_id->get_error_message()
+            ));
+            return new WP_Error(
+                'sideload_failed',
+                sprintf(
+                    __('Failed to add image to media library: %s', 'roihin-crystal'),
+                    $attachment_id->get_error_message()
+                )
+            );
         }
+
+        // Log success
+        error_log(sprintf(
+            'Roihin Crystal: Successfully downloaded and added image %d for post %d',
+            $attachment_id,
+            $post_id
+        ));
 
         return $attachment_id;
     }
