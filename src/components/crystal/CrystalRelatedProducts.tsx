@@ -86,9 +86,9 @@ function ProductCard({ product, locale }: { product: RelatedCrystalProduct; loca
         </div>
 
         {/* Price and Action Buttons Row */}
-        <div className="flex items-center justify-between gap-2">
+        <div className="flex items-start justify-between gap-2">
           {/* Price */}
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col gap-1">
             <span className="text-sm md:text-base font-semibold text-gray-900">
               {product.price.toLocaleString('th-TH')}.-
             </span>
