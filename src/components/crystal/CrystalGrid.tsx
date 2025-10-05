@@ -30,7 +30,7 @@ export default function CrystalGrid({ crystals, currentLocale }: CrystalGridProp
               src={crystal.image || '/images/logo.avif'}
               alt={crystal.nameEn}
               fill
-              className="object-contain group-hover:scale-110 transition-transform duration-300"
+              className="object-cover group-hover:scale-110 transition-transform duration-300"
               sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
             />
           </div>
