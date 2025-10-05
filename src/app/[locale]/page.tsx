@@ -1,5 +1,6 @@
 import ChatWidget from '@/components/ChatWidget'
 import NavigationWithSuspense from '@/components/NavigationWithSuspense'
+import { FontProvider } from '@/components/providers/FontProvider'
 import {
   AboutSection,
   Footer,
@@ -16,7 +17,7 @@ export const revalidate = 300
 
 export default function Home() {
   return (
-    <>
+    <FontProvider fonts={{ th: 'font-prompt', en: 'font-playfair' }}>
       <NavigationWithSuspense />
 
       {/* Main content wrapper - no padding needed, hero section will handle spacing */}
@@ -84,6 +85,6 @@ export default function Home() {
 
         <ChatWidget />
       </main>
-    </>
+    </FontProvider>
   )
 }
