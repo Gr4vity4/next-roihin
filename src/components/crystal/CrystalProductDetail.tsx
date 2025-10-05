@@ -35,7 +35,7 @@ export default function CrystalProductDetail({ product }: CrystalProductDetailPr
                 src={product.image}
                 alt={product.nameEn}
                 fill
-                className="object-contain"
+                className="object-cover"
                 priority
                 sizes="250px"
               />
