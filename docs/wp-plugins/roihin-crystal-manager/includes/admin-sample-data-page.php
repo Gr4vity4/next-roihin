@@ -124,7 +124,7 @@ function roihin_crystal_sample_data_page() {
         </div>
 
         <!-- Sample Data Preview -->
-        <div class="card" style="margin-top: 20px;">
+        <div class="card" style="margin-top: 20px; max-width: 100%;">
             <h2><?php _e('Sample Data Preview', 'roihin-crystal'); ?></h2>
             <p><?php _e('The following crystal products will be created:', 'roihin-crystal'); ?></p>
 
