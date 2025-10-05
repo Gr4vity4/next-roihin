@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useLocale } from 'next-intl'
+import { getErrorMessage } from '@/lib/utils/error-handler'
 import type { Testimonial } from '@/lib/types/wordpress-settings'
 import type { BankData } from '@/lib/types/bank'
 import type { Product } from '@/lib/types/products'
@@ -53,7 +54,7 @@ export function useApiWithLanguage<T>(
       setData(responseData)
     } catch (err) {
       console.error('Error fetching data:', err)
-      setError(err instanceof Error ? err.message : 'Unknown error')
+      setError(getErrorMessage(err, 'Unknown error'))
     } finally {
       setLoading(false)
     }

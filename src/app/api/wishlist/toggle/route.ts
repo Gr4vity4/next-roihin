@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getAuthToken } from '@/lib/auth/get-token'
 import { toggleWishlist } from '@/lib/api/wishlist'
+import { getErrorMessage } from '@/lib/utils/error-handler'
 
 export async function POST(request: Request) {
   try {
@@ -31,7 +32,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Wishlist toggle error:', error)
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to toggle wishlist' },
+      { error: getErrorMessage(error, 'Failed to toggle wishlist') },
       { status: 500 }
     )
   }

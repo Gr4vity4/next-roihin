@@ -1,5 +1,5 @@
 import { checkFavorite } from '@/lib/api/wishlist'
-import { cookies } from 'next/headers'
+import { getAuthToken } from '@/lib/auth/get-token'
 import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
@@ -12,8 +12,7 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Product ID is required' }, { status: 400 })
     }
 
-    const cookieStore = await cookies()
-    const token = cookieStore.get('wpToken')?.value
+    const token = await getAuthToken()
 
     if (!token) {
       return NextResponse.json({ favorite: false, item_id: null }, { status: 200 })

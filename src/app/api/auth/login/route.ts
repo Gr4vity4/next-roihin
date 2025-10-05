@@ -17,7 +17,7 @@ export async function POST(request: Request) {
     const data = await response.json()
 
     if (!response.ok) {
-      return new Response(JSON.stringify(data), { status: response.status })
+      return NextResponse.json(data, { status: response.status })
     }
 
     const cookieStore = await cookies()
@@ -37,8 +37,8 @@ export async function POST(request: Request) {
     })
   } catch (error) {
     console.error('Login error:', error)
-    return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
+    return NextResponse.json(
+      { error: 'Internal server error' },
       { status: 500 }
     )
   }

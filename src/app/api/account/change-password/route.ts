@@ -1,13 +1,14 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
+import { getAuthToken } from '@/lib/auth/get-token';
+import { WORDPRESS_API_URL } from '@/config/api.config';
 
 export async function POST(req: Request) {
   try {
     const { current_password, new_password, confirm_password } = await req.json();
-    
-    const cookieStore = await cookies();
-    const token = cookieStore.get('wpToken')?.value;
-    
+
+    const token = await getAuthToken();
+
     if (!token) {
       return NextResponse.json(
         { message: 'Authentication required' },
@@ -15,16 +16,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const wpUrl = process.env.WORDPRESS_API_URL;
-    if (!wpUrl) {
-      console.error('WORDPRESS_API_URL not configured');
-      return NextResponse.json(
-        { message: 'Server configuration error' },
-        { status: 500 }
-      );
-    }
-
-    const res = await fetch(`${wpUrl}/wp-json/roihin/v1/me/password`, {
+    const res = await fetch(`${WORDPRESS_API_URL}/wp-json/roihin/v1/me/password`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -43,6 +35,7 @@ export async function POST(req: Request) {
       return NextResponse.json(data, { status: res.status });
     }
 
+    const cookieStore = await cookies();
     cookieStore.delete('wpToken');
     
     return NextResponse.json({ 

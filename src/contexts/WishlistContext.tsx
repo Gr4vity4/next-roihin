@@ -3,31 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { getErrorMessage } from '@/lib/utils/error-handler'
-
-interface WishlistItem {
-  id: string
-  product_id: number
-  color?: string
-  added_at: number
-  product?: {
-    id: number
-    slug: string
-    title: string
-    featured_image_url?: string
-    [key: string]: unknown
-  }
-  price?: {
-    min_price: number
-    available_any: boolean
-    selected?: {
-      color: string
-      price: number
-      available: boolean
-    }
-  }
-  is_available?: boolean
-  display_price?: number
-}
+import type { WishlistItem } from '@/lib/types/wishlist'
 
 interface WishlistContextType {
   items: WishlistItem[]

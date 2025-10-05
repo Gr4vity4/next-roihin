@@ -1,66 +1,15 @@
 import { WORDPRESS_API_URL } from '@/config/api.config'
+import type {
+  WishlistToggleParams,
+  WishlistToggleResponse,
+  WishlistResponse,
+  WishlistContainsResponse,
+  WishlistCheckResponse,
+  WishlistFavoriteResponse,
+} from '@/lib/types/wishlist'
 
-interface WishlistToggleParams {
-  token: string
-  productId: number
-  color?: string | null
-  op?: 'add' | 'remove' | 'toggle'
-}
-
-interface WishlistToggleResponse {
-  action: 'added' | 'removed' | 'kept'
-  item: {
-    id: string
-    product_id: number
-    color?: string
-    added_at: number
-  }
-  count: number
-}
-
-interface WishlistItem {
-  id: string
-  product_id: number
-  color?: string
-  added_at: number
-  product?: {
-    id: number
-    slug: string
-    title: string
-    featured_image_url?: string
-    [key: string]: unknown
-  }
-  price?: {
-    min_price: number
-    available_any: boolean
-    selected?: {
-      color: string
-      price: number
-      available: boolean
-    }
-  }
-  is_available?: boolean
-  display_price?: number
-}
-
-interface WishlistResponse {
-  count: number
-  items: WishlistItem[]
-}
-
-interface WishlistContainsResponse {
-  exists: boolean
-  item_id?: string
-}
-
-interface WishlistCheckResponse {
-  map: Record<string, string | null>
-}
-
-interface WishlistFavoriteResponse {
-  favorite: boolean
-  item_id: string | null
-}
+// Re-export types for convenience
+export type { WishlistItem } from '@/lib/types/wishlist'
 
 const API_URL = WORDPRESS_API_URL
 
@@ -130,8 +79,7 @@ export async function toggleWishlist({
 }
 
 export async function fetchWishlist(token: string): Promise<WishlistResponse> {
-  // Add timestamp to ensure fresh data
-  const response = await fetch(`${API_URL}/wp-json/roihin/v1/wishlist?t=${Date.now()}`, {
+  const response = await fetch(`${API_URL}/wp-json/roihin/v1/wishlist`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

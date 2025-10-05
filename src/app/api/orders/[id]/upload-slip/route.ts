@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { uploadSlipFile, uploadSlipBase64 } from '@/lib/api/orders'
+import { getErrorMessage } from '@/lib/utils/error-handler'
 
 export async function POST(
   request: NextRequest,
@@ -48,7 +49,7 @@ export async function POST(
   } catch (error) {
     console.error('Slip upload error:', error)
     return NextResponse.json(
-      { ok: false, error: error instanceof Error ? error.message : 'Failed to upload slip' },
+      { ok: false, error: getErrorMessage(error, 'Failed to upload slip') },
       { status: 500 }
     )
   }
