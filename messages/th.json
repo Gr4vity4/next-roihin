@@ -114,6 +114,55 @@
     },
     "noProducts": "อยู่ระหว่างอัพเดตข้อมูลสินค้า"
   },
+  "crystal": {
+    "pageTitle": "ผลการค้นหา | Roihin Thailand",
+    "pageDescription": "ค้นหาและเลือกซื้อหินธรรมชาติคุณภาพสูงจากร้อยหิน",
+    "hero": {
+      "title": "หินธรรมชาติ",
+      "subtitle": "ค้นหาหินที่เหมาะกับคุณจากคอลเลกชันหินธรรมชาติคุณภาพสูง"
+    },
+    "title": "สินค้าทั้งหมดสด",
+    "filters": {
+      "search": "ค้นหาคำค้นหาชื่อ",
+      "searchPlaceholder": "ค้นหา",
+      "colorTitle": "ค้นหาจากโทนสี",
+      "energyTitle": "เลือกคุณพลังงาน",
+      "zodiacTitle": "เลือกคุณประจำราศีคราฟ",
+      "elementTitle": "เลือกคุณจากธาตุชุดชัก",
+      "energyProperties": [
+        "การงาน ไม้คลาด",
+        "การงาน ธุรกิจ การธนาคาร",
+        "ความรัก ความลุมุล โชคดี",
+        "สุขภาพ สมดุลชีวิต",
+        "จิตวิญญาณ ความมั่นคง"
+      ],
+      "zodiacSigns": [
+        "เมษ - Aries",
+        "พฤษภ - Taurus",
+        "เมถุน - Gemini",
+        "กรกฎ - Cancer",
+        "สิงห์ - Leo",
+        "กันย์ - Virgo",
+        "ตุลย์ - Libra",
+        "พิจิก - Scorpio",
+        "ธนู - Sagittarius",
+        "มังกร - Capricorn",
+        "กุมภ์ - Aquarius",
+        "มีน - Pisces"
+      ],
+      "elements": [
+        "ธาตุดิน",
+        "ธาตุน้ำ",
+        "ธาตุลม",
+        "ธาตุไฟ"
+      ]
+    },
+    "pagination": {
+      "previous": "PREVIOUS",
+      "next": "NEXT"
+    },
+    "noProducts": "ไม่พบสินค้าที่ตรงกับเงื่อนไขการค้นหา"
+  },
   "checkout": {
     "title": "ตะกร้าสินค้า",
     "pageTitle": "ตะกร้าสินค้า | Roihin Thailand",

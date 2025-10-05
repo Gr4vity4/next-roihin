@@ -114,6 +114,55 @@
     },
     "noProducts": "Currently updating product information."
   },
+  "crystal": {
+    "pageTitle": "Search Results | Roihin Thailand",
+    "pageDescription": "Discover and shop high-quality natural crystals from Roihin",
+    "hero": {
+      "title": "Natural Crystals",
+      "subtitle": "Find the perfect crystal for you from our premium natural stone collection"
+    },
+    "title": "All Products",
+    "filters": {
+      "search": "Search by name",
+      "searchPlaceholder": "Search",
+      "colorTitle": "Search by color tone",
+      "energyTitle": "Select energy properties",
+      "zodiacTitle": "Select by zodiac sign",
+      "elementTitle": "Select by element",
+      "energyProperties": [
+        "Career, Prosperity",
+        "Business, Banking",
+        "Love, Romance, Luck",
+        "Health, Balance",
+        "Spirituality, Stability"
+      ],
+      "zodiacSigns": [
+        "Aries",
+        "Taurus",
+        "Gemini",
+        "Cancer",
+        "Leo",
+        "Virgo",
+        "Libra",
+        "Scorpio",
+        "Sagittarius",
+        "Capricorn",
+        "Aquarius",
+        "Pisces"
+      ],
+      "elements": [
+        "Earth",
+        "Water",
+        "Air",
+        "Fire"
+      ]
+    },
+    "pagination": {
+      "previous": "PREVIOUS",
+      "next": "NEXT"
+    },
+    "noProducts": "No products found matching your search criteria"
+  },
   "checkout": {
     "title": "Shopping Cart",
     "pageTitle": "Shopping Cart | Roihin Thailand",
