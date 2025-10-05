@@ -23,9 +23,11 @@ export default function CrystalGrid({ crystals, currentLocale }: CrystalGridProp
           href={`/${currentLocale}/crystal/product/${crystal.slug}`}
           className="group block"
         >
-          <div className="relative aspect-square overflow-hidden bg-black rounded-lg mb-3">
+          <div
+            className={`relative aspect-square overflow-hidden ${crystal.image ? 'bg-black' : 'bg-gray-800'} rounded-lg mb-3`}
+          >
             <Image
-              src={crystal.image}
+              src={crystal.image || '/images/logo.avif'}
               alt={crystal.nameEn}
               fill
               className="object-contain group-hover:scale-110 transition-transform duration-300"
