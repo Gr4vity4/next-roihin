@@ -10,6 +10,7 @@ import CrystalProductDetail, {
 import CrystalRelatedProducts, {
   RelatedCrystalProduct,
 } from '@/components/crystal/CrystalRelatedProducts'
+import CrystalFAQ from '@/components/crystal/CrystalFAQ'
 
 // Mock crystal products data
 const MOCK_CRYSTAL_PRODUCTS: Record<string, CrystalProduct> = {
@@ -156,6 +157,11 @@ export default function CrystalProductPage() {
         <CrystalRelatedProducts
           crystalName={locale === 'th' ? product.nameTh : product.nameEn}
           products={MOCK_RELATED_PRODUCTS}
+          locale={locale}
+        />
+
+        <CrystalFAQ
+          crystalName={locale === 'th' ? product.nameTh : product.nameEn}
           locale={locale}
         />
       </main>

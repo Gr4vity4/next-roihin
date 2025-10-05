@@ -185,6 +185,10 @@
     "actions": {
       "addToWishlist": "Add to Wishlist",
       "addToCart": "Add to Cart"
+    },
+    "faq": {
+      "viewAllProducts": "View all products related to {crystalName}",
+      "backToCatalog": "Back to Stones & Minerals"
     }
   },
   "checkout": {
