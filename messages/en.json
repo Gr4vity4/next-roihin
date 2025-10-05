@@ -163,6 +163,30 @@
     },
     "noProducts": "No products found matching your search criteria"
   },
+  "crystalProduct": {
+    "breadcrumb": {
+      "home": "Home",
+      "crystals": "Stones & Minerals"
+    },
+    "properties": {
+      "title": "Properties",
+      "priceComplete": "Complete Price",
+      "chakra": "Chakra",
+      "zodiacCompatibility": "Zodiac Compatibility",
+      "rulingPlanet": "Ruling Planet",
+      "color": "Color"
+    },
+    "attributes": {
+      "title": "ATTRIBUTES"
+    },
+    "relatedProducts": {
+      "title": "Products related to {crystalName} that you might like"
+    },
+    "actions": {
+      "addToWishlist": "Add to Wishlist",
+      "addToCart": "Add to Cart"
+    }
+  },
   "checkout": {
     "title": "Shopping Cart",
     "pageTitle": "Shopping Cart | Roihin Thailand",

@@ -163,6 +163,30 @@
     },
     "noProducts": "ไม่พบสินค้าที่ตรงกับเงื่อนไขการค้นหา"
   },
+  "crystalProduct": {
+    "breadcrumb": {
+      "home": "หน้าแรก",
+      "crystals": "หินและแร่ธาตุ"
+    },
+    "properties": {
+      "title": "คุณสมบัติ",
+      "priceComplete": "ราคาเสร็จงาน",
+      "chakra": "จักระ",
+      "zodiacCompatibility": "สีคบา",
+      "rulingPlanet": "ดาวประจำสี",
+      "color": "สี"
+    },
+    "attributes": {
+      "title": "คุณสมบัติ (ATTRIBUTES)"
+    },
+    "relatedProducts": {
+      "title": "สินค้าที่เกี่ยวกับ {crystalName} ที่คุณอาจชื่นชอบ"
+    },
+    "actions": {
+      "addToWishlist": "เพิ่มลงรายการโปรด",
+      "addToCart": "เพิ่มลงตะกร้า"
+    }
+  },
   "checkout": {
     "title": "ตะกร้าสินค้า",
     "pageTitle": "ตะกร้าสินค้า | Roihin Thailand",
