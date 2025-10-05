@@ -12,13 +12,13 @@ export default function CrystalFAQ({ crystalName, locale }: CrystalFAQProps) {
   const t = useTranslations('crystalProduct.faq')
 
   return (
-    <section className="bg-white py-12 md:py-16 border-t border-gray-200">
+    <section className="bg-white py-12 md:pb-16">
       <div className="container max-w-5xl mx-auto px-4">
-        <div className="flex flex-col items-center justify-center gap-6 md:gap-8 text-center">
+        <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6">
           {/* View All Products Link */}
           <Link
             href={`/${locale}/crystal`}
-            className="text-lg md:text-xl text-gray-900 hover:text-gray-600 transition-colors"
+            className="px-6 py-3 text-sm md:text-base text-gray-900 border border-gray-300 hover:border-gray-900 hover:bg-gray-50 transition-all"
           >
             {t('viewAllProducts', { crystalName })}
           </Link>
@@ -26,7 +26,7 @@ export default function CrystalFAQ({ crystalName, locale }: CrystalFAQProps) {
           {/* Back to Catalog Link */}
           <Link
             href={`/${locale}/crystal`}
-            className="text-base md:text-lg text-gray-600 hover:text-gray-900 transition-colors"
+            className="px-6 py-3 text-sm md:text-base text-gray-900 border border-gray-300 hover:border-gray-900 hover:bg-gray-50 transition-all"
           >
             {t('backToCatalog')}
           </Link>
