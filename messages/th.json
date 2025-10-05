@@ -4,6 +4,7 @@
     "about": "เกี่ยวกับร้อยหิน",
     "personalized": "งานออกแบบเฉพาะบุคคล",
     "charmspacer": "ชาร์ม/สเปเซอร์",
+    "crystal": "หินและแร่ธาตุ",
     "diy": "DIY",
     "testimonial": "รีวิวจริง",
     "customerService": "บริการลูกค้า",
@@ -113,6 +114,105 @@
       }
     },
     "noProducts": "อยู่ระหว่างอัพเดตข้อมูลสินค้า"
+  },
+  "crystal": {
+    "pageTitle": "ผลการค้นหา | Roihin Thailand",
+    "pageDescription": "ค้นหาและเลือกซื้อหินธรรมชาติคุณภาพสูงจากร้อยหิน",
+    "hero": {
+      "title": "หินและแร่ธาตุ",
+      "subtitle": "ความลับอันน่าทึ่งของจักรวาล ยังรอการค้นพบ"
+    },
+    "title": "หินเข้าใหม่ล่าสุด",
+    "filters": {
+      "search": "ค้นหาหินจากชื่อ",
+      "searchPlaceholder": "ค้นหา",
+      "colorTitle": "ค้นหาจากโทนสี",
+      "energyTitle": "เลือกหินพลังงาน",
+      "zodiacTitle": "เลือกหินประจำราศีคนาราศี",
+      "elementTitle": "เลือกหินจากราศีหลัก",
+      "energyProperties": [
+        "การเงิน โชคลาภ",
+        "การงาน ธุรกิจ การลงทุน",
+        "ความรัก ความสุข โชคดี",
+        "สุขภาพ สมดุลชีวิต",
+        "จิตวิญญาณ ความมั่นคง"
+      ],
+      "zodiacSigns": [
+        "เมษ - Aries",
+        "พฤษภ - Taurus",
+        "เมถุน - Gemini",
+        "กรกฎ - Cancer",
+        "สิงห์ - Leo",
+        "กันย์ - Virgo",
+        "ตุลย์ - Libra",
+        "พิจิก - Scorpio",
+        "ธนู - Sagittarius",
+        "มังกร - Capricorn",
+        "กุมภ์ - Aquarius",
+        "มีน - Pisces"
+      ],
+      "elements": [
+        "ราศีดิน",
+        "ราศีน้ำ",
+        "ราศีลม",
+        "ราศีไฟ"
+      ]
+    },
+    "pagination": {
+      "previous": "PREVIOUS",
+      "next": "NEXT"
+    },
+    "noProducts": "ไม่พบสินค้าที่ตรงกับเงื่อนไขการค้นหา"
+  },
+  "crystalProduct": {
+    "breadcrumb": {
+      "home": "หน้าแรก",
+      "crystals": "หินและแร่ธาตุ"
+    },
+    "properties": {
+      "title": "คุณสมบัติ",
+      "priceComplete": "ราคาเสร็จงาน",
+      "chakra": "จักระ",
+      "zodiacCompatibility": "สีคบา",
+      "rulingPlanet": "ดาวประจำสี",
+      "color": "สี"
+    },
+    "attributes": {
+      "title": "คุณสมบัติ (ATTRIBUTES)"
+    },
+    "relatedProducts": {
+      "title": "สินค้าที่เกี่ยวกับ {crystalName} ที่คุณอาจชื่นชอบ"
+    },
+    "actions": {
+      "addToWishlist": "เพิ่มลงรายการโปรด",
+      "addToCart": "เพิ่มลงตะกร้า"
+    },
+    "faq": {
+      "viewAllProducts": "ดูสินค้าเกี่ยวกับ {crystalName} ทั้งหมด",
+      "backToCatalog": "กลับหน้าหินและแร่ธาตุ"
+    }
+  },
+  "productDetail": {
+    "loading": "กำลังโหลดสินค้า...",
+    "description": "รายละเอียดสินค้า",
+    "crystalTags": "คุณสมบัติของหิน",
+    "addToCart": "เพิ่มลงตะกร้า",
+    "adding": "กำลังเพิ่ม...",
+    "addToWishlist": "เพิ่มลงรายการโปรด",
+    "removeFromWishlist": "ลบจากรายการโปรด"
+  },
+  "productListing": {
+    "loading": "กำลังโหลดสินค้า...",
+    "title": "สินค้าหิน{crystalName}",
+    "subtitle": "{count} สินค้า",
+    "noProducts": "ไม่พบสินค้าสำหรับหินชนิดนี้",
+    "breadcrumb": {
+      "home": "หน้าแรก",
+      "crystals": "หินและแร่ธาตุ"
+    },
+    "addToCart": "เพิ่ม",
+    "adding": "กำลังเพิ่ม...",
+    "addToWishlist": "เพิ่มรายการโปรด"
   },
   "checkout": {
     "title": "ตะกร้าสินค้า",

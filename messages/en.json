@@ -4,6 +4,7 @@
     "about": "About us",
     "personalized": "Personalized Design",
     "charmspacer": "Charm / Spacer",
+    "crystal": "Crystal / Mineral",
     "diy": "DIY",
     "testimonial": "Testimonial",
     "customerService": "Contact",
@@ -113,6 +114,105 @@
       }
     },
     "noProducts": "Currently updating product information."
+  },
+  "crystal": {
+    "pageTitle": "Search Results | Roihin Thailand",
+    "pageDescription": "Discover and shop high-quality natural crystals from Roihin",
+    "hero": {
+      "title": "Stones & Minerals",
+      "subtitle": "The amazing secrets of the universe await discovery"
+    },
+    "title": "Latest New Arrivals",
+    "filters": {
+      "search": "Search crystal by name",
+      "searchPlaceholder": "Search",
+      "colorTitle": "Search by color tone",
+      "energyTitle": "Select energy crystals",
+      "zodiacTitle": "Select crystal by zodiac sign",
+      "elementTitle": "Select crystal by primary zodiac",
+      "energyProperties": [
+        "Finance, Fortune",
+        "Work, Business, Investment",
+        "Love, Happiness, Luck",
+        "Health, Balance",
+        "Spirituality, Stability"
+      ],
+      "zodiacSigns": [
+        "Aries",
+        "Taurus",
+        "Gemini",
+        "Cancer",
+        "Leo",
+        "Virgo",
+        "Libra",
+        "Scorpio",
+        "Sagittarius",
+        "Capricorn",
+        "Aquarius",
+        "Pisces"
+      ],
+      "elements": [
+        "Earth Sign",
+        "Water Sign",
+        "Air Sign",
+        "Fire Sign"
+      ]
+    },
+    "pagination": {
+      "previous": "PREVIOUS",
+      "next": "NEXT"
+    },
+    "noProducts": "No products found matching your search criteria"
+  },
+  "crystalProduct": {
+    "breadcrumb": {
+      "home": "Home",
+      "crystals": "Stones & Minerals"
+    },
+    "properties": {
+      "title": "Properties",
+      "priceComplete": "Complete Price",
+      "chakra": "Chakra",
+      "zodiacCompatibility": "Zodiac Compatibility",
+      "rulingPlanet": "Ruling Planet",
+      "color": "Color"
+    },
+    "attributes": {
+      "title": "ATTRIBUTES"
+    },
+    "relatedProducts": {
+      "title": "Products related to {crystalName} that you might like"
+    },
+    "actions": {
+      "addToWishlist": "Add to Wishlist",
+      "addToCart": "Add to Cart"
+    },
+    "faq": {
+      "viewAllProducts": "View all products related to {crystalName}",
+      "backToCatalog": "Back to Stones & Minerals"
+    }
+  },
+  "productDetail": {
+    "loading": "Loading product...",
+    "description": "Product Description",
+    "crystalTags": "Crystal Properties",
+    "addToCart": "Add to Cart",
+    "adding": "Adding...",
+    "addToWishlist": "Add to Wishlist",
+    "removeFromWishlist": "Remove from Wishlist"
+  },
+  "productListing": {
+    "loading": "Loading products...",
+    "title": "{crystalName} Products",
+    "subtitle": "{count, plural, =0 {No products available} =1 {# product available} other {# products available}}",
+    "noProducts": "No products found for this crystal type",
+    "breadcrumb": {
+      "home": "Home",
+      "crystals": "Crystals"
+    },
+    "addToCart": "Add",
+    "adding": "Adding...",
+    "addToWishlist": "Add to wishlist"
   },
   "checkout": {
     "title": "Shopping Cart",

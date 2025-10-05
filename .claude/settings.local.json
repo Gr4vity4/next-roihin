@@ -16,7 +16,10 @@
       "mcp__playwright__browser_snapshot",
       "Bash(BASE_URL=http://localhost:3000 npx playwright test --reporter=list)",
       "Bash(git commit:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git checkout:*)",
+      "Bash(git log:*)",
+      "Bash(zip:*)"
     ],
     "deny": []
   }

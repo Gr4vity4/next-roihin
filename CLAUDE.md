@@ -45,6 +45,7 @@ npm run test:e2e:report       # View test report
 ## Architecture
 
 ### Tech Stack
+
 - **Framework**: Next.js 15.4 with App Router
 - **Language**: TypeScript with strict mode
 - **Internationalization**: next-intl for Thai/English support
@@ -56,6 +57,7 @@ npm run test:e2e:report       # View test report
 - **Testing**: Playwright for E2E testing (Chromium & Mobile Safari)
 
 ### Project Structure
+
 - `/src/app/[locale]/` - Internationalized Next.js App Router pages
 - `/src/app/api/` - API proxy routes for WordPress integration
 - `/src/components/` - Reusable React components
@@ -72,13 +74,17 @@ npm run test:e2e:report       # View test report
 ### Key Architectural Patterns
 
 #### 1. Caching Strategy
+
 The app uses environment-aware caching configured in `/src/config/cache.config.ts`:
+
 - **Development**: All caching disabled for better DX
 - **Production**: Strategic caching with 5-minute revalidation for dynamic content
 - Use `getFetchConfig()` and `getCacheHeaders()` helpers for consistent caching
 
 #### 2. WordPress CMS Integration
+
 All content managed through WordPress REST API at `https://wp-roihin.precisiondevlab.com`:
+
 - Posts API: `/api/blog/posts`
 - Categories API: `/api/blog/categories`
 - Individual post: `/api/blog/posts/[title]`
@@ -87,19 +93,23 @@ All content managed through WordPress REST API at `https://wp-roihin.precisionde
 - Gallery API: `/api/gallery`
 
 #### 3. API Route Pattern
+
 All API routes follow consistent patterns:
+
 1. Use `getFetchConfig()` for cache configuration
 2. Return `getCacheHeaders()` in responses
 3. Validate with Zod schemas
 4. Handle errors gracefully with fallbacks
 
 #### 4. Internationalization
+
 - Routes prefixed with `[locale]` parameter (en/th)
 - Translations in `/messages/` directory
 - Use `useTranslations()` hook for component translations
 - Default locale: 'th', supported: ['th', 'en']
 
 #### 5. Component Organization
+
 - Page components use server components by default
 - Loading states implemented with loading.tsx files
 - Error boundaries for graceful error handling
@@ -109,6 +119,7 @@ All API routes follow consistent patterns:
 ## Environment Variables
 
 Required in `.env.local`:
+
 ```env
 # WordPress API Configuration
 WORDPRESS_API_URL=https://wp-roihin.precisiondevlab.com
@@ -134,11 +145,13 @@ STRIPE_WEBHOOK_SECRET=whsec_your_stripe_webhook_secret_here
 ## Path Aliases
 
 TypeScript path alias configured:
+
 - `@/*` maps to `./src/*`
 
 ## Security Configuration
 
 Content Security Policy and security headers configured in `next.config.ts`:
+
 - CSP restricts script/style sources
 - X-Frame-Options: DENY
 - Strict CORS policies
@@ -157,6 +170,7 @@ Content Security Policy and security headers configured in `next.config.ts`:
 ## API Helpers
 
 ### Key Helper Functions
+
 - `getTestimonials(language)` - Fetch testimonials from WordPress
 - `getSiteSettings()` - Get site settings from WordPress
 - `getGalleryPhotos(language)` - Fetch gallery photos from WordPress

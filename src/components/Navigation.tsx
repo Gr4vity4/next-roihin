@@ -41,6 +41,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
       { name: t('about'), href: '/about' },
       { name: t('personalized'), href: '/personalized' },
       { name: t('charmspacer'), href: '/charmspacer' },
+      { name: t('crystal'), href: '/crystal' },
       { name: t('diy'), href: '/custom' },
       { name: t('testimonial'), href: '/testimonial' },
       { name: t('customerService'), href: '/customer-service' },
