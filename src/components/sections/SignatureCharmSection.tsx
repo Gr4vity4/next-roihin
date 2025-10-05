@@ -11,7 +11,8 @@ interface SignatureCharmSectionProps {
   title: string
   subtitle: string
   ctaButton?: {
-    text: string
+    text?: string
+    translationKey?: string
     variant: 'primary' | 'gold' | 'green' | 'outline' | 'ghost'
     onClick?: () => void
     href?: string
