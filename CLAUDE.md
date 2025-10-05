@@ -216,5 +216,3 @@ Content Security Policy and security headers configured in `next.config.ts`:
 - `/src/lib/api/` - API helper functions directory
 - `/next.config.ts` - Next.js configuration with CSP and i18n
 - `/src/i18n/routing.ts` - Internationalization routing config
-
-**IMPORTANT**: Always use ultrathink before making any changes to the codebase.
