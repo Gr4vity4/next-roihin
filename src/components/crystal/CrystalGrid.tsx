@@ -20,11 +20,13 @@ export default function CrystalGrid({ crystals, currentLocale }: CrystalGridProp
       {crystals.map((crystal) => (
         <Link
           key={crystal.id}
-          href={`/${currentLocale}/crystal/product/${crystal.slug}`}
+          href={`/${currentLocale}/crystal/${crystal.slug}`}
           className="group block"
         >
           <div
-            className={`relative aspect-square overflow-hidden ${crystal.image ? 'bg-black' : 'bg-gray-800'} rounded-lg mb-3`}
+            className={`relative aspect-square overflow-hidden ${
+              crystal.image ? 'bg-black' : 'bg-gray-800'
+            } rounded-lg mb-3`}
           >
             <Image
               src={crystal.image || '/images/logo.avif'}
