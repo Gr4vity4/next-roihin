@@ -85,31 +85,6 @@ function ProductCard({
             className="object-contain group-hover:scale-105 transition-transform duration-300"
             sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 25vw"
           />
-
-          {/* Wishlist Button - Top Right */}
-          <button
-            onClick={(e) => {
-              e.preventDefault()
-              handleWishlistToggle()
-            }}
-            className="absolute top-2 right-2 p-2 bg-white/90 hover:bg-white rounded-full shadow-sm transition-all z-10"
-            aria-label={t('addToWishlist')}
-          >
-            {isWishlisted ? (
-              <HeartSolidIcon className="w-5 h-5 text-red-500" />
-            ) : (
-              <HeartIcon className="w-5 h-5 text-gray-700 hover:text-red-500 transition-colors" />
-            )}
-          </button>
-
-          {/* Add to Cart Button - Bottom Right */}
-          <button
-            onClick={handleAddToCart}
-            className="absolute bottom-2 right-2 p-2 bg-white/90 hover:bg-white rounded-full shadow-sm transition-all z-10 opacity-0 group-hover:opacity-100"
-            aria-label={t('addToCart')}
-          >
-            <ShoppingCartIcon className="w-5 h-5 text-gray-700 hover:text-green-600 transition-colors" />
-          </button>
         </div>
 
         {/* Product Info */}
@@ -127,6 +102,34 @@ function ProductCard({
               </span>
             )}
           </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex items-center justify-end gap-2 mt-2">
+          {/* Wishlist Button */}
+          <button
+            onClick={(e) => {
+              e.preventDefault()
+              handleWishlistToggle()
+            }}
+            className="p-2 bg-white hover:bg-gray-50 rounded-full shadow-sm transition-all"
+            aria-label={t('addToWishlist')}
+          >
+            {isWishlisted ? (
+              <HeartSolidIcon className="w-5 h-5 text-red-500" />
+            ) : (
+              <HeartIcon className="w-5 h-5 text-gray-700 hover:text-red-500 transition-colors" />
+            )}
+          </button>
+
+          {/* Add to Cart Button */}
+          <button
+            onClick={handleAddToCart}
+            className="p-2 bg-white hover:bg-gray-50 rounded-full shadow-sm transition-all"
+            aria-label={t('addToCart')}
+          >
+            <ShoppingCartIcon className="w-5 h-5 text-gray-700 hover:text-green-600 transition-colors" />
+          </button>
         </div>
       </div>
     </Link>
