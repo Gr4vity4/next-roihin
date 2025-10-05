@@ -111,9 +111,11 @@ export default function CrystalProductDetail({ product }: CrystalProductDetailPr
         <div className="p-6 md:p-8">
           <div className="space-y-4">
             {product.description.map((paragraph, index) => (
-              <p key={index} className="text-base md:text-lg text-gray-900 leading-relaxed">
-                {paragraph}
-              </p>
+              <div
+                key={index}
+                className="text-base md:text-lg text-gray-900 leading-relaxed"
+                dangerouslySetInnerHTML={{ __html: paragraph }}
+              />
             ))}
           </div>
         </div>
