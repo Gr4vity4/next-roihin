@@ -1,50 +1,100 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useEffect, useMemo } from 'react'
+import { useParams } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import ChatWidget from '@/components/ChatWidget'
 import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import { Footer } from '@/components/sections'
 import PersonalizedHeroSection from '@/components/sections/PersonalizedHeroSection'
 import CrystalFilterSidebar from '@/components/crystal/CrystalFilterSidebar'
-import CrystalGrid, { Crystal } from '@/components/crystal/CrystalGrid'
+import CrystalGrid from '@/components/crystal/CrystalGrid'
 import Pagination from '@/components/crystal/Pagination'
-import { useTranslations } from 'next-intl'
-import { useParams } from 'next/navigation'
-
-// Mockup crystal data
-const MOCKUP_CRYSTALS: Crystal[] = [
-  { id: '1', slug: 'apatite-1', nameEn: 'Apatite', nameTh: 'อะพาไทต์', image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400&h=400&fit=crop' },
-  { id: '2', slug: 'labradorite-1', nameEn: 'Labradorite', nameTh: 'ลาบราดอไรต์', image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400&h=400&fit=crop' },
-  { id: '3', slug: 'apatite-2', nameEn: 'Apatite', nameTh: 'อะพาไทต์', image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400&h=400&fit=crop' },
-  { id: '4', slug: 'labradorite-2', nameEn: 'Labradorite', nameTh: 'ลาบราดอไรต์', image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400&h=400&fit=crop' },
-  { id: '5', slug: 'apatite-3', nameEn: 'Apatite', nameTh: 'อะพาไทต์', image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400&h=400&fit=crop' },
-  { id: '6', slug: 'apatite-4', nameEn: 'Apatite', nameTh: 'อะพาไทต์', image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400&h=400&fit=crop' },
-  { id: '7', slug: 'labradorite-3', nameEn: 'Labradorite', nameTh: 'ลาบราดอไรต์', image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400&h=400&fit=crop' },
-  { id: '8', slug: 'apatite-5', nameEn: 'Apatite', nameTh: 'อะพาไทต์', image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400&h=400&fit=crop' },
-  { id: '9', slug: 'labradorite-4', nameEn: 'Labradorite', nameTh: 'ลาบราดอไรต์', image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400&h=400&fit=crop' },
-  { id: '10', slug: 'apatite-6', nameEn: 'Apatite', nameTh: 'อะพาไทต์', image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400&h=400&fit=crop' },
-  { id: '11', slug: 'apatite-7', nameEn: 'Apatite', nameTh: 'อะพาไทต์', image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400&h=400&fit=crop' },
-  { id: '12', slug: 'labradorite-5', nameEn: 'Labradorite', nameTh: 'ลาบราดอไรต์', image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400&h=400&fit=crop' },
-  { id: '13', slug: 'apatite-8', nameEn: 'Apatite', nameTh: 'อะพาไทต์', image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400&h=400&fit=crop' },
-  { id: '14', slug: 'labradorite-6', nameEn: 'Labradorite', nameTh: 'ลาบราดอไรต์', image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400&h=400&fit=crop' },
-  { id: '15', slug: 'apatite-9', nameEn: 'Apatite', nameTh: 'อะพาไทต์', image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400&h=400&fit=crop' },
-  { id: '16', slug: 'apatite-10', nameEn: 'Apatite', nameTh: 'อะพาไทต์', image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400&h=400&fit=crop' },
-  { id: '17', slug: 'labradorite-7', nameEn: 'Labradorite', nameTh: 'ลาบราดอไรต์', image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400&h=400&fit=crop' },
-  { id: '18', slug: 'apatite-11', nameEn: 'Apatite', nameTh: 'อะพาไทต์', image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400&h=400&fit=crop' },
-  { id: '19', slug: 'labradorite-8', nameEn: 'Labradorite', nameTh: 'ลาบราดอไรต์', image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400&h=400&fit=crop' },
-  { id: '20', slug: 'apatite-12', nameEn: 'Apatite', nameTh: 'อะพาไทต์', image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400&h=400&fit=crop' },
-  { id: '21', slug: 'apatite-13', nameEn: 'Apatite', nameTh: 'อะพาไทต์', image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400&h=400&fit=crop' },
-  { id: '22', slug: 'labradorite-9', nameEn: 'Labradorite', nameTh: 'ลาบราดอไรต์', image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400&h=400&fit=crop' },
-  { id: '23', slug: 'apatite-14', nameEn: 'Apatite', nameTh: 'อะพาไทต์', image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400&h=400&fit=crop' },
-  { id: '24', slug: 'labradorite-10', nameEn: 'Labradorite', nameTh: 'ลาบราดอไรต์', image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400&h=400&fit=crop' },
-]
+import { getCrystals } from '@/lib/api/crystals'
+import type { Crystal } from '@/lib/types/crystal'
 
 const ITEMS_PER_PAGE = 20
 
+/**
+ * Filter value mapping from UI display to ACF field values
+ * This maps the translated filter labels to the database field values
+ */
+const FILTER_VALUE_MAPPINGS = {
+  // Energy properties mapping
+  energyProperties: {
+    'การเงิน โชคลาภ': 'finance_fortune',
+    'Finance, Fortune': 'finance_fortune',
+    'การงาน ธุรกิจ การลงทุน': 'work_business',
+    'Work, Business, Investment': 'work_business',
+    'ความรัก ความสุข โชคดี': 'love_happiness',
+    'Love, Happiness, Luck': 'love_happiness',
+    'สุขภาพ สมดุลชีวิต': 'health_balance',
+    'Health, Balance': 'health_balance',
+    'จิตวิญญาณ ความมั่นคง': 'spirituality_stability',
+    'Spirituality, Stability': 'spirituality_stability',
+  } as Record<string, string>,
+
+  // Zodiac signs mapping
+  zodiacSigns: {
+    'เมษ - Aries': 'aries',
+    'Aries': 'aries',
+    'พฤษภ - Taurus': 'taurus',
+    'Taurus': 'taurus',
+    'เมถุน - Gemini': 'gemini',
+    'Gemini': 'gemini',
+    'กรกฎ - Cancer': 'cancer',
+    'Cancer': 'cancer',
+    'สิงห์ - Leo': 'leo',
+    'Leo': 'leo',
+    'กันย์ - Virgo': 'virgo',
+    'Virgo': 'virgo',
+    'ตุลย์ - Libra': 'libra',
+    'Libra': 'libra',
+    'พิจิก - Scorpio': 'scorpio',
+    'Scorpio': 'scorpio',
+    'ธนู - Sagittarius': 'sagittarius',
+    'Sagittarius': 'sagittarius',
+    'มังกร - Capricorn': 'capricorn',
+    'Capricorn': 'capricorn',
+    'กุมภ์ - Aquarius': 'aquarius',
+    'Aquarius': 'aquarius',
+    'มีน - Pisces': 'pisces',
+    'Pisces': 'pisces',
+  } as Record<string, string>,
+
+  // Element types mapping
+  elements: {
+    'ราศีดิน': 'earth',
+    'Earth Sign': 'earth',
+    'ราศีน้ำ': 'water',
+    'Water Sign': 'water',
+    'ราศีลม': 'air',
+    'Air Sign': 'air',
+    'ราศีไฟ': 'fire',
+    'Fire Sign': 'fire',
+  } as Record<string, string>,
+}
+
+/**
+ * Map UI filter values to ACF field values
+ */
+function mapFilterValues(values: string[], mapping: Record<string, string>): string {
+  return values
+    .map((value) => mapping[value] || value.toLowerCase().replace(/\s+/g, '_'))
+    .join(',')
+}
+
 export default function CrystalPage() {
   const params = useParams()
-  const locale = params.locale as string
+  const locale = (params.locale as string) || 'th'
   const t = useTranslations('crystal')
+
+  // State
+  const [crystals, setCrystals] = useState<Crystal[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [totalPages, setTotalPages] = useState(1)
+  const [currentPage, setCurrentPage] = useState(1)
 
   // Filter states
   const [searchQuery, setSearchQuery] = useState('')
@@ -52,14 +102,68 @@ export default function CrystalPage() {
   const [selectedEnergyProperties, setSelectedEnergyProperties] = useState<string[]>([])
   const [selectedZodiacSigns, setSelectedZodiacSigns] = useState<string[]>([])
   const [selectedElements, setSelectedElements] = useState<string[]>([])
-  const [currentPage, setCurrentPage] = useState(1)
+
+  // Fetch crystals when filters or page change
+  useEffect(() => {
+    async function fetchCrystals() {
+      setIsLoading(true)
+      setError(null)
+
+      try {
+        // Map filter values to ACF field values
+        const colorFilter = selectedColors.join(',')
+        const energyFilter = mapFilterValues(
+          selectedEnergyProperties,
+          FILTER_VALUE_MAPPINGS.energyProperties
+        )
+        const zodiacFilter = mapFilterValues(
+          selectedZodiacSigns,
+          FILTER_VALUE_MAPPINGS.zodiacSigns
+        )
+        const elementFilter = mapFilterValues(
+          selectedElements,
+          FILTER_VALUE_MAPPINGS.elements
+        )
+
+        const result = await getCrystals({
+          lang: locale as 'en' | 'th',
+          page: currentPage,
+          per_page: ITEMS_PER_PAGE,
+          search: searchQuery,
+          color_filter: colorFilter || undefined,
+          energy_properties: energyFilter || undefined,
+          zodiac_signs: zodiacFilter || undefined,
+          element_type: elementFilter || undefined,
+        })
+
+        setCrystals(result.crystals)
+        setTotalPages(result.totalPages)
+      } catch (err) {
+        console.error('Error fetching crystals:', err)
+        setError('Failed to load crystals')
+        setCrystals([])
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchCrystals()
+  }, [
+    locale,
+    currentPage,
+    searchQuery,
+    selectedColors,
+    selectedEnergyProperties,
+    selectedZodiacSigns,
+    selectedElements,
+  ])
 
   // Filter toggle handlers
   const handleColorToggle = (color: string) => {
     setSelectedColors((prev) =>
       prev.includes(color) ? prev.filter((c) => c !== color) : [...prev, color]
     )
-    setCurrentPage(1) // Reset to first page when filter changes
+    setCurrentPage(1)
   }
 
   const handleEnergyPropertyToggle = (property: string) => {
@@ -83,30 +187,10 @@ export default function CrystalPage() {
     setCurrentPage(1)
   }
 
-  // Apply filters (in a real implementation, this would filter based on actual data)
-  const filteredCrystals = useMemo(() => {
-    let filtered = [...MOCKUP_CRYSTALS]
-
-    // Apply search filter
-    if (searchQuery) {
-      filtered = filtered.filter(
-        (crystal) =>
-          crystal.nameEn.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          crystal.nameTh.includes(searchQuery)
-      )
-    }
-
-    // In a real implementation, you would apply color, energy, zodiac, and element filters here
-
-    return filtered
-  }, [searchQuery])
-
-  // Pagination
-  const totalPages = Math.ceil(filteredCrystals.length / ITEMS_PER_PAGE)
-  const paginatedCrystals = useMemo(() => {
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
-    return filteredCrystals.slice(startIndex, startIndex + ITEMS_PER_PAGE)
-  }, [filteredCrystals, currentPage])
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query)
+    setCurrentPage(1)
+  }
 
   return (
     <>
@@ -125,7 +209,7 @@ export default function CrystalPage() {
               {/* Sidebar */}
               <CrystalFilterSidebar
                 searchQuery={searchQuery}
-                onSearchChange={setSearchQuery}
+                onSearchChange={handleSearchChange}
                 selectedColors={selectedColors}
                 onColorToggle={handleColorToggle}
                 selectedEnergyProperties={selectedEnergyProperties}
@@ -141,7 +225,7 @@ export default function CrystalPage() {
                 {/* Header with title and pagination */}
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
                   <h1 className="text-2xl md:text-3xl font-medium text-white">{t('title')}</h1>
-                  {totalPages > 1 && (
+                  {totalPages > 1 && !isLoading && (
                     <Pagination
                       currentPage={currentPage}
                       totalPages={totalPages}
@@ -150,17 +234,36 @@ export default function CrystalPage() {
                   )}
                 </div>
 
-                {/* Crystal Grid */}
-                {paginatedCrystals.length > 0 ? (
-                  <CrystalGrid crystals={paginatedCrystals} currentLocale={locale} />
-                ) : (
+                {/* Loading State */}
+                {isLoading && (
                   <div className="text-center py-12">
-                    <p className="text-gray-400 text-lg">{t('noProducts')}</p>
+                    <div className="inline-block w-8 h-8 border-4 border-gold-500 border-t-transparent rounded-full animate-spin" />
+                    <p className="text-gray-400 text-lg mt-4">Loading crystals...</p>
                   </div>
                 )}
 
+                {/* Error State */}
+                {error && !isLoading && (
+                  <div className="text-center py-12">
+                    <p className="text-red-400 text-lg">{error}</p>
+                  </div>
+                )}
+
+                {/* Crystal Grid */}
+                {!isLoading && !error && (
+                  <>
+                    {crystals.length > 0 ? (
+                      <CrystalGrid crystals={crystals} currentLocale={locale} />
+                    ) : (
+                      <div className="text-center py-12">
+                        <p className="text-gray-400 text-lg">{t('noProducts')}</p>
+                      </div>
+                    )}
+                  </>
+                )}
+
                 {/* Bottom Pagination */}
-                {totalPages > 1 && paginatedCrystals.length > 0 && (
+                {totalPages > 1 && crystals.length > 0 && !isLoading && (
                   <div className="mt-12">
                     <Pagination
                       currentPage={currentPage}

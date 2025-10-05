@@ -85,6 +85,12 @@ export const cacheConfig = {
       revalidate: isDevelopment ? 0 : CACHE_DURATIONS.SHORT, // 5 minutes in production
       tags: ['gallery', 'photos'] as string[],
     },
+
+    // Crystal products from WordPress
+    crystals: {
+      revalidate: isDevelopment ? 0 : CACHE_DURATIONS.SHORT, // 5 minutes in production
+      tags: ['crystals', 'products'] as string[],
+    },
   },
   
   // HTTP Cache-Control headers for API routes

@@ -1,65 +1,19 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { notFound, useParams } from 'next/navigation'
 import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import ChatWidget from '@/components/ChatWidget'
 import { Footer } from '@/components/sections'
-import CrystalProductDetail, {
-  CrystalProduct,
-} from '@/components/crystal/CrystalProductDetail'
+import CrystalProductDetail from '@/components/crystal/CrystalProductDetail'
 import CrystalRelatedProducts, {
   RelatedCrystalProduct,
 } from '@/components/crystal/CrystalRelatedProducts'
 import CrystalFAQ from '@/components/crystal/CrystalFAQ'
+import { getCrystalBySlug } from '@/lib/api/crystals'
+import type { CrystalProduct } from '@/lib/types/crystal'
 
-// Mock crystal products data
-const MOCK_CRYSTAL_PRODUCTS: Record<string, CrystalProduct> = {
-  'apatite-1': {
-    id: '1',
-    slug: 'apatite-1',
-    nameEn: 'Apatite',
-    nameTh: 'อะพาไทต์',
-    image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=800&h=800&fit=crop',
-    properties: {
-      priceComplete: 'au, น้ำ',
-      chakra: ['จักระลำคอ', 'จักระดาวศีล'],
-      zodiacCompatibility: ['ราศีเมษุน', 'ราศีตุลย์', 'ราศีสุนุ'],
-      rulingPlanet: 'ดาวพุธ',
-      color: ['ฟ้า', 'น้ำเงิน'],
-    },
-    description: [
-      'อะพาไทต์เป็นแร่ฟอสเฟตที่มีสีหลายชนาย มีรูปหลักทรงหกเหลี่ยม อัดแน่นด้วยไออุ่นของโลกนั้นที่ได้ฟูดูโลไลต์ และคอโลไรต์ในเฟลล์ และทำหน้าที่ควบคุมกระดูและการแบนาอสีนู รวมทั้งการกักเก็บและการถลอดล้อยพลังงานของร่า',
-      'อะพาไทต์มีบทบาดสีฟ้า ใช้ในการทำงานที่เกี่ยวกับอัตชาตา การเดินทางจากจางจิต (Astral Travel) การทำสนรในระดับสีนรั และกระตุ้นให้เกิดความฝันที่รู้ตัว (Lucid Dreaming) ชื่อ "Apatite" มาจากภาษากรีกที่หมายถึง "การหลอกลวง หรือคำให้ เข้าใจผิด" เนื่องจากมักถูกมักได้ตัวเป็นแร่ชนิดอื่น ๆ',
-      'ด้วยความท้อะพาไทต์เป็นแสงฟอสฟอรีสที่เข้มข้น จึงถูกนำมาใช้ในดุลาสาสรกรรม เช่น บีย และในทางจิตจางญาณ อะพาไทต์ช่วยกระตุ้นการเดินโต การพัฒนา ความสมบูรณ์ และความดุลสมบูรณ์ นอกจากนี้ยังช่วยบรรเทาความรู้เกาเวคศัสรา อีกทั้งช่วงยันลูกอันครืดที่งต่องวันร์',
-      'อะพาไทต์ลามำเงินก่อเป็นหินยังชนาม (Shamanic Stone) ที่ใช้ในการปกป้องระหว่างการเดินทางจากจิต วินิยาม การเข้าถึงบันทึกอากาซิก (Akashic Records) หรือการทำงานกับอัตชาตา ใช้เพื่อปกป้องผิดผู้มีฝีภาพฟังปีชาง และกระตุ้น การเดินโดมองตูแลงหาความรู้เกาเวคศัสรา อีกทั้งช่วงจั่นดรับตัตวอ',
-      'ในชั้งแร่งๆ อะพาไทต์มีค่าความแข็งปะมาณ 5 ตามมาตราโมห์ (Mohs Hardness) เมื่อทำการทดสอบเส้น (Streak Test) จะราชาเป็นเส็นชาว โดยทัวไปพบในดุจสีฟ้าและเขียว จัดอยู่ในกลุ่มฟอสเฟต และมีรูปผลึกเป็นะมบ5ไทนหรือ หกเหลี่ยม',
-    ],
-    attributes:
-      'อะพาไทต์เป็นหินแห้งแรงบันดาลใจและกระพยบนา กึงให้ต้านจิตวิญญาณ ความคิดสร้างสรรค์ และการเสงอกอก ช่วย เชื่อมโยงระหว่างจิตใต้สำนึกกับโลกวัตรา เสริมการสื่อสาร และช่วยรับดุลบุดุลทั้งฝ่ายกายและจารานท์ โดยสีต้าง ๆ จะมีพลัง เอพาหกพเด้ต เช่ น้ำเงินเสริมการสื่อสารและจิตวิญญาณ ส่วนสีเหลืองเสริมความบั่งกั้ง ความมั่นใจ และฬลังคนทาง กายภาพ นอกจากนี้ยังช่วงฬลังไดุต่นเข้มขึนโบระไชยใต้ต้านอืน ๆ อัีดได้ ได้แก่',
-  },
-  'labradorite-1': {
-    id: '2',
-    slug: 'labradorite-1',
-    nameEn: 'Labradorite',
-    nameTh: 'ลาบราดอไรต์',
-    image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=800&h=800&fit=crop',
-    properties: {
-      priceComplete: 'โมฬกัจฉะ, แก้ว',
-      chakra: ['จักระหน้าผาก', 'จักระบานพิษ'],
-      zodiacCompatibility: ['ราศีธนู', 'ราศีมีน', 'ราศีกันย์'],
-      rulingPlanet: 'ดาวเสาร์',
-      color: ['เทา', 'ฟ้า', 'เขียว', 'ทอง'],
-    },
-    description: [
-      'ลาบราดอไรต์เป็นหินที่มีความสวยงามด้วยการเปลี่ยนสีแบบพิเศษ เรียกว่า "Labradorescence" ซึ่งแสดงให้เห็นสีสันที่หลากหลายเมื่อได้รับแสง',
-      'หินชนิดนี้ช่วยเสริมสร้างพลังงานทางจิตวิญญาณ เพิ่มความสามารถในการมองเห็นสิ่งที่ซ่อนอยู่ และปกป้องออร่าจากพลังงานลบ',
-    ],
-    attributes:
-      'ลาบราดอไรต์เป็นหินแห่งการเปลี่ยนแปลงและการปกป้อง ช่วยเสริมสร้างสัญชาตญาณ ความคิดสร้างสรรค์ และความมั่นใจในตนเอง',
-  },
-}
-
-// Mock related products data
+// Mock related products data (to be replaced with real API when available)
 const MOCK_RELATED_PRODUCTS: RelatedCrystalProduct[] = [
   {
     id: '1',
@@ -140,10 +94,57 @@ export default function CrystalProductPage() {
   const slug = params.slug as string
   const locale = params.locale as string
 
-  // Get product from mock data
-  const product = MOCK_CRYSTAL_PRODUCTS[slug]
+  // State
+  const [product, setProduct] = useState<CrystalProduct | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  if (!product) {
+  // Fetch crystal product on mount
+  useEffect(() => {
+    async function fetchProduct() {
+      setIsLoading(true)
+      setError(null)
+
+      try {
+        const crystalData = await getCrystalBySlug(slug, locale as 'en' | 'th')
+
+        if (!crystalData) {
+          setError('Product not found')
+          setProduct(null)
+        } else {
+          setProduct(crystalData)
+        }
+      } catch (err) {
+        console.error('Error fetching crystal product:', err)
+        setError('Failed to load product')
+        setProduct(null)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchProduct()
+  }, [slug, locale])
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <>
+        <NavigationWithSuspense position="static" />
+        <main className="min-h-screen bg-white flex items-center justify-center">
+          <div className="text-center">
+            <div className="inline-block w-12 h-12 border-4 border-gold-500 border-t-transparent rounded-full animate-spin" />
+            <p className="text-gray-600 text-lg mt-4">Loading crystal...</p>
+          </div>
+        </main>
+        <Footer />
+        <ChatWidget />
+      </>
+    )
+  }
+
+  // Show error or not found
+  if (error || !product) {
     notFound()
   }
 
