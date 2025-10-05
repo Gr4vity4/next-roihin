@@ -4,7 +4,6 @@ import ChatWidget from '@/components/ChatWidget'
 import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import { Footer } from '@/components/sections'
 import { useCart } from '@/contexts/CartContext'
-import { useWishlist } from '@/contexts/WishlistContext'
 import { ShoppingCartIcon } from '@heroicons/react/24/outline'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
@@ -29,6 +28,16 @@ interface CrystalType {
   slug: string
   nameEn: string
   nameTh: string
+}
+
+// Cart item type
+interface CartItem {
+  id: string
+  slug: string
+  title: string
+  price: number
+  image: string
+  category: string
 }
 
 // Mock crystal types
@@ -175,7 +184,6 @@ export default function CrystalProductsPage() {
   const locale = params.locale as string
   const t = useTranslations('productListing')
   const { addItem } = useCart()
-  const { toggleItem, isInWishlist } = useWishlist()
 
   const [products, setProducts] = useState<CrystalProduct[]>([])
   const [crystalType, setCrystalType] = useState<CrystalType | null>(null)
@@ -263,8 +271,6 @@ export default function CrystalProductsPage() {
                   product={product}
                   locale={locale}
                   addToCart={addItem}
-                  toggleWishlist={toggleItem}
-                  isInWishlist={isInWishlist(parseInt(product.id))}
                 />
               ))}
             </div>
@@ -286,14 +292,10 @@ function ProductCard({
   product,
   locale,
   addToCart,
-  toggleWishlist,
-  isInWishlist,
 }: {
   product: CrystalProduct
   locale: string
-  addToCart: (item: any) => void
-  toggleWishlist: (productId: number) => Promise<boolean>
-  isInWishlist: boolean
+  addToCart: (item: CartItem) => void
 }) {
   const [isAddingToCart, setIsAddingToCart] = useState(false)
   const t = useTranslations('productListing')
@@ -320,16 +322,6 @@ function ProductCard({
     setTimeout(() => {
       setIsAddingToCart(false)
     }, 500)
-  }
-
-  const handleWishlistToggle = async (e: React.MouseEvent) => {
-    e.preventDefault()
-
-    try {
-      await toggleWishlist(parseInt(product.id))
-    } catch (error) {
-      console.error('Failed to toggle wishlist:', error)
-    }
   }
 
   return (

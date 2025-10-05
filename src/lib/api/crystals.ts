@@ -6,7 +6,6 @@
 
 import { getFetchConfig } from '@/config/cache.config'
 import type {
-  Crystal,
   CrystalProduct,
   CrystalFilterParams,
   CrystalsAPIResponse,
