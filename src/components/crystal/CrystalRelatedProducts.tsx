@@ -79,48 +79,53 @@ function ProductCard({ product, locale }: { product: RelatedCrystalProduct; loca
         </div>
 
         {/* Product Info */}
-        <div className="text-center space-y-1">
-          <h3 className="text-sm md:text-base text-gray-900 font-medium line-clamp-2 group-hover:text-gray-600 transition-colors">
+        <div className="text-center">
+          <h3 className="text-sm md:text-base text-gray-900 font-medium line-clamp-2 group-hover:text-gray-600 transition-colors mb-2">
             {product.nameTh}
           </h3>
-          <div className="flex items-center justify-center gap-2">
-            <span className="text-lg md:text-xl font-semibold text-gray-900">
+        </div>
+
+        {/* Price and Action Buttons Row */}
+        <div className="flex items-center justify-between gap-2">
+          {/* Price */}
+          <div className="flex items-center gap-2">
+            <span className="text-sm md:text-base font-semibold text-gray-900">
               {product.price.toLocaleString('th-TH')}.-
             </span>
             {product.originalPrice > product.price && (
-              <span className="text-xs md:text-sm text-gray-400 line-through">
+              <span className="text-xs text-gray-400 line-through">
                 {product.originalPrice.toLocaleString('th-TH')}.-
               </span>
             )}
           </div>
-        </div>
 
-        {/* Action Buttons */}
-        <div className="flex items-center justify-end gap-2 mt-2">
-          {/* Wishlist Button */}
-          <button
-            onClick={(e) => {
-              e.preventDefault()
-              handleWishlistToggle()
-            }}
-            className="p-2 bg-white hover:bg-gray-50 rounded-full shadow-sm transition-all"
-            aria-label={t('addToWishlist')}
-          >
-            {isWishlisted ? (
-              <HeartSolidIcon className="w-5 h-5 text-red-500" />
-            ) : (
-              <HeartIcon className="w-5 h-5 text-gray-700 hover:text-red-500 transition-colors" />
-            )}
-          </button>
+          {/* Action Buttons */}
+          <div className="flex items-center gap-2 flex-shrink-0">
+            {/* Wishlist Button */}
+            <button
+              onClick={(e) => {
+                e.preventDefault()
+                handleWishlistToggle()
+              }}
+              className="p-2 bg-white hover:bg-gray-50 rounded-full shadow-sm transition-all"
+              aria-label={t('addToWishlist')}
+            >
+              {isWishlisted ? (
+                <HeartSolidIcon className="w-5 h-5 text-red-500" />
+              ) : (
+                <HeartIcon className="w-5 h-5 text-gray-700 hover:text-red-500 transition-colors" />
+              )}
+            </button>
 
-          {/* Add to Cart Button */}
-          <button
-            onClick={handleAddToCart}
-            className="p-2 bg-white hover:bg-gray-50 rounded-full shadow-sm transition-all"
-            aria-label={t('addToCart')}
-          >
-            <ShoppingCartIcon className="w-5 h-5 text-gray-700 hover:text-green-600 transition-colors" />
-          </button>
+            {/* Add to Cart Button */}
+            <button
+              onClick={handleAddToCart}
+              className="p-2 bg-white hover:bg-gray-50 rounded-full shadow-sm transition-all"
+              aria-label={t('addToCart')}
+            >
+              <ShoppingCartIcon className="w-5 h-5 text-gray-700 hover:text-green-600 transition-colors" />
+            </button>
+          </div>
         </div>
       </div>
     </Link>
