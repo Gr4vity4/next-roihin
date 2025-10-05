@@ -1,10 +1,10 @@
 'use client'
 
-import Image from 'next/image'
-import Link from 'next/link'
-import { useTranslations } from 'next-intl'
 import { HeartIcon, ShoppingCartIcon } from '@heroicons/react/24/outline'
 import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid'
+import { useTranslations } from 'next-intl'
+import Image from 'next/image'
+import Link from 'next/link'
 import { useState } from 'react'
 
 export interface RelatedCrystalProduct {
@@ -32,7 +32,7 @@ export default function CrystalRelatedProducts({
 
   return (
     <section className="bg-white py-12 md:py-16 border-t border-gray-200">
-      <div className="container max-w-7xl mx-auto px-4">
+      <div className="container max-w-5xl mx-auto px-4">
         {/* Section Title */}
         <h2 className="text-2xl md:text-3xl text-center text-gray-900 mb-8 md:mb-12">
           {t('relatedProducts.title', { crystalName })}
@@ -49,13 +49,7 @@ export default function CrystalRelatedProducts({
   )
 }
 
-function ProductCard({
-  product,
-  locale,
-}: {
-  product: RelatedCrystalProduct
-  locale: string
-}) {
+function ProductCard({ product, locale }: { product: RelatedCrystalProduct; locale: string }) {
   const [isWishlisted, setIsWishlisted] = useState(false)
   const t = useTranslations('crystalProduct.actions')
 
@@ -71,10 +65,7 @@ function ProductCard({
   }
 
   return (
-    <Link
-      href={`/${locale}/crystal/product/${product.slug}`}
-      className="group block relative"
-    >
+    <Link href={`/${locale}/crystal/product/${product.slug}`} className="group block relative">
       <div className="relative">
         {/* Product Image */}
         <div className="relative aspect-square overflow-hidden bg-gray-50 rounded-lg mb-3">
