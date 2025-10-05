@@ -188,18 +188,18 @@ function roihin_crystal_get_energy_label($key) {
  */
 function roihin_crystal_get_zodiac_label($key) {
     $labels = [
-        'aries' => '♈',
-        'taurus' => '♉',
-        'gemini' => '♊',
-        'cancer' => '♋',
-        'leo' => '♌',
-        'virgo' => '♍',
-        'libra' => '♎',
-        'scorpio' => '♏',
-        'sagittarius' => '♐',
-        'capricorn' => '♑',
-        'aquarius' => '♒',
-        'pisces' => '♓',
+        'aries' => __('Aries', 'roihin-crystal'),
+        'taurus' => __('Taurus', 'roihin-crystal'),
+        'gemini' => __('Gemini', 'roihin-crystal'),
+        'cancer' => __('Cancer', 'roihin-crystal'),
+        'leo' => __('Leo', 'roihin-crystal'),
+        'virgo' => __('Virgo', 'roihin-crystal'),
+        'libra' => __('Libra', 'roihin-crystal'),
+        'scorpio' => __('Scorpio', 'roihin-crystal'),
+        'sagittarius' => __('Sagittarius', 'roihin-crystal'),
+        'capricorn' => __('Capricorn', 'roihin-crystal'),
+        'aquarius' => __('Aquarius', 'roihin-crystal'),
+        'pisces' => __('Pisces', 'roihin-crystal'),
     ];
 
     return $labels[$key] ?? ucfirst($key);
