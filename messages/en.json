@@ -123,16 +123,16 @@
     },
     "title": "All Products",
     "filters": {
-      "search": "Search by name",
+      "search": "Search crystal by name",
       "searchPlaceholder": "Search",
       "colorTitle": "Search by color tone",
-      "energyTitle": "Select energy properties",
-      "zodiacTitle": "Select by zodiac sign",
-      "elementTitle": "Select by element",
+      "energyTitle": "Select energy crystals",
+      "zodiacTitle": "Select crystal by zodiac sign",
+      "elementTitle": "Select crystal by primary zodiac",
       "energyProperties": [
-        "Career, Prosperity",
-        "Business, Banking",
-        "Love, Romance, Luck",
+        "Finance, Fortune",
+        "Work, Business, Investment",
+        "Love, Happiness, Luck",
         "Health, Balance",
         "Spirituality, Stability"
       ],
@@ -151,10 +151,10 @@
         "Pisces"
       ],
       "elements": [
-        "Earth",
-        "Water",
-        "Air",
-        "Fire"
+        "Earth Sign",
+        "Water Sign",
+        "Air Sign",
+        "Fire Sign"
       ]
     },
     "pagination": {
