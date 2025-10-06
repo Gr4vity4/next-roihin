@@ -1,18 +1,38 @@
+'use client'
+
 import { Link } from '@/i18n/navigation'
 import { getRecentPersonalizedDesigns } from '@/lib/api/gallery'
-import { getTranslations } from 'next-intl/server'
+import { useTranslations } from 'next-intl'
 import Image from 'next/image'
+import { useEffect, useState } from 'react'
 import { FontProvider } from '../providers/FontProvider'
 import { Container } from '../ui'
+import { PersonalizedDesignModal } from '../ui/PersonalizedDesignModal'
 
-export default async function RecentPersonalizedDesignsSection() {
-  const t = await getTranslations('personalizedPage.recentDesigns')
+export default function RecentPersonalizedDesignsSection() {
+  const t = useTranslations('personalizedPage.recentDesigns')
+  const [galleryImages, setGalleryImages] = useState<string[]>([])
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0)
+  const [isLoading, setIsLoading] = useState(true)
 
   // Fetch random 8 images from WordPress API
-  const galleryImages = await getRecentPersonalizedDesigns(8)
+  useEffect(() => {
+    async function fetchImages() {
+      try {
+        const images = await getRecentPersonalizedDesigns(8)
+        setGalleryImages(images)
+      } catch (error) {
+        console.error('Failed to fetch gallery images:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchImages()
+  }, [])
 
-  // If no images available, don't render the section
-  if (galleryImages.length === 0) {
+  // Don't render if loading or no images
+  if (isLoading || galleryImages.length === 0) {
     return null
   }
 
@@ -20,6 +40,11 @@ export default async function RecentPersonalizedDesignsSection() {
   const displayImages = [...galleryImages]
   while (displayImages.length < 8) {
     displayImages.push('')
+  }
+
+  const handleImageClick = (index: number) => {
+    setSelectedImageIndex(index)
+    setIsModalOpen(true)
   }
 
   return (
@@ -43,26 +68,33 @@ export default async function RecentPersonalizedDesignsSection() {
             {/* Gallery Grid - 4 columns on desktop, 2 on mobile */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mb-12">
               {displayImages.slice(0, 8).map((imageUrl, index) => (
-                <div
+                <button
                   key={`recent-design-${index}`}
-                  className="relative aspect-square overflow-hidden rounded-2xl bg-gray-100 shadow-sm"
+                  onClick={() => imageUrl && handleImageClick(index)}
+                  className="relative aspect-square overflow-hidden rounded-2xl bg-gray-100 shadow-sm hover:shadow-lg transition-shadow cursor-pointer disabled:cursor-default group"
+                  disabled={!imageUrl}
+                  aria-label={imageUrl ? `View design ${index + 1}` : undefined}
                 >
                   {imageUrl ? (
-                    <Image
-                      src={imageUrl}
-                      alt={`${t('imageAlt')} ${index + 1}`}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 50vw, 25vw"
-                      // Priority loading for first 4 images
-                      priority={index < 4}
-                      loading={index >= 4 ? 'lazy' : undefined}
-                    />
+                    <>
+                      <Image
+                        src={imageUrl}
+                        alt={`${t('imageAlt')} ${index + 1}`}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        sizes="(max-width: 768px) 50vw, 25vw"
+                        // Priority loading for first 4 images
+                        priority={index < 4}
+                        loading={index >= 4 ? 'lazy' : undefined}
+                      />
+                      {/* Hover overlay */}
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+                    </>
                   ) : (
                     // Empty placeholder for missing images
                     <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200" />
                   )}
-                </div>
+                </button>
               ))}
             </div>
 
@@ -81,6 +113,14 @@ export default async function RecentPersonalizedDesignsSection() {
           </div>
         </Container>
       </section>
+
+      {/* Personalized Design Modal */}
+      <PersonalizedDesignModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        images={galleryImages.filter((img) => img !== '')}
+        title={t('imageAlt')}
+      />
     </FontProvider>
   )
 }
