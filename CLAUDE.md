@@ -46,7 +46,7 @@ npm run test:e2e:report       # View test report
 
 ### Tech Stack
 
-- **Framework**: Next.js 15.4 with App Router
+- **Framework**: Next.js 15.5 with App Router
 - **Language**: TypeScript with strict mode
 - **Internationalization**: next-intl for Thai/English support
 - **CMS**: WordPress REST API for all content management
@@ -159,10 +159,10 @@ Content Security Policy and security headers configured in `next.config.ts`:
 
 ## Performance Optimizations
 
-1. **Font Optimization**: Mixed Language font system with unicode-range splitting
-   - Bodoni Moda for Latin/English characters
-   - Sukhumvit Set for Thai characters
-   - Inter as fallback
+1. **Font Optimization**: Mixed Language font system loaded via Next.js font optimization
+   - Playfair Display for Latin/English serif characters
+   - Prompt for Thai characters (supports weights 100-900)
+   - Inter as fallback sans-serif
 2. **Image Optimization**: Next.js Image component with remote patterns for Unsplash, Wix, and WordPress
 3. **Code Splitting**: Automatic with App Router
 4. **Turbopack**: Enabled in development for faster builds
@@ -172,10 +172,9 @@ Content Security Policy and security headers configured in `next.config.ts`:
 ### Key Helper Functions
 
 - `getTestimonials(language)` - Fetch testimonials from WordPress
-- `getSiteSettings()` - Get site settings from WordPress
-- `getGalleryPhotos(language)` - Fetch gallery photos from WordPress
-- `siteMetaHelpers.getContactInfo()` - Get contact information
-- `siteMetaHelpers.getSocialLinks()` - Get social media links
+- `getPersonalizedGallery()` - Fetch personalized gallery photos from WordPress
+- `getRandomGalleryPhotos(count)` - Get random selection of gallery photos
+- `getRecentPersonalizedDesigns(count)` - Get recent bracelet design photos
 
 ## Styling Guidelines
 
