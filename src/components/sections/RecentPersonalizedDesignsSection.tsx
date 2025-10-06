@@ -119,7 +119,7 @@ export default function RecentPersonalizedDesignsSection() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         images={galleryImages.filter((img) => img !== '')}
-        title={t('imageAlt')}
+        title={'ออกแบบโดย'}
       />
     </FontProvider>
   )

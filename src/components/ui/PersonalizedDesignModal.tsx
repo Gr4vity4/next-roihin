@@ -20,12 +20,15 @@ export function PersonalizedDesignModal({
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
 
   // Mock data matching the reference design
-  const mockImages = images.length > 0 ? images : [
-    '/images/placeholder-bracelet-1.jpg',
-    '/images/placeholder-bracelet-2.jpg',
-    '/images/placeholder-bracelet-3.jpg',
-    '/images/placeholder-bracelet-4.jpg',
-  ]
+  const mockImages =
+    images.length > 0
+      ? images
+      : [
+          '/images/placeholder-bracelet-1.jpg',
+          '/images/placeholder-bracelet-2.jpg',
+          '/images/placeholder-bracelet-3.jpg',
+          '/images/placeholder-bracelet-4.jpg',
+        ]
 
   // Lock body scroll when modal is open
   useEffect(() => {
@@ -133,9 +136,7 @@ export function PersonalizedDesignModal({
               <div className="pt-6 flex items-start justify-between">
                 <div className="space-y-1">
                   <p className="text-xs text-gray-500">{title}</p>
-                  <p className="font-medium text-gray-800">
-                    ROIHIN Stone & Bracelet
-                  </p>
+                  <p className="font-medium text-gray-800">ROIHIN Stone & Bracelet</p>
                   <p className="text-xs text-gray-500">22 August 2025</p>
                 </div>
                 <div className="flex gap-3 pt-1">
@@ -179,13 +180,12 @@ export function PersonalizedDesignModal({
               </div>
 
               {/* Footer Copyright Text */}
-              <div className="pt-4 border-t border-gray-200">
+              <div className="pt-4">
                 <p className="text-xs text-gray-600 leading-relaxed">
-                  รูปภาพ วิดีโอ รูปแบบการจัดวางคริสตัลและคำอธิบายพลังงาน
-                  ถือเป็นทรัพย์สินทางปัญญา ห้ามมิให้ผู้อื่นทำซ้ำ คัดลอก ดัดแปลง
-                  โดยไม่ได้รับอนุญาต
-                  <br />© 2025 ROIHIN Stone & Bracelet under s 195 co., ltd. All
-                  rights reserved.
+                  รูปภาพ วิดีโอ รูปแบบการจัดวางคริสตัลและคำอธิบายพลังงาน ถือเป็นทรัพย์สินทางปัญญา
+                  ห้ามมิให้ผู้อื่นทำซ้ำ คัดลอก ดัดแปลง โดยไม่ได้รับอนุญาต
+                  <br />
+                  &copy; 2025 ROIHIN Stone & Bracelet under s 195 co., ltd. All rights reserved.
                 </p>
               </div>
             </div>
@@ -193,24 +193,22 @@ export function PersonalizedDesignModal({
             {/* Right Section - Details */}
             <div className="space-y-6">
               {/* Title */}
-              <h2 className="text-3xl md:text-4xl font-light text-gray-800">
-                คำอธิบายพลังงาน
-              </h2>
+              <h2 className="text-3xl md:text-4xl font-light text-gray-800">คำอธิบายพลังงาน</h2>
 
               {/* Description */}
               <div className="text-gray-700 leading-relaxed text-sm md:text-base space-y-2">
                 <p>
                   กำไลเส้นนี้เปล่งประกายพลังแห่งความมั่นใจและการตัดสินใจที่เฉียบขาด
                   เสริมไฟในใจให้ลุกไหม้ นำพลังงานแห่งความกล้าและแรงขับเคลื่อนมาเถื่อ
-                  หนุนการงานและการเงิน ช่วยปลดหนี้และสร้างโอกาสใหม่ ๆ ด้านการเงิน
-                  ได้อย่างมั่นคง พลังงานของหินยังค่อยปกป้องจากสิ่งไม่ดีและพลังลบ
-                  เสริมสุขภาพทั้งกายและใจให้แข็งแรง พร้อมทั้งช่วยให้จิตใจสงบ มีสมาธิ
-                  ลดความฟุ้งซ่าน และเพิ่มความเฉียบแหลมในความคิดและความจำ เถื่อ
-                  หนุนพลังจิตวิญญาณให้สูงขึ้น ในด้านความสัมพันธ์ กำไลช่วยเสริมความ
-                  เข้าใจและความผกพันกับคู่ครอง ทำให้ความรักมั่นคงและรำรับ อีกทั้ง
-                  ยังดึงดูดโชคดี ไม่ว่าจะเป็นโชคลาภ การได้เพื่อนร่วมงานดี ๆ หรือโอกาสที่
-                  นำประกำใจ กำไลเส้นนี้จึงเป็นเครื่องรางที่ครอบคลุมทั้งพลังแห่งความ
-                  สำเร็จ ความสุข ความรัก และการคุ้มครองให้แคล้วคลาดปลอดภัย
+                  หนุนการงานและการเงิน ช่วยปลดหนี้และสร้างโอกาสใหม่ ๆ ด้านการเงิน ได้อย่างมั่นคง
+                  พลังงานของหินยังค่อยปกป้องจากสิ่งไม่ดีและพลังลบ เสริมสุขภาพทั้งกายและใจให้แข็งแรง
+                  พร้อมทั้งช่วยให้จิตใจสงบ มีสมาธิ ลดความฟุ้งซ่าน
+                  และเพิ่มความเฉียบแหลมในความคิดและความจำ เถื่อ หนุนพลังจิตวิญญาณให้สูงขึ้น
+                  ในด้านความสัมพันธ์ กำไลช่วยเสริมความ เข้าใจและความผกพันกับคู่ครอง
+                  ทำให้ความรักมั่นคงและรำรับ อีกทั้ง ยังดึงดูดโชคดี ไม่ว่าจะเป็นโชคลาภ
+                  การได้เพื่อนร่วมงานดี ๆ หรือโอกาสที่ นำประกำใจ
+                  กำไลเส้นนี้จึงเป็นเครื่องรางที่ครอบคลุมทั้งพลังแห่งความ สำเร็จ ความสุข ความรัก
+                  และการคุ้มครองให้แคล้วคลาดปลอดภัย
                 </p>
               </div>
 
@@ -218,10 +216,7 @@ export function PersonalizedDesignModal({
               <div className="space-y-3">
                 <h3 className="font-medium text-gray-800">คะแนนพลังงาน</h3>
                 {properties.map((prop, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between gap-4 text-sm"
-                  >
+                  <div key={index} className="flex items-center justify-between gap-4 text-sm">
                     <span className="text-gray-700 flex-1">{prop.name}</span>
                     <div className="flex gap-1">
                       {[...Array(8)].map((_, i) => (
@@ -233,9 +228,7 @@ export function PersonalizedDesignModal({
                         />
                       ))}
                     </div>
-                    <span className="text-gray-600 text-xs w-20 text-right">
-                      {prop.label}
-                    </span>
+                    <span className="text-gray-600 text-xs w-20 text-right">{prop.label}</span>
                   </div>
                 ))}
               </div>
@@ -258,9 +251,7 @@ export function PersonalizedDesignModal({
               {/* Charm and Size Selection */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <h3 className="font-medium text-gray-800 text-sm">
-                    ชาร์มและตัวคั่น
-                  </h3>
+                  <h3 className="font-medium text-gray-800 text-sm">ชาร์มและตัวคั่น</h3>
                   <div className="px-4 py-3 border border-gray-300 rounded-full text-sm text-gray-700 text-center">
                     None
                   </div>
@@ -275,11 +266,9 @@ export function PersonalizedDesignModal({
 
               {/* Price and Production Time */}
               <div className="space-y-2">
-                <h3 className="font-medium text-gray-800 text-sm">
-                  งบประมาณการจัดทำ
-                </h3>
+                <h3 className="font-medium text-gray-800 text-sm">งบประมาณการจัดทำ</h3>
                 <div className="px-6 py-3 border border-gray-300 rounded-full text-center text-gray-700">
-                  ระดับสูง (8,000 บันไป)
+                  ระดับสูง (8,000 ขึ้นไป)
                 </div>
               </div>
             </div>
