@@ -18,7 +18,7 @@ export default function PersonalizedHeroSection({
       backgroundAlt="Personalized Stone Bracelet Hero Background"
       overlayOpacity={0.1}
     >
-      <div className="container flex justify-center items-center md:items-start">
+      <div className="container flex justify-center items-center md:items-start mx-auto">
         <div className="px-6 sm:px-8 md:px-12 lg:px-4 max-w-4xl">
           {/* Title */}
           <Typography
