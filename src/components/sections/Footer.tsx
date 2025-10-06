@@ -1,8 +1,5 @@
 'use client'
 
-import { FontProvider } from '@/components/providers/FontProvider'
-import { VibrantDestinySection } from '@/components/sections'
-import { content } from '@/config/content.config'
 import { Link } from '@/i18n/navigation'
 import { cn } from '@/lib/utils'
 import { MapPin } from 'lucide-react'
@@ -68,18 +65,14 @@ export default function Footer({
   const copyright = '© 2021 All rights is reserved by Roihin Stone and Bracelet'
   return (
     <>
-      <FontProvider fonts={{ th: 'font-playfair', en: 'font-playfair' }}>
-        {/* Vibrant Destiny Section */}
-        <VibrantDestinySection
-          backgroundImage={content.vibrantDestiny.background.image}
-          backgroundAlt={content.vibrantDestiny.background.alt}
-          title={content.vibrantDestiny.title}
-          subtitle={content.vibrantDestiny.subtitle}
-          since={content.vibrantDestiny.since}
-          overlayOpacity={0.2}
-        />
-      </FontProvider>
-      <footer className={cn('py-8 sm:py-10 md:py-12', backgroundColor, textColor, className)}>
+      <footer
+        className={cn(
+          'py-8 sm:py-10 md:py-12 border-t border-gray-800',
+          backgroundColor,
+          textColor,
+          className,
+        )}
+      >
         <Container padding="lg">
           <div className="grid md:grid-cols-4 gap-6 sm:gap-7 md:gap-8 mb-6 sm:mb-7 md:mb-8">
             {/* Logo Column */}
