@@ -1,0 +1,421 @@
+{
+  "key": "group_personalized_design_details",
+  "title": "Design Details",
+  "fields": [
+    {
+      "key": "field_pd_gallery",
+      "label": "Design Gallery",
+      "name": "design_gallery",
+      "aria-label": "",
+      "type": "gallery",
+      "instructions": "Upload images of the bracelet design (minimum 1, maximum 10 images). Recommended: 800x800px or larger, square aspect ratio.",
+      "required": 1,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "return_format": "array",
+      "library": "all",
+      "min": 1,
+      "max": 10,
+      "min_width": 800,
+      "min_height": 800,
+      "min_size": "",
+      "max_size": 5,
+      "mime_types": "jpg,jpeg,png,webp",
+      "insert": "append",
+      "preview_size": "medium"
+    },
+    {
+      "key": "field_pd_designer_info",
+      "label": "Designer Information",
+      "name": "designer_info",
+      "aria-label": "",
+      "type": "group",
+      "instructions": "",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "layout": "block",
+      "sub_fields": [
+        {
+          "key": "field_pd_designer_name",
+          "label": "Designer Name",
+          "name": "designer_name",
+          "aria-label": "",
+          "type": "text",
+          "instructions": "",
+          "required": 1,
+          "conditional_logic": 0,
+          "wrapper": {
+            "width": "50",
+            "class": "",
+            "id": ""
+          },
+          "default_value": "ROIHIN Stone & Bracelet",
+          "maxlength": "",
+          "placeholder": "",
+          "prepend": "",
+          "append": ""
+        },
+        {
+          "key": "field_pd_design_date",
+          "label": "Design Date",
+          "name": "design_date",
+          "aria-label": "",
+          "type": "date_picker",
+          "instructions": "",
+          "required": 1,
+          "conditional_logic": 0,
+          "wrapper": {
+            "width": "50",
+            "class": "",
+            "id": ""
+          },
+          "display_format": "d F Y",
+          "return_format": "Y-m-d",
+          "first_day": 1
+        },
+        {
+          "key": "field_pd_designer_title",
+          "label": "Designer Attribution Label",
+          "name": "designer_title",
+          "aria-label": "",
+          "type": "text",
+          "instructions": "Label shown above designer name (e.g., 'Designed by' or 'ออกแบบโดย')",
+          "required": 0,
+          "conditional_logic": 0,
+          "wrapper": {
+            "width": "",
+            "class": "",
+            "id": ""
+          },
+          "default_value": "ออกแบบโดย",
+          "maxlength": "",
+          "placeholder": "",
+          "prepend": "",
+          "append": ""
+        }
+      ]
+    },
+    {
+      "key": "field_pd_energy_desc",
+      "label": "Energy Description",
+      "name": "energy_description",
+      "aria-label": "",
+      "type": "group",
+      "instructions": "",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "layout": "block",
+      "sub_fields": [
+        {
+          "key": "field_pd_energy_desc_th",
+          "label": "Description (Thai)",
+          "name": "description_th",
+          "aria-label": "",
+          "type": "wysiwyg",
+          "instructions": "Detailed description of energy properties in Thai (minimum 100 characters)",
+          "required": 1,
+          "conditional_logic": 0,
+          "wrapper": {
+            "width": "",
+            "class": "",
+            "id": ""
+          },
+          "default_value": "",
+          "tabs": "visual",
+          "toolbar": "basic",
+          "media_upload": 0,
+          "delay": 0
+        },
+        {
+          "key": "field_pd_energy_desc_en",
+          "label": "Description (English)",
+          "name": "description_en",
+          "aria-label": "",
+          "type": "wysiwyg",
+          "instructions": "English translation of energy description (optional)",
+          "required": 0,
+          "conditional_logic": 0,
+          "wrapper": {
+            "width": "",
+            "class": "",
+            "id": ""
+          },
+          "default_value": "",
+          "tabs": "visual",
+          "toolbar": "basic",
+          "media_upload": 0,
+          "delay": 0
+        }
+      ]
+    },
+    {
+      "key": "field_pd_energy_properties",
+      "label": "Energy Properties",
+      "name": "energy_properties",
+      "aria-label": "",
+      "type": "repeater",
+      "instructions": "Add exactly 5 energy property ratings. Each category must be present.",
+      "required": 1,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "layout": "table",
+      "pagination": 0,
+      "min": 5,
+      "max": 5,
+      "collapsed": "",
+      "button_label": "Add Property",
+      "rows_per_page": 20,
+      "sub_fields": [
+        {
+          "key": "field_pd_ep_category",
+          "label": "Category",
+          "name": "category",
+          "aria-label": "",
+          "type": "select",
+          "instructions": "",
+          "required": 1,
+          "conditional_logic": 0,
+          "wrapper": {
+            "width": "",
+            "class": "",
+            "id": ""
+          },
+          "choices": {
+            "finance_fortune": "การเงิน โชคลาภ (Finance & Fortune)",
+            "work_business": "การงาน ธุรกิจ การลงทุน (Work, Business, Investment)",
+            "love_happiness": "ความรัก ความสุข โชคดี (Love, Happiness, Luck)",
+            "health_balance": "สุขภาพ สมดุลชีวิต (Health, Life Balance)",
+            "spirituality": "จิตวิญญาณ ความมั่นคง (Spirituality, Stability)"
+          },
+          "default_value": "",
+          "return_format": "value",
+          "multiple": 0,
+          "allow_null": 0,
+          "ui": 0,
+          "ajax": 0,
+          "placeholder": ""
+        },
+        {
+          "key": "field_pd_ep_rating",
+          "label": "Rating",
+          "name": "rating",
+          "aria-label": "",
+          "type": "range",
+          "instructions": "0-8 scale (0=None, 1-2=Fair, 3=Moderate, 4=Very Good, 5-8=Excellent)",
+          "required": 1,
+          "conditional_logic": 0,
+          "wrapper": {
+            "width": "",
+            "class": "",
+            "id": ""
+          },
+          "default_value": 3,
+          "min": 0,
+          "max": 8,
+          "step": 1,
+          "prepend": "",
+          "append": ""
+        }
+      ]
+    },
+    {
+      "key": "field_pd_stones",
+      "label": "Stones Used in Design",
+      "name": "stones_used",
+      "aria-label": "",
+      "type": "repeater",
+      "instructions": "Add stones used in this design (minimum 1, maximum 15)",
+      "required": 1,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "layout": "table",
+      "pagination": 0,
+      "min": 1,
+      "max": 15,
+      "collapsed": "",
+      "button_label": "Add Stone",
+      "rows_per_page": 20,
+      "sub_fields": [
+        {
+          "key": "field_pd_stone_name",
+          "label": "Stone Name",
+          "name": "stone_name",
+          "aria-label": "",
+          "type": "text",
+          "instructions": "",
+          "required": 1,
+          "conditional_logic": 0,
+          "wrapper": {
+            "width": "",
+            "class": "",
+            "id": ""
+          },
+          "default_value": "",
+          "maxlength": "",
+          "placeholder": "e.g., Black Tourmaline",
+          "prepend": "",
+          "append": ""
+        },
+        {
+          "key": "field_pd_stone_reference",
+          "label": "Link to Crystal Database",
+          "name": "stone_reference",
+          "aria-label": "",
+          "type": "post_object",
+          "instructions": "Optional: Link to crystal post in database",
+          "required": 0,
+          "conditional_logic": 0,
+          "wrapper": {
+            "width": "",
+            "class": "",
+            "id": ""
+          },
+          "post_type": ["crystal"],
+          "post_status": "",
+          "taxonomy": "",
+          "return_format": "id",
+          "multiple": 0,
+          "allow_null": 1,
+          "bidirectional": 0,
+          "ui": 1,
+          "bidirectional_target": []
+        }
+      ]
+    },
+    {
+      "key": "field_pd_specifications",
+      "label": "Bracelet Specifications",
+      "name": "specifications",
+      "aria-label": "",
+      "type": "group",
+      "instructions": "",
+      "required": 0,
+      "conditional_logic": 0,
+      "wrapper": {
+        "width": "",
+        "class": "",
+        "id": ""
+      },
+      "layout": "block",
+      "sub_fields": [
+        {
+          "key": "field_pd_stone_size",
+          "label": "Stone Size",
+          "name": "stone_size",
+          "aria-label": "",
+          "type": "select",
+          "instructions": "",
+          "required": 1,
+          "conditional_logic": 0,
+          "wrapper": {
+            "width": "50",
+            "class": "",
+            "id": ""
+          },
+          "choices": {
+            "6mm": "6 mm.",
+            "8mm": "8 mm.",
+            "10mm": "10 mm.",
+            "12mm": "12 mm.",
+            "custom": "Custom Size"
+          },
+          "default_value": "8mm",
+          "return_format": "value",
+          "multiple": 0,
+          "allow_null": 0,
+          "ui": 0,
+          "ajax": 0,
+          "placeholder": ""
+        },
+        {
+          "key": "field_pd_stone_size_custom",
+          "label": "Custom Stone Size",
+          "name": "stone_size_custom",
+          "aria-label": "",
+          "type": "text",
+          "instructions": "",
+          "required": 0,
+          "conditional_logic": [
+            [
+              {
+                "field": "field_pd_stone_size",
+                "operator": "==",
+                "value": "custom"
+              }
+            ]
+          ],
+          "wrapper": {
+            "width": "50",
+            "class": "",
+            "id": ""
+          },
+          "default_value": "",
+          "maxlength": "",
+          "placeholder": "e.g., 7 mm.",
+          "prepend": "",
+          "append": ""
+        },
+        {
+          "key": "field_pd_charm_separator",
+          "label": "Charm & Separator",
+          "name": "charm_separator",
+          "aria-label": "",
+          "type": "text",
+          "instructions": "",
+          "required": 0,
+          "conditional_logic": 0,
+          "wrapper": {
+            "width": "",
+            "class": "",
+            "id": ""
+          },
+          "default_value": "None",
+          "maxlength": "",
+          "placeholder": "e.g., Silver charm, Gold spacer",
+          "prepend": "",
+          "append": ""
+        }
+      ]
+    }
+  ],
+  "location": [
+    [
+      {
+        "param": "post_type",
+        "operator": "==",
+        "value": "personalized_design"
+      }
+    ]
+  ],
+  "menu_order": 0,
+  "position": "normal",
+  "style": "default",
+  "label_placement": "top",
+  "instruction_placement": "label",
+  "hide_on_screen": "",
+  "active": true,
+  "description": "",
+  "show_in_rest": 1
+}

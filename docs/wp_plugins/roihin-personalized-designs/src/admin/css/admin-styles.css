@@ -1,0 +1,198 @@
+/**
+ * Admin Styles for ROIHIN Personalized Designs Manager
+ */
+
+/* Design Info Meta Box */
+.rpd-design-info {
+    padding: 10px 0;
+}
+
+.rpd-design-info p {
+    margin: 8px 0;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* Custom Column Styling */
+.column-design_thumbnail img {
+    border: 1px solid #ddd;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.column-avg_rating {
+    font-weight: 600;
+    color: #2271b1;
+}
+
+/* ACF Field Group Styling */
+.acf-field[data-name="energy_properties"] .acf-table {
+    margin-top: 10px;
+}
+
+.acf-field[data-name="energy_properties"] .acf-table th {
+    background: #f5f5f5;
+    font-weight: 600;
+}
+
+/* Energy Properties Rating Visual */
+.acf-field[data-type="range"] {
+    position: relative;
+}
+
+.acf-field[data-type="range"] input[type="range"] {
+    width: 100%;
+}
+
+/* Gallery Field Enhancement */
+.acf-gallery .acf-gallery-main {
+    min-height: 200px;
+    background: #fafafa;
+    border: 2px dashed #ddd;
+    border-radius: 4px;
+}
+
+.acf-gallery .acf-gallery-attachment {
+    position: relative;
+}
+
+.acf-gallery .acf-gallery-attachment:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+/* Stone Repeater Field */
+.acf-field[data-name="stones_used"] .acf-table {
+    border: 1px solid #ddd;
+}
+
+.acf-field[data-name="stones_used"] .acf-row {
+    transition: background-color 0.2s;
+}
+
+.acf-field[data-name="stones_used"] .acf-row:hover {
+    background-color: #f9f9f9;
+}
+
+/* Admin Notice Styling */
+.notice.rpd-notice {
+    border-left-color: #D4AF37;
+}
+
+.notice.rpd-notice p {
+    margin: 0.5em 0;
+}
+
+/* Quick Edit Enhancements */
+.inline-edit-col .inline-edit-group label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+/* Budget Level Color Coding */
+.taxonomy-budget_level .term-budget {
+    color: #16a34a;
+}
+
+.taxonomy-budget_level .term-standard {
+    color: #2563eb;
+}
+
+.taxonomy-budget_level .term-premium {
+    color: #9333ea;
+}
+
+.taxonomy-budget_level .term-luxury {
+    color: #D4AF37;
+    font-weight: 600;
+}
+
+/* Responsive Adjustments */
+@media screen and (max-width: 782px) {
+    .column-design_thumbnail {
+        display: none;
+    }
+
+    .rpd-design-info p {
+        font-size: 12px;
+    }
+}
+
+/* Loading States */
+.rpd-loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.rpd-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #ddd;
+    border-top-color: #2271b1;
+    border-radius: 50%;
+    animation: rpd-spin 0.6s linear infinite;
+}
+
+@keyframes rpd-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Energy Property Category Icons */
+.acf-field[data-name="category"] select option {
+    padding: 5px;
+}
+
+/* Validation Error Styling */
+.acf-error-message {
+    background: #dc2626;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin-top: 5px;
+    font-size: 13px;
+}
+
+/* Success Messages */
+.acf-success-message {
+    background: #16a34a;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin-top: 5px;
+    font-size: 13px;
+}
+
+/* Custom Tooltips */
+.rpd-tooltip {
+    position: relative;
+    display: inline-block;
+    cursor: help;
+}
+
+.rpd-tooltip:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 6px 10px;
+    background: #333;
+    color: white;
+    font-size: 12px;
+    white-space: nowrap;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    z-index: 1000;
+}
+
+/* Post Type Icon */
+#menu-posts-personalized_design .dashicons-art {
+    color: #D4AF37;
+}
+
+#menu-posts-personalized_design:hover .dashicons-art {
+    color: #B8941F;
+}
