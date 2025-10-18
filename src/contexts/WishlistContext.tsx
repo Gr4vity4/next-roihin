@@ -77,7 +77,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
         },
         body: JSON.stringify({
           product_id: productId,
-          color: color || null,
+          color: color ?? null,
           op: 'add',
         }),
         credentials: 'include',
@@ -102,8 +102,23 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
   const removeItem = async (itemId: string) => {
     try {
       setError(null)
+      const targetItem = items.find(item => item.id === itemId)
+
+      if (!targetItem) {
+        await refreshWishlist()
+        throw new Error('Wishlist item not found')
+      }
+
       const response = await fetch(`/api/wishlist/${itemId}`, {
         method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          product_id: targetItem.product_id,
+          color: targetItem.color ?? null,
+          product_color_option_id: targetItem.product_color_option_id ?? null,
+        }),
         credentials: 'include',
       })
 
@@ -122,6 +137,11 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
   const removeByProductId = async (productId: number, color?: string) => {
     try {
       setError(null)
+      const targetColor = color ?? null
+      const targetItem = items.find(item =>
+        item.product_id === productId && (item.color ?? null) === targetColor
+      )
+
       const response = await fetch('/api/wishlist/toggle', {
         method: 'POST',
         headers: {
@@ -129,7 +149,8 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
         },
         body: JSON.stringify({
           product_id: productId,
-          color: color || null,
+          color: targetColor,
+          color_option_id: targetItem?.product_color_option_id ?? null,
           op: 'remove',
         }),
         credentials: 'include',
@@ -141,10 +162,12 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
 
       const result = await response.json()
       
-      if (result.action === 'removed') {
+      const action = result.action ?? result.meta?.action
+
+      if (action === 'removed') {
         setItems(prevItems => 
           prevItems.filter(item => 
-            !(item.product_id === productId && item.color === (color || undefined))
+            !(item.product_id === productId && (item.color ?? null) === targetColor)
           )
         )
       }
@@ -156,16 +179,18 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
   }
 
   const isInWishlist = (productId: number, color?: string) => {
+    const targetColor = color ?? null
     return items.some(item => 
       item.product_id === productId && 
-      item.color === (color || undefined)
+      (item.color ?? null) === targetColor
     )
   }
 
   const getItemId = (productId: number, color?: string) => {
+    const targetColor = color ?? null
     const item = items.find(item => 
       item.product_id === productId && 
-      item.color === (color || undefined)
+      (item.color ?? null) === targetColor
     )
     return item?.id || null
   }
@@ -180,7 +205,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
         },
         body: JSON.stringify({
           product_id: productId,
-          color: color || null,
+          color: color ?? null,
         }),
         credentials: 'include',
       })
@@ -190,16 +215,20 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
       }
 
       const result = await response.json()
-      
-      if (result.action === 'added') {
+      const action = result.action ?? result.meta?.action
+      const removedItemId = result.item?.id ?? result.meta?.wishlist_item_id ?? null
+
+      if (action === 'added') {
         // Refresh the wishlist to get full product details
         await refreshWishlist()
         return true
-      } else if (result.action === 'removed') {
+      } else if (action === 'removed') {
         // Remove the item from local state
         setItems(prevItems => 
           prevItems.filter(item => 
-            !(item.product_id === productId && item.color === (color || undefined))
+            removedItemId
+              ? item.id !== removedItemId
+              : !(item.product_id === productId && (item.color ?? null) === (color ?? null))
           )
         )
         return false

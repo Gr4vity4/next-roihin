@@ -11,8 +11,9 @@
 export interface WishlistItem {
   id: string
   product_id: number
-  color?: string
-  color_key?: string
+  product_color_option_id?: number | null
+  color?: string | null
+  color_key?: string | null
   note?: string
   added_at: number
   product?: {
@@ -50,6 +51,7 @@ export interface WishlistToggleParams {
   token: string
   productId: number
   color?: string | null
+  colorOptionId?: number | null
   op?: 'add' | 'remove' | 'toggle'
 }
 
@@ -61,6 +63,7 @@ export interface WishlistToggleResponse {
   item: {
     id: string
     product_id: number
+    product_color_option_id?: number | null
     color?: string
     added_at: number
   }

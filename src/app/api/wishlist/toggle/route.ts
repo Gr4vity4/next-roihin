@@ -12,7 +12,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json()
-    const { product_id, color, op } = body
+    const { product_id, color, color_option_id, op } = body
 
     if (!product_id) {
       return NextResponse.json(
@@ -25,6 +25,7 @@ export async function POST(request: Request) {
       token,
       productId: product_id,
       color,
+      colorOptionId: color_option_id ?? null,
       op,
     })
 
