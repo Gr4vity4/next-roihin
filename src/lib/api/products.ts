@@ -209,13 +209,18 @@ export async function getAllProducts(language: 'en' | 'th' = 'en'): Promise<Prod
     const response = await fetch(url, getFetchConfig('api'))
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch all products: ${response.statusText}`)
+      const errorText = await response.text().catch(() => response.statusText)
+      throw new Error(`Failed to fetch all products (${response.status}): ${errorText}`)
     }
 
     const apiResponse: LaravelProductsResponse = await response.json()
 
     return apiResponse.data.map(transformLaravelProduct)
   } catch (error) {
+    // Network errors or fetch failures
+    if (error instanceof TypeError && error.message.includes('fetch')) {
+      throw new Error(`Unable to connect to Laravel API at ${buildLaravelApiUrl('products', { locale: language })}. Ensure backend server is running.`)
+    }
     throw new Error(getErrorMessage(error, 'Failed to fetch products'))
   }
 }
