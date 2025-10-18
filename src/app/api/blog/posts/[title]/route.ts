@@ -1,9 +1,9 @@
-import type { BlogPostDetailsResponse, WordPressSinglePost } from '@/lib/types/wordpress'
-import { WordPressSinglePostSchema } from '@/lib/types/wordpress'
-import { extractTextFromHtml } from '@/lib/utils'
+import type { BlogPostDetailsResponse } from '@/lib/types/wordpress'
+import type { LaravelPost } from '@/lib/types/laravel'
+import { LaravelSinglePostResponseSchema } from '@/lib/types/laravel'
+import { getLaravelApiEndpoint } from '@/config/api.config'
 import { NextRequest, NextResponse } from 'next/server'
 
-const WORDPRESS_BASE_URL = 'https://wp-roihin.precisiondevlab.com'
 const DEFAULT_IMAGE = '/images/357c3a_ac4bc1a787364c358512be32cc1ffc30~mv2.avif'
 
 interface RouteParams {
@@ -14,7 +14,7 @@ interface RouteParams {
 
 /**
  * GET /api/blog/posts/[title]
- * Proxy endpoint to fetch a single post by slug from WordPress REST API
+ * Proxy endpoint to fetch a single post by slug from Laravel REST API
  * Path parameters:
  * - title: The URL-encoded slug of the post to fetch (kept as 'title' for backwards compatibility)
  */
@@ -42,23 +42,14 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     // Decode the URL-encoded slug
     const decodedSlug = decodeURIComponent(title)
 
-    // Build WordPress API URL with language prefix
-    const langPrefix = lang === 'th' ? '/th' : ''
-    const apiUrl = `${WORDPRESS_BASE_URL}${langPrefix}/wp-json/wp/v2/posts`
+    // Build Laravel API URL for single post
+    const apiUrl = `${getLaravelApiEndpoint(`posts/${decodedSlug}`)}?locale=${lang}`
 
-    // Build WordPress API URL with slug parameter
-    const apiParams = new URLSearchParams({
-      slug: decodedSlug,
-      _embed: 'author,wp:featuredmedia,wp:term',
-      _fields: 'id,slug,title,content,excerpt,date,categories,acf,_links,_embedded',
-    })
-
-    const wpApiUrl = `${apiUrl}?${apiParams.toString()}`
-
-    // Fetch post from WordPress API
-    const response = await fetch(wpApiUrl, {
+    // Fetch post from Laravel API
+    const response = await fetch(apiUrl, {
       headers: {
         'Content-Type': 'application/json',
+        'Accept-Language': lang,
       },
       next: {
         revalidate: 300, // Cache for 5 minutes (single posts change less frequently)
@@ -81,51 +72,32 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         )
       }
 
-      throw new Error(`WordPress API responded with status: ${response.status}`)
+      throw new Error(`Laravel API responded with status: ${response.status}`)
     }
 
-    const data = await response.json()
-
-    // When fetching by slug, WordPress returns an array
-    const postData = Array.isArray(data) ? data[0] : data
-    
-    if (!postData) {
-      return NextResponse.json(
-        {
-          error: 'Post not found',
-          message: 'No post found with the specified slug',
-        },
-        {
-          status: 404,
-          headers: {
-            'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
-          },
-        },
-      )
-    }
+    const responseData = await response.json()
 
     // Validate response data with Zod
-    let validatedPost
+    let validatedData
     try {
-      validatedPost = WordPressSinglePostSchema.parse(postData)
+      validatedData = LaravelSinglePostResponseSchema.parse(responseData)
     } catch (validationError) {
       console.error('Validation error for post data:', {
         slug: decodedSlug,
         lang,
-        postDataKeys: Object.keys(postData || {}),
         error: validationError
       })
       throw validationError
     }
 
-    // Transform WordPress post to our frontend format
-    const transformedPost = transformWordPressPost(validatedPost)
+    // Transform Laravel post to our frontend format
+    const transformedPost = transformLaravelPost(validatedData.data)
 
-    const responseData: BlogPostDetailsResponse = {
+    const result: BlogPostDetailsResponse = {
       post: transformedPost,
     }
 
-    return NextResponse.json(responseData, {
+    return NextResponse.json(result, {
       headers: {
         'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
       },
@@ -139,7 +111,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       return NextResponse.json(
         {
           error: 'Invalid response format',
-          message: 'The WordPress API response does not match expected format',
+          message: 'The Laravel API response does not match expected format',
         },
         {
           status: 502,
@@ -169,50 +141,28 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 }
 
 /**
- * Transform WordPress post data to frontend BlogPostDetails format
+ * Transform Laravel post data to frontend BlogPostDetails format
  */
-function transformWordPressPost(post: WordPressSinglePost) {
-  // Extract hero image from ACF, fallback to featured media, then default
-  const heroImage =
-    (post.acf?.hero_image && typeof post.acf.hero_image === 'string' ? post.acf.hero_image : null) ||
-    post._embedded?.['wp:featuredmedia']?.[0]?.source_url ||
-    DEFAULT_IMAGE
-
-  // Extract featured image (different from hero image)
-  const featuredImage = post._embedded?.['wp:featuredmedia']?.[0]?.source_url
-
-  // Extract text content from WordPress excerpt field
-  const excerpt = extractTextFromHtml(post.excerpt.rendered, 200)
-
-  // Extract author information
-  const author = post._embedded?.author?.[0]
-    ? {
-        id: post._embedded.author[0].id,
-        name: post._embedded.author[0].name,
-        description: post._embedded.author[0].description,
-      }
-    : undefined
-
-  // Extract terms (categories, tags, etc.)
-  const terms =
-    post._embedded?.['wp:term']?.flat().map((term) => ({
-      id: term.id,
-      name: term.name,
-      slug: term.slug,
-      taxonomy: term.taxonomy,
-    })) || []
+function transformLaravelPost(post: LaravelPost) {
+  // Use featured image or default
+  const featuredImage = post.featured_image || DEFAULT_IMAGE
 
   return {
     id: post.id.toString(),
     slug: post.slug,
-    title: post.title.rendered,
-    content: post.content.rendered,
-    excerpt: excerpt,
-    heroImage: heroImage,
-    featuredImage: featuredImage,
-    date: post.date,
-    categories: post.categories,
-    author: author,
-    terms: terms,
+    title: post.title,
+    content: post.content,
+    excerpt: post.excerpt,
+    heroImage: featuredImage,
+    featuredImage: post.featured_image || undefined,
+    date: post.published_at,
+    categories: post.category ? [post.category.id] : [],
+    author: undefined, // Laravel API doesn't include author info in current implementation
+    terms: post.category ? [{
+      id: post.category.id,
+      name: post.category.name,
+      slug: post.category.slug,
+      taxonomy: 'category',
+    }] : [],
   }
 }

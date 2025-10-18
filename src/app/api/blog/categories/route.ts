@@ -1,41 +1,41 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { WordPressCategoriesResponseSchema } from '@/lib/types/wordpress'
+import { LaravelCategoriesResponseSchema } from '@/lib/types/laravel'
 import type { BlogCategoriesResponse } from '@/lib/types/wordpress'
+import { buildLaravelApiUrl } from '@/config/api.config'
 import { getFetchConfig, getCacheHeaders } from '@/config/cache.config'
-
-const WORDPRESS_BASE_URL = 'https://wp-roihin.precisiondevlab.com'
 
 /**
  * GET /api/blog/categories
- * Proxy endpoint to fetch categories from WordPress REST API
+ * Proxy endpoint to fetch categories from Laravel REST API
  */
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
-    const exclude = searchParams.get('exclude') || '1' // Exclude "Uncategorized" by default
     const lang = searchParams.get('lang') || 'en'
-    
-    // Build WordPress API URL with language prefix
-    const langPrefix = lang === 'th' ? '/th' : ''
-    const apiUrl = `${WORDPRESS_BASE_URL}${langPrefix}/wp-json/wp/v2/categories`
-    
-    // Fetch categories from WordPress API with environment-aware caching
-    const response = await fetch(`${apiUrl}?exclude=${exclude}&per_page=100`, {
+
+    // Build Laravel API URL
+    const apiUrl = buildLaravelApiUrl('categories', {
+      locale: lang,
+    })
+
+    // Fetch categories from Laravel API with environment-aware caching
+    const response = await fetch(apiUrl, {
       headers: {
         'Content-Type': 'application/json',
+        'Accept-Language': lang,
       },
       ...getFetchConfig('blogCategories'),
     })
 
     if (!response.ok) {
-      throw new Error(`WordPress API responded with status: ${response.status}`)
+      throw new Error(`Laravel API responded with status: ${response.status}`)
     }
 
-    const data = await response.json()
-    
+    const responseData = await response.json()
+
     // Validate response data with Zod
-    const validatedCategories = WordPressCategoriesResponseSchema.parse(data)
-    
+    const validatedData = LaravelCategoriesResponseSchema.parse(responseData)
+
     // Add default "All Posts" category and transform to our format
     const transformedCategories = [
       {
@@ -45,20 +45,20 @@ export async function GET(request: NextRequest) {
           thai: 'บทความทั้งหมด',
         },
       },
-      ...validatedCategories.map(category => ({
+      ...validatedData.data.map(category => ({
         id: category.id.toString(),
         name: {
           english: category.name,
-          thai: category.name, // For now, using same name for Thai. This could be enhanced with translations
+          thai: category.name, // Laravel already handles translation based on locale
         },
       }))
     ]
 
-    const responseData: BlogCategoriesResponse = {
+    const result: BlogCategoriesResponse = {
       categories: transformedCategories
     }
 
-    return NextResponse.json(responseData, {
+    return NextResponse.json(result, {
       headers: getCacheHeaders('mediumTerm'),
     })
 
@@ -82,11 +82,11 @@ export async function GET(request: NextRequest) {
       {
         ...fallbackResponse,
         error: 'Failed to fetch categories',
-        message: process.env.NODE_ENV === 'development' 
-          ? (error as Error).message 
+        message: process.env.NODE_ENV === 'development'
+          ? (error as Error).message
           : 'Unable to load categories at this time'
       },
-      { 
+      {
         status: 500,
         headers: getCacheHeaders('mediumTerm'),
       }

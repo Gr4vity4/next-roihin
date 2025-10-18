@@ -1,20 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getFetchConfig, getCacheHeaders } from '@/config/cache.config'
-import { getWordPressApiUrl, getApiBasePath } from '@/config/api.config'
-import {
-  WordPressTestimonialsResponseSchema,
-  type TestimonialsResponse,
-  type Testimonial,
-} from '@/lib/types/wordpress-settings'
+import { buildLaravelApiUrl } from '@/config/api.config'
+import { LaravelTestimonialsResponseSchema } from '@/lib/types/laravel'
+import type { TestimonialsResponse, Testimonial } from '@/lib/types/wordpress-settings'
 
 const DEFAULT_AVATAR = '/images/default-avatar.jpg'
 
 /**
  * GET /api/testimonials
- * Proxy endpoint to fetch testimonials from WordPress REST API
- * 
- * Uses acf_format=standard to get avatar URLs directly from WordPress API
- * instead of avatar IDs that need to be converted to URLs
+ * Proxy endpoint to fetch testimonials from Laravel REST API
  */
 export async function GET(request: NextRequest) {
   try {
@@ -22,71 +16,49 @@ export async function GET(request: NextRequest) {
     const limit = searchParams.get('limit') || '15'
     const language = (searchParams.get('lang') || 'en') as 'en' | 'th'
 
-    // Build WordPress API URL for testimonials
-    const params = new URLSearchParams({
-      per_page: limit,
-      meta_key: 'sort_order',
-      orderby: 'meta_value_num',
-      order: 'asc',
-      _fields: 'acf',
-      acf_format: 'standard',
+    // Build Laravel API URL for testimonials
+    const apiUrl = buildLaravelApiUrl('testimonials', {
+      limit: parseInt(limit),
+      locale: language,
     })
 
-    const apiUrl = getWordPressApiUrl(language)
-    const basePath = getApiBasePath()
-    const wpApiUrl = `${apiUrl}${basePath}/testimonial?${params.toString()}`
-
-    // Fetch testimonials from WordPress API with environment-aware caching
-    const response = await fetch(wpApiUrl, {
+    // Fetch testimonials from Laravel API with environment-aware caching
+    const response = await fetch(apiUrl, {
       headers: {
         'Content-Type': 'application/json',
+        'Accept-Language': language,
       },
       ...getFetchConfig('testimonials'),
     })
 
     if (!response.ok) {
-      throw new Error(`WordPress API responded with status: ${response.status}`)
+      throw new Error(`Laravel API responded with status: ${response.status}`)
     }
 
-    const data = await response.json()
+    const responseData = await response.json()
 
     // Validate response data with Zod
-    const validatedTestimonials = WordPressTestimonialsResponseSchema.parse(data)
+    const validatedData = LaravelTestimonialsResponseSchema.parse(responseData)
 
-    // Transform WordPress testimonials to our format
-    const transformedTestimonials: Testimonial[] = validatedTestimonials
-      .filter((item) => item.acf.is_active) // Only include active testimonials
+    // Transform Laravel testimonials to our format
+    const transformedTestimonials: Testimonial[] = validatedData.data
       .map((item, index) => {
-        const acf = item.acf
-
-        // Use avatar URL directly from WordPress API with acf_format=standard
-        const avatarUrl = acf.avatar || DEFAULT_AVATAR
-
-        // Extract review image URL if available
-        const reviewImageUrl = 
-          acf.review_image && 
-          typeof acf.review_image === 'object' && 
-          'url' in acf.review_image 
-            ? acf.review_image.url 
-            : null
-
         return {
-          id: `testimonial-${index + 1}`,
-          avatar: avatarUrl,
-          message: acf.message,
-          date: formatDate(acf.date),
-          isActive: acf.is_active,
-          sortOrder: acf.sort_order,
-          reviewImage: reviewImageUrl,
+          id: `testimonial-${item.id}`,
+          avatar: item.avatar || DEFAULT_AVATAR,
+          message: item.message,
+          date: formatDate(item.date, language),
+          isActive: item.is_active,
+          sortOrder: item.sort_order,
+          reviewImage: item.review_image,
         }
       })
-      .sort((a, b) => a.sortOrder - b.sortOrder) // Sort by sort_order
 
-    const responseData: TestimonialsResponse = {
+    const result: TestimonialsResponse = {
       testimonials: transformedTestimonials,
     }
 
-    return NextResponse.json(responseData, {
+    return NextResponse.json(result, {
       headers: getCacheHeaders('mediumTerm'),
     })
   } catch (error) {
@@ -117,7 +89,7 @@ export async function GET(request: NextRequest) {
 /**
  * Format date from YYYYMMDD to a readable format
  */
-function formatDate(dateString: string): string {
+function formatDate(dateString: string, language: 'en' | 'th'): string {
   if (!dateString || dateString.length !== 8) {
     return dateString
   }
@@ -127,14 +99,15 @@ function formatDate(dateString: string): string {
   const day = dateString.substring(6, 8)
 
   const date = new Date(`${year}-${month}-${day}`)
-  
-  // Format as Thai date or return original if invalid
+
+  // Format date or return original if invalid
   if (isNaN(date.getTime())) {
     return dateString
   }
 
-  // Format date based on language from request context (defaulting to Thai for backward compatibility)
-  return date.toLocaleDateString('th-TH', {
+  // Format date based on language
+  const locale = language === 'th' ? 'th-TH' : 'en-US'
+  return date.toLocaleDateString(locale, {
     year: 'numeric',
     month: 'long',
     day: 'numeric',

@@ -1,14 +1,14 @@
 import { getFetchConfig } from '@/config/cache.config'
-import { PhotoGalleryResponseSchema } from '@/lib/types/gallery'
-import { WORDPRESS_API_URL, WORDPRESS_API_BASE_PATH } from '@/config/api.config'
+import { buildLaravelApiUrl } from '@/config/api.config'
+import { LaravelSingleGalleryResponseSchema } from '@/lib/types/laravel'
 
 /**
- * Get personalized gallery photos from WordPress
+ * Get personalized gallery photos from Laravel API
  * @returns Array of image URLs
  */
 export async function getPersonalizedGallery(): Promise<string[]> {
   try {
-    const url = `${WORDPRESS_API_URL}${WORDPRESS_API_BASE_PATH}/photo?_fields=acf&uid=personalized`
+    const url = buildLaravelApiUrl('galleries/personalized')
 
     const response = await fetch(url, {
       ...getFetchConfig('gallery'),
@@ -22,16 +22,16 @@ export async function getPersonalizedGallery(): Promise<string[]> {
     const data = await response.json()
 
     // Validate response with Zod schema
-    const validatedData = PhotoGalleryResponseSchema.safeParse(data)
+    const validatedData = LaravelSingleGalleryResponseSchema.safeParse(data)
 
     if (!validatedData.success) {
       console.error('Invalid gallery response format:', validatedData.error)
       return []
     }
 
-    // Extract gallery URLs from first item if exists
-    if (validatedData.data.length > 0 && validatedData.data[0].acf.gallery) {
-      return validatedData.data[0].acf.gallery
+    // Extract image URLs from gallery images
+    if (validatedData.data.data.images && validatedData.data.data.images.length > 0) {
+      return validatedData.data.data.images.map(img => img.image_url)
     }
 
     return []
@@ -70,13 +70,14 @@ export async function getRandomGalleryPhotos(count: number = 10): Promise<string
 }
 
 /**
- * Get recent personalized bracelet designs from WordPress
+ * Get recent personalized bracelet designs from Laravel API
+ * Uses the "inspired" gallery for recent designs
  * @param count Number of photos to select (default: 8)
  * @returns Array of randomly selected image URLs
  */
 export async function getRecentPersonalizedDesigns(count: number = 8): Promise<string[]> {
   try {
-    const url = `${WORDPRESS_API_URL}${WORDPRESS_API_BASE_PATH}/photo?_fields=acf&uid=recently-personailzed-bracelet-design`
+    const url = buildLaravelApiUrl('galleries/inspired')
 
     const response = await fetch(url, {
       ...getFetchConfig('gallery'),
@@ -90,16 +91,16 @@ export async function getRecentPersonalizedDesigns(count: number = 8): Promise<s
     const data = await response.json()
 
     // Validate response with Zod schema
-    const validatedData = PhotoGalleryResponseSchema.safeParse(data)
+    const validatedData = LaravelSingleGalleryResponseSchema.safeParse(data)
 
     if (!validatedData.success) {
       console.error('Invalid recent designs response format:', validatedData.error)
       return []
     }
 
-    // Extract gallery URLs from first item if exists
-    if (validatedData.data.length > 0 && validatedData.data[0].acf.gallery) {
-      const allPhotos = validatedData.data[0].acf.gallery
+    // Extract image URLs from gallery images
+    if (validatedData.data.data.images && validatedData.data.data.images.length > 0) {
+      const allPhotos = validatedData.data.data.images.map(img => img.image_url)
 
       // If we have fewer photos than requested, return all
       if (allPhotos.length <= count) {

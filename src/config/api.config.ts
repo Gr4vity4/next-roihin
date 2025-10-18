@@ -6,47 +6,68 @@
  */
 
 /**
- * WordPress API Base URL
- * Default: https://wp-roihin.precisiondevlab.com
+ * Laravel API Base URL
+ * Default: http://localhost:8000
  */
-export const WORDPRESS_API_URL =
-  process.env.WORDPRESS_API_URL ||
-  process.env.NEXT_PUBLIC_WORDPRESS_API_URL ||
-  'https://wp-roihin.precisiondevlab.com'
+export const LARAVEL_API_URL =
+  process.env.LARAVEL_API_URL ||
+  process.env.NEXT_PUBLIC_LARAVEL_API_URL ||
+  'http://localhost:8000'
 
 /**
- * WordPress API Base Path
- * Default: /wp-json/wp/v2
+ * Laravel API Base Path
+ * Default: /api/v1
  */
-export const WORDPRESS_API_BASE_PATH =
-  process.env.WORDPRESS_API_BASE_PATH ||
-  '/wp-json/wp/v2'
+export const LARAVEL_API_BASE_PATH = '/api/v1'
 
 /**
- * Get full WordPress API URL with language support
- * @param language - Language code ('en' | 'th')
- * @returns Full API URL with language prefix if applicable
+ * Get full Laravel API URL
+ * @returns Full Laravel API base URL
  */
-export function getWordPressApiUrl(language?: 'en' | 'th'): string {
-  const langPrefix = language === 'th' ? '/th' : ''
-  return `${WORDPRESS_API_URL}${langPrefix}`
+export function getLaravelApiUrl(): string {
+  return LARAVEL_API_URL
 }
 
 /**
- * Get WordPress API base path
- * @returns API base path (e.g., /wp-json/wp/v2)
- */
-export function getApiBasePath(): string {
-  return WORDPRESS_API_BASE_PATH
-}
-
-/**
- * Get WordPress API endpoint URL
- * @param endpoint - API endpoint path (e.g., '/wp-json/roihin/v1/wishlist')
- * @param language - Optional language code
+ * Get Laravel API endpoint URL
+ * @param endpoint - API endpoint path (e.g., '/posts', '/testimonials')
  * @returns Full endpoint URL
  */
-export function getApiEndpoint(endpoint: string, language?: 'en' | 'th'): string {
-  const baseUrl = getWordPressApiUrl(language)
-  return `${baseUrl}${endpoint}`
+export function getLaravelApiEndpoint(endpoint: string): string {
+  // Remove leading slash if present to avoid double slashes
+  const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint
+  return `${LARAVEL_API_URL}${LARAVEL_API_BASE_PATH}/${cleanEndpoint}`
+}
+
+/**
+ * Build Laravel API URL with query parameters
+ * @param endpoint - API endpoint path
+ * @param params - Query parameters as key-value pairs
+ * @returns Full URL with query string
+ */
+export function buildLaravelApiUrl(
+  endpoint: string,
+  params?: Record<string, string | number | boolean | string[] | undefined>
+): string {
+  const baseUrl = getLaravelApiEndpoint(endpoint)
+
+  if (!params) {
+    return baseUrl
+  }
+
+  const queryParams = new URLSearchParams()
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      if (Array.isArray(value)) {
+        // Handle array parameters (e.g., slugs[]=value1&slugs[]=value2)
+        value.forEach(v => queryParams.append(`${key}[]`, String(v)))
+      } else {
+        queryParams.append(key, String(value))
+      }
+    }
+  })
+
+  const queryString = queryParams.toString()
+  return queryString ? `${baseUrl}?${queryString}` : baseUrl
 }

@@ -1,90 +1,71 @@
 import type { BlogPost, BlogPostsResponse } from '@/lib/types/wordpress'
-import { WordPressPostsResponseSchema } from '@/lib/types/wordpress'
-import { extractTextFromHtml } from '@/lib/utils'
+import { LaravelPostsResponseSchema } from '@/lib/types/laravel'
+import { buildLaravelApiUrl } from '@/config/api.config'
 import { NextRequest, NextResponse } from 'next/server'
 import { getFetchConfig, getCacheHeaders } from '@/config/cache.config'
 
-const WORDPRESS_BASE_URL = 'https://wp-roihin.precisiondevlab.com'
 const DEFAULT_IMAGE = '/images/357c3a_ac4bc1a787364c358512be32cc1ffc30~mv2.avif'
 
 /**
  * GET /api/blog/posts
- * Proxy endpoint to fetch posts from WordPress REST API
+ * Proxy endpoint to fetch posts from Laravel REST API
  */
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
     const page = searchParams.get('page') || '1'
     const perPage = searchParams.get('per_page') || '6'
-    const categories = searchParams.get('categories') || ''
     const lang = searchParams.get('lang') || 'en'
 
-    // Build WordPress API URL with language prefix
-    const langPrefix = lang === 'th' ? '/th' : ''
-    const apiUrl = `${WORDPRESS_BASE_URL}${langPrefix}/wp-json/wp/v2/posts`
-
-    // Build WordPress API URL with parameters
-    const params = new URLSearchParams({
-      page,
-      per_page: perPage,
-      _embed: 'wp:featuredmedia',
-      _fields: 'id,slug,title,content,_links,_embedded,date,categories,excerpt',
+    // Build Laravel API URL with parameters
+    const apiUrl = buildLaravelApiUrl('posts', {
+      page: parseInt(page),
+      per_page: parseInt(perPage),
+      locale: lang,
     })
 
-    // Add categories filter if specified
-    if (categories && categories !== 'all') {
-      params.append('categories', categories)
-    }
-
-    const wpApiUrl = `${apiUrl}?${params.toString()}`
-
-    // Fetch posts from WordPress API with environment-aware caching
-    const response = await fetch(wpApiUrl, {
+    // Fetch posts from Laravel API with environment-aware caching
+    const response = await fetch(apiUrl, {
       headers: {
         'Content-Type': 'application/json',
+        'Accept-Language': lang,
       },
       ...getFetchConfig('blogPosts'),
     })
 
     if (!response.ok) {
-      throw new Error(`WordPress API responded with status: ${response.status}`)
+      throw new Error(`Laravel API responded with status: ${response.status}`)
     }
 
-    const data = await response.json()
+    const responseData = await response.json()
 
     // Validate response data with Zod
-    const validatedPosts = WordPressPostsResponseSchema.parse(data)
+    const validatedData = LaravelPostsResponseSchema.parse(responseData)
 
-    // Transform WordPress posts to our format
-    const transformedPosts: BlogPost[] = validatedPosts.map((post) => {
-      // Extract featured image
-      const featuredImage = post._embedded?.['wp:featuredmedia']?.[0]?.source_url || DEFAULT_IMAGE
-
-      // Extract text content from WordPress excerpt field and limit length
-      const excerpt = extractTextFromHtml(post.excerpt.rendered, 128)
-
+    // Transform Laravel posts to our format
+    const transformedPosts: BlogPost[] = validatedData.data.map((post) => {
       return {
         id: post.id.toString(),
         slug: post.slug,
-        title: post.title.rendered,
-        excerpt: excerpt,
-        image: featuredImage,
-        date: post.date,
-        categories: post.categories,
+        title: post.title,
+        excerpt: post.excerpt,
+        image: post.featured_image || DEFAULT_IMAGE,
+        date: post.published_at,
+        categories: post.category ? [post.category.id] : [],
       }
     })
 
-    // Get pagination info from headers
-    const totalPages = response.headers.get('X-WP-TotalPages')
+    // Get pagination info from Laravel meta
+    const pagination = validatedData.meta.pagination
     const currentPage = parseInt(page)
 
-    const responseData: BlogPostsResponse = {
+    const result: BlogPostsResponse = {
       posts: transformedPosts,
-      totalPages: totalPages ? parseInt(totalPages) : undefined,
+      totalPages: pagination?.last_page,
       currentPage,
     }
 
-    return NextResponse.json(responseData, {
+    return NextResponse.json(result, {
       headers: getCacheHeaders('shortTerm'),
     })
   } catch (error) {
