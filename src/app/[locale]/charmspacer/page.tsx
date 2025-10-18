@@ -36,17 +36,17 @@ export default async function CharmspacerPage({ params }: CharmspacerPageProps) 
   let products: Product[] = []
 
   try {
-    products = await getAllProducts()
+    products = await getAllProducts(locale as 'en' | 'th')
   } catch (error) {
     console.error('Failed to fetch products:', error)
     products = []
   }
 
-  // Define category mappings
-  const categoryMappings = {
-    'Lucky Charm': 'charm' as const,
-    Spacer: 'spacer' as const,
-    Pendant: 'pendant' as const,
+  // Define category slug mappings (slug-based for locale independence)
+  const categorySlugMappings = {
+    'lucky-charm': 'charm' as const,
+    'spacer': 'spacer' as const,
+    'pendant': 'pendant' as const,
   }
 
   // Group products by their category
@@ -57,8 +57,8 @@ export default async function CharmspacerPage({ params }: CharmspacerPageProps) 
   }
 
   products.forEach((product) => {
-    const categoryName = product.product_category?.name || ''
-    const categoryKey = categoryMappings[categoryName as keyof typeof categoryMappings]
+    const categorySlug = product.product_category?.slug || ''
+    const categoryKey = categorySlugMappings[categorySlug as keyof typeof categorySlugMappings]
 
     if (categoryKey && categoryKey in productsByCategory) {
       productsByCategory[categoryKey as keyof typeof productsByCategory].push(product)
