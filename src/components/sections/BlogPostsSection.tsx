@@ -8,6 +8,7 @@ import type {
 } from '@/lib/types/wordpress'
 import { useLocale } from 'next-intl'
 import { formatThaiDate } from '@/lib/utils'
+import { getErrorMessage } from '@/lib/utils/error-handler'
 import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
 import { useEffect, useState } from 'react'
@@ -100,13 +101,30 @@ export default function BlogPostsSection({
       try {
         const params = new URLSearchParams({ lang: locale })
         const response = await fetch(`/api/blog/categories?${params.toString()}`)
-        if (!response.ok) throw new Error('Failed to fetch categories')
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
 
         const data: BlogCategoriesResponse = await response.json()
-        setCategories(data.categories)
+
+        // If no categories returned, use fallback
+        if (data.categories && data.categories.length > 0) {
+          setCategories(data.categories)
+        } else {
+          // Set fallback categories when empty
+          setCategories([
+            {
+              id: 'all',
+              name: {
+                english: 'All Articles',
+                thai: 'บทความทั้งหมด',
+              },
+            },
+          ])
+        }
       } catch (err) {
-        console.error('Error fetching categories:', err)
-        // Set fallback categories
+        console.error('Error fetching categories:', getErrorMessage(err, 'Failed to fetch categories'))
+        // Set fallback categories on error
         setCategories([
           {
             id: 'all',
@@ -145,7 +163,9 @@ export default function BlogPostsSection({
         }
 
         const response = await fetch(`/api/blog/posts?${params.toString()}`)
-        if (!response.ok) throw new Error('Failed to fetch posts')
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
 
         const data: BlogPostsResponse = await response.json()
 
@@ -158,7 +178,7 @@ export default function BlogPostsSection({
         setTotalPages(data.totalPages)
         setError(null)
       } catch (err) {
-        console.error('Error fetching posts:', err)
+        console.error('Error fetching posts:', getErrorMessage(err, 'Failed to fetch posts'))
         setError('Unable to load posts. Please try again later.')
       } finally {
         setLoading(false)
