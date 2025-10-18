@@ -1,8 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { LaravelCategoriesResponseSchema } from '@/lib/types/laravel'
-import type { BlogCategoriesResponse } from '@/lib/types/wordpress'
 import { buildLaravelApiUrl } from '@/config/api.config'
 import { getFetchConfig, getCacheHeaders } from '@/config/cache.config'
+
+interface BlogCategoriesResponse {
+  categories: Array<{
+    id: string
+    name: {
+      english: string
+      thai: string
+    }
+  }>
+}
 
 /**
  * GET /api/blog/categories

@@ -1,30 +1,41 @@
 import { getCacheHeaders, getFetchConfig } from '@/config/cache.config'
 import { NextResponse } from 'next/server'
-import { WORDPRESS_API_URL } from '@/config/api.config'
+import { buildLaravelApiUrl } from '@/config/api.config'
+import { getErrorMessage } from '@/lib/utils/error-handler'
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
-  const lang = searchParams.get('lang') || 'th'
-  
+  const locale = searchParams.get('lang') || searchParams.get('locale') || 'en'
+  const category = searchParams.get('category')
+
   try {
-    const response = await fetch(
-      `${WORDPRESS_API_URL}/wp-json/wp/v2/stone?_fields=acf&per_page=100&lang=${lang}`,
-      getFetchConfig('api')
-    )
-    
+    const params: Record<string, string> = {
+      locale,
+      per_page: '100',
+    }
+
+    if (category) {
+      params.category = category
+    }
+
+    const url = buildLaravelApiUrl('/stones', params)
+
+    const response = await fetch(url, getFetchConfig('api'))
+
     if (!response.ok) {
       throw new Error(`Failed to fetch stones: ${response.status}`)
     }
-    
-    const stones = await response.json()
-    
+
+    const result = await response.json()
+    const stones = result.data || result
+
     return NextResponse.json(stones, {
       headers: getCacheHeaders(),
     })
   } catch (error) {
     console.error('Error fetching stones:', error)
     return NextResponse.json(
-      { error: 'Failed to fetch stones' },
+      { error: getErrorMessage(error, 'Failed to fetch stones') },
       { status: 500, headers: getCacheHeaders() }
     )
   }

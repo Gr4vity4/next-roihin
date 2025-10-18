@@ -1,7 +1,30 @@
 import BlogPostClient from '@/components/BlogPostClient'
 import { siteConfig } from '@/config/site.config'
-import type { BlogPostDetailsResponse } from '@/lib/types/wordpress'
 import type { Metadata } from 'next'
+
+interface BlogPost {
+  id: number
+  title: string
+  slug: string
+  excerpt: string
+  content: string
+  featured_image?: string
+  author: {
+    name: string
+    avatar?: string
+  }
+  published_at: string
+  reading_time: number
+  categories: Array<{
+    id: number
+    name: string
+    slug: string
+  }>
+}
+
+interface BlogPostDetailsResponse {
+  post: BlogPost | null
+}
 
 interface ArticlePageProps {
   params: Promise<{
@@ -77,23 +100,23 @@ export async function generateMetadata({ params, searchParams }: ArticlePageProp
       title: article.title,
       description,
       type: 'article',
-      publishedTime: article.date,
+      publishedTime: article.published_at,
       authors: article.author ? [article.author.name] : [],
       url,
-      images: [
+      images: article.featured_image ? [
         {
-          url: article.heroImage,
+          url: article.featured_image,
           width: 1200,
           height: 630,
           alt: article.title,
         },
-      ],
+      ] : [],
     },
     twitter: {
       card: 'summary_large_image',
       title: article.title,
       description,
-      images: [article.heroImage],
+      images: article.featured_image ? [article.featured_image] : [],
     },
     alternates: {
       canonical: url,

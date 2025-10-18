@@ -1,4 +1,3 @@
-import type { BlogPost, BlogPostsResponse } from '@/lib/types/wordpress'
 import { LaravelPostsResponseSchema } from '@/lib/types/laravel'
 import { buildLaravelApiUrl } from '@/config/api.config'
 import { NextRequest, NextResponse } from 'next/server'
@@ -42,25 +41,13 @@ export async function GET(request: NextRequest) {
     // Validate response data with Zod
     const validatedData = LaravelPostsResponseSchema.parse(responseData)
 
-    // Transform Laravel posts to our format
-    const transformedPosts: BlogPost[] = validatedData.data.map((post) => {
-      return {
-        id: post.id.toString(),
-        slug: post.slug,
-        title: post.title,
-        excerpt: post.excerpt,
-        image: post.featured_image || DEFAULT_IMAGE,
-        date: post.published_at,
-        categories: post.category ? [post.category.id] : [],
-      }
-    })
-
-    // Get pagination info from Laravel meta
-    const pagination = validatedData.meta.pagination
+    // Use Laravel data directly
+    const posts = validatedData.data || []
+    const pagination = validatedData.meta?.pagination
     const currentPage = parseInt(page)
 
-    const result: BlogPostsResponse = {
-      posts: transformedPosts,
+    const result = {
+      posts,
       totalPages: pagination?.last_page,
       currentPage,
     }
@@ -72,7 +59,7 @@ export async function GET(request: NextRequest) {
     console.error('Posts API error:', error)
 
     // Return error response with empty posts
-    const fallbackResponse: BlogPostsResponse = {
+    const fallbackResponse = {
       posts: [],
       currentPage: parseInt(request.nextUrl.searchParams.get('page') || '1'),
     }

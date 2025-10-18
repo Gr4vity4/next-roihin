@@ -14,7 +14,7 @@ import {
 import { content } from '@/config/content.config'
 import { siteConfig } from '@/config/site.config'
 import { useLocale } from 'next-intl'
-import type { BlogPostDetailsResponse } from '@/lib/types/wordpress'
+import type { BlogPostDetailsResponse } from '@/lib/types/laravel'
 import { formatThaiDate } from '@/lib/utils'
 import Image from 'next/image'
 import { notFound, useRouter } from 'next/navigation'

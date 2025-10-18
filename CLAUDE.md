@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-ROIHIN STONE & BRACELET - A Next.js 15 e-commerce application for personalized stone bracelets with multi-language support (Thai/English) and WordPress CMS integration.
+ROIHIN - A full-stack e-commerce platform for personalized stone bracelets with a decoupled architecture featuring a Next.js 15 front-end, Laravel 12 REST API back-end, and Stripe payments. The platform supports multi-language (Thai/English) content with database-driven translations.
 
 ## Code Architecture & Best Practices
 
@@ -49,7 +49,7 @@ npm run test:e2e:report       # View test report
 - **Framework**: Next.js 15.5 with App Router
 - **Language**: TypeScript with strict mode
 - **Internationalization**: next-intl for Thai/English support
-- **CMS**: WordPress REST API for all content management
+- **Back-End API**: Laravel 12 REST API with Sanctum authentication
 - **Styling**: Tailwind CSS v4 with custom Mixed Language font system
 - **UI Components**: Radix UI primitives, Heroicons, Lucide icons
 - **Data Validation**: Zod schemas for API responses
@@ -59,13 +59,13 @@ npm run test:e2e:report       # View test report
 ### Project Structure
 
 - `/src/app/[locale]/` - Internationalized Next.js App Router pages
-- `/src/app/api/` - API proxy routes for WordPress integration
+- `/src/app/api/` - API proxy routes for Laravel back-end
 - `/src/components/` - Reusable React components
 - `/src/components/sections/` - Page-specific section components
 - `/src/components/ui/` - UI primitives and utilities
-- `/src/lib/api/` - API helper functions for WordPress integration
+- `/src/lib/api/` - API helper functions for Laravel integration
 - `/src/lib/types/` - TypeScript type definitions
-- `/src/config/` - Configuration files (cache, content, site)
+- `/src/config/` - **MANDATORY centralized configuration** (api.config.ts, cache.config.ts)
 - `/src/contexts/` - React context providers (Auth, Cart, Wishlist)
 - `/src/i18n/` - Internationalization configuration
 - `/messages/` - Translation JSON files (en.json, th.json)
@@ -81,16 +81,21 @@ The app uses environment-aware caching configured in `/src/config/cache.config.t
 - **Production**: Strategic caching with 5-minute revalidation for dynamic content
 - Use `getFetchConfig()` and `getCacheHeaders()` helpers for consistent caching
 
-#### 2. WordPress CMS Integration
+#### 2. Laravel Back-End Integration
 
-All content managed through WordPress REST API at `https://wp-roihin.precisiondevlab.com`:
+All content managed through Laravel REST API (default: `http://localhost:8000`):
 
-- Posts API: `/api/blog/posts`
-- Categories API: `/api/blog/categories`
-- Individual post: `/api/blog/posts/[title]`
-- Site Settings API: `/api/site-settings`
-- Testimonials API: `/api/testimonials`
-- Gallery API: `/api/gallery`
+- Products: `/api/v1/products`
+- Stones: `/api/v1/stones`
+- Posts: `/api/v1/posts`
+- Categories: `/api/v1/categories`
+- Testimonials: `/api/v1/testimonials`
+- Galleries: `/api/v1/galleries`
+- Authentication: `/api/v1/auth/*`
+- Wishlist: `/api/v1/wishlist`, `/api/v1/products/{id}/wishlist`
+- Profile: `/api/v1/auth/me`
+
+**IMPORTANT**: Always use `getLaravelApiEndpoint()` or `buildLaravelApiUrl()` from `/src/config/api.config.ts` - never hardcode API URLs.
 
 #### 3. API Route Pattern
 
@@ -121,13 +126,12 @@ All API routes follow consistent patterns:
 Required in `.env.local`:
 
 ```env
-# WordPress API Configuration
-WORDPRESS_API_URL=https://wp-roihin.precisiondevlab.com
-WORDPRESS_API_BASE_PATH=/wp-json/wp/v2
-NEXT_PUBLIC_WORDPRESS_API_URL=https://wp-roihin.precisiondevlab.com
-
 # JWT Configuration
 JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+
+# Laravel API Configuration (optional - defaults to http://localhost:8000)
+LARAVEL_API_URL=http://localhost:8000
+NEXT_PUBLIC_LARAVEL_API_URL=http://localhost:8000
 
 # API Configuration
 NEXT_PUBLIC_API_URL=http://localhost:3000/api
@@ -163,7 +167,7 @@ Content Security Policy and security headers configured in `next.config.ts`:
    - Playfair Display for Latin/English serif characters
    - Prompt for Thai characters (supports weights 100-900)
    - Inter as fallback sans-serif
-2. **Image Optimization**: Next.js Image component with remote patterns for Unsplash, Wix, and WordPress
+2. **Image Optimization**: Next.js Image component with remote patterns for Unsplash and Wix
 3. **Code Splitting**: Automatic with App Router
 4. **Turbopack**: Enabled in development for faster builds
 
@@ -171,10 +175,11 @@ Content Security Policy and security headers configured in `next.config.ts`:
 
 ### Key Helper Functions
 
-- `getTestimonials(language)` - Fetch testimonials from WordPress
-- `getPersonalizedGallery()` - Fetch personalized gallery photos from WordPress
-- `getRandomGalleryPhotos(count)` - Get random selection of gallery photos
-- `getRecentPersonalizedDesigns(count)` - Get recent bracelet design photos
+All helpers in `/src/lib/api/` interact with Laravel REST API:
+
+- `getProfile()` / `updateProfile()` - User profile management
+- `toggleWishlist()` / `fetchWishlist()` - Wishlist operations
+- Testimonials, galleries, posts, products - Fetched through Next.js API routes that proxy to Laravel
 
 ## Styling Guidelines
 

@@ -1,6 +1,3 @@
-import type { BlogPostDetailsResponse } from '@/lib/types/wordpress'
-import type { LaravelPost } from '@/lib/types/laravel'
-import { LaravelSinglePostResponseSchema } from '@/lib/types/laravel'
 import { getLaravelApiEndpoint } from '@/config/api.config'
 import { NextRequest, NextResponse } from 'next/server'
 
@@ -76,25 +73,11 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     }
 
     const responseData = await response.json()
+    const data = responseData.data || responseData
 
-    // Validate response data with Zod
-    let validatedData
-    try {
-      validatedData = LaravelSinglePostResponseSchema.parse(responseData)
-    } catch (validationError) {
-      console.error('Validation error for post data:', {
-        slug: decodedSlug,
-        lang,
-        error: validationError
-      })
-      throw validationError
-    }
-
-    // Transform Laravel post to our frontend format
-    const transformedPost = transformLaravelPost(validatedData.data)
-
-    const result: BlogPostDetailsResponse = {
-      post: transformedPost,
+    // Return Laravel response directly
+    const result = {
+      post: data,
     }
 
     return NextResponse.json(result, {
@@ -140,29 +123,4 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-/**
- * Transform Laravel post data to frontend BlogPostDetails format
- */
-function transformLaravelPost(post: LaravelPost) {
-  // Use featured image or default
-  const featuredImage = post.featured_image || DEFAULT_IMAGE
-
-  return {
-    id: post.id.toString(),
-    slug: post.slug,
-    title: post.title,
-    content: post.content,
-    excerpt: post.excerpt,
-    heroImage: featuredImage,
-    featuredImage: post.featured_image || undefined,
-    date: post.published_at,
-    categories: post.category ? [post.category.id] : [],
-    author: undefined, // Laravel API doesn't include author info in current implementation
-    terms: post.category ? [{
-      id: post.category.id,
-      name: post.category.name,
-      slug: post.category.slug,
-      taxonomy: 'category',
-    }] : [],
-  }
-}
+// Transformation function removed - using Laravel response directly

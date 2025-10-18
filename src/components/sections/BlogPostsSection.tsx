@@ -5,7 +5,7 @@ import type {
   BlogCategory,
   BlogPost,
   BlogPostsResponse,
-} from '@/lib/types/wordpress'
+} from '@/lib/types/laravel'
 import { useLocale } from 'next-intl'
 import { formatThaiDate } from '@/lib/utils'
 import { getErrorMessage } from '@/lib/utils/error-handler'

@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
 import { getCacheHeaders } from '@/config/cache.config'
-import type { SiteSettingsResponse } from '@/lib/types/wordpress-settings'
 
 /**
  * GET /api/site-settings
@@ -17,7 +16,7 @@ export async function GET() {
     // For now, return fallback values directly
     console.warn('[Site Settings] Using hardcoded fallback values - Laravel API endpoint not yet implemented')
 
-    const fallbackSettings: SiteSettingsResponse = {
+    const fallbackSettings = {
       settings: {
         contact: {
           address: '101/54 หมู่บ้าน ภัสสร 70 (เกาะแก้ว) หมู่ที่ 4 ตำบลเกาะแก้ว อ.เมืองภูเก็ต จ.ภูเก็ต 83000',
@@ -43,7 +42,7 @@ export async function GET() {
     console.error('Site settings API error:', error)
 
     // Return error response with fallback settings
-    const fallbackResponse: SiteSettingsResponse = {
+    const fallbackResponse = {
       settings: {
         contact: {
           address: '101/54 หมู่บ้าน ภัสสร 70 (เกาะแก้ว) หมู่ที่ 4 ตำบลเกาะแก้ว อ.เมืองภูเก็ต จ.ภูเก็ต 83000',

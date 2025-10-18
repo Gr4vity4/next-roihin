@@ -1,27 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getFetchConfig, getCacheHeaders } from '@/config/cache.config'
-import { getWordPressApiUrl, getApiBasePath } from '@/config/api.config'
-import { ProductsResponseSchema } from '@/lib/types/api-types'
+import { buildLaravelApiUrl } from '@/config/api.config'
+import { getErrorMessage } from '@/lib/utils/error-handler'
 
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
-    const language = (searchParams.get('lang') || 'en') as 'en' | 'th'
-    
-    const apiUrl = getWordPressApiUrl(language)
-    const basePath = getApiBasePath()
-    
-    const response = await fetch(
-      `${apiUrl}${basePath}/product?_fields=acf`,
-      getFetchConfig('api')
-    )
+    const locale = searchParams.get('lang') || searchParams.get('locale') || 'en'
+
+    const url = buildLaravelApiUrl('/products', {
+      locale,
+      per_page: '100',
+    })
+
+    const response = await fetch(url, getFetchConfig('api'))
 
     if (!response.ok) {
       throw new Error(`Failed to fetch products: ${response.status}`)
     }
 
-    const data = await response.json()
-    const products = ProductsResponseSchema.parse(data)
+    const result = await response.json()
+    const products = result.data || result
 
     return NextResponse.json(products, {
       headers: getCacheHeaders(),
@@ -29,7 +28,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Error fetching products:', error)
     return NextResponse.json(
-      { error: 'Failed to fetch products' },
+      { error: getErrorMessage(error, 'Failed to fetch products') },
       { status: 500, headers: getCacheHeaders() }
     )
   }
