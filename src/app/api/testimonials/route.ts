@@ -4,7 +4,7 @@ import { buildLaravelApiUrl } from '@/config/api.config'
 import { LaravelTestimonialsResponseSchema } from '@/lib/types/laravel'
 import type { TestimonialsResponse, Testimonial } from '@/lib/types/wordpress-settings'
 
-const DEFAULT_AVATAR = '/images/default-avatar.jpg'
+const DEFAULT_AVATAR = '/images/default-avatar.svg'
 
 /**
  * GET /api/testimonials
@@ -87,18 +87,15 @@ export async function GET(request: NextRequest) {
 }
 
 /**
- * Format date from YYYYMMDD to a readable format
+ * Format date from ISO format (YYYY-MM-DD) to a readable localized format
  */
 function formatDate(dateString: string, language: 'en' | 'th'): string {
-  if (!dateString || dateString.length !== 8) {
+  if (!dateString) {
     return dateString
   }
 
-  const year = dateString.substring(0, 4)
-  const month = dateString.substring(4, 6)
-  const day = dateString.substring(6, 8)
-
-  const date = new Date(`${year}-${month}-${day}`)
+  // Parse date - handles both ISO format (YYYY-MM-DD) and legacy YYYYMMDD
+  const date = new Date(dateString)
 
   // Format date or return original if invalid
   if (isNaN(date.getTime())) {
