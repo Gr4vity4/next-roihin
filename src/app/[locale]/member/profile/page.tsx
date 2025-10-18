@@ -1,13 +1,19 @@
 'use client'
 
+import 'air-datepicker/air-datepicker.css'
+
 import Button from '@/components/Button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { useLocale, useTranslations } from 'next-intl'
+import type AirDatepicker, { AirDatepickerLocale } from 'air-datepicker'
 import type { ProfileData } from '@/lib/api/profile'
 
+type SupportedLocale = 'th' | 'en'
+
 type GenderOption = 'male' | 'female' | 'other' | 'prefer_not_to_say'
+type AirDatepickerInstance = AirDatepicker<HTMLInputElement>
 
 export default function ProfilePage() {
   const t = useTranslations('member.profile')
@@ -26,6 +32,9 @@ export default function ProfilePage() {
     birthDate: '',
     gender: 'prefer_not_to_say' as GenderOption,
   })
+  const birthDateInputRef = useRef<HTMLInputElement | null>(null)
+  const datepickerRef = useRef<AirDatepickerInstance | null>(null)
+  const birthDateValueRef = useRef(formData.birthDate)
 
   const formatMemberSince = useCallback(
     (isoDate?: string | null) => {
@@ -126,6 +135,113 @@ export default function ProfilePage() {
   useEffect(() => {
     fetchProfile()
   }, [fetchProfile])
+
+  useEffect(() => {
+    birthDateValueRef.current = formData.birthDate
+  }, [formData.birthDate])
+
+  const loadDatepickerLocale = useCallback(async (currentLocale: string) => {
+    const normalized = currentLocale.toLowerCase()
+    const supportedLocales: Record<SupportedLocale, () => Promise<{ default: AirDatepickerLocale }>> = {
+      th: () => import('air-datepicker/locale/th'),
+      en: () => import('air-datepicker/locale/en'),
+    }
+
+    const match = Object.keys(supportedLocales).find((key) =>
+      normalized.startsWith(key)
+    ) as SupportedLocale | undefined
+
+    if (!match) {
+      return undefined
+    }
+
+    try {
+      const localeModule = await supportedLocales[match]()
+      return localeModule.default
+    } catch (error) {
+      console.error('Failed to load datepicker locale:', error)
+      return undefined
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!isEditing) {
+      datepickerRef.current?.destroy()
+      datepickerRef.current = null
+      return
+    }
+
+    let isCancelled = false
+    const currentBirthDate = birthDateValueRef.current
+
+    const initializeDatepicker = async () => {
+      try {
+        const [{ default: AirDatepickerClass }, localeData] = await Promise.all([
+          import('air-datepicker'),
+          loadDatepickerLocale(locale),
+        ])
+
+        if (isCancelled || !birthDateInputRef.current) {
+          return
+        }
+
+        const instance = new AirDatepickerClass(birthDateInputRef.current, {
+          locale: localeData,
+          dateFormat: 'yyyy-MM-dd',
+          autoClose: true,
+          maxDate: new Date(),
+          buttons: ['clear'],
+          showEvent: 'focus',
+          onSelect: ({ formattedDate }) => {
+            setFormData((prev) => ({
+              ...prev,
+              birthDate: formattedDate ?? '',
+            }))
+          },
+        })
+
+        datepickerRef.current = instance
+
+        if (currentBirthDate) {
+          void instance.selectDate(currentBirthDate, { silent: true })
+        }
+
+        if (document.activeElement === birthDateInputRef.current) {
+          instance.show()
+        }
+      } catch (error) {
+        console.error('Failed to initialize datepicker:', error)
+      }
+    }
+
+    void initializeDatepicker()
+
+    return () => {
+      isCancelled = true
+      datepickerRef.current?.destroy()
+      datepickerRef.current = null
+    }
+  }, [isEditing, loadDatepickerLocale, locale])
+
+  useEffect(() => {
+    const instance = datepickerRef.current
+
+    if (!instance) {
+      return
+    }
+
+    if (formData.birthDate) {
+      void instance.selectDate(formData.birthDate, { silent: true })
+    } else {
+      instance.clear({ silent: true })
+    }
+  }, [formData.birthDate])
+
+  useEffect(() => {
+    if (!isEditing) {
+      datepickerRef.current?.hide()
+    }
+  }, [isEditing])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -309,9 +425,22 @@ export default function ProfilePage() {
               <Label htmlFor="birthDate">{t('fields.birthDate')}</Label>
               <Input
                 id="birthDate"
-                type="date"
+                ref={birthDateInputRef}
+                type="text"
+                inputMode="numeric"
+                autoComplete="bday"
                 value={formData.birthDate}
                 onChange={(e) => setFormData({ ...formData, birthDate: e.target.value })}
+                onFocus={() => {
+                  if (isEditing) {
+                    datepickerRef.current?.show()
+                  }
+                }}
+                onClick={() => {
+                  if (isEditing) {
+                    datepickerRef.current?.show()
+                  }
+                }}
                 disabled={!isEditing}
                 className="w-full"
               />
