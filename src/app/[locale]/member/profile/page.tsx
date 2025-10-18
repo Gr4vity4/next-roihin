@@ -4,40 +4,82 @@ import Button from '@/components/Button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useEffect, useState, useCallback } from 'react'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
+import type { ProfileData } from '@/lib/api/profile'
 
-interface ProfileData {
-  id: number
-  email: string
-  first_name: string
-  last_name: string
-  phone?: string // Some responses may use 'phone' instead of 'phone_number'
-  phone_number?: string // Make optional since it might not exist
-  billing_phone?: string // WooCommerce billing phone field
-  birth_date: string
-  gender: 'male' | 'female' | 'other' | 'prefer_not_to_say'
-  member_since: {
-    raw: string
-    human: string
-  }
-}
+type GenderOption = 'male' | 'female' | 'other' | 'prefer_not_to_say'
 
 export default function ProfilePage() {
   const t = useTranslations('member.profile')
+  const locale = useLocale()
   const [isEditing, setIsEditing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [isFetching, setIsFetching] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
-  const [memberSince, setMemberSince] = useState('January 2024')
+  const [memberSince, setMemberSince] = useState('—')
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     email: '',
     phone: '',
     birthDate: '',
-    gender: 'male' as 'male' | 'female' | 'other' | 'prefer_not_to_say',
+    gender: 'prefer_not_to_say' as GenderOption,
   })
+
+  const formatMemberSince = useCallback(
+    (isoDate?: string | null) => {
+      if (!isoDate) {
+        return ''
+      }
+
+      const date = new Date(isoDate)
+
+      if (Number.isNaN(date.getTime())) {
+        return ''
+      }
+
+      try {
+        return new Intl.DateTimeFormat(locale, {
+          month: 'long',
+          year: 'numeric',
+        }).format(date)
+      } catch (error) {
+        console.error('Failed to format member since date:', error)
+        return ''
+      }
+    },
+    [locale]
+  )
+
+  const splitName = useCallback((fullName?: string | null) => {
+    if (!fullName) {
+      return { firstName: '', lastName: '' }
+    }
+
+    const trimmed = fullName.trim()
+
+    if (!trimmed) {
+      return { firstName: '', lastName: '' }
+    }
+
+    const [first, ...rest] = trimmed.split(/\s+/)
+
+    return {
+      firstName: first ?? '',
+      lastName: rest.join(' '),
+    }
+  }, [])
+
+  const normalizeGender = useCallback((value?: ProfileData['gender']): GenderOption => {
+    const allowed: GenderOption[] = ['male', 'female', 'other', 'prefer_not_to_say']
+
+    if (!value) {
+      return 'prefer_not_to_say'
+    }
+
+    return allowed.includes(value as GenderOption) ? (value as GenderOption) : 'prefer_not_to_say'
+  }, [])
 
   const fetchProfile = useCallback(async () => {
     try {
@@ -51,42 +93,35 @@ export default function ProfilePage() {
         throw new Error(errorData.error || 'Failed to fetch profile')
       }
 
-      const data: ProfileData = await response.json()
+      const payload = (await response.json()) as ProfileData | { user: ProfileData }
+      const profile = 'user' in payload ? payload.user : payload
 
-      // Log the received data for debugging
-      console.log('Received profile data:', data)
-
-      // Extract phone from multiple possible fields
-      const phoneValue = data.phone_number || data.phone || data.billing_phone || ''
-
-      setFormData({
-        firstName: data.first_name || '',
-        lastName: data.last_name || '',
-        email: data.email || '',
-        phone: phoneValue, // Use extracted phone value
-        birthDate: data.birth_date || '',
-        gender: data.gender || 'male',
-      })
-
-      // Enhanced logging to debug phone field
-      console.log('Phone number extraction from API:', {
-        'data.phone_number': data.phone_number,
-        'data.phone': data.phone,
-        'data.billing_phone': data.billing_phone,
-        extracted_value: phoneValue,
-        is_empty: !phoneValue || phoneValue.trim() === '',
-      })
-
-      if (data.member_since) {
-        setMemberSince(data.member_since.human)
+      if (!profile) {
+        throw new Error('Profile response was empty')
       }
+
+      const { firstName, lastName } = splitName(profile.name)
+      const phoneValue = profile.shipping_phone || profile.phone || ''
+
+      setFormData((prev) => ({
+        ...prev,
+        firstName,
+        lastName,
+        email: profile.email || '',
+        phone: phoneValue || '',
+        birthDate: profile.birth_date ?? '',
+        gender: normalizeGender(profile.gender),
+      }))
+
+      const computedMemberSince = formatMemberSince(profile.created_at)
+      setMemberSince(computedMemberSince || '—')
     } catch (err) {
       console.error('Failed to fetch profile:', err)
       setError(err instanceof Error ? err.message : t('errors.loadFailed'))
     } finally {
       setIsFetching(false)
     }
-  }, [t])
+  }, [formatMemberSince, normalizeGender, splitName, t])
 
   useEffect(() => {
     fetchProfile()
@@ -98,47 +133,54 @@ export default function ProfilePage() {
     setError(null)
     setSuccess(null)
 
+    const fullName = `${formData.firstName} ${formData.lastName}`.replace(/\s+/g, ' ').trim()
+    const safeName = fullName.length > 0 ? fullName : formData.email || 'Member'
+    const trimmedPhone = formData.phone?.trim() ?? ''
+    const normalizedBirthDate = formData.birthDate ? formData.birthDate : null
+
+    const payload = {
+      name: safeName,
+      shipping_phone: trimmedPhone || null,
+      birth_date: normalizedBirthDate,
+      gender: formData.gender,
+    }
+
     try {
       const response = await fetch('/api/profile', {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          first_name: formData.firstName,
-          last_name: formData.lastName,
-          email: formData.email,
-          phone_number: formData.phone,
-          birth_date: formData.birthDate,
-          gender: formData.gender,
-        }),
+        body: JSON.stringify(payload),
       })
 
-      const data = await response.json()
+      const responseData = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || t('errors.updateFailed'))
+        throw new Error(responseData.error || t('errors.updateFailed'))
       }
 
-      // Update form data with the response, ensuring phone number is preserved
-      const updatedPhone = data.phone_number || data.phone || formData.phone || ''
+      const updatedProfile = ('user' in responseData
+        ? responseData.user
+        : responseData) as ProfileData
 
-      setFormData({
-        firstName: data.first_name || formData.firstName || '',
-        lastName: data.last_name || formData.lastName || '',
-        email: data.email || formData.email || '',
-        phone: updatedPhone, // Use the computed phone value
-        birthDate: data.birth_date || formData.birthDate || '',
-        gender: data.gender || formData.gender || 'male',
-      })
+      const { firstName, lastName } = splitName(updatedProfile.name)
+      const updatedPhone = updatedProfile.shipping_phone || updatedProfile.phone || ''
 
-      // Log update result for debugging
-      console.log('Updated phone number:', {
-        response_phone_number: data.phone_number,
-        response_phone: data.phone,
-        form_phone: formData.phone,
-        final_phone: updatedPhone,
-      })
+      setFormData((prev) => ({
+        ...prev,
+        firstName: firstName || prev.firstName,
+        lastName: lastName || prev.lastName,
+        email: updatedProfile.email || prev.email,
+        phone: updatedPhone || '',
+        birthDate: updatedProfile.birth_date ?? prev.birthDate,
+        gender: normalizeGender(updatedProfile.gender),
+      }))
+
+      const computedMemberSince = formatMemberSince(updatedProfile.created_at)
+      if (computedMemberSince) {
+        setMemberSince(computedMemberSince)
+      }
 
       setIsEditing(false)
       setSuccess(t('success'))

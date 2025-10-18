@@ -6,6 +6,8 @@ export interface ProfileData {
   name: string
   email: string
   phone: string | null
+  birth_date: string | null
+  gender: 'male' | 'female' | 'other' | 'prefer_not_to_say' | null
   shipping_phone: string | null
   shipping_address: string | null
   shipping_district: string | null
@@ -20,6 +22,8 @@ export interface UpdateProfileData {
   name?: string
   email?: string
   phone?: string
+  birth_date?: string | null
+  gender?: 'male' | 'female' | 'other' | 'prefer_not_to_say' | null
   shipping_phone?: string
   shipping_address?: string
   shipping_district?: string
@@ -42,14 +46,14 @@ export async function getProfile(): Promise<ProfileData> {
     cache: 'no-store',
   })
 
+  const responseData = await response.json()
+
   if (!response.ok) {
-    const error = await response.json()
-    console.error('Laravel API error:', error)
-    throw new Error(error.message || 'Failed to fetch profile')
+    console.error('Laravel API error:', responseData)
+    throw new Error(responseData.message || 'Failed to fetch profile')
   }
 
-  const responseData = await response.json()
-  const data = responseData.data || responseData
+  const data = responseData.user || responseData.data || responseData
 
   return data
 }
@@ -77,7 +81,7 @@ export async function updateProfile(payload: UpdateProfileData): Promise<Profile
     throw new Error(responseData.message || 'Update failed')
   }
 
-  const data = responseData.data || responseData
+  const data = responseData.user || responseData.data || responseData
 
   return data
 }
