@@ -9,7 +9,7 @@ import { ChevronLeftIcon, ChevronRightIcon, ShoppingCartIcon } from '@heroicons/
 import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { getProductImageUrl } from '@/lib/utils/image-helper'
 
 interface ProductDetailProps {
@@ -25,12 +25,29 @@ export default function ProductDetail({ product, category, language = 'en' }: Pr
   const router = useRouter()
   const { addItem } = useCart()
 
-  const allImages = [product.featured_image_url, ...product.gallery_urls]
-    .filter(Boolean)
-    .map(url => getProductImageUrl(url))
   const colorPrices = product.acf.color_prices || []
   const selectedPrice = colorPrices[selectedColor]?.price
   const selectedColorData = colorPrices[selectedColor]
+
+  // Build gallery images based on selected color
+  const allImages = (() => {
+    const selectedColorGallery = selectedColorData?.gallery_images || []
+
+    // If selected color has gallery images, use only those
+    if (selectedColorGallery.length > 0) {
+      return selectedColorGallery.map(url => getProductImageUrl(url))
+    }
+
+    // Fallback to featured image and general gallery_urls
+    return [product.featured_image_url, ...product.gallery_urls]
+      .filter(Boolean)
+      .map(url => getProductImageUrl(url))
+  })()
+
+  // Reset image index when color changes
+  useEffect(() => {
+    setSelectedImageIndex(0)
+  }, [selectedColor])
 
   const handlePrevImage = () => {
     setSelectedImageIndex((prev) => (prev === 0 ? allImages.length - 1 : prev - 1))

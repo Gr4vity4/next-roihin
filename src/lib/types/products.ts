@@ -6,6 +6,7 @@ export interface ColorPrice {
     id: number
     url: string
   } | null
+  gallery_images?: string[]
 }
 
 export interface ProductACF {
