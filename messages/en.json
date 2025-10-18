@@ -70,6 +70,12 @@
       "acceptTermsRequired": "Please accept the terms of service"
     }
   },
+  "wishlist": {
+    "loginRequired": {
+      "title": "Please Login First",
+      "message": "You need to login to save your favorite products"
+    }
+  },
   "userMenu": {
     "dashboard": "Dashboard",
     "profile": "Profile",

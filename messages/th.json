@@ -70,6 +70,12 @@
       "acceptTermsRequired": "กรุณายอมรับข้อกำหนดการใช้งาน"
     }
   },
+  "wishlist": {
+    "loginRequired": {
+      "title": "กรุณาเข้าสู่ระบบก่อน",
+      "message": "คุณต้องเข้าสู่ระบบเพื่อบันทึกสินค้าโปรด"
+    }
+  },
   "userMenu": {
     "dashboard": "แดชบอร์ด",
     "profile": "โปรไฟล์",

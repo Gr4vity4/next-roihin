@@ -1,9 +1,11 @@
 'use client'
 
 import { useWishlist } from '@/contexts/WishlistContext'
+import { useAuth } from '@/contexts/AuthContext'
 import { HeartIcon } from '@heroicons/react/24/outline'
 import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid'
 import { useEffect, useState } from 'react'
+import AuthModal from '@/components/AuthModal'
 
 interface WishlistButtonProps {
   product: {
@@ -29,9 +31,12 @@ export default function WishlistButton({
   showText = false,
 }: WishlistButtonProps) {
   const { toggleItem, isInWishlist, loading, checkFavorite } = useWishlist()
+  const { isLoggedIn } = useAuth()
   const [isWishlisted, setIsWishlisted] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
+  const [showAuthModal, setShowAuthModal] = useState(false)
+  const [authMode, setAuthMode] = useState<'sign-in' | 'sign-up'>('sign-in')
 
   const selectedColor = color || product.color
 
@@ -54,6 +59,12 @@ export default function WishlistButton({
 
   const handleToggleWishlist = async () => {
     if (isProcessing) return
+
+    // Check if user is logged in before allowing wishlist action
+    if (!isLoggedIn) {
+      setShowAuthModal(true)
+      return
+    }
 
     setIsAnimating(true)
     setIsProcessing(true)
@@ -84,58 +95,68 @@ export default function WishlistButton({
   }
 
   return (
-    <button
-      onClick={handleToggleWishlist}
-      disabled={isProcessing}
-      className={`
-        relative group transition-all duration-200
-        ${
-          showText
-            ? 'inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-600 hover:border-white'
-            : `${sizeClasses[size]} rounded-full border-2 border-gray-600 hover:border-white flex items-center justify-center`
-        }
-        ${
-          isWishlisted
-            ? 'bg-red-500/10 border-red-500 hover:border-red-400'
-            : 'bg-black/50 hover:bg-white/10'
-        }
-        ${isProcessing ? 'opacity-50 cursor-not-allowed' : ''}
-        ${className}
-      `}
-      aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
-      title={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
-    >
-      <div className={`relative ${isAnimating ? 'animate-ping' : ''}`}>
-        {isWishlisted ? (
-          <HeartSolidIcon
-            className={`
-              ${iconSizeClasses[size]} 
-              text-red-500 
-              transition-transform duration-200 
-              ${isAnimating ? 'scale-125' : 'scale-100'}
-            `}
-          />
-        ) : (
-          <HeartIcon
-            className={`
-              ${iconSizeClasses[size]} 
-              text-white 
-              group-hover:text-red-400 
-              transition-colors duration-200
-            `}
-          />
+    <>
+      <button
+        onClick={handleToggleWishlist}
+        disabled={isProcessing}
+        className={`
+          relative group transition-all duration-200
+          ${
+            showText
+              ? 'inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-600 hover:border-white'
+              : `${sizeClasses[size]} rounded-full border-2 border-gray-600 hover:border-white flex items-center justify-center`
+          }
+          ${
+            isWishlisted
+              ? 'bg-red-500/10 border-red-500 hover:border-red-400'
+              : 'bg-black/50 hover:bg-white/10'
+          }
+          ${isProcessing ? 'opacity-50 cursor-not-allowed' : ''}
+          ${className}
+        `}
+        aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+        title={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+      >
+        <div className={`relative ${isAnimating ? 'animate-ping' : ''}`}>
+          {isWishlisted ? (
+            <HeartSolidIcon
+              className={`
+                ${iconSizeClasses[size]}
+                text-red-500
+                transition-transform duration-200
+                ${isAnimating ? 'scale-125' : 'scale-100'}
+              `}
+            />
+          ) : (
+            <HeartIcon
+              className={`
+                ${iconSizeClasses[size]}
+                text-white
+                group-hover:text-red-400
+                transition-colors duration-200
+              `}
+            />
+          )}
+        </div>
+
+        {showText && (
+          <span className={`text-sm font-medium ${isWishlisted ? 'text-red-400' : 'text-white'}`}>
+            {isWishlisted ? 'บันทึกแล้ว' : 'บันทึก'}
+          </span>
         )}
-      </div>
 
-      {showText && (
-        <span className={`text-sm font-medium ${isWishlisted ? 'text-red-400' : 'text-white'}`}>
-          {isWishlisted ? 'บันทึกแล้ว' : 'บันทึก'}
-        </span>
-      )}
+        {isAnimating && !showText && (
+          <span className="absolute inset-0 rounded-full animate-ping bg-red-400/20"></span>
+        )}
+      </button>
 
-      {isAnimating && !showText && (
-        <span className="absolute inset-0 rounded-full animate-ping bg-red-400/20"></span>
-      )}
-    </button>
+      {/* Auth Modal for login prompt */}
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        mode={authMode}
+        onModeChange={setAuthMode}
+      />
+    </>
   )
 }
