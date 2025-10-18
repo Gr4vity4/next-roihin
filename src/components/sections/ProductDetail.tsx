@@ -10,6 +10,7 @@ import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { getProductImageUrl } from '@/lib/utils/image-helper'
 
 interface ProductDetailProps {
   product: Product
@@ -24,7 +25,9 @@ export default function ProductDetail({ product, category, language = 'en' }: Pr
   const router = useRouter()
   const { addItem } = useCart()
 
-  const allImages = [product.featured_image_url, ...product.gallery_urls].filter(Boolean)
+  const allImages = [product.featured_image_url, ...product.gallery_urls]
+    .filter(Boolean)
+    .map(url => getProductImageUrl(url))
   const colorPrices = product.acf.color_prices || []
   const selectedPrice = colorPrices[selectedColor]?.price
   const selectedColorData = colorPrices[selectedColor]
@@ -70,7 +73,7 @@ export default function ProductDetail({ product, category, language = 'en' }: Pr
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
           {/* Image Gallery */}
           <div className="space-y-4">
-            <div className="relative aspect-square bg-gray-900 overflow-hidden">
+            <div className="relative aspect-square bg-gray-800 overflow-hidden">
               {allImages.length > 0 && (
                 <>
                   <Image

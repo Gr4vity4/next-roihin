@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import { getProductImageUrl } from '@/lib/utils/image-helper'
 
 interface Product {
   id: string
@@ -32,9 +33,9 @@ export default function ProductGrid({ products, currentLocale }: ProductGridProp
           href={`/${currentLocale}/charmspacer/product/${product.slug}`}
           className="group block"
         >
-          <div className="relative aspect-square overflow-hidden bg-black rounded-lg">
+          <div className="relative aspect-square overflow-hidden bg-gray-800 rounded-lg">
             <Image
-              src={product.featured_image_url}
+              src={getProductImageUrl(product.featured_image_url)}
               alt={product.title}
               fill
               className="object-contain group-hover:scale-110 transition-transform duration-300"

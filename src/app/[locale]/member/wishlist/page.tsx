@@ -7,6 +7,7 @@ import { useWishlist } from '@/contexts/WishlistContext'
 import { useCart } from '@/contexts/CartContext'
 import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
+import { getProductImageUrl } from '@/lib/utils/image-helper'
 
 export default function WishlistPage() {
   const t = useTranslations('member.wishlist')
@@ -70,7 +71,7 @@ export default function WishlistPage() {
       slug: item.product?.slug || `product-${item.product_id}`,
       title: item.product?.title || `Product ${item.product_id}`,
       price: item.display_price || item.price?.min_price || 0,
-      image: item.product?.featured_image_url || '/images/placeholder.jpg',
+      image: getProductImageUrl(item.product?.featured_image_url),
       color: item.color,
       category: item.product?.category
     }
@@ -159,7 +160,7 @@ export default function WishlistPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {items.map((item) => {
             const isRemoving = removingItem === item.id
-            const productImage = item.product?.featured_image_url || '/images/placeholder.jpg'
+            const productImage = getProductImageUrl(item.product?.featured_image_url)
             const productName = item.product?.title || `Product ${item.product_id}`
             const productSlug = item.product?.slug || `product-${item.product_id}`
             const displayPrice = item.display_price || item.price?.min_price || 0
@@ -173,19 +174,13 @@ export default function WishlistPage() {
                 }`}
               >
                 <Link href={`/charmspacer/product/${productSlug}`}>
-                  <div className="aspect-square bg-gray-100 relative overflow-hidden group">
-                    {productImage ? (
-                      <Image
-                        src={productImage}
-                        alt={productName}
-                        fill
-                        className="object-cover group-hover:scale-110 transition-transform duration-300"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="text-4xl">💎</div>
-                      </div>
-                    )}
+                  <div className="aspect-square bg-gray-800 relative overflow-hidden group">
+                    <Image
+                      src={productImage}
+                      alt={productName}
+                      fill
+                      className="object-cover group-hover:scale-110 transition-transform duration-300"
+                    />
                     {!isAvailable && (
                       <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
                         <span className="text-white font-semibold bg-black/70 px-4 py-2 rounded">

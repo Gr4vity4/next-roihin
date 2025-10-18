@@ -3,6 +3,7 @@ import Typography from '@/components/ui/Typography'
 import { Product } from '@/lib/types/products'
 import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
+import { getProductImageUrl } from '@/lib/utils/image-helper'
 
 interface RelatedProductsProps {
   products: Product[]
@@ -20,9 +21,9 @@ export default function RelatedProducts({ products }: RelatedProductsProps) {
           {products.map((product) => (
             <Link key={product.id} href={`/charmspacer/product/${product.slug}`} className="group">
               <div className="space-y-2">
-                <div className="relative aspect-square bg-gray-900 overflow-hidden">
+                <div className="relative aspect-square bg-gray-800 overflow-hidden">
                   <Image
-                    src={product.featured_image_url}
+                    src={getProductImageUrl(product.featured_image_url)}
                     alt={product.title}
                     fill
                     className="object-cover transition-transform duration-300 group-hover:scale-110"
