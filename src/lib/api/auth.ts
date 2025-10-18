@@ -1,33 +1,17 @@
-import { WORDPRESS_API_URL } from '@/config/api.config'
+/**
+ * Authentication API helpers
+ *
+ * These functions call the Next.js API routes which proxy to Laravel backend.
+ * This file provides a clean abstraction layer for authentication operations.
+ */
 
-interface RegisterData {
-  first_name: string
-  last_name: string
-  email: string
-  phone: string
-  password: string
-  accept_terms: boolean
-}
+import type { RegisterData, LoginData, ForgotPasswordData, ResetPasswordData } from '@/lib/types/auth'
 
-interface LoginData {
-  username: string
-  password: string
-}
-
-interface ForgotPasswordData {
-  email: string
-}
-
-interface ResetPasswordData {
-  login: string
-  key: string
-  password: string
-}
-
-const API_URL = WORDPRESS_API_URL
-
+/**
+ * Register a new user
+ */
 export async function register(data: RegisterData) {
-  const response = await fetch(`${API_URL}/wp-json/roihin/v1/register`, {
+  const response = await fetch('/api/auth/register', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -36,16 +20,19 @@ export async function register(data: RegisterData) {
   })
 
   const result = await response.json()
-  
+
   if (!response.ok) {
-    throw new Error(result.message || 'Registration failed')
+    throw new Error(result.error || 'Registration failed')
   }
-  
+
   return result
 }
 
+/**
+ * Login with email and password
+ */
 export async function login(data: LoginData) {
-  const response = await fetch(`${API_URL}/wp-json/jwt-auth/v1/token`, {
+  const response = await fetch('/api/auth/login', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -54,31 +41,19 @@ export async function login(data: LoginData) {
   })
 
   const result = await response.json()
-  
+
   if (!response.ok) {
-    throw new Error(result.message || 'Login failed')
+    throw new Error(result.error || 'Login failed')
   }
-  
+
   return result
 }
 
-export async function validateToken(token: string) {
-  const response = await fetch(`${API_URL}/wp-json/jwt-auth/v1/token/validate`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-    },
-  })
-
-  if (!response.ok) {
-    throw new Error('Token validation failed')
-  }
-  
-  return response.ok
-}
-
+/**
+ * Request password reset email
+ */
 export async function forgotPassword(data: ForgotPasswordData) {
-  const response = await fetch(`${API_URL}/wp-json/roihin/v1/forgot-password`, {
+  const response = await fetch('/api/auth/forgot-password', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -87,16 +62,19 @@ export async function forgotPassword(data: ForgotPasswordData) {
   })
 
   const result = await response.json()
-  
+
   if (!response.ok) {
-    throw new Error(result.message || 'Request failed')
+    throw new Error(result.error || 'Request failed')
   }
-  
+
   return result
 }
 
+/**
+ * Reset password with token
+ */
 export async function resetPassword(data: ResetPasswordData) {
-  const response = await fetch(`${API_URL}/wp-json/roihin/v1/reset-password`, {
+  const response = await fetch('/api/auth/reset-password', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -104,11 +82,32 @@ export async function resetPassword(data: ResetPasswordData) {
     body: JSON.stringify(data),
   })
 
-  const result = await response.json()
-  
-  if (!response.ok) {
-    throw new Error(result.message || 'Reset password failed')
+  if (response.status === 204) {
+    return { message: 'Password reset successfully' }
   }
-  
+
+  const result = await response.json()
+
+  if (!response.ok) {
+    throw new Error(result.error || 'Reset password failed')
+  }
+
+  return result
+}
+
+/**
+ * Logout current user
+ */
+export async function logout() {
+  const response = await fetch('/api/auth/logout', {
+    method: 'POST',
+  })
+
+  const result = await response.json()
+
+  if (!response.ok) {
+    throw new Error(result.error || 'Logout failed')
+  }
+
   return result
 }

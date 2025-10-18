@@ -3,15 +3,11 @@
 import { createContext, useContext, useState } from 'react'
 import { useLocalStorage } from '@/hooks/useLocalStorage'
 import { getErrorMessage } from '@/lib/utils/error-handler'
-
-interface User {
-  name: string
-  email: string
-}
+import type { SimpleUser } from '@/lib/types/auth'
 
 interface AuthContextType {
   isLoggedIn: boolean
-  user: User | null
+  user: SimpleUser | null
   login: (email: string, password: string) => Promise<void>
   register: (data: RegisterData) => Promise<void>
   logout: () => void
@@ -31,7 +27,7 @@ interface RegisterData {
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useLocalStorage<User | null>('user', null)
+  const [user, setUser] = useLocalStorage<SimpleUser | null>('user', null)
   const [isLoggedIn, setIsLoggedIn] = useState(!!user)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -54,12 +50,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!response.ok) {
         throw new Error(data.error || data.message || 'Login failed')
       }
-      
-      const userData: User = {
+
+      const userData: SimpleUser = {
+        id: data.user?.id || 0,
         name: data.user?.name || email.split('@')[0],
         email: data.user?.email || email,
+        phone: data.user?.phone || null,
       }
-      
+
       setUser(userData)
       setIsLoggedIn(true)
     } catch (err) {

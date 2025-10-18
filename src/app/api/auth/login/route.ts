@@ -1,44 +1,71 @@
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
-import { WORDPRESS_API_URL } from '@/config/api.config'
+import { getLaravelApiEndpoint } from '@/config/api.config'
+import { AuthResponseSchema } from '@/lib/types/auth'
+import { getErrorMessage } from '@/lib/utils/error-handler'
 
 export async function POST(request: Request) {
   try {
     const { email, password } = await request.json()
-    
-    const response = await fetch(`${WORDPRESS_API_URL}/wp-json/jwt-auth/v1/token`, {
+
+    const response = await fetch(getLaravelApiEndpoint('/auth/login'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
       },
-      body: JSON.stringify({ username: email, password }),
+      body: JSON.stringify({
+        email,
+        password,
+        device_name: request.headers.get('user-agent') || 'web-browser',
+      }),
     })
 
     const data = await response.json()
 
     if (!response.ok) {
-      return NextResponse.json(data, { status: response.status })
+      // Handle Laravel validation errors
+      if (response.status === 422 && data.errors) {
+        const firstError = Object.values(data.errors)[0]
+        const errorMessage = Array.isArray(firstError) ? firstError[0] : 'Invalid credentials'
+        return NextResponse.json(
+          { error: errorMessage },
+          { status: 422 }
+        )
+      }
+
+      return NextResponse.json(
+        { error: data.message || 'Login failed' },
+        { status: response.status }
+      )
     }
 
+    // Validate response with Zod schema
+    const validatedData = AuthResponseSchema.parse(data)
+
+    // Set httpOnly cookie with auth token
     const cookieStore = await cookies()
-    cookieStore.set('wpToken', data.token, {
+    cookieStore.set('authToken', validatedData.token, {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-      maxAge: 60 * 60 * 24 * 7,
+      maxAge: 60 * 60 * 24 * 7, // 7 days
     })
 
+    // Return user data (token is in cookie, don't expose in response)
     return NextResponse.json({
       user: {
-        email: data.user_email,
-        name: data.user_display_name
+        id: validatedData.user.id,
+        name: validatedData.user.name,
+        email: validatedData.user.email,
+        phone: validatedData.user.phone,
       }
     })
   } catch (error) {
     console.error('Login error:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: getErrorMessage(error, 'Internal server error') },
       { status: 500 }
     )
   }

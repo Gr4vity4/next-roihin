@@ -13,7 +13,8 @@ function ResetPasswordForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const token = searchParams.get('token')
-  
+  const email = searchParams.get('email')
+
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -26,11 +27,11 @@ function ResetPasswordForm() {
   }>({})
 
   useEffect(() => {
-    // Redirect if no token
-    if (!token) {
+    // Redirect if no token or email
+    if (!token || !email) {
       router.push('/')
     }
-  }, [token, router])
+  }, [token, email, router])
 
   const validatePassword = (value: string) => {
     if (value.length < 8) {
@@ -70,28 +71,32 @@ function ResetPasswordForm() {
     
     setErrors({})
     setIsLoading(true)
-    
+
     try {
-      // Extract login and key from token parameter
-      // The token format from email should be: login:key or just key
-      const [login, key] = token?.includes(':') 
-        ? token.split(':') 
-        : ['', token || '']
-      
       const response = await fetch('/api/auth/reset-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
-          login: login || 'user',
-          key: key || token,
-          password 
+        body: JSON.stringify({
+          email: email || '',
+          token: token || '',
+          password,
         }),
       })
-      
+
+      // Laravel returns 204 No Content on success
+      if (response.status === 204) {
+        setIsSuccess(true)
+        // Redirect to home after 3 seconds
+        setTimeout(() => {
+          router.push('/')
+        }, 3000)
+        return
+      }
+
       const data = await response.json()
-      
+
       if (response.ok) {
         setIsSuccess(true)
         // Redirect to home after 3 seconds

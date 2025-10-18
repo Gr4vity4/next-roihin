@@ -6,6 +6,15 @@
  */
 
 /**
+ * WordPress API Base URL (still used for blog, testimonials, galleries)
+ * Default: https://wp-roihin.precisiondevlab.com
+ */
+export const WORDPRESS_API_URL =
+  process.env.WORDPRESS_API_URL ||
+  process.env.NEXT_PUBLIC_WORDPRESS_API_URL ||
+  'https://wp-roihin.precisiondevlab.com'
+
+/**
  * Laravel API Base URL
  * Default: http://localhost:8000
  */
@@ -19,6 +28,30 @@ export const LARAVEL_API_URL =
  * Default: /api/v1
  */
 export const LARAVEL_API_BASE_PATH = '/api/v1'
+
+/**
+ * WordPress API Base Path
+ * Default: /wp-json/wp/v2
+ */
+export const WORDPRESS_API_BASE_PATH = process.env.WORDPRESS_API_BASE_PATH || '/wp-json/wp/v2'
+
+/**
+ * Get WordPress API URL with optional language prefix
+ * @param language - Language code ('en' | 'th')
+ * @returns WordPress API base URL
+ */
+export function getWordPressApiUrl(language?: 'en' | 'th'): string {
+  const langPrefix = language === 'th' ? '/th' : ''
+  return `${WORDPRESS_API_URL}${langPrefix}`
+}
+
+/**
+ * Get WordPress API base path
+ * @returns API base path
+ */
+export function getApiBasePath(): string {
+  return WORDPRESS_API_BASE_PATH
+}
 
 /**
  * Get full Laravel API URL
