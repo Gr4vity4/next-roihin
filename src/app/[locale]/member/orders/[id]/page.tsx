@@ -218,7 +218,7 @@ export default function OrderDetailPage() {
       <div className="mb-6">
         <Link href="/member/orders">
           <Button variant="ghost" size="sm" leftIcon={<ArrowLeft className="w-4 h-4" />}>
-            Back to Orders
+            {t('detail.backToOrders')}
           </Button>
         </Link>
       </div>
@@ -241,7 +241,7 @@ export default function OrderDetailPage() {
             )}
           </div>
           <div className="text-right">
-            <p className="text-sm text-gray-600 mb-1">Total Amount</p>
+            <p className="text-sm text-gray-600 mb-1">{t('detail.totalAmount')}</p>
             <p className="text-3xl font-bold text-gray-900">{totalFormatted}</p>
           </div>
         </div>
@@ -297,7 +297,7 @@ export default function OrderDetailPage() {
               </div>
               {order.discount_amount_minor > 0 && (
                 <div className="flex justify-between text-sm text-gray-600">
-                  <span>Discount</span>
+                  <span>{t('detail.discount')}</span>
                   <span className="text-green-600 font-medium">
                     -{formatCurrency(order.discount_amount_minor, order.currency, locale)}
                   </span>
@@ -341,7 +341,7 @@ export default function OrderDetailPage() {
           {/* Notes */}
           {order.notes && (
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">Order Notes</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">{t('detail.orderNotes')}</h3>
               <p className="text-sm text-gray-700">{order.notes}</p>
             </div>
           )}
@@ -353,14 +353,14 @@ export default function OrderDetailPage() {
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
             <div className="flex items-center gap-2 mb-4">
               <Clock className="w-5 h-5 text-gray-600" />
-              <h3 className="text-lg font-semibold text-gray-900">Order Timeline</h3>
+              <h3 className="text-lg font-semibold text-gray-900">{t('detail.orderTimeline')}</h3>
             </div>
             <div className="space-y-4">
               {order.delivered_at && (
                 <div className="flex gap-3">
                   <div className="flex-shrink-0 w-2 h-2 bg-green-500 rounded-full mt-1.5"></div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900">Delivered</p>
+                    <p className="text-sm font-medium text-gray-900">{t('detail.delivered')}</p>
                     <p className="text-xs text-gray-500">{formatDate(order.delivered_at, locale)}</p>
                   </div>
                 </div>
@@ -369,7 +369,7 @@ export default function OrderDetailPage() {
                 <div className="flex gap-3">
                   <div className="flex-shrink-0 w-2 h-2 bg-blue-500 rounded-full mt-1.5"></div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900">Shipped</p>
+                    <p className="text-sm font-medium text-gray-900">{t('detail.shipped')}</p>
                     <p className="text-xs text-gray-500">{formatDate(order.shipped_at, locale)}</p>
                   </div>
                 </div>
@@ -378,7 +378,7 @@ export default function OrderDetailPage() {
                 <div className="flex gap-3">
                   <div className="flex-shrink-0 w-2 h-2 bg-green-500 rounded-full mt-1.5"></div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900">Paid</p>
+                    <p className="text-sm font-medium text-gray-900">{t('detail.paid')}</p>
                     <p className="text-xs text-gray-500">{formatDate(order.paid_at, locale)}</p>
                   </div>
                 </div>
@@ -387,7 +387,7 @@ export default function OrderDetailPage() {
                 <div className="flex gap-3">
                   <div className="flex-shrink-0 w-2 h-2 bg-gray-400 rounded-full mt-1.5"></div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900">Order Placed</p>
+                    <p className="text-sm font-medium text-gray-900">{t('detail.orderPlaced')}</p>
                     <p className="text-xs text-gray-500">{formatDate(order.placed_at, locale)}</p>
                   </div>
                 </div>
@@ -396,7 +396,7 @@ export default function OrderDetailPage() {
                 <div className="flex gap-3">
                   <div className="flex-shrink-0 w-2 h-2 bg-red-500 rounded-full mt-1.5"></div>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900">Cancelled</p>
+                    <p className="text-sm font-medium text-gray-900">{t('detail.cancelled')}</p>
                     <p className="text-xs text-gray-500">{formatDate(order.cancelled_at, locale)}</p>
                   </div>
                 </div>
@@ -414,12 +414,12 @@ export default function OrderDetailPage() {
             </div>
             <div className="text-sm text-gray-600 space-y-2">
               <div className="flex justify-between">
-                <span>Status:</span>
-                <span className="font-medium text-gray-900">{order.paid_at ? 'Paid' : 'Pending'}</span>
+                <span>{t('detail.status')}:</span>
+                <span className="font-medium text-gray-900">{order.paid_at ? t('detail.paid') : t('detail.pending')}</span>
               </div>
               {order.paid_at && (
                 <div className="flex justify-between">
-                  <span>Paid at:</span>
+                  <span>{t('detail.paidAt')}:</span>
                   <span className="font-medium text-gray-900">{formatDate(order.paid_at, locale)}</span>
                 </div>
               )}
@@ -428,7 +428,7 @@ export default function OrderDetailPage() {
 
           {/* Actions */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-3">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Actions</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('detail.actions')}</h3>
             {status === 'processing' && (
               <Button variant="outline" size="sm" fullWidth disabled>
                 {t('orderCard.cancelOrder')}
@@ -436,7 +436,7 @@ export default function OrderDetailPage() {
             )}
             <Link href="/member/orders">
               <Button variant="outline" size="sm" fullWidth>
-                Back to All Orders
+                {t('detail.backToAllOrders')}
               </Button>
             </Link>
           </div>

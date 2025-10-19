@@ -492,6 +492,23 @@
         "writeReview": "Write Review",
         "cancelOrder": "Cancel Order"
       },
+      "detail": {
+        "backToOrders": "Back to Orders",
+        "totalAmount": "Total Amount",
+        "orderTimeline": "Order Timeline",
+        "delivered": "Delivered",
+        "shipped": "Shipped",
+        "paid": "Paid",
+        "orderPlaced": "Order Placed",
+        "cancelled": "Cancelled",
+        "status": "Status",
+        "pending": "Pending",
+        "actions": "Actions",
+        "backToAllOrders": "Back to All Orders",
+        "discount": "Discount",
+        "orderNotes": "Order Notes",
+        "paidAt": "Paid at"
+      },
       "loading": "Loading your orders...",
       "errors": {
         "loadFailed": "We couldn't load your orders. Please try again.",
