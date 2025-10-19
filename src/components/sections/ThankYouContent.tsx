@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { useLocale, useTranslations } from 'next-intl'
 import { Link } from '@/i18n/navigation'
@@ -67,7 +67,10 @@ export default function ThankYouContent() {
       setError(null)
 
       try {
-        const response = await fetch(`/api/orders/${orderId}`, { cache: 'no-store' })
+        const response = await fetch(`/api/orders/${orderId}`, {
+          cache: 'no-store',
+          credentials: 'include',
+        })
 
         if (response.status === 401) {
           throw new Error('unauthorized')
