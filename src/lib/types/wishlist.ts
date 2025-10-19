@@ -1,3 +1,5 @@
+import type { ColorPrice } from '@/lib/types/products'
+
 /**
  * Centralized Wishlist Type Definitions
  *
@@ -19,6 +21,7 @@ export interface WishlistItem {
     color?: string | null
     price?: number
     available?: boolean
+    gallery_images?: string[]
   } | null
   note?: string
   added_at: number
@@ -27,6 +30,11 @@ export interface WishlistItem {
     slug: string
     title: string
     featured_image_url?: string
+    gallery_urls?: string[]
+    acf?: {
+      color_prices?: ColorPrice[]
+      [key: string]: unknown
+    }
     [key: string]: unknown
   }
   price?: {

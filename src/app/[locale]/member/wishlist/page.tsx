@@ -8,6 +8,93 @@ import { useCart } from '@/contexts/CartContext'
 import { useState, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import { getProductImageUrl } from '@/lib/utils/image-helper'
+import type { WishlistItem } from '@/lib/types/wishlist'
+
+const parseColorOptionId = (value: unknown): number | null => {
+  if (typeof value === 'number') {
+    return Number.isFinite(value) ? value : null
+  }
+  if (typeof value === 'string') {
+    const parsed = Number(value)
+    return Number.isFinite(parsed) ? parsed : null
+  }
+  return null
+}
+
+const findFirstImageUrl = (candidate: unknown): string | null => {
+  if (!Array.isArray(candidate)) {
+    return null
+  }
+
+  for (const entry of candidate) {
+    if (typeof entry === 'string') {
+      const trimmed = entry.trim()
+      if (trimmed) {
+        return trimmed
+      }
+    } else if (entry && typeof entry === 'object') {
+      const maybeUrl = (entry as { url?: unknown }).url
+      if (typeof maybeUrl === 'string') {
+        const trimmed = maybeUrl.trim()
+        if (trimmed) {
+          return trimmed
+        }
+      }
+    }
+  }
+
+  return null
+}
+
+const resolveWishlistItemImageUrl = (item: WishlistItem, colorLabel: string | null): string => {
+  const colorOptionImage = findFirstImageUrl(item.color_option?.gallery_images)
+  if (colorOptionImage) {
+    return getProductImageUrl(colorOptionImage)
+  }
+
+  const product = item.product
+  const colorPrices = product?.acf?.color_prices ?? []
+
+  if (colorPrices.length > 0) {
+    const candidateIds = [
+      parseColorOptionId(item.product_color_option_id ?? null),
+      parseColorOptionId(item.color_option?.id ?? null),
+    ]
+
+    const seenIds = new Set<number>()
+    for (const id of candidateIds) {
+      if (id === null || seenIds.has(id)) {
+        continue
+      }
+      seenIds.add(id)
+      const optionById = colorPrices.find(option => parseColorOptionId(option.id ?? null) === id)
+      if (optionById) {
+        const image = findFirstImageUrl(optionById.gallery_images)
+        if (image) {
+          return getProductImageUrl(image)
+        }
+      }
+    }
+
+    if (colorLabel) {
+      const normalizedColor = colorLabel.trim().toLowerCase()
+      const optionByColor = colorPrices.find(option =>
+        typeof option.color === 'string' && option.color.trim().toLowerCase() === normalizedColor
+      )
+      if (optionByColor) {
+        const image = findFirstImageUrl(optionByColor.gallery_images)
+        if (image) {
+          return getProductImageUrl(image)
+        }
+      }
+    }
+  }
+
+  const fallbackGalleryImage = findFirstImageUrl(product?.gallery_urls)
+  const fallbackImage = product?.featured_image_url ?? fallbackGalleryImage
+
+  return getProductImageUrl(fallbackImage)
+}
 
 export default function WishlistPage() {
   const t = useTranslations('member.wishlist')
@@ -48,32 +135,28 @@ export default function WishlistPage() {
     }
   }
 
-  const handleAddToCart = (item: {
-    id: string
-    product_id: number
-    color?: string
-    product?: {
-      slug: string
-      title: string
-      featured_image_url?: string
-      category?: string
-    }
-    display_price?: number
-    price?: {
-      min_price: number
-    }
-  }) => {
+  const handleAddToCart = (item: WishlistItem) => {
     setAddingToCart(item.id)
 
     // Prepare cart item data
+    const rawCartColor = item.color ?? item.color_option?.color ?? item.price?.selected?.color ?? null
+    const cartColorLabel = typeof rawCartColor === 'string'
+      ? rawCartColor
+      : (rawCartColor !== null && rawCartColor !== undefined ? String(rawCartColor) : null)
+    const productCategory = item.product && typeof (item.product as { category?: unknown }).category === 'string'
+      ? (item.product as { category: string }).category
+      : undefined
     const cartItem = {
       id: item.color ? `${item.product_id}-${item.color}` : String(item.product_id),
       slug: item.product?.slug || `product-${item.product_id}`,
       title: item.product?.title || `Product ${item.product_id}`,
-      price: item.display_price || item.price?.min_price || 0,
-      image: getProductImageUrl(item.product?.featured_image_url),
+      price: item.display_price
+        ?? item.price?.selected?.price
+        ?? item.price?.min_price
+        ?? 0,
+      image: resolveWishlistItemImageUrl(item, cartColorLabel),
       color: item.color,
-      category: item.product?.category
+      category: productCategory,
     }
 
     // Add item to cart
@@ -160,7 +243,6 @@ export default function WishlistPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {items.map((item) => {
             const isRemoving = removingItem === item.id
-            const productImage = getProductImageUrl(item.product?.featured_image_url)
             const productName = item.product?.title || `Product ${item.product_id}`
             const productSlug = item.product?.slug || `product-${item.product_id}`
             const displayPrice = item.display_price
@@ -172,6 +254,7 @@ export default function WishlistPage() {
             const colorLabel = typeof rawColorLabel === 'string'
               ? rawColorLabel
               : (rawColorLabel !== null && rawColorLabel !== undefined ? String(rawColorLabel) : null)
+            const productImage = resolveWishlistItemImageUrl(item, colorLabel)
             const colorTranslationKey = 'item.color'
             const translatedColor = colorLabel ? t(colorTranslationKey, { color: colorLabel }) : null
             const colorText = translatedColor && translatedColor !== `member.wishlist.${colorTranslationKey}`

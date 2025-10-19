@@ -1,4 +1,5 @@
 export interface ColorPrice {
+  id?: number | string | null
   color: string
   price: number
   available: boolean

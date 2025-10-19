@@ -15,6 +15,7 @@ type RawWishlistItem = {
     color?: string | null
     price?: number | string | null
     available?: boolean
+    gallery_images?: unknown
   } | null
   added_at?: string
   product?: {
@@ -119,6 +120,10 @@ export async function fetchWishlist(token: string): Promise<WishlistResponse> {
     const product = entry.product ?? {}
     const addedAt = typeof entry.added_at === 'string' ? Date.parse(entry.added_at) : Date.now()
     const featuredImage = product.featured_image_url ?? product.gallery_urls?.[0] ?? null
+    const galleryUrlsRaw = Array.isArray(product.gallery_urls) ? product.gallery_urls : []
+    const galleryUrls = galleryUrlsRaw
+      .map((url) => (typeof url === 'string' ? url : null))
+      .filter((url): url is string => url !== null && url.trim() !== '')
     const rawOptionId = entry.product_color_option_id ?? null
 
     const parseNumericValue = (value: unknown): number => {
@@ -159,6 +164,7 @@ export async function fetchWishlist(token: string): Promise<WishlistResponse> {
       color: string | null
       price: number
       available: boolean
+      gallery_images: string[]
     }
 
     const normalizeColorOption = (option: RawWishlistItem['color_option']): NormalizedColorOption | null => {
@@ -178,12 +184,26 @@ export async function fetchWishlist(token: string): Promise<WishlistResponse> {
       const color = typeof option.color === 'string' ? option.color : null
       const price = parseNumericValue(option.price)
       const available = parseBooleanValue(option.available)
+      const galleryImagesRaw = Array.isArray(option.gallery_images) ? option.gallery_images : []
+      const galleryImages = galleryImagesRaw
+        .map((image) => {
+          if (typeof image === 'string') {
+            return image.trim() === '' ? null : image
+          }
+          if (image && typeof image === 'object') {
+            const candidateUrl = (image as { url?: unknown }).url
+            return typeof candidateUrl === 'string' && candidateUrl.trim() !== '' ? candidateUrl : null
+          }
+          return null
+        })
+        .filter((url): url is string => url !== null)
 
       return {
         id,
         color,
         price,
         available,
+        gallery_images: galleryImages,
       }
     }
 
@@ -191,7 +211,7 @@ export async function fetchWishlist(token: string): Promise<WishlistResponse> {
       if (!option || typeof option !== 'object') {
         return null
       }
-      const candidate = option as { id?: unknown; color?: unknown; price?: unknown; available?: unknown }
+      const candidate = option as { id?: unknown; color?: unknown; price?: unknown; available?: unknown; gallery_images?: unknown }
       const idValue = candidate.id
       let id: number | null = null
       if (typeof idValue === 'number') {
@@ -203,12 +223,26 @@ export async function fetchWishlist(token: string): Promise<WishlistResponse> {
       const color = typeof candidate.color === 'string' ? candidate.color : null
       const price = parseNumericValue(candidate.price)
       const available = parseBooleanValue(candidate.available)
+      const galleryImagesRaw = Array.isArray(candidate.gallery_images) ? candidate.gallery_images : []
+      const galleryImages = galleryImagesRaw
+        .map((image) => {
+          if (typeof image === 'string') {
+            return image.trim() === '' ? null : image
+          }
+          if (image && typeof image === 'object') {
+            const candidateUrl = (image as { url?: unknown }).url
+            return typeof candidateUrl === 'string' && candidateUrl.trim() !== '' ? candidateUrl : null
+          }
+          return null
+        })
+        .filter((url): url is string => url !== null)
 
       return {
         id,
         color,
         price,
         available,
+        gallery_images: galleryImages,
       }
     }
 
@@ -288,6 +322,7 @@ export async function fetchWishlist(token: string): Promise<WishlistResponse> {
           color: selectedOption.color ?? colorLabel ?? null,
           price: selectedOption.price,
           available: selectedOption.available,
+          gallery_images: selectedOption.gallery_images,
         }
       : normalizedEntryOption
         ? {
@@ -295,6 +330,7 @@ export async function fetchWishlist(token: string): Promise<WishlistResponse> {
             color: normalizedEntryOption.color ?? colorLabel ?? null,
             price: normalizedEntryOption.price,
             available: normalizedEntryOption.available,
+            gallery_images: normalizedEntryOption.gallery_images,
           }
         : null
 
@@ -321,6 +357,7 @@ export async function fetchWishlist(token: string): Promise<WishlistResponse> {
             slug: product.slug,
             title: product.title,
             featured_image_url: featuredImage,
+            gallery_urls: galleryUrls,
             excerpt: product.excerpt,
             acf: product.acf,
             product_category: product.product_category,
