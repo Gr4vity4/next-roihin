@@ -7,6 +7,7 @@ import { useCart } from '@/contexts/CartContext'
 import { Link, useRouter } from '@/i18n/navigation'
 import { getDefaultAddress } from '@/lib/api/addresses.client'
 import { getStripe } from '@/lib/stripe-client'
+import type { CreateOrderPayload } from '@/lib/api/orders'
 import { ArrowLeft } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import Image from 'next/image'
@@ -32,6 +33,7 @@ export default function CheckoutConfirmContent() {
   const [isProcessing, setIsProcessing] = useState(false)
   const [orderError, setOrderError] = useState<string>('')
   const [addressLoading, setAddressLoading] = useState(false)
+  const [defaultAddressId, setDefaultAddressId] = useState<string | null>(null)
   const [shippingAddress, setShippingAddress] = useState<ShippingAddress>({
     fullName: '',
     email: '',
@@ -55,9 +57,10 @@ export default function CheckoutConfirmContent() {
 
       setAddressLoading(true)
       try {
-        const { hasDefault, item } = await getDefaultAddress()
+        const { hasDefault, id, item } = await getDefaultAddress()
 
         if (hasDefault && item) {
+          setDefaultAddressId(id)
           setShippingAddress({
             fullName: item.full_name,
             email: user?.email || '',
@@ -67,6 +70,8 @@ export default function CheckoutConfirmContent() {
             province: item.province,
             postalCode: item.postal_code,
           })
+        } else {
+          setDefaultAddressId(null)
         }
       } catch (error) {
         console.error('Failed to fetch default address:', error)
@@ -92,36 +97,78 @@ export default function CheckoutConfirmContent() {
     setOrderError('')
 
     try {
-      // Create Stripe checkout session
-      const response = await fetch('/api/stripe/create-checkout-session', {
+      const payload: CreateOrderPayload = {
+        items: items.map((item) => {
+          const numericId = Number(item.id)
+          const productId = Number.isFinite(numericId) ? numericId : undefined
+
+          return {
+            product_id: productId ?? undefined,
+            product_name: item.title,
+            sku: item.slug,
+            unit_price_minor: Math.round(item.price * 100),
+            quantity: item.quantity,
+            options: {
+              image: item.image,
+              color: item.color,
+              category: item.category,
+              slug: item.slug,
+              isCustomBracelet: item.isCustomBracelet,
+              braceletDesign: item.braceletDesign ?? null,
+            },
+          }
+        }),
+        shipping_address: {
+          full_name: shippingAddress.fullName,
+          phone: shippingAddress.phone,
+          address: shippingAddress.address,
+          subdistrict: '',
+          district: shippingAddress.district,
+          province: shippingAddress.province,
+          postal_code: shippingAddress.postalCode,
+          country: 'TH',
+          email: shippingAddress.email,
+        },
+        currency: 'THB',
+        shipping_amount_minor: 0,
+        discount_amount_minor: 0,
+        metadata: {
+          cart_source: 'web',
+          cart_total_items: itemCount,
+        },
+        locale,
+      }
+
+      if (defaultAddressId) {
+        const parsed = Number(defaultAddressId)
+        if (Number.isFinite(parsed)) {
+          payload.shipping_address_id = parsed
+        }
+      }
+
+      const response = await fetch('/api/orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          items: items.map((item) => ({
-            id: item.id,
-            title: item.title,
-            price: item.price,
-            quantity: item.quantity,
-            image: item.image,
-          })),
-          shippingAddress,
-          locale,
-        }),
+        body: JSON.stringify(payload),
       })
 
       if (!response.ok) {
-        throw new Error('Failed to create checkout session')
+        const errorBody = await response.json().catch(() => ({}))
+        throw new Error(errorBody?.error || 'Failed to create order')
       }
 
-      const { sessionId, url } = await response.json()
+      const data = await response.json()
+      const checkoutUrl: string | null = data?.stripe?.checkout_url ?? null
+      const sessionId: string | null = data?.stripe?.checkout_session_id ?? null
 
-      // Redirect to Stripe Checkout
-      if (url) {
-        window.location.href = url
-      } else {
-        // Fallback: Use Stripe.js to redirect
+      if (checkoutUrl) {
+        window.location.href = checkoutUrl
+        return
+      }
+
+      if (sessionId) {
         const stripe = await getStripe()
         if (!stripe) {
           throw new Error('Stripe failed to load')
@@ -132,7 +179,11 @@ export default function CheckoutConfirmContent() {
         if (error) {
           throw error
         }
+
+        return
       }
+
+      throw new Error('Missing checkout session information')
     } catch (error) {
       console.error('Checkout failed:', error)
       setOrderError(t('errors.checkoutFailed'))

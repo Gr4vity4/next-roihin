@@ -314,8 +314,11 @@
     },
     "success": {
       "title": "Thank You for Your Order!",
+      "subtitle": "We have received your payment details and will start preparing your shipment shortly.",
       "orderNumber": "Order Number",
-      "status": "Status"
+      "status": "Status",
+      "nextSteps": "Need anything else?",
+      "contact": "We will email you once your order ships. You can review every order anytime in your account."
     },
     "orderDetails": {
       "title": "Order Details",
@@ -324,13 +327,16 @@
       "subtotal": "Subtotal",
       "shipping": "Shipping",
       "shippingFree": "Free",
-      "total": "Total"
+      "total": "Total",
+      "phone": "Phone"
     },
     "shippingAddress": {
-      "title": "Shipping Address"
+      "title": "Shipping Address",
+      "missing": "No shipping address available."
     },
     "paymentInfo": {
       "title": "Payment Information",
+      "status": "Latest status:",
       "transferTo": "Transfer to one of the following accounts:",
       "bankName": "Bank",
       "accountName": "Account Name",
@@ -345,7 +351,8 @@
       "uploadError": "Upload failed. Please try again."
     },
     "actions": {
-      "backToHome": "Back to Home"
+      "backToHome": "Back to Home",
+      "viewOrders": "View My Orders"
     }
   },
   "aboutPage": {
@@ -471,6 +478,7 @@
       "subtitle": "Track and manage your orders",
       "tabs": {
         "all": "All",
+        "pending": "Pending",
         "processing": "Processing",
         "shipped": "Shipped",
         "delivered": "Delivered",
@@ -483,6 +491,11 @@
         "viewDetails": "View Details",
         "writeReview": "Write Review",
         "cancelOrder": "Cancel Order"
+      },
+      "loading": "Loading your orders...",
+      "errors": {
+        "loadFailed": "We couldn't load your orders. Please try again.",
+        "unauthorized": "Please sign in to view your orders."
       },
       "empty": {
         "title": "No orders found",
