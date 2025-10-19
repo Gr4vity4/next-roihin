@@ -14,6 +14,12 @@ export interface WishlistItem {
   product_color_option_id?: number | null
   color?: string | null
   color_key?: string | null
+  color_option?: {
+    id: number | string | null
+    color?: string | null
+    price?: number
+    available?: boolean
+  } | null
   note?: string
   added_at: number
   product?: {

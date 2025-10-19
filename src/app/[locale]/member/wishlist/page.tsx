@@ -163,8 +163,20 @@ export default function WishlistPage() {
             const productImage = getProductImageUrl(item.product?.featured_image_url)
             const productName = item.product?.title || `Product ${item.product_id}`
             const productSlug = item.product?.slug || `product-${item.product_id}`
-            const displayPrice = item.display_price || item.price?.min_price || 0
+            const displayPrice = item.display_price
+              ?? item.price?.selected?.price
+              ?? item.price?.min_price
+              ?? 0
             const isAvailable = item.is_available !== false
+            const rawColorLabel = item.color ?? item.color_option?.color ?? item.price?.selected?.color ?? null
+            const colorLabel = typeof rawColorLabel === 'string'
+              ? rawColorLabel
+              : (rawColorLabel !== null && rawColorLabel !== undefined ? String(rawColorLabel) : null)
+            const colorTranslationKey = 'item.color'
+            const translatedColor = colorLabel ? t(colorTranslationKey, { color: colorLabel }) : null
+            const colorText = translatedColor && translatedColor !== `member.wishlist.${colorTranslationKey}`
+              ? translatedColor
+              : colorLabel
 
             return (
               <div
@@ -196,8 +208,8 @@ export default function WishlistPage() {
                       {productName}
                     </h3>
                   </Link>
-                  {item.color && (
-                    <p className="text-sm text-gray-600 mb-2">{t('item.color', { color: item.color })}</p>
+                  {colorText && (
+                    <p className="text-sm text-gray-600 mb-2">{colorText}</p>
                   )}
                   <p className="text-xl font-bold text-[#005635] mb-3">
                     {formatPrice(displayPrice)}

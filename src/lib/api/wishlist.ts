@@ -10,6 +10,12 @@ type RawWishlistItem = {
   product_id: number
   product_color_option_id?: number | null
   color?: string | null
+  color_option?: {
+    id?: number | string | null
+    color?: string | null
+    price?: number | string | null
+    available?: boolean
+  } | null
   added_at?: string
   product?: {
     id?: number
@@ -112,19 +118,201 @@ export async function fetchWishlist(token: string): Promise<WishlistResponse> {
   const items = entries.map((entry) => {
     const product = entry.product ?? {}
     const addedAt = typeof entry.added_at === 'string' ? Date.parse(entry.added_at) : Date.now()
-    const productColorOptionId = entry.product_color_option_id ?? null
-    const color = entry.color ?? null
-
-    const priceValue = typeof product.price === 'number' ? product.price : 0
-    const isAvailable = typeof product.is_available === 'boolean' ? product.is_available : true
     const featuredImage = product.featured_image_url ?? product.gallery_urls?.[0] ?? null
+    const rawOptionId = entry.product_color_option_id ?? null
+
+    const parseNumericValue = (value: unknown): number => {
+      if (typeof value === 'number') {
+        return Number.isFinite(value) ? value : 0
+      }
+      if (typeof value === 'string') {
+        const sanitized = value
+          .replace(/[^\d.,-]/g, '')
+          .replace(/,/g, '')
+        const parsed = Number(sanitized)
+        return Number.isFinite(parsed) ? parsed : 0
+      }
+      return 0
+    }
+
+    const parseBooleanValue = (value: unknown): boolean => {
+      if (typeof value === 'boolean') {
+        return value
+      }
+      if (typeof value === 'number') {
+        return value !== 0
+      }
+      if (typeof value === 'string') {
+        const normalized = value.trim().toLowerCase()
+        if (normalized === 'true' || normalized === '1' || normalized === 'yes') {
+          return true
+        }
+        if (normalized === 'false' || normalized === '0' || normalized === 'no') {
+          return false
+        }
+      }
+      return Boolean(value)
+    }
+
+    type NormalizedColorOption = {
+      id: number | null
+      color: string | null
+      price: number
+      available: boolean
+    }
+
+    const normalizeColorOption = (option: RawWishlistItem['color_option']): NormalizedColorOption | null => {
+      if (!option || typeof option !== 'object') {
+        return null
+      }
+
+      const idValue = option.id
+      let id: number | null = null
+      if (typeof idValue === 'number') {
+        id = Number.isFinite(idValue) ? idValue : null
+      } else if (typeof idValue === 'string') {
+        const parsed = Number(idValue)
+        id = Number.isFinite(parsed) ? parsed : null
+      }
+
+      const color = typeof option.color === 'string' ? option.color : null
+      const price = parseNumericValue(option.price)
+      const available = parseBooleanValue(option.available)
+
+      return {
+        id,
+        color,
+        price,
+        available,
+      }
+    }
+
+    const normalizeProductColorOption = (option: unknown): NormalizedColorOption | null => {
+      if (!option || typeof option !== 'object') {
+        return null
+      }
+      const candidate = option as { id?: unknown; color?: unknown; price?: unknown; available?: unknown }
+      const idValue = candidate.id
+      let id: number | null = null
+      if (typeof idValue === 'number') {
+        id = Number.isFinite(idValue) ? idValue : null
+      } else if (typeof idValue === 'string') {
+        const parsed = Number(idValue)
+        id = Number.isFinite(parsed) ? parsed : null
+      }
+      const color = typeof candidate.color === 'string' ? candidate.color : null
+      const price = parseNumericValue(candidate.price)
+      const available = parseBooleanValue(candidate.available)
+
+      return {
+        id,
+        color,
+        price,
+        available,
+      }
+    }
+
+    const productColorPricesRaw = Array.isArray((product as { acf?: unknown }).acf?.color_prices)
+      ? ((product as { acf?: { color_prices?: unknown } }).acf?.color_prices as unknown[])
+      : []
+
+    const productColorPrices: NormalizedColorOption[] = productColorPricesRaw
+      .map(normalizeProductColorOption)
+      .filter((option): option is NormalizedColorOption => option !== null)
+
+    const normalizedEntryOption = normalizeColorOption(entry.color_option)
+    const colorOptionId =
+      typeof rawOptionId === 'number'
+        ? (Number.isFinite(rawOptionId) ? rawOptionId : null)
+        : (typeof rawOptionId === 'string'
+          ? (Number.isFinite(Number(rawOptionId)) ? Number(rawOptionId) : null)
+          : null)
+
+    const findById = (id: number | null) => {
+      if (id === null) {
+        return null
+      }
+      return productColorPrices.find(option => option.id === id) ?? null
+    }
+
+    const findByColor = (color: string | null) => {
+      if (!color) {
+        return null
+      }
+      const lowered = color.toLowerCase()
+      return productColorPrices.find(option => option.color?.toLowerCase() === lowered) ?? null
+    }
+
+    const selectedOption =
+      findById(colorOptionId) ??
+      (normalizedEntryOption?.id !== null ? findById(normalizedEntryOption.id) : null) ??
+      normalizedEntryOption ??
+      findByColor(entry.color ?? null) ??
+      (productColorPrices.length === 1 ? productColorPrices[0] : null)
+
+    const rawColor = entry.color ?? null
+    const sanitizedEntryColor = typeof rawColor === 'string' && !rawColor.startsWith('member.')
+      ? rawColor
+      : null
+    const colorLabel = sanitizedEntryColor
+      ?? selectedOption?.color
+      ?? normalizedEntryOption?.color
+      ?? (typeof rawColor === 'string' ? rawColor : null)
+
+    const minPrice = productColorPrices.reduce<number | null>((acc, option) => {
+      if (acc === null) {
+        return option.price
+      }
+      return Math.min(acc, option.price)
+    }, null)
+
+    const productPrice = (product as { price?: unknown }).price
+    const fallbackProductPrice = parseNumericValue(productPrice)
+
+    const displayPrice = selectedOption?.price
+      ?? normalizedEntryOption?.price
+      ?? (minPrice ?? undefined)
+      ?? fallbackProductPrice
+
+    const availableAny = productColorPrices.length > 0
+      ? productColorPrices.some(option => option.available)
+      : parseBooleanValue((product as { is_available?: unknown }).is_available ?? true)
+
+    const isAvailable = selectedOption
+      ? selectedOption.available
+      : parseBooleanValue((product as { is_available?: unknown }).is_available ?? availableAny)
+
+    const normalizedSelectedOption = selectedOption
+      ? {
+          id: selectedOption.id,
+          color: selectedOption.color ?? colorLabel ?? null,
+          price: selectedOption.price,
+          available: selectedOption.available,
+        }
+      : normalizedEntryOption
+        ? {
+            id: normalizedEntryOption.id,
+            color: normalizedEntryOption.color ?? colorLabel ?? null,
+            price: normalizedEntryOption.price,
+            available: normalizedEntryOption.available,
+          }
+        : null
+
+    const colorKey =
+      colorOptionId !== null
+        ? `color-option:${colorOptionId}`
+        : normalizedSelectedOption?.id !== null && normalizedSelectedOption?.id !== undefined
+          ? `color-option:${normalizedSelectedOption.id}`
+          : (colorLabel ?? null)
+
+    const minPriceValue = minPrice ?? displayPrice
 
     return {
       id: String(entry.id),
       product_id: entry.product_id,
-      product_color_option_id: productColorOptionId,
-      color,
-      color_key: productColorOptionId ? `color-option:${productColorOptionId}` : color,
+      product_color_option_id: colorOptionId,
+      color: colorLabel,
+      color_key: colorKey,
       note: null,
       added_at: Number.isNaN(addedAt) ? Date.now() : addedAt,
       product: product.id
@@ -139,12 +327,19 @@ export async function fetchWishlist(token: string): Promise<WishlistResponse> {
           }
         : undefined,
       price: {
-        min_price: priceValue,
-        available_any: isAvailable,
-        selected: undefined,
+        min_price: minPriceValue,
+        available_any: availableAny,
+        selected: normalizedSelectedOption
+          ? {
+              color: normalizedSelectedOption.color ?? '',
+              price: normalizedSelectedOption.price,
+              available: normalizedSelectedOption.available,
+            }
+          : undefined,
       },
       is_available: isAvailable,
-      display_price: priceValue,
+      display_price: displayPrice,
+      color_option: normalizedSelectedOption,
     }
   })
 
