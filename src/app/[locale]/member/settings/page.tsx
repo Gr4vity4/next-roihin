@@ -6,6 +6,7 @@ import Button from '@/components/Button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useTranslations } from 'next-intl'
+import { Eye, EyeOff } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -129,7 +130,7 @@ export default function SettingsPage() {
                 onClick={() => setCurrentPasswordVisible(!currentPasswordVisible)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
               >
-                {currentPasswordVisible ? '👁️' : '👁️‍🗨️'}
+                {currentPasswordVisible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
               </button>
             </div>
           </div>
@@ -150,7 +151,7 @@ export default function SettingsPage() {
                 onClick={() => setNewPasswordVisible(!newPasswordVisible)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
               >
-                {newPasswordVisible ? '👁️' : '👁️‍🗨️'}
+                {newPasswordVisible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
               </button>
             </div>
           </div>

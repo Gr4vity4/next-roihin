@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useCart } from '@/contexts/CartContext'
 import { Link, usePathname, useRouter } from '@/i18n/navigation'
 import { cn } from '@/lib/utils'
-import { ChevronDown, Menu, ShoppingCart, X } from 'lucide-react'
+import { ChevronDown, Menu, ShoppingCart, X, Check } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import Image from 'next/image'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -251,7 +251,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                         )}
                       >
                         ไทย
-                        {locale === 'th' && <span className="text-gold">✓</span>}
+                        {locale === 'th' && <Check className="w-4 h-4 text-gold" />}
                       </button>
                       <button
                         onClick={() => handleLanguageSwitch('en')}
@@ -261,7 +261,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                         )}
                       >
                         English
-                        {locale === 'en' && <span className="text-gold">✓</span>}
+                        {locale === 'en' && <Check className="w-4 h-4 text-gold" />}
                       </button>
                     </div>
                   )}
@@ -383,7 +383,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                         )}
                       >
                         ไทย
-                        {locale === 'th' && <span className="text-gold">✓</span>}
+                        {locale === 'th' && <Check className="w-4 h-4 text-gold" />}
                       </button>
                       <button
                         onClick={() => handleLanguageSwitch('en')}
@@ -393,7 +393,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                         )}
                       >
                         English
-                        {locale === 'en' && <span className="text-gold">✓</span>}
+                        {locale === 'en' && <Check className="w-4 h-4 text-gold" />}
                       </button>
                     </div>
                   )}

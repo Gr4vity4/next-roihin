@@ -1,7 +1,7 @@
 'use client'
 
 import Modal from '@/components/ui/Modal'
-import { CircleCheck } from 'lucide-react'
+import { CircleCheck, Mail, Clock } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
@@ -94,14 +94,18 @@ export default function OrderSuccessModal({
 
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
           <p className="text-sm text-blue-800">
-            <span className="font-medium">📧 อีเมลยืนยัน:</span>{' '}
+            <span className="font-medium inline-flex items-center gap-1">
+              <Mail className="w-4 h-4 inline" /> อีเมลยืนยัน:
+            </span>{' '}
             เราได้ส่งรายละเอียดคำสั่งซื้อไปยังอีเมลของคุณแล้ว
           </p>
         </div>
 
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
           <p className="text-sm text-amber-800">
-            <span className="font-medium">⏱️ การดำเนินการ:</span>{' '}
+            <span className="font-medium inline-flex items-center gap-1">
+              <Clock className="w-4 h-4 inline" /> การดำเนินการ:
+            </span>{' '}
             ทีมงานจะตรวจสอบการชำระเงินและจัดส่งสินค้าภายใน 1-2 วันทำการ
           </p>
         </div>
