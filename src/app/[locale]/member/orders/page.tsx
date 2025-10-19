@@ -215,9 +215,11 @@ export default function OrdersPage() {
                     )}
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    <Button variant="outline" size="sm" disabled>
-                      {t('orderCard.viewDetails')}
-                    </Button>
+                    <Link href={`/member/orders/${order.id}`}>
+                      <Button variant="outline" size="sm">
+                        {t('orderCard.viewDetails')}
+                      </Button>
+                    </Link>
                     {status === 'processing' && (
                       <Button variant="outline" size="sm" disabled>
                         {t('orderCard.cancelOrder')}
