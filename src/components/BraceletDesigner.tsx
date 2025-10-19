@@ -155,15 +155,26 @@ export default function BraceletDesigner() {
         const response = await fetch(`/api/stones?lang=${locale}`)
         if (response.ok) {
           const data = await response.json()
+          const stones = Array.isArray(data)
+            ? data.filter((stone: Stone | null | undefined): stone is Stone =>
+                Boolean(stone && typeof stone === 'object' && 'acf' in stone && stone.acf),
+              )
+            : []
+
+          if (!Array.isArray(data)) {
+            console.warn('Unexpected stones payload received from API', data)
+          }
+
           // Log first stone data for debugging
-          if (data.length > 0) {
+          if (stones.length > 0) {
             console.log('Sample stone data:', {
-              title: data[0].acf?.title,
-              stone_image: data[0].acf?.stone_image,
-              preview_image: data[0].acf?.preview_image,
+              title: stones[0].acf?.title,
+              stone_image: stones[0].acf?.stone_image,
+              preview_image: stones[0].acf?.preview_image,
             })
           }
-          setStoneSettings(data)
+
+          setStoneSettings(stones)
         }
       } catch (error) {
         console.error('Error fetching stones:', error)
