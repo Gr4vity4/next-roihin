@@ -1,4 +1,8 @@
-import { LaravelPostsResponseSchema } from '@/lib/types/laravel'
+import {
+  BlogPostsResponseSchema,
+  LaravelPostsResponseSchema,
+  type BlogPost,
+} from '@/lib/types/laravel'
 import { buildLaravelApiUrl } from '@/config/api.config'
 import { NextRequest, NextResponse } from 'next/server'
 import { getFetchConfig, getCacheHeaders } from '@/config/cache.config'
@@ -41,16 +45,37 @@ export async function GET(request: NextRequest) {
     // Validate response data with Zod
     const validatedData = LaravelPostsResponseSchema.parse(responseData)
 
-    // Use Laravel data directly
-    const posts = validatedData.data || []
+    // Transform Laravel data into frontend-friendly blog posts
+    const posts: BlogPost[] = validatedData.data.map((post) => ({
+      id: post.id,
+      slug: post.slug,
+      title: post.title,
+      excerpt: post.excerpt,
+      image: post.featured_image ?? DEFAULT_IMAGE,
+      date: post.published_at || post.created_at,
+      category: post.category
+        ? {
+            id: post.category.id.toString(),
+            slug: post.category.slug,
+            name: {
+              english: post.category.name,
+              thai: post.category.name,
+            },
+          }
+        : null,
+    }))
     const pagination = validatedData.meta?.pagination
     const currentPage = parseInt(page)
 
-    const result = {
+    const result = BlogPostsResponseSchema.parse({
       posts,
-      totalPages: pagination?.last_page,
+      totalPages: pagination?.last_page && pagination.last_page > 0
+        ? pagination.last_page
+        : posts.length > 0
+          ? 1
+          : undefined,
       currentPage,
-    }
+    })
 
     return NextResponse.json(result, {
       headers: getCacheHeaders('shortTerm'),
@@ -59,10 +84,10 @@ export async function GET(request: NextRequest) {
     console.error('Posts API error:', error)
 
     // Return error response with empty posts
-    const fallbackResponse = {
+    const fallbackResponse = BlogPostsResponseSchema.parse({
       posts: [],
       currentPage: parseInt(request.nextUrl.searchParams.get('page') || '1'),
-    }
+    })
 
     return NextResponse.json(
       {

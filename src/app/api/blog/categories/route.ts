@@ -1,17 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { LaravelCategoriesResponseSchema } from '@/lib/types/laravel'
+import {
+  BlogCategoriesResponseSchema,
+  LaravelCategoriesResponseSchema,
+  type BlogCategory,
+} from '@/lib/types/laravel'
 import { buildLaravelApiUrl } from '@/config/api.config'
 import { getFetchConfig, getCacheHeaders } from '@/config/cache.config'
-
-interface BlogCategoriesResponse {
-  categories: Array<{
-    id: string
-    name: {
-      english: string
-      thai: string
-    }
-  }>
-}
 
 /**
  * GET /api/blog/categories
@@ -46,9 +40,10 @@ export async function GET(request: NextRequest) {
     const validatedData = LaravelCategoriesResponseSchema.parse(responseData)
 
     // Add default "All Posts" category and transform to our format
-    const transformedCategories = [
+    const transformedCategories: BlogCategory[] = [
       {
         id: 'all',
+        slug: 'all',
         name: {
           english: 'All Articles',
           thai: 'บทความทั้งหมด',
@@ -56,16 +51,17 @@ export async function GET(request: NextRequest) {
       },
       ...validatedData.data.map(category => ({
         id: category.id.toString(),
+        slug: category.slug,
         name: {
           english: category.name,
           thai: category.name, // Laravel already handles translation based on locale
         },
-      }))
+      })),
     ]
 
-    const result: BlogCategoriesResponse = {
-      categories: transformedCategories
-    }
+    const result = BlogCategoriesResponseSchema.parse({
+      categories: transformedCategories,
+    })
 
     return NextResponse.json(result, {
       headers: getCacheHeaders('mediumTerm'),
@@ -75,17 +71,18 @@ export async function GET(request: NextRequest) {
     console.error('Categories API error:', error)
 
     // Return error response with fallback categories
-    const fallbackResponse: BlogCategoriesResponse = {
+    const fallbackResponse = BlogCategoriesResponseSchema.parse({
       categories: [
         {
           id: 'all',
+          slug: 'all',
           name: {
             english: 'All Articles',
             thai: 'บทความทั้งหมด',
           },
         },
-      ]
-    }
+      ],
+    })
 
     return NextResponse.json(
       {

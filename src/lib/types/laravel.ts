@@ -28,9 +28,9 @@ export const LaravelCategorySchema = z.object({
   id: z.number(),
   slug: z.string(),
   name: z.string(),
-  posts_count: z.number(),
-  created_at: z.string(),
-  updated_at: z.string(),
+  posts_count: z.number().optional(),
+  created_at: z.string().nullable().optional(),
+  updated_at: z.string().nullable().optional(),
 })
 
 export type LaravelCategory = z.infer<typeof LaravelCategorySchema>
@@ -126,6 +126,94 @@ export const LaravelCategoriesResponseSchema = z.object({
 })
 
 export type LaravelCategoriesResponse = z.infer<typeof LaravelCategoriesResponseSchema>
+
+/**
+ * Frontend Blog Category Schema
+ */
+export const BlogCategorySchema = z.object({
+  id: z.string(),
+  slug: z.string().optional(),
+  name: z.object({
+    english: z.string(),
+    thai: z.string(),
+  }),
+})
+
+export type BlogCategory = z.infer<typeof BlogCategorySchema>
+
+/**
+ * Frontend Blog Categories Response Schema
+ */
+export const BlogCategoriesResponseSchema = z.object({
+  categories: z.array(BlogCategorySchema),
+})
+
+export type BlogCategoriesResponse = z.infer<typeof BlogCategoriesResponseSchema>
+
+/**
+ * Frontend Blog Post Schema
+ */
+export const BlogPostSchema = z.object({
+  id: z.number(),
+  slug: z.string(),
+  title: z.string(),
+  excerpt: z.string(),
+  image: z.string(),
+  date: z.string(),
+  category: BlogCategorySchema.nullable().optional(),
+})
+
+export type BlogPost = z.infer<typeof BlogPostSchema>
+
+/**
+ * Frontend Blog Posts Response Schema
+ */
+export const BlogPostsResponseSchema = z.object({
+  posts: z.array(BlogPostSchema),
+  totalPages: z.number().int().positive().optional(),
+  currentPage: z.number().int().positive(),
+})
+
+export type BlogPostsResponse = z.infer<typeof BlogPostsResponseSchema>
+
+/**
+ * Frontend Blog Post Details Response Schema (lenient to support partial data)
+ */
+export const BlogPostDetailsResponseSchema = z.object({
+  post: z
+    .object({
+      id: z.number(),
+      slug: z.string(),
+      title: z.string(),
+      excerpt: z.string().optional().nullable(),
+      content: z.string().optional().nullable(),
+      image: z.string().optional().nullable(),
+      heroImage: z.string().optional().nullable(),
+      featured_image: z.string().optional().nullable(),
+      date: z.string().optional(),
+      published_at: z.string().optional(),
+      author: z
+        .object({
+          name: z.string(),
+          avatar: z.string().optional().nullable(),
+        })
+        .optional()
+        .nullable(),
+      terms: z
+        .array(
+          z.object({
+            id: z.number(),
+            name: z.string(),
+            slug: z.string().optional(),
+            taxonomy: z.string().optional(),
+          }),
+        )
+        .optional(),
+    })
+    .nullable(),
+})
+
+export type BlogPostDetailsResponse = z.infer<typeof BlogPostDetailsResponseSchema>
 
 /**
  * Laravel API Testimonials Response Schema
