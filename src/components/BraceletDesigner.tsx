@@ -24,7 +24,7 @@ import {
   generateBraceletThumbnail,
   generateBraceletTitle,
 } from '@/lib/utils/braceletImageGenerator'
-import { ArrowLeft, Check, RefreshCw, ShoppingCartIcon } from 'lucide-react'
+import { ArrowLeft, Check, RefreshCw, ShoppingCart } from 'lucide-react'
 import { useLocale } from 'next-intl'
 import Image from 'next/image'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -1048,7 +1048,7 @@ export default function BraceletDesigner() {
                 <>{locale === 'th' ? 'กำลังเพิ่ม...' : 'Adding...'}</>
               ) : (
                 <>
-                  <ShoppingCartIcon className="w-4 h-4 mr-2" />
+                  <ShoppingCart className="w-4 h-4 mr-2" />
                   {locale === 'th' ? 'เพิ่มลงตะกร้า' : 'Add to Cart'}
                 </>
               )}

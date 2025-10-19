@@ -5,7 +5,7 @@ import Typography from '@/components/ui/Typography'
 import AuthModal from '@/components/AuthModal'
 import { useCart } from '@/contexts/CartContext'
 import { useAuth } from '@/contexts/AuthContext'
-import { MinusIcon, PlusIcon, ShoppingBagIcon, TrashIcon } from '@heroicons/react/24/outline'
+import { Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react'
 import Image from 'next/image'
 import { Link, useRouter } from '@/i18n/navigation'
 import { useEffect, useState } from 'react'
@@ -60,7 +60,7 @@ export default function CheckoutContent() {
         <Container>
           <div className="max-w-4xl mx-auto text-center py-16">
             <div className="bg-white rounded-2xl shadow-lg p-12">
-              <ShoppingBagIcon className="w-20 h-20 text-gray-300 mx-auto mb-6" />
+              <ShoppingBag className="w-20 h-20 text-gray-300 mx-auto mb-6" />
               <Typography variant="h2" className="text-gray-900 mb-4">
                 {t('emptyCart.title')}
               </Typography>
@@ -128,7 +128,7 @@ export default function CheckoutContent() {
                           className="text-gray-400 hover:text-red-500 transition-colors p-2 h-fit"
                           aria-label={t('product.removeItem')}
                         >
-                          <TrashIcon className="w-5 h-5" />
+                          <Trash2 className="w-5 h-5" />
                         </button>
                       </div>
 
@@ -139,7 +139,7 @@ export default function CheckoutContent() {
                             className="w-9 h-9 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center justify-center transition-colors"
                             aria-label={t('product.decreaseQuantity')}
                           >
-                            <MinusIcon className="w-4 h-4" />
+                            <Minus className="w-4 h-4" />
                           </button>
                           <span className="text-gray-900 font-medium w-12 text-center text-lg">
                             {item.quantity}
@@ -149,7 +149,7 @@ export default function CheckoutContent() {
                             className="w-9 h-9 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center justify-center transition-colors"
                             aria-label={t('product.increaseQuantity')}
                           >
-                            <PlusIcon className="w-4 h-4" />
+                            <Plus className="w-4 h-4" />
                           </button>
                         </div>
                         <div className="text-right">

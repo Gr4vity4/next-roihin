@@ -5,7 +5,7 @@ import Typography from '@/components/ui/Typography'
 import WishlistButton from '@/components/ui/WishlistButton'
 import { useCart } from '@/contexts/CartContext'
 import { Category, Product } from '@/lib/types/products'
-import { ChevronLeftIcon, ChevronRightIcon, ShoppingCartIcon } from '@heroicons/react/24/outline'
+import { ChevronLeft, ChevronRight, ShoppingCart } from 'lucide-react'
 import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
 import { useRouter } from 'next/navigation'
@@ -109,14 +109,14 @@ export default function ProductDetail({ product, category, language = 'en' }: Pr
                         className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
                         aria-label="Previous image"
                       >
-                        <ChevronLeftIcon className="w-5 h-5" />
+                        <ChevronLeft className="w-5 h-5" />
                       </button>
                       <button
                         onClick={handleNextImage}
                         className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
                         aria-label="Next image"
                       >
-                        <ChevronRightIcon className="w-5 h-5" />
+                        <ChevronRight className="w-5 h-5" />
                       </button>
                     </>
                   )}
@@ -304,7 +304,7 @@ export default function ProductDetail({ product, category, language = 'en' }: Pr
                     : 'bg-white hover:bg-gray-100 text-black'
                 }`}
               >
-                <ShoppingCartIcon className="w-5 h-5 mr-2" />
+                <ShoppingCart className="w-5 h-5 mr-2" />
                 {isAdding
                   ? language === 'th'
                     ? 'เพิ่มลงตะกร้าแล้ว!'

@@ -1,7 +1,7 @@
 'use client'
 
 import Modal from '@/components/ui/Modal'
-import { CheckCircleIcon } from '@heroicons/react/24/solid'
+import { CircleCheck } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
@@ -68,7 +68,11 @@ export default function OrderSuccessModal({
     >
       <div className="text-center">
         <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
-          <CheckCircleIcon className="h-10 w-10 text-green-600" aria-hidden="true" />
+          <CircleCheck
+            className="h-10 w-10 text-green-600"
+            aria-hidden="true"
+            fill="currentColor"
+          />
         </div>
 
         <h3 className="text-xl font-semibold text-gray-900 mb-2">สั่งซื้อสำเร็จ!</h3>

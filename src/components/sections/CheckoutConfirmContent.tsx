@@ -7,7 +7,7 @@ import { useCart } from '@/contexts/CartContext'
 import { Link, useRouter } from '@/i18n/navigation'
 import { getDefaultAddress } from '@/lib/api/addresses.client'
 import { getStripe } from '@/lib/stripe-client'
-import { ArrowLeftIcon } from '@heroicons/react/24/outline'
+import { ArrowLeft } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import Image from 'next/image'
 import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
@@ -166,7 +166,7 @@ export default function CheckoutConfirmContent() {
               className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
               aria-label={t('backToCart')}
             >
-              <ArrowLeftIcon className="w-5 h-5 text-gray-600" />
+              <ArrowLeft className="w-5 h-5 text-gray-600" />
             </Link>
             <Typography variant="h3" className="text-gray-900">
               {t('title')}

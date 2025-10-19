@@ -1,7 +1,6 @@
 'use client'
 
-import { HeartIcon, ShoppingCartIcon } from '@heroicons/react/24/outline'
-import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid'
+import { Heart, ShoppingCart } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -111,13 +110,13 @@ function ProductCard({ product, locale }: { product: RelatedCrystalProduct; loca
                 e.preventDefault()
                 handleWishlistToggle()
               }}
-              className="p-2 bg-white hover:bg-gray-50 rounded-full shadow-sm transition-all"
+              className="group p-2 bg-white hover:bg-gray-50 rounded-full shadow-sm transition-all"
               aria-label={t('addToWishlist')}
             >
               {isWishlisted ? (
-                <HeartSolidIcon className="w-5 h-5 text-red-500" />
+                <Heart className="w-5 h-5 text-red-500" fill="currentColor" />
               ) : (
-                <HeartIcon className="w-5 h-5 text-gray-700 hover:text-red-500 transition-colors" />
+                <Heart className="w-5 h-5 text-gray-700 transition-colors group-hover:text-red-500" />
               )}
             </button>
 
@@ -127,7 +126,7 @@ function ProductCard({ product, locale }: { product: RelatedCrystalProduct; loca
               className="p-2 bg-white hover:bg-gray-50 rounded-full shadow-sm transition-all"
               aria-label={t('addToCart')}
             >
-              <ShoppingCartIcon className="w-5 h-5 text-gray-700 hover:text-green-600 transition-colors" />
+              <ShoppingCart className="w-5 h-5 text-gray-700 transition-colors hover:text-green-600" />
             </button>
           </div>
         </div>

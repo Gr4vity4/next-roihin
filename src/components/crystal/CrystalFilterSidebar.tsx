@@ -1,7 +1,7 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
-import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'
+import { Search } from 'lucide-react'
 
 interface CrystalFilterSidebarProps {
   searchQuery: string
@@ -62,7 +62,7 @@ export default function CrystalFilterSidebar({
             placeholder={t('searchPlaceholder')}
             className="w-full bg-white text-black px-3 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500"
           />
-          <MagnifyingGlassIcon className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
         </div>
       </div>
 

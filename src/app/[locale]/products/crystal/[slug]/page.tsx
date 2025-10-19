@@ -4,7 +4,7 @@ import ChatWidget from '@/components/ChatWidget'
 import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import { Footer } from '@/components/sections'
 import { useCart } from '@/contexts/CartContext'
-import { ShoppingCartIcon } from '@heroicons/react/24/outline'
+import { ShoppingCart } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -376,7 +376,7 @@ function ProductCard({
             className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-3 rounded-lg text-sm font-medium flex items-center justify-center gap-1 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             aria-label={t('addToCart')}
           >
-            <ShoppingCartIcon className="w-4 h-4" />
+            <ShoppingCart className="w-4 h-4" />
             <span className="hidden sm:inline">
               {isAddingToCart ? t('adding') : t('addToCart')}
             </span>

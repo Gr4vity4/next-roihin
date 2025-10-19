@@ -2,7 +2,7 @@
 
 import { ReactNode } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
-import { XMarkIcon } from '@heroicons/react/24/outline'
+import { X } from 'lucide-react'
 
 interface ModalProps {
   isOpen: boolean
@@ -59,7 +59,7 @@ export default function Modal({
                     className="ml-auto inline-flex items-center justify-center rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
                   >
                     <span className="sr-only">Close</span>
-                    <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                    <X className="h-6 w-6" aria-hidden="true" />
                   </button>
                 </Dialog.Close>
               )}

@@ -2,8 +2,7 @@
 
 import { useWishlist } from '@/contexts/WishlistContext'
 import { useAuth } from '@/contexts/AuthContext'
-import { HeartIcon } from '@heroicons/react/24/outline'
-import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid'
+import { Heart } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import AuthModal from '@/components/AuthModal'
 
@@ -118,25 +117,15 @@ export default function WishlistButton({
         title={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
       >
         <div className={`relative ${isAnimating ? 'animate-ping' : ''}`}>
-          {isWishlisted ? (
-            <HeartSolidIcon
-              className={`
-                ${iconSizeClasses[size]}
-                text-red-500
-                transition-transform duration-200
-                ${isAnimating ? 'scale-125' : 'scale-100'}
-              `}
-            />
-          ) : (
-            <HeartIcon
-              className={`
-                ${iconSizeClasses[size]}
-                text-white
-                group-hover:text-red-400
-                transition-colors duration-200
-              `}
-            />
-          )}
+          <Heart
+            className={`
+              ${iconSizeClasses[size]}
+              transition-colors duration-200 transition-transform
+              ${isWishlisted ? 'text-red-500' : 'text-white group-hover:text-red-400'}
+              ${isWishlisted && isAnimating ? 'scale-125' : 'scale-100'}
+            `}
+            fill={isWishlisted ? 'currentColor' : 'none'}
+          />
         </div>
 
         {showText && (

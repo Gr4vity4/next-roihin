@@ -5,13 +5,7 @@ import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import { Footer } from '@/components/sections'
 import { useCart } from '@/contexts/CartContext'
 import { useWishlist } from '@/contexts/WishlistContext'
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  HeartIcon,
-  ShoppingCartIcon,
-} from '@heroicons/react/24/outline'
-import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid'
+import { ChevronLeft, ChevronRight, Heart, ShoppingCart } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import { notFound, useParams } from 'next/navigation'
@@ -202,14 +196,14 @@ export default function CrystalProductDetailPage() {
                       className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-900 p-2 rounded-full transition-colors shadow-lg"
                       aria-label="Previous image"
                     >
-                      <ChevronLeftIcon className="w-5 h-5" />
+                      <ChevronLeft className="w-5 h-5" />
                     </button>
                     <button
                       onClick={handleNextImage}
                       className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-900 p-2 rounded-full transition-colors shadow-lg"
                       aria-label="Next image"
                     >
-                      <ChevronRightIcon className="w-5 h-5" />
+                      <ChevronRight className="w-5 h-5" />
                     </button>
                   </>
                 )}
@@ -301,7 +295,7 @@ export default function CrystalProductDetailPage() {
                   disabled={isAddingToCart}
                   className="w-full bg-green-600 hover:bg-green-700 text-white py-4 px-6 rounded-lg font-semibold flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <ShoppingCartIcon className="w-5 h-5" />
+                  <ShoppingCart className="w-5 h-5" />
                   {isAddingToCart ? t('adding') : t('addToCart')}
                 </button>
 
@@ -311,12 +305,12 @@ export default function CrystalProductDetailPage() {
                 >
                   {isInFavorites ? (
                     <>
-                      <HeartSolidIcon className="w-5 h-5 text-red-500" />
+                      <Heart className="w-5 h-5 text-red-500" fill="currentColor" />
                       {t('removeFromWishlist')}
                     </>
                   ) : (
                     <>
-                      <HeartIcon className="w-5 h-5" />
+                      <Heart className="w-5 h-5" />
                       {t('addToWishlist')}
                     </>
                   )}

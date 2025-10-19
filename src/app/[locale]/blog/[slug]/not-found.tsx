@@ -1,14 +1,6 @@
 import { Link } from '@/i18n/navigation'
 import { Container, Typography } from '@/components/ui'
-
-// Simple SVG icon component
-function ArrowLeftIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-    </svg>
-  )
-}
+import { ArrowLeft } from 'lucide-react'
 
 export default function NotFound() {
   return (
@@ -41,7 +33,7 @@ export default function NotFound() {
               href="/blog"
               className="inline-flex items-center px-6 py-3 bg-[#006039] text-white hover:bg-[#004D2E] transition-colors duration-200 font-medium"
             >
-              <ArrowLeftIcon className="h-5 w-5 mr-2" />
+              <ArrowLeft className="h-5 w-5 mr-2" />
               <Typography
                 variant="body"
                               >

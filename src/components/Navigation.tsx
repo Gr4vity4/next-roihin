@@ -5,8 +5,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useCart } from '@/contexts/CartContext'
 import { Link, usePathname, useRouter } from '@/i18n/navigation'
 import { cn } from '@/lib/utils'
-import { ShoppingCartIcon } from '@heroicons/react/24/outline'
-import { ChevronDown, Menu, X } from 'lucide-react'
+import { ChevronDown, Menu, ShoppingCart, X } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import Image from 'next/image'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -217,7 +216,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                   href="/checkout"
                   className="relative p-2 text-white hover:text-gold transition-colors"
                 >
-                  <ShoppingCartIcon className="w-6 h-6" />
+                  <ShoppingCart className="w-6 h-6" />
                   {itemCount > 0 && (
                     <span className="absolute -top-1 -right-1 bg-white font-prompt text-black text-xs font-bold rounded-full min-w-[20px] h-5 px-1.5 flex items-center justify-center">
                       {itemCount > 99 ? '99+' : itemCount}
@@ -349,7 +348,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                   href="/checkout"
                   className="relative p-2 text-white hover:text-gold transition-colors"
                 >
-                  <ShoppingCartIcon className="w-6 h-6" />
+                  <ShoppingCart className="w-6 h-6" />
                   {itemCount > 0 && (
                     <span className="absolute -top-1 -right-1 bg-white font-prompt text-black text-xs font-bold rounded-full min-w-[20px] h-5 px-1.5 flex items-center justify-center">
                       {itemCount > 99 ? '99+' : itemCount}
@@ -532,7 +531,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
               href="/checkout"
               className="relative p-2 text-white hover:text-gold transition-colors"
             >
-              <ShoppingCartIcon className="w-6 h-6" />
+              <ShoppingCart className="w-6 h-6" />
               {itemCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-white font-prompt text-black text-xs font-bold rounded-full min-w-[20px] h-5 px-1.5 flex items-center justify-center">
                   {itemCount > 99 ? '99+' : itemCount}

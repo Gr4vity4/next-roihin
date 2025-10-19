@@ -1,7 +1,7 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 interface PaginationProps {
   currentPage: number
@@ -60,7 +60,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
         className="px-3 py-1 text-sm disabled:opacity-30 disabled:cursor-not-allowed hover:text-gold-500 transition-colors"
       >
         <span className="flex items-center gap-1">
-          <ChevronLeftIcon className="w-4 h-4" />
+          <ChevronLeft className="w-4 h-4" />
           <span className="hidden sm:inline">{t('previous')}</span>
         </span>
       </button>
@@ -96,7 +96,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange }: Pa
       >
         <span className="flex items-center gap-1">
           <span className="hidden sm:inline">{t('next')}</span>
-          <ChevronRightIcon className="w-4 h-4" />
+          <ChevronRight className="w-4 h-4" />
         </span>
       </button>
     </div>
