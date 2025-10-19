@@ -11,11 +11,15 @@ import {
   TestimonialsSection,
 } from '@/components/sections'
 import { content } from '@/config/content.config'
+import { getRecentPersonalizedDesigns } from '@/lib/api/gallery'
 // Configure route segment caching for home page (dynamic content with testimonials)
 // Revalidate every 5 minutes
 export const revalidate = 300
 
-export default function Home() {
+export default async function Home() {
+  // Fetch latest inspired gallery images from Laravel admin REST endpoint
+  const galleryImages = (await getRecentPersonalizedDesigns(10)).filter((url): url is string => Boolean(url))
+
   return (
     <FontProvider fonts={{ th: 'font-prompt', en: 'font-playfair' }}>
       <NavigationWithSuspense />
@@ -68,6 +72,7 @@ export default function Home() {
             { ...content.gallery.ctaButtons[0], translationKey: 'designByYourself' },
             { ...content.gallery.ctaButtons[1], translationKey: 'designByRoihin' },
           ]}
+          images={galleryImages}
         />
 
         {/* Vibrant Destiny Section */}

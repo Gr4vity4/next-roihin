@@ -21,17 +21,27 @@ interface GallerySectionProps {
   overlayOpacity?: number
   parallaxSpeed?: number
   className?: string
+  images?: string[]
 }
 
 export default function GallerySection({
   ctaButtons,
   className = '',
+  images = [],
 }: GallerySectionProps) {
   const t = useTranslations()
-  const productImages = Array.from({ length: 10 }, (_, i) => ({
+  const fallbackImages = Array.from({ length: 10 }, (_, i) => ({
     src: `/images/home-page/${i + 1}.png`,
     alt: `Product ${i + 1}`,
   }))
+
+  const productImages =
+    images.length > 0
+      ? images.map((src, index) => ({
+          src,
+          alt: `Inspired gallery design ${index + 1}`,
+        }))
+      : fallbackImages
 
   return (
     <section className={`py-16 bg-black ${className}`}>

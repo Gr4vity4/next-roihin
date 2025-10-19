@@ -84,7 +84,7 @@ export async function getRandomGalleryPhotos(count: number = 10): Promise<string
  * Get recent personalized bracelet designs from Laravel API
  * Uses the "inspired" gallery for recent designs
  * @param count Number of photos to select (default: 8)
- * @returns Array of randomly selected image URLs
+ * @returns Array of prioritized image URLs (sorted by sort order)
  */
 export async function getRecentPersonalizedDesigns(count: number = 8): Promise<string[]> {
   try {
@@ -109,27 +109,29 @@ export async function getRecentPersonalizedDesigns(count: number = 8): Promise<s
       return []
     }
 
-    // Extract image URLs from gallery images
-    if (validatedData.data.data.images && validatedData.data.data.images.length > 0) {
-      const allPhotos = validatedData.data.data.images.map(img => img.image_url)
+    const galleryImages = validatedData.data.data.images ?? []
 
-      // If we have fewer photos than requested, return all
-      if (allPhotos.length <= count) {
-        return [...allPhotos].sort(() => Math.random() - 0.5)
-      }
-
-      // Fisher-Yates shuffle algorithm for true randomization
-      const shuffled = [...allPhotos]
-      for (let i = shuffled.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]
-      }
-
-      // Return first 'count' items from shuffled array
-      return shuffled.slice(0, count)
+    if (galleryImages.length === 0) {
+      return []
     }
 
-    return []
+    // Sort images by admin-defined sort order (ascending). Missing sort_order go last.
+    const sortedByPriority = [...galleryImages].sort((a, b) => {
+      const aOrder = typeof a.sort_order === 'number' ? a.sort_order : Number.MAX_SAFE_INTEGER
+      const bOrder = typeof b.sort_order === 'number' ? b.sort_order : Number.MAX_SAFE_INTEGER
+      return aOrder - bOrder
+    })
+
+    const prioritizedUrls = sortedByPriority
+      .map(image => image.image_url)
+      .filter((url): url is string => Boolean(url))
+
+    if (prioritizedUrls.length === 0) {
+      return []
+    }
+
+    // Respect requested count while preserving priority order
+    return prioritizedUrls.slice(0, count)
   } catch (error) {
     console.error('Error fetching recent personalized designs:', error)
     return []
