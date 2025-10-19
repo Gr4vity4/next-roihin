@@ -16,7 +16,7 @@ export default function ThankYouContent() {
           {/* Success Header */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
-              <CircleCheck className="w-8 h-8 text-green-600" fill="currentColor" />
+              <CircleCheck className="w-8 h-8 text-green-600" strokeWidth={2.5} aria-hidden />
             </div>
             <Typography variant="h3" className="text-gray-900 mb-2">
               {t('success.title')}
