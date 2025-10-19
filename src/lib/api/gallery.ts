@@ -1,12 +1,12 @@
 import { getFetchConfig } from '@/config/cache.config'
 import { buildLaravelApiUrl } from '@/config/api.config'
-import { LaravelSingleGalleryResponseSchema } from '@/lib/types/laravel'
+import { LaravelSingleGalleryResponseSchema, type LaravelGalleryImage } from '@/lib/types/laravel'
 
 /**
- * Get personalized gallery photos from Laravel API
- * @returns Array of image URLs
+ * Get curated personalized gallery images from Laravel API
+ * @returns Array of gallery image objects
  */
-export async function getPersonalizedGallery(): Promise<string[]> {
+export async function getPersonalizedGalleryImages(): Promise<LaravelGalleryImage[]> {
   try {
     const url = buildLaravelApiUrl('galleries/personalized')
 
@@ -29,16 +29,27 @@ export async function getPersonalizedGallery(): Promise<string[]> {
       return []
     }
 
-    // Extract image URLs from gallery images
-    if (validatedData.data.data.images && validatedData.data.data.images.length > 0) {
-      return validatedData.data.data.images.map(img => img.image_url)
-    }
-
-    return []
+    return validatedData.data.data.images ?? []
   } catch (error) {
     console.error('Error fetching gallery photos:', error)
     return []
   }
+}
+
+/**
+ * Get personalized gallery photos from Laravel API
+ * @returns Array of image URLs
+ */
+export async function getPersonalizedGallery(): Promise<string[]> {
+  const images = await getPersonalizedGalleryImages()
+
+  if (images.length === 0) {
+    return []
+  }
+
+  return images
+    .map(image => image.image_url)
+    .filter((url): url is string => Boolean(url))
 }
 
 /**
