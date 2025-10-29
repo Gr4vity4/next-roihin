@@ -138,6 +138,7 @@ export default function CrystalPage() {
 
         setCrystals(result.crystals)
         setTotalPages(result.totalPages)
+        setCurrentPage((prev) => (prev === result.currentPage ? prev : result.currentPage))
       } catch (err) {
         console.error('Error fetching crystals:', err)
         setError('Failed to load crystals')

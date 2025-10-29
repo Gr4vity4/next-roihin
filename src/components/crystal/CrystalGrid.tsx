@@ -1,13 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
-export interface Crystal {
-  id: string
-  slug: string
-  nameEn: string
-  nameTh: string
-  image: string
-}
+import type { Crystal } from '@/lib/types/crystal'
 
 interface CrystalGridProps {
   crystals: Crystal[]
@@ -30,7 +24,7 @@ export default function CrystalGrid({ crystals, currentLocale }: CrystalGridProp
           >
             <Image
               src={crystal.image || '/images/logo.avif'}
-              alt={crystal.nameEn}
+              alt={crystal.title}
               fill
               className="object-cover group-hover:scale-110 transition-transform duration-300"
               sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
@@ -38,9 +32,11 @@ export default function CrystalGrid({ crystals, currentLocale }: CrystalGridProp
           </div>
           <div className="text-center space-y-0.5">
             <h3 className="text-sm md:text-base text-white font-light group-hover:text-gold-500 transition-colors">
-              {crystal.nameEn}
+              {crystal.title}
             </h3>
-            <p className="text-xs md:text-sm text-gray-400">{crystal.nameTh}</p>
+            {crystal.subtitle && (
+              <p className="text-xs md:text-sm text-gray-400">{crystal.subtitle}</p>
+            )}
           </div>
         </Link>
       ))}

@@ -1,39 +1,53 @@
 import Image from 'next/image'
 
-export interface CrystalProduct {
-  id: string
-  slug: string
-  nameEn: string
-  nameTh: string
-  image: string
-  properties: {
-    priceComplete: string
-    chakra: string[]
-    zodiacCompatibility: string[]
-    rulingPlanet: string
-    color: string[]
-  }
-  description: string[]
-  attributes: string
-}
+import type { CrystalProduct, CrystalSizePricing } from '@/lib/types/crystal'
 
 interface CrystalProductDetailProps {
   product: CrystalProduct
   locale: string
 }
 
+const SIZE_LABELS: Record<keyof CrystalSizePricing, string> = {
+  size6mm: '6 mm',
+  size8mm: '8 mm',
+  size10mm: '10 mm',
+  size12mm: '12 mm',
+}
+
+function DetailRow({ label, value }: { label: string; value?: string }) {
+  return (
+    <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
+      <div className="text-base md:text-lg lg:col-span-1 text-gray-900 font-medium">{label}</div>
+      <div className="text-base md:text-lg lg:col-span-2 text-gray-900">{value || '-'}</div>
+    </div>
+  )
+}
+
+function renderSizeEntries(sizePrices: CrystalSizePricing | undefined) {
+  if (!sizePrices) {
+    return []
+  }
+
+  return (Object.entries(sizePrices) as Array<[keyof CrystalSizePricing, string | undefined]>)
+    .filter(([, value]) => Boolean(value))
+    .map(([key, value]) => ({
+      label: SIZE_LABELS[key],
+      value: value as string,
+    }))
+}
+
 export default function CrystalProductDetail({ product }: CrystalProductDetailProps) {
+  const sizeEntries = renderSizeEntries(product.sizePrices)
+
   return (
     <section className="bg-white py-8 md:py-12">
       <div className="container max-w-5xl mx-auto px-4">
-        {/* Top Section - Image and Properties */}
         <div className="grid md:grid-cols-3 gap-4 md:gap-6 mb-4 md:mb-6">
-          {/* Left - Crystal Image */}
           <div className="p-6 md:p-8 flex items-start justify-center col-span-1">
             <div className="relative w-[250px] h-[250px] bg-white">
               <Image
-                src={product.image}
-                alt={product.nameEn}
+                src={product.image || '/images/logo.avif'}
+                alt={product.title}
                 fill
                 className="object-cover"
                 priority
@@ -42,83 +56,63 @@ export default function CrystalProductDetail({ product }: CrystalProductDetailPr
             </div>
           </div>
 
-          {/* Right - Name and Properties */}
           <div className="p-6 md:p-8 flex flex-col col-span-2">
-            {/* Product Name Section */}
             <div className="border-b border-gray-200 pb-6 mb-6">
               <h1 className="text-2xl md:text-3xl lg:text-4xl text-gray-900 mb-2 font-bold">
-                {product.nameEn}
+                {product.title}
               </h1>
-              <h2 className="text-lg md:text-xl lg:text-2xl text-gray-900">{product.nameTh}</h2>
+              {product.subtitle && (
+                <h2 className="text-lg md:text-xl lg:text-2xl text-gray-900">{product.subtitle}</h2>
+              )}
             </div>
 
-            {/* Properties Table */}
-            <div className="flex-1">
-              {/* Price Complete */}
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
-                <div className="text-base md:text-lg lg:col-span-1 text-gray-900 font-medium">
-                  ราคาพลังงาน
-                </div>
-                <div className="text-base md:text-lg lg:col-span-2 text-gray-900">
-                  {product.properties.priceComplete}
-                </div>
-              </div>
-
-              {/* Chakra */}
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
-                <div className="text-base md:text-lg lg:col-span-1 text-gray-900 font-medium">
-                  จักระ
-                </div>
-                <div className="text-base md:text-lg lg:col-span-2 text-gray-900">
-                  {product.properties.chakra.join(', ')}
-                </div>
-              </div>
-
-              {/* Zodiac Compatibility */}
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
-                <div className="text-base md:text-lg lg:col-span-1 text-gray-900 font-medium">
-                  สีคบา
-                </div>
-                <div className="text-base md:text-lg lg:col-span-2 text-gray-900">
-                  {product.properties.zodiacCompatibility.join(', ')}
-                </div>
-              </div>
-
-              {/* Ruling Planet */}
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
-                <div className="text-base md:text-lg lg:col-span-1 text-gray-900 font-medium">
-                  ดาวประจำสี
-                </div>
-                <div className="text-base md:text-lg lg:col-span-2 text-gray-900">
-                  {product.properties.rulingPlanet}
-                </div>
-              </div>
-
-              {/* Color */}
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-2">
-                <div className="text-base md:text-lg lg:col-span-1 text-gray-900 font-medium">
-                  สี
-                </div>
-                <div className="text-base md:text-lg lg:col-span-2 text-gray-900">
-                  {product.properties.color.join(', ')}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom Section - Full Width Description */}
-        <div className="p-6 md:p-8">
-          <div className="space-y-4">
-            {product.description.map((paragraph, index) => (
-              <div
-                key={index}
-                className="text-base md:text-lg text-gray-900 leading-relaxed"
-                dangerouslySetInnerHTML={{ __html: paragraph }}
+            <div className="flex-1 space-y-3">
+              <DetailRow label="ธาตุพลังงาน" value={product.story.energyElement} />
+              <DetailRow
+                label="จักระ"
+                value={product.story.connectedChakras?.join(', ')}
               />
-            ))}
+              <DetailRow
+                label="ราศีที่เกี่ยวข้อง"
+                value={product.story.ascendant?.join(', ')}
+              />
+              <DetailRow
+                label="ดาวประจำตัว"
+                value={product.story.starRelations?.join(', ')}
+              />
+              {product.category && <DetailRow label="หมวดหมู่" value={product.category} />}
+            </div>
+
+            {sizeEntries.length > 0 && (
+              <div className="mt-6">
+                <h3 className="text-base md:text-lg text-gray-900 font-medium mb-2">ราคาตามขนาด</h3>
+                <div className="grid grid-cols-2 gap-2">
+                  {sizeEntries.map(({ label, value }) => (
+                    <div
+                      key={label}
+                      className="flex items-center justify-between rounded border border-gray-200 px-3 py-2"
+                    >
+                      <span className="text-sm text-gray-600">{label}</span>
+                      <span className="text-sm text-gray-900">{value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
+
+        {product.description.length > 0 && (
+          <div className="p-6 md:p-8">
+            <div className="space-y-4">
+              {product.description.map((paragraph, index) => (
+                <p key={index} className="text-base md:text-lg text-gray-900 leading-relaxed">
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </section>
   )

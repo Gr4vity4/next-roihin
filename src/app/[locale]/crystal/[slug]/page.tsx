@@ -156,13 +156,13 @@ export default function CrystalProductPage() {
         <CrystalProductDetail product={product} locale={locale} />
 
         <CrystalRelatedProducts
-          crystalName={locale === 'th' ? product.nameTh : product.nameEn}
+          crystalName={product.title}
           products={MOCK_RELATED_PRODUCTS}
           locale={locale}
         />
 
         <CrystalFAQ
-          crystalName={locale === 'th' ? product.nameTh : product.nameEn}
+          crystalName={product.title}
           product={product}
           locale={locale}
         />

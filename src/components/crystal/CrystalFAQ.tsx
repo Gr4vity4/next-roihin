@@ -19,7 +19,7 @@ export default function CrystalFAQ({ crystalName, product, locale }: CrystalFAQP
         <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6">
           {/* View All Products Link */}
           <Link
-            href={`/${locale}/products/crystal/${product.nameEn.toLocaleLowerCase()}`}
+            href={`/${locale}/products/crystal/${product.slug}`}
             className="px-6 py-3 text-sm md:text-base text-gray-900 border border-gray-300 hover:border-gray-900 hover:bg-gray-50 transition-all"
           >
             {t('viewAllProducts', { crystalName })}
