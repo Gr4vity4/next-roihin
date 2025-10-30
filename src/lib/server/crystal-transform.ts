@@ -7,20 +7,27 @@ import type {
   CrystalStory,
 } from '@/lib/types/crystal'
 
-interface RawStoneRecord {
-  [key: string]: unknown
+type RawCrystalRecord = Record<string, unknown>
+
+interface NormalizedCrystalRecord {
+  id: string
+  slug: string
+  title: string
+  subtitle?: string
+  category?: string
+  image: string
+  previewImage?: string
+  locale: CrystalLocale
+  story: CrystalStory
+  sizePrices: CrystalSizePricing
+  description: string[]
 }
 
-interface NormalizedStone {
-  id: number
-  title: string
-  subtitle: string
-  description: string
-  story: CrystalStory
-  category: string
-  stoneImage: string
-  previewImage: string
-  sizePrices: CrystalSizePricing
+interface CrystalTranslationBlock {
+  name?: string
+  chakra?: string
+  ruling_star?: string
+  description?: string
 }
 
 const ASSET_KEYS = ['url', 'full_url', 'fullUrl', 'original_url', 'originalUrl', 'path', 'storage_path']
@@ -134,35 +141,30 @@ function extractAssetUrl(source: unknown): string {
   return ''
 }
 
-function splitList(value: unknown): string[] {
-  if (typeof value !== 'string') {
+function normalizeList(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    return value
+      .map((item) => toString(item))
+      .map((item) => item.trim())
+      .filter((item) => item.length > 0)
+  }
+
+  const stringValue = toString(value)
+  if (!stringValue) {
     return []
   }
 
-  return value
+  return stringValue
     .split(/[\n\r,;、|\/]+/u)
     .map((item) => item.trim())
     .filter((item) => item.length > 0)
 }
 
-function normalizeStory(raw: unknown): CrystalStory {
-  if (typeof raw !== 'object' || raw === null) {
-    return {
-      energyElement: '',
-      connectedChakras: [],
-      ascendant: [],
-      starRelations: [],
-    }
-  }
-
-  const record = raw as Record<string, unknown>
-
-  return {
-    energyElement: toString(record.energy_element ?? record.energyElement ?? record.element),
-    connectedChakras: splitList(record.connected_chakras ?? record.connectedChakras ?? record.chakras),
-    ascendant: splitList(record.ascendant ?? record.ascendant_sign ?? record.ascendantSign),
-    starRelations: splitList(record.star_relations ?? record.starRelations ?? record.star_relation),
-  }
+function splitParagraphs(value: string): string[] {
+  return value
+    .split(/\r?\n\r?\n+/)
+    .map((paragraph) => paragraph.trim())
+    .filter((paragraph) => paragraph.length > 0)
 }
 
 function normalizeSizePrices(raw: unknown): CrystalSizePricing {
@@ -204,158 +206,175 @@ function normalizeSizePrices(raw: unknown): CrystalSizePricing {
   }
 }
 
-function normalizeStone(raw: unknown): NormalizedStone | null {
+function selectTranslation(
+  translations: unknown,
+  locale: CrystalLocale,
+): { data: CrystalTranslationBlock; fallback: CrystalTranslationBlock } {
+  if (typeof translations !== 'object' || translations === null) {
+    return { data: {}, fallback: {} }
+  }
+
+  const record = translations as Record<string, unknown>
+  const primary = record[locale]
+
+  const oppositeLocale: CrystalLocale = locale === 'th' ? 'en' : 'th'
+  const secondary = record[oppositeLocale] ?? record.en ?? record.th
+
+  const toBlock = (input: unknown): CrystalTranslationBlock => {
+    if (typeof input !== 'object' || input === null) {
+      return {}
+    }
+
+    const block = input as Record<string, unknown>
+
+    return {
+      name: toString(block.name ?? block.title),
+      chakra: toString(block.chakra),
+      ruling_star: toString(block.ruling_star ?? block.rulingStar),
+      description: toString(block.description),
+    }
+  }
+
+  return {
+    data: toBlock(primary),
+    fallback: toBlock(secondary),
+  }
+}
+
+function humanizeSlug(value: string): string {
+  return value
+    .replace(/[-_]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/^./, (char) => char.toUpperCase())
+}
+
+function normalizeCrystalRecord(raw: unknown, locale: CrystalLocale): NormalizedCrystalRecord | null {
   if (typeof raw !== 'object' || raw === null) {
     return null
   }
 
-  const record = raw as RawStoneRecord
-  const id = toNumber(record.id)
+  const record = raw as RawCrystalRecord
 
-  if (id === null) {
+  const idNumber = toNumber(record.id)
+  if (idNumber === null) {
     return null
   }
 
-  const title =
-    toString(record.title ?? record.name ?? record.slug) || `Crystal ${id}`
+  const slug = toString(record.slug) || `crystal-${idNumber}`
 
-  const subtitle = toString(record.sub_title ?? record.subtitle ?? record.subTitle)
-  const description = toString(record.description ?? '')
-  const story = normalizeStory(
-    record.story ?? record.story_json ?? record.storyJson ?? record.story_data,
+  const { data: translation, fallback } = selectTranslation(record.translations, locale)
+
+  const titleCandidate = translation.name || fallback.name || toString(record.name)
+  const title = titleCandidate || humanizeSlug(slug) || `Crystal ${idNumber}`
+
+  const chakraValues = normalizeList(record.chakra ?? translation.chakra ?? fallback.chakra)
+  const ascendantValues = normalizeList(
+    record.ascendant ?? record.ascendant_sign ?? record.ascendantSign ?? record.ascendant_zodiac,
+  )
+  const zodiacValues = normalizeList(record.zodiac_signs ?? record.zodiacSigns)
+  const resolvedAscendant = ascendantValues.length > 0 ? ascendantValues : zodiacValues
+
+  const rulingStarValues = normalizeList(
+    record.ruling_star ?? record.rulingStar ?? translation.ruling_star ?? fallback.ruling_star,
   )
 
-  const category = toString(record.category ?? '')
+  const energyValues = normalizeList(record.energy_element ?? record.energyElement)
+  const energyElement = energyValues.join(', ')
 
-  const primaryImage = extractAssetUrl(record.preview_image ?? record.previewImage)
-  const fallbackImage = extractAssetUrl(record.stone_image ?? record.crystal_image)
+  const toneColorValues = normalizeList(record.tone_colors ?? record.toneColors)
 
-  const previewImage = primaryImage || fallbackImage
-  const stoneImage = fallbackImage || primaryImage
+  const coverImage =
+    extractAssetUrl(record.cover_image_url ?? record.cover_image ?? record.coverImage) || ''
+  const crystalImage =
+    extractAssetUrl(record.crystal_image_url ?? record.crystal_image ?? record.crystalImage) || ''
+
+  const primaryImage = crystalImage || coverImage
+  const previewImage = coverImage || crystalImage
+
+  const descriptionSource = translation.description || fallback.description || toString(record.description)
+
+  const story: CrystalStory = {
+    energyElement,
+    connectedChakras: chakraValues,
+    ascendant: resolvedAscendant,
+    starRelations: rulingStarValues,
+  }
+
+  const category = toString(record.category ?? '') || undefined
+  const subtitle = chakraValues[0] || toneColorValues[0] || undefined
 
   const sizePrices = normalizeSizePrices(record.size_prices ?? record.sizePrices)
 
   return {
-    id,
+    id: String(idNumber),
+    slug,
     title,
     subtitle,
-    description,
-    story,
     category,
-    stoneImage,
-    previewImage,
+    image: primaryImage,
+    previewImage: previewImage || undefined,
+    locale,
+    story,
     sizePrices,
+    description: splitParagraphs(descriptionSource),
   }
 }
 
-export function normalizeStoneCollection(payload: unknown): NormalizedStone[] {
-  const collections: unknown[] = []
+export function normalizeCrystalCollection(
+  payload: unknown,
+  locale: CrystalLocale,
+): NormalizedCrystalRecord[] {
+  const items: unknown[] = []
 
   if (Array.isArray(payload)) {
-    collections.push(...payload)
+    items.push(...payload)
   } else if (payload && typeof payload === 'object') {
     const root = payload as Record<string, unknown>
     if (Array.isArray(root.data)) {
-      collections.push(...root.data)
-    } else if (
-      root.data &&
-      typeof root.data === 'object' &&
-      Array.isArray((root.data as Record<string, unknown>).data)
-    ) {
-      collections.push(...((root.data as Record<string, unknown>).data as unknown[]))
+      items.push(...root.data)
     }
   }
 
-  return collections
-    .map((item) => normalizeStone(item))
-    .filter((item): item is NormalizedStone => item !== null)
+  return items
+    .map((item) => normalizeCrystalRecord(item, locale))
+    .filter((item): item is NormalizedCrystalRecord => item !== null)
 }
 
-export function normalizeSingleStone(payload: unknown): NormalizedStone | null {
+export function normalizeSingleCrystal(
+  payload: unknown,
+  locale: CrystalLocale,
+): NormalizedCrystalRecord | null {
   if (payload && typeof payload === 'object') {
     const root = payload as Record<string, unknown>
     if (root.data) {
-      return normalizeStone(root.data)
+      return normalizeCrystalRecord(root.data, locale)
     }
   }
 
-  return normalizeStone(payload)
+  return normalizeCrystalRecord(payload, locale)
 }
 
-function splitParagraphs(value: string): string[] {
-  return value
-    .split(/\r?\n\r?\n+/)
-    .map((paragraph) => paragraph.trim())
-    .filter((paragraph) => paragraph.length > 0)
-}
-
-function slugify(value: string): string {
-  const normalized = value
-    .toLowerCase()
-    .normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^\p{Letter}\p{Number}]+/gu, '-')
-    .replace(/^-+|-+$/g, '')
-    .replace(/-{2,}/g, '-')
-
-  return normalized || 'crystal'
-}
-
-export function createCrystalSlug(title: string, id: number): string {
-  return `${slugify(title)}-${id}`
-}
-
-export function extractIdFromSlug(slug: string): number | null {
-  if (!slug) {
-    return null
-  }
-
-  const match = slug.match(/-(\d+)$/)
-  if (match) {
-    return Number(match[1])
-  }
-
-  if (/^\d+$/.test(slug)) {
-    return Number(slug)
-  }
-
-  return null
-}
-
-export function stoneToCrystal(stone: NormalizedStone, locale: CrystalLocale): Crystal {
-  const slug = createCrystalSlug(stone.title || stone.subtitle || `crystal-${stone.id}`, stone.id)
-
+export function crystalRecordToListItem(crystal: NormalizedCrystalRecord): Crystal {
   return {
-    id: String(stone.id),
-    slug,
-    title: stone.title || `Crystal ${stone.id}`,
-    subtitle: stone.subtitle || undefined,
-    image: stone.previewImage || stone.stoneImage || '',
-    previewImage: stone.previewImage || stone.stoneImage || undefined,
-    category: stone.category || undefined,
-    locale,
-    story: stone.story,
-    sizePrices: stone.sizePrices,
+    id: crystal.id,
+    slug: crystal.slug,
+    title: crystal.title,
+    subtitle: crystal.subtitle,
+    image: crystal.image,
+    previewImage: crystal.previewImage,
+    category: crystal.category,
+    locale: crystal.locale,
+    story: crystal.story,
+    sizePrices: Object.keys(crystal.sizePrices).length > 0 ? crystal.sizePrices : undefined,
   }
 }
 
-export function stoneToCrystalProduct(
-  stone: NormalizedStone,
-  locale: CrystalLocale,
-  slugOverride?: string,
-): CrystalProduct {
-  const base = stoneToCrystal(stone, locale)
-
+export function crystalRecordToProduct(crystal: NormalizedCrystalRecord): CrystalProduct {
   return {
-    ...base,
-    slug: slugOverride ?? base.slug,
-    story: stone.story,
-    sizePrices: {
-      size6mm: stone.sizePrices.size6mm,
-      size8mm: stone.sizePrices.size8mm,
-      size10mm: stone.sizePrices.size10mm,
-      size12mm: stone.sizePrices.size12mm,
-    },
-    description: splitParagraphs(stone.description),
+    ...crystalRecordToListItem(crystal),
+    story: crystal.story,
+    sizePrices: crystal.sizePrices,
+    description: crystal.description,
   }
 }

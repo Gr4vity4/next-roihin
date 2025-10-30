@@ -3,15 +3,25 @@ import { NextRequest, NextResponse } from 'next/server'
 import { buildLaravelApiUrl } from '@/config/api.config'
 import { getCacheHeaders, getFetchConfig } from '@/config/cache.config'
 import {
-  extractIdFromSlug,
-  normalizeSingleStone,
-  stoneToCrystalProduct,
+  crystalRecordToProduct,
+  normalizeSingleCrystal,
 } from '@/lib/server/crystal-transform'
 import type { CrystalLocale } from '@/lib/types/crystal'
 import { getErrorMessage } from '@/lib/utils/error-handler'
 
 function parseLocale(value: string | null): CrystalLocale {
   return value === 'th' ? 'th' : 'en'
+}
+
+function resolveResponseLocale(payload: unknown, fallback: CrystalLocale): CrystalLocale {
+  if (payload && typeof payload === 'object') {
+    const meta = (payload as { meta?: { locale?: unknown } }).meta
+    if (meta && typeof meta.locale === 'string') {
+      return parseLocale(meta.locale)
+    }
+  }
+
+  return fallback
 }
 
 interface RouteParams {
@@ -25,18 +35,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   const searchParams = request.nextUrl.searchParams
   const locale = parseLocale(searchParams.get('lang') || searchParams.get('locale'))
 
-  const crystalId = extractIdFromSlug(slug)
-  if (!crystalId) {
-    return NextResponse.json(
-      { error: 'Invalid crystal identifier' },
-      { status: 400, headers: getCacheHeaders() },
-    )
-  }
-
   try {
-    const url = buildLaravelApiUrl(`/stones/${crystalId}`, {
+    const url = buildLaravelApiUrl(`/crystals/${slug}`, {
       locale,
-      lang: locale,
     })
 
     const response = await fetch(url, getFetchConfig('api'))
@@ -53,16 +54,18 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     }
 
     const payload = await response.json()
-    const stone = normalizeSingleStone(payload)
 
-    if (!stone) {
+    const resolvedLocale = resolveResponseLocale(payload, locale)
+    const crystal = normalizeSingleCrystal(payload, resolvedLocale)
+
+    if (!crystal) {
       return NextResponse.json(
         { crystal: null },
         { status: 404, headers: getCacheHeaders() },
       )
     }
 
-    const product = stoneToCrystalProduct(stone, locale, slug)
+    const product = crystalRecordToProduct(crystal)
 
     return NextResponse.json(
       { crystal: product },

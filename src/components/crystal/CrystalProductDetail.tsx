@@ -44,7 +44,7 @@ export default function CrystalProductDetail({ product }: CrystalProductDetailPr
       <div className="container max-w-5xl mx-auto px-4">
         <div className="grid md:grid-cols-3 gap-4 md:gap-6 mb-4 md:mb-6">
           <div className="p-6 md:p-8 flex items-start justify-center col-span-1">
-            <div className="relative w-[250px] h-[250px] bg-white">
+            <div className="relative w-[250px] h-[250px] bg-gray-500">
               <Image
                 src={product.image || '/images/logo.avif'}
                 alt={product.title}
@@ -73,11 +73,11 @@ export default function CrystalProductDetail({ product }: CrystalProductDetailPr
                 value={product.story.connectedChakras?.join(', ')}
               />
               <DetailRow
-                label="ราศีที่เกี่ยวข้อง"
+                label="ลัคนา"
                 value={product.story.ascendant?.join(', ')}
               />
               <DetailRow
-                label="ดาวประจำตัว"
+                label="ดาวประจำ"
                 value={product.story.starRelations?.join(', ')}
               />
               {product.category && <DetailRow label="หมวดหมู่" value={product.category} />}

@@ -3,10 +3,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { buildLaravelApiUrl } from '@/config/api.config'
 import { getCacheHeaders, getFetchConfig } from '@/config/cache.config'
 import {
-  normalizeStoneCollection,
-  stoneToCrystal,
+  crystalRecordToListItem,
+  normalizeCrystalCollection,
 } from '@/lib/server/crystal-transform'
-import type { Crystal, CrystalLocale } from '@/lib/types/crystal'
+import type { CrystalLocale } from '@/lib/types/crystal'
 import { getErrorMessage } from '@/lib/utils/error-handler'
 
 const DEFAULT_PER_PAGE = 20
@@ -28,106 +28,172 @@ function parsePositiveInteger(value: string | null, fallback: number): number {
   return Math.floor(parsed)
 }
 
-function matchesSearch(crystal: Crystal, query: string): boolean {
-  const haystack = [
-    crystal.title,
-    crystal.subtitle,
-    crystal.category,
-    ...(crystal.story?.connectedChakras ?? []),
-    ...(crystal.story?.ascendant ?? []),
-    crystal.story?.energyElement,
-    ...(crystal.story?.starRelations ?? []),
-  ]
+function resolveResponseLocale(payload: unknown, fallback: CrystalLocale): CrystalLocale {
+  if (payload && typeof payload === 'object') {
+    const meta = (payload as { meta?: { locale?: unknown } }).meta
+    if (meta && typeof meta.locale === 'string') {
+      return parseLocale(meta.locale)
+    }
+  }
 
-  return haystack.some((value) => (value || '').toLowerCase().includes(query))
+  return fallback
 }
 
-function applyElementFilter(crystals: Crystal[], filterValue: string | null): Crystal[] {
-  if (!filterValue) {
-    return crystals
-  }
+function collectMultiValueParam(params: URLSearchParams, keys: string[]): string | undefined {
+  const values = new Set<string>()
 
-  const requestedElements = filterValue
-    .split(',')
-    .map((value) => value.trim().toLowerCase())
-    .filter((value) => value.length > 0)
-
-  if (requestedElements.length === 0) {
-    return crystals
-  }
-
-  return crystals.filter((crystal) => {
-    const element = crystal.story?.energyElement?.toLowerCase() ?? ''
-    if (!element) {
-      return false
+  keys.forEach((key) => {
+    const direct = params.get(key)
+    if (direct) {
+      direct
+        .split(',')
+        .map((value) => value.trim())
+        .filter((value) => value.length > 0)
+        .forEach((value) => values.add(value))
     }
 
-    return requestedElements.some((requested) => element.includes(requested))
+    params
+      .getAll(key)
+      .map((value) => value.trim())
+      .filter((value) => value.length > 0)
+      .forEach((value) => values.add(value))
+
+    const arrayKey = key.endsWith('[]') ? key : `${key}[]`
+    params
+      .getAll(arrayKey)
+      .map((value) => value.trim())
+      .filter((value) => value.length > 0)
+      .forEach((value) => values.add(value))
   })
+
+  if (values.size === 0) {
+    return undefined
+  }
+
+  return Array.from(values).join(',')
 }
 
-function applyZodiacFilter(crystals: Crystal[], filterValue: string | null): Crystal[] {
-  if (!filterValue) {
-    return crystals
+function buildBackendQuery(
+  searchParams: URLSearchParams,
+  baseLocale: CrystalLocale,
+  perPage: number,
+  page: number,
+): Record<string, string> {
+  let locale = baseLocale
+
+  const query: Record<string, string> = {
+    locale,
+    lang: locale,
+    per_page: String(perPage),
+    page: String(page),
   }
 
-  const requestedZodiacs = filterValue
-    .split(',')
-    .map((value) => value.trim().toLowerCase())
-    .filter((value) => value.length > 0)
-
-  if (requestedZodiacs.length === 0) {
-    return crystals
+  const search = searchParams.get('search')
+  if (search) {
+    query.search = search
   }
 
-  return crystals.filter((crystal) => {
-    const ascendant = crystal.story?.ascendant ?? []
-    if (ascendant.length === 0) {
-      return false
-    }
+  const toneColors = collectMultiValueParam(searchParams, [
+    'tone_colors',
+    'toneColors',
+    'color_filter',
+    'colorFilter',
+    'colors',
+  ])
+  if (toneColors) {
+    query.tone_colors = toneColors
+    query.colors = toneColors
+  }
 
-    const normalizedAscendant = ascendant.map((value) => value.toLowerCase())
-    return requestedZodiacs.some((requested) =>
-      normalizedAscendant.some((candidate) => candidate.includes(requested)),
-    )
-  })
+  const energyPurposes = collectMultiValueParam(searchParams, [
+    'energy_purposes',
+    'energyProperties',
+    'energy_properties',
+  ])
+  if (energyPurposes) {
+    query.energy_purposes = energyPurposes
+  }
+
+  const energyElements = collectMultiValueParam(searchParams, [
+    'energy_elements',
+    'element_type',
+    'elementType',
+  ])
+  if (energyElements) {
+    query.energy_elements = energyElements
+  }
+
+  const zodiacSigns = collectMultiValueParam(searchParams, ['zodiac_signs', 'zodiacSigns'])
+  if (zodiacSigns) {
+    query.zodiac_signs = zodiacSigns
+  }
+
+  const zodiacGroups = collectMultiValueParam(searchParams, ['primary_zodiac_groups', 'primaryZodiacGroups'])
+  if (zodiacGroups) {
+    query.primary_zodiac_groups = zodiacGroups
+  }
+
+  const localeOverride = searchParams.get('locale')
+  if (localeOverride) {
+    locale = parseLocale(localeOverride)
+    query.locale = locale
+    query.lang = locale
+  }
+
+  const pageOverride = searchParams.get('page')
+  if (pageOverride) {
+    query.page = String(parsePositiveInteger(pageOverride, page))
+  }
+
+  const perPageOverride = searchParams.get('per_page')
+  if (perPageOverride) {
+    query.per_page = String(parsePositiveInteger(perPageOverride, perPage))
+  }
+
+  const category = searchParams.get('category')
+  if (category) {
+    query.category = category
+  }
+
+  return query
 }
 
-function applySearchFilter(crystals: Crystal[], query: string | null): Crystal[] {
-  if (!query) {
-    return crystals
+function parsePagination(payload: unknown) {
+  if (!payload || typeof payload !== 'object') {
+    return null
   }
 
-  const normalizedQuery = query.trim().toLowerCase()
-  if (!normalizedQuery) {
-    return crystals
+  const pagination = (payload as { meta?: { pagination?: Record<string, unknown> } }).meta?.pagination
+  if (!pagination || typeof pagination !== 'object') {
+    return null
   }
 
-  return crystals.filter((crystal) => matchesSearch(crystal, normalizedQuery))
+  const record = pagination as Record<string, unknown>
+
+  const toNumberOrUndefined = (value: unknown) => {
+    const parsed = Number(value)
+    return Number.isFinite(parsed) ? parsed : undefined
+  }
+
+  return {
+    total: toNumberOrUndefined(record.total),
+    perPage: toNumberOrUndefined(record.per_page ?? record.perPage),
+    currentPage: toNumberOrUndefined(record.current_page ?? record.currentPage),
+    lastPage: toNumberOrUndefined(record.last_page ?? record.lastPage),
+  }
 }
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
-  const locale = parseLocale(searchParams.get('lang') || searchParams.get('locale'))
-  const page = parsePositiveInteger(searchParams.get('page'), 1)
-  const perPage = parsePositiveInteger(searchParams.get('per_page'), DEFAULT_PER_PAGE)
-  const searchQuery = searchParams.get('search')
-  const elementFilter = searchParams.get('element_type')
-  const zodiacFilter = searchParams.get('zodiac_signs')
+  const requestedLocale = parseLocale(searchParams.get('lang') || searchParams.get('locale'))
+  const requestedPage = parsePositiveInteger(searchParams.get('page'), 1)
+  const requestedPerPage = parsePositiveInteger(searchParams.get('per_page'), DEFAULT_PER_PAGE)
 
   try {
-    const queryParams: Record<string, string> = {
-      locale,
-      lang: locale,
-      per_page: '100',
-    }
-
-    const category = searchParams.get('category')
-    if (category) {
-      queryParams.category = category
-    }
-
-    const url = buildLaravelApiUrl('/stones', queryParams)
+    const url = buildLaravelApiUrl(
+      '/crystals',
+      buildBackendQuery(searchParams, requestedLocale, requestedPerPage, requestedPage),
+    )
 
     const response = await fetch(url, getFetchConfig('api'))
 
@@ -136,22 +202,19 @@ export async function GET(request: NextRequest) {
     }
 
     const payload = await response.json()
-    const stones = normalizeStoneCollection(payload)
-    const crystals = stones.map((stone) => stoneToCrystal(stone, locale))
+    const responseLocale = resolveResponseLocale(payload, requestedLocale)
+    const normalizedRecords = normalizeCrystalCollection(payload, responseLocale)
+    const crystals = normalizedRecords.map((record) => crystalRecordToListItem(record))
 
-    let filtered = applySearchFilter(crystals, searchQuery)
-    filtered = applyElementFilter(filtered, elementFilter)
-    filtered = applyZodiacFilter(filtered, zodiacFilter)
+    const pagination = parsePagination(payload)
 
-    const totalItems = filtered.length
-    const totalPages = Math.max(1, Math.ceil(totalItems / perPage))
-    const currentPage = Math.min(page, totalPages)
-    const startIndex = (currentPage - 1) * perPage
-    const paginated = filtered.slice(startIndex, startIndex + perPage)
+    const totalItems = pagination?.total ?? crystals.length
+    const totalPages = pagination?.lastPage ?? Math.max(1, Math.ceil(totalItems / requestedPerPage))
+    const currentPage = pagination?.currentPage ?? requestedPage
 
     return NextResponse.json(
       {
-        crystals: paginated,
+        crystals,
         totalPages,
         currentPage,
         totalItems,
