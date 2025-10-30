@@ -17,6 +17,8 @@ interface NormalizedCrystalRecord {
   category?: string
   image: string
   previewImage?: string
+  color?: string
+  toneColors?: string[]
   locale: CrystalLocale
   story: CrystalStory
   sizePrices: CrystalSizePricing
@@ -284,6 +286,10 @@ function normalizeCrystalRecord(raw: unknown, locale: CrystalLocale): Normalized
 
   const toneColorValues = normalizeList(record.tone_colors ?? record.toneColors)
 
+  const color =
+    toString(record.color ?? record.primary_color ?? record.primaryColor ?? toneColorValues[0]) ||
+    undefined
+
   const coverImage =
     extractAssetUrl(record.cover_image_url ?? record.cover_image ?? record.coverImage) || ''
   const crystalImage =
@@ -314,6 +320,8 @@ function normalizeCrystalRecord(raw: unknown, locale: CrystalLocale): Normalized
     category,
     image: primaryImage,
     previewImage: previewImage || undefined,
+    color,
+    toneColors: toneColorValues.length > 0 ? toneColorValues : undefined,
     locale,
     story,
     sizePrices,
@@ -364,6 +372,8 @@ export function crystalRecordToListItem(crystal: NormalizedCrystalRecord): Cryst
     image: crystal.image,
     previewImage: crystal.previewImage,
     category: crystal.category,
+    color: crystal.color,
+    toneColors: crystal.toneColors,
     locale: crystal.locale,
     story: crystal.story,
     sizePrices: Object.keys(crystal.sizePrices).length > 0 ? crystal.sizePrices : undefined,

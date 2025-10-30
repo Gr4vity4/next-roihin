@@ -27,6 +27,8 @@ export interface Crystal {
   image: string
   previewImage?: string
   category?: string
+  color?: string
+  toneColors?: string[]
   locale: CrystalLocale
   story?: CrystalStory
   sizePrices?: CrystalSizePricing

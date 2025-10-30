@@ -38,6 +38,7 @@ function renderSizeEntries(sizePrices: CrystalSizePricing | undefined) {
 
 export default function CrystalProductDetail({ product }: CrystalProductDetailProps) {
   const sizeEntries = renderSizeEntries(product.sizePrices)
+  const colorDisplay = product.color || product.toneColors?.join(', ')
 
   return (
     <section className="bg-white py-8 md:py-12">
@@ -79,6 +80,10 @@ export default function CrystalProductDetail({ product }: CrystalProductDetailPr
               <DetailRow
                 label="ดาวประจำ"
                 value={product.story.starRelations?.join(', ')}
+              />
+              <DetailRow
+                label="สี"
+                value={colorDisplay}
               />
               {product.category && <DetailRow label="หมวดหมู่" value={product.category} />}
             </div>
