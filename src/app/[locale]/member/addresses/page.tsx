@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
 import Button from '@/components/Button'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { useTranslations } from 'next-intl'
+import { useCallback, useEffect, useState } from 'react'
 
 interface Address {
   id: string
@@ -199,7 +199,7 @@ export default function AddressesPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto pt-8">
+    <div className="max-w-7xl mx-auto pt-8 font-prompt">
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('title')}</h1>

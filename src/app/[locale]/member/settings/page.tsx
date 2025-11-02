@@ -1,12 +1,6 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import Button from '@/components/Button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { useTranslations } from 'next-intl'
-import { Eye, EyeOff } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -16,6 +10,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Eye, EyeOff } from 'lucide-react'
+import { useTranslations } from 'next-intl'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 
 export default function SettingsPage() {
   const t = useTranslations('member.settings')
@@ -91,7 +91,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto pt-8">
+    <div className="max-w-4xl mx-auto pt-8 font-prompt">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('title')}</h1>
         <p className="text-gray-600">{t('subtitle')}</p>

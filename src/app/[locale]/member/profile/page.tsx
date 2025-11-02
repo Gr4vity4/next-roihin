@@ -5,10 +5,11 @@ import 'air-datepicker/air-datepicker.css'
 import Button from '@/components/Button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { useEffect, useState, useCallback, useRef } from 'react'
-import { useLocale, useTranslations } from 'next-intl'
-import type AirDatepicker, { AirDatepickerLocale } from 'air-datepicker'
 import type { ProfileData } from '@/lib/api/profile'
+import type AirDatepicker from 'air-datepicker'
+import type { AirDatepickerLocale } from 'air-datepicker'
+import { useLocale, useTranslations } from 'next-intl'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 type SupportedLocale = 'th' | 'en'
 
@@ -320,7 +321,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto pt-8">
+    <div className="max-w-4xl mx-auto pt-8 font-prompt">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('title')}</h1>
         <p className="text-gray-600">{t('subtitle')}</p>

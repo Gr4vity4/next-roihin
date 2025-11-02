@@ -1,14 +1,14 @@
 'use client'
 
-import { Link } from '@/i18n/navigation'
-import Image from 'next/image'
 import Button from '@/components/Button'
-import { useWishlist } from '@/contexts/WishlistContext'
 import { useCart } from '@/contexts/CartContext'
-import { useState, useEffect } from 'react'
-import { useTranslations } from 'next-intl'
-import { getProductImageUrl } from '@/lib/utils/image-helper'
+import { useWishlist } from '@/contexts/WishlistContext'
+import { Link } from '@/i18n/navigation'
 import type { WishlistItem } from '@/lib/types/wishlist'
+import { getProductImageUrl } from '@/lib/utils/image-helper'
+import { useTranslations } from 'next-intl'
+import Image from 'next/image'
+import { useEffect, useState } from 'react'
 
 const parseColorOptionId = (value: unknown): number | null => {
   if (typeof value === 'number') {
@@ -179,7 +179,7 @@ export default function WishlistPage() {
 
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto pt-8">
+      <div className="max-w-7xl mx-auto pt-8 font-prompt">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('title')}</h1>
           <p className="text-gray-600">{t('loading')}</p>
