@@ -6,19 +6,11 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
 
-export interface RelatedCrystalProduct {
-  id: string
-  slug: string
-  nameEn: string
-  nameTh: string
-  image: string
-  price: number
-  originalPrice: number
-}
+import type { Product } from '@/lib/types/products'
 
 interface CrystalRelatedProductsProps {
   crystalName: string
-  products: RelatedCrystalProduct[]
+  products: Product[]
   locale: string
 }
 
@@ -28,6 +20,10 @@ export default function CrystalRelatedProducts({
   locale,
 }: CrystalRelatedProductsProps) {
   const t = useTranslations('crystalProduct')
+
+  if (!products.length) {
+    return null
+  }
 
   return (
     <section className="bg-white py-12 md:py-16 border-t border-gray-200">
@@ -48,10 +44,22 @@ export default function CrystalRelatedProducts({
   )
 }
 
-function ProductCard({ product, locale }: { product: RelatedCrystalProduct; locale: string }) {
+function ProductCard({ product, locale }: { product: Product; locale: string }) {
   const [isWishlisted, setIsWishlisted] = useState(false)
   const t = useTranslations('crystalProduct.actions')
-  const mockupSlug = 'apatite-ring-1'
+  const priceOption =
+    product.acf?.color_prices?.find((option) => option.available) ??
+    product.acf?.color_prices?.[0]
+  const price = typeof priceOption?.price === 'number' ? priceOption.price : null
+  const priceLabel =
+    price !== null
+      ? `฿${price.toLocaleString(locale === 'th' ? 'th-TH' : 'en-US')}`
+      : null
+  const imageSrc =
+    product.featured_image_url ||
+    product.gallery_urls?.[0] ||
+    '/images/placeholder.jpg'
+  const title = product.title || product.slug
 
   const handleWishlistToggle = () => {
     setIsWishlisted(!isWishlisted)
@@ -66,15 +74,15 @@ function ProductCard({ product, locale }: { product: RelatedCrystalProduct; loca
 
   return (
     <Link
-      href={`/${locale}/products/crystal-detail/${mockupSlug}`}
+      href={`/${locale}/products/crystal-detail/${product.slug}`}
       className="group block relative"
     >
       <div className="relative">
         {/* Product Image */}
         <div className="relative aspect-square overflow-hidden bg-gray-50 rounded-lg mb-3">
           <Image
-            src={product.image}
-            alt={product.nameEn}
+            src={imageSrc}
+            alt={title}
             fill
             className="object-contain group-hover:scale-105 transition-transform duration-300"
             sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 25vw"
@@ -84,7 +92,7 @@ function ProductCard({ product, locale }: { product: RelatedCrystalProduct; loca
         {/* Product Info */}
         <div className="text-center">
           <h3 className="text-sm md:text-base text-gray-900 font-medium line-clamp-2 group-hover:text-gray-600 transition-colors mb-2">
-            {product.nameTh}
+            {title}
           </h3>
         </div>
 
@@ -92,12 +100,13 @@ function ProductCard({ product, locale }: { product: RelatedCrystalProduct; loca
         <div className="flex items-start justify-between gap-2">
           {/* Price */}
           <div className="flex flex-col gap-1">
-            <span className="text-sm md:text-base font-semibold text-gray-900">
-              {product.price.toLocaleString('th-TH')}.-
-            </span>
-            {product.originalPrice > product.price && (
-              <span className="text-xs text-gray-400 line-through">
-                {product.originalPrice.toLocaleString('th-TH')}.-
+            {priceLabel ? (
+              <span className="text-sm md:text-base font-semibold text-gray-900">
+                {priceLabel}
+              </span>
+            ) : (
+              <span className="text-sm md:text-base font-semibold text-gray-500">
+                -
               </span>
             )}
           </div>

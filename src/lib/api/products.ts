@@ -29,6 +29,7 @@ function transformLaravelProduct(laravelProduct: LaravelProductResponse): Produc
       description_en: laravelProduct.acf.description_en,
     },
     product_category: laravelProduct.product_category,
+    crystal_id: laravelProduct.crystal_id,
     is_favorite: laravelProduct.is_favorite,
   }
 }
@@ -75,6 +76,50 @@ export async function getProductsByCategory(
   return allProducts
     .filter(product => product.product_category?.slug === categorySlug)
     .slice(0, perPage)
+}
+
+export async function getProductsByCrystalId(
+  crystalId: string | number,
+  perPage: number = 12,
+  language: 'en' | 'th' = 'en'
+): Promise<Product[]> {
+  try {
+    const isBrowser = typeof window !== 'undefined'
+    let url: string
+
+    if (isBrowser) {
+      const apiBase = (process.env.NEXT_PUBLIC_API_URL || '/api').replace(/\/$/, '')
+      const params = new URLSearchParams({
+        locale: language,
+        crystalId: String(crystalId),
+        per_page: String(perPage),
+      })
+      url = `${apiBase}/products?${params.toString()}`
+    } else {
+      url = buildLaravelApiUrl('products', {
+        locale: language,
+        per_page: perPage,
+        crystal_id: crystalId,
+      })
+    }
+
+    const response = await fetch(url, getFetchConfig('api'))
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch products for crystal ${crystalId}: ${response.statusText}`)
+    }
+
+    const payload: unknown = await response.json()
+    const items: LaravelProductResponse[] = Array.isArray(payload)
+      ? payload
+      : Array.isArray((payload as { data?: unknown }).data)
+        ? ((payload as { data: LaravelProductResponse[] }).data)
+        : []
+
+    return items.map(transformLaravelProduct)
+  } catch (error) {
+    throw new Error(getErrorMessage(error, `Failed to fetch crystal products for ${crystalId}`))
+  }
 }
 
 export async function getCatalog(perCat: number = 12, language: 'en' | 'th' = 'en'): Promise<CatalogResponse> {

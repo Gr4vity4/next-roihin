@@ -7,10 +7,18 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
     const locale = searchParams.get('lang') || searchParams.get('locale') || 'en'
+    const category = searchParams.get('category')?.trim() || undefined
+    const crystalId =
+      searchParams.get('crystal_id')?.trim() ||
+      searchParams.get('crystalId')?.trim() ||
+      undefined
+    const perPage = searchParams.get('per_page') || searchParams.get('perPage') || '100'
 
     const url = buildLaravelApiUrl('/products', {
       locale,
-      per_page: '100',
+      per_page: perPage,
+      category,
+      crystal_id: crystalId,
     })
 
     const response = await fetch(url, getFetchConfig('api'))

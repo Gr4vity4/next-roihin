@@ -3,91 +3,15 @@
 import ChatWidget from '@/components/ChatWidget'
 import CrystalFAQ from '@/components/crystal/CrystalFAQ'
 import CrystalProductDetail from '@/components/crystal/CrystalProductDetail'
-import CrystalRelatedProducts, {
-  RelatedCrystalProduct,
-} from '@/components/crystal/CrystalRelatedProducts'
+import CrystalRelatedProducts from '@/components/crystal/CrystalRelatedProducts'
 import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import { Footer } from '@/components/sections'
 import { getCrystalBySlug } from '@/lib/api/crystals'
+import { getProductsByCrystalId } from '@/lib/api/products'
 import type { CrystalProduct } from '@/lib/types/crystal'
+import type { Product as StoreProduct } from '@/lib/types/products'
 import { notFound, useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
-
-// Mock related products data (to be replaced with real API when available)
-const MOCK_RELATED_PRODUCTS: RelatedCrystalProduct[] = [
-  {
-    id: '1',
-    slug: 'apatite-ring-1',
-    nameEn: 'Apatite Ring',
-    nameTh: 'สร้อยข้อมือเม็ดบัวช่า',
-    image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400&h=400&fit=crop',
-    price: 4890,
-    originalPrice: 6990,
-  },
-  {
-    id: '2',
-    slug: 'apatite-stone-raw',
-    nameEn: 'Apatite Raw Stone',
-    nameTh: 'ทำไสคนคอเลคช่ชั่ "รักนิรันดร์"',
-    image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400&h=400&fit=crop',
-    price: 6890,
-    originalPrice: 6890,
-  },
-  {
-    id: '3',
-    slug: 'apatite-bracelet-1',
-    nameEn: 'Apatite Bracelet',
-    nameTh: 'สร้อยข้อมือเม็ดบัวช่า',
-    image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400&h=400&fit=crop',
-    price: 4890,
-    originalPrice: 6990,
-  },
-  {
-    id: '4',
-    slug: 'apatite-beads',
-    nameEn: 'Apatite Beads',
-    nameTh: 'ทำไสคนคอเลคช่ชั่ "รักนิรันดร์"',
-    image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400&h=400&fit=crop',
-    price: 6890,
-    originalPrice: 6890,
-  },
-  {
-    id: '5',
-    slug: 'apatite-pendant-1',
-    nameEn: 'Apatite Pendant',
-    nameTh: 'สร้อยข้อมือเม็ดบัวช่า',
-    image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400&h=400&fit=crop',
-    price: 4890,
-    originalPrice: 6990,
-  },
-  {
-    id: '6',
-    slug: 'apatite-necklace',
-    nameEn: 'Apatite Necklace',
-    nameTh: 'ทำไสคนคอเลคช่ชั่ "รักนิรันดร์"',
-    image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400&h=400&fit=crop',
-    price: 6890,
-    originalPrice: 6890,
-  },
-  {
-    id: '7',
-    slug: 'apatite-drop-pendant',
-    nameEn: 'Apatite Drop Pendant',
-    nameTh: 'สร้อยข้อมือเม็ดบัวช่า',
-    image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400&h=400&fit=crop',
-    price: 4890,
-    originalPrice: 6990,
-  },
-  {
-    id: '8',
-    slug: 'apatite-charm-bracelet',
-    nameEn: 'Apatite Charm Bracelet',
-    nameTh: 'ทำไสคนคอเลคช่ชั่ "รักนิรันดร์"',
-    image: 'https://images.unsplash.com/photo-1614624532983-4ce03382d63d?w=400&h=400&fit=crop',
-    price: 6890,
-    originalPrice: 6890,
-  },
-]
 
 export default function CrystalProductPage() {
   const params = useParams()
@@ -98,6 +22,9 @@ export default function CrystalProductPage() {
   const [product, setProduct] = useState<CrystalProduct | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [relatedProducts, setRelatedProducts] = useState<StoreProduct[]>([])
+  const [isRelatedLoading, setIsRelatedLoading] = useState(false)
+  const [relatedError, setRelatedError] = useState<string | null>(null)
 
   // Fetch crystal product on mount
   useEffect(() => {
@@ -125,6 +52,50 @@ export default function CrystalProductPage() {
 
     fetchProduct()
   }, [slug, locale])
+
+  useEffect(() => {
+    const crystalId = product?.id
+
+    if (!crystalId) {
+      setRelatedProducts([])
+      return
+    }
+
+    let isCancelled = false
+
+    async function fetchRelatedProducts() {
+      setIsRelatedLoading(true)
+      setRelatedError(null)
+
+      try {
+        const related = await getProductsByCrystalId(
+          crystalId,
+          8,
+          locale === 'th' ? 'th' : 'en'
+        )
+
+        if (!isCancelled) {
+          setRelatedProducts(related)
+        }
+      } catch (err) {
+        console.error('Error fetching related products:', err)
+        if (!isCancelled) {
+          setRelatedProducts([])
+          setRelatedError('Failed to load related products')
+        }
+      } finally {
+        if (!isCancelled) {
+          setIsRelatedLoading(false)
+        }
+      }
+    }
+
+    fetchRelatedProducts()
+
+    return () => {
+      isCancelled = true
+    }
+  }, [product?.id, locale])
 
   // Show loading state
   if (isLoading) {
@@ -155,11 +126,26 @@ export default function CrystalProductPage() {
       <main className="min-h-screen bg-white">
         <CrystalProductDetail product={product} locale={locale} />
 
-        <CrystalRelatedProducts
-          crystalName={product.title}
-          products={MOCK_RELATED_PRODUCTS}
-          locale={locale}
-        />
+        {relatedError && (
+          <div className="container max-w-5xl mx-auto px-4 py-6 text-center text-sm text-gray-500">
+            {relatedError}
+          </div>
+        )}
+
+        {!relatedError && isRelatedLoading && relatedProducts.length === 0 && (
+          <div className="container max-w-5xl mx-auto px-4 py-12 flex flex-col items-center text-gray-500 text-sm">
+            <div className="inline-block w-8 h-8 border-4 border-gold-500 border-t-transparent rounded-full animate-spin mb-4" />
+            <span>Loading related products...</span>
+          </div>
+        )}
+
+        {!relatedError && relatedProducts.length > 0 && (
+          <CrystalRelatedProducts
+            crystalName={product.title}
+            products={relatedProducts}
+            locale={locale}
+          />
+        )}
 
         <CrystalFAQ
           crystalName={product.title}

@@ -33,6 +33,7 @@ export interface Product {
   gallery_urls: string[]
   acf: ProductACF
   product_category: ProductCategory
+  crystal_id?: number | null
   is_favorite?: boolean
 }
 
@@ -59,6 +60,7 @@ export interface LaravelProductResponse {
     name: string
     slug: string
   }
+  crystal_id: number | null
   is_favorite: boolean
 }
 
