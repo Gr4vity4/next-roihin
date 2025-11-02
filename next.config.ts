@@ -1,7 +1,61 @@
-import type { NextConfig } from "next";
-import createNextIntlPlugin from 'next-intl/plugin';
+import type { NextConfig } from 'next'
+import createNextIntlPlugin from 'next-intl/plugin'
 
-const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
+const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts')
+
+const resolveOrigin = (input?: string | null): string | null => {
+  if (!input) return null
+  try {
+    const parsed = new URL(input)
+    return parsed.origin
+  } catch {
+    return null
+  }
+}
+
+const laravelApiOrigin =
+  resolveOrigin(process.env.NEXT_PUBLIC_LARAVEL_API_URL) ??
+  resolveOrigin(process.env.LARAVEL_API_URL) ??
+  'http://localhost:8000'
+
+const wordpressOrigin =
+  resolveOrigin(process.env.NEXT_PUBLIC_WORDPRESS_API_URL) ??
+  resolveOrigin(process.env.WORDPRESS_API_URL)
+
+const additionalConnectOrigins = [laravelApiOrigin, wordpressOrigin, 'https://api.stripe.com', 'https://js.stripe.com']
+  .filter((origin): origin is string => Boolean(origin))
+
+const connectSrcDirective = `connect-src 'self' ${additionalConnectOrigins.join(' ')}`
+
+const toRemotePattern = (origin: string) => {
+  const url = new URL(origin)
+  return {
+    protocol: url.protocol.replace(':', ''),
+    hostname: url.hostname,
+    port: url.port && url.port !== '80' && url.port !== '443' ? url.port : '',
+    pathname: '/**' as const,
+  }
+}
+
+const remotePatterns = [
+  toRemotePattern(laravelApiOrigin),
+  {
+    protocol: 'https',
+    hostname: 'images.unsplash.com',
+    port: '',
+    pathname: '/**' as const,
+  },
+  {
+    protocol: 'https',
+    hostname: 'static.wixstatic.com',
+    port: '',
+    pathname: '/**' as const,
+  },
+] satisfies NonNullable<NextConfig['images']>['remotePatterns']
+
+if (wordpressOrigin) {
+  remotePatterns.push(toRemotePattern(wordpressOrigin))
+}
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -10,32 +64,7 @@ const nextConfig: NextConfig = {
   //   typedRoutes: true,
   // },
   images: {
-    remotePatterns: [
-      {
-        protocol: 'http',
-        hostname: 'localhost',
-        port: '8000',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'images.unsplash.com',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'static.wixstatic.com',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'wp-roihin.precisiondevlab.com',
-        port: '',
-        pathname: '/**',
-      },
-    ],
+    remotePatterns,
   },
   async headers() {
     return [
@@ -50,7 +79,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "img-src 'self' data: https: blob:",
               "font-src 'self' https://fonts.gstatic.com",
-              "connect-src 'self' https://wp-roihin.precisiondevlab.com",
+              connectSrcDirective,
               "media-src 'self'",
               "object-src 'none'",
               "base-uri 'self'",

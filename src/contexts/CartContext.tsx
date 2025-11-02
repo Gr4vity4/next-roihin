@@ -17,6 +17,7 @@ interface BraceletDesign {
   beadSize: number
   totalPrice: number
   designId: string
+  designImageUrl?: string
 }
 
 interface CartItem {

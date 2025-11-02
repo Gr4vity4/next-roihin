@@ -24,6 +24,7 @@ import {
   generateBraceletThumbnail,
   generateBraceletTitle,
 } from '@/lib/utils/braceletImageGenerator'
+import { getLaravelApiEndpoint } from '@/config/api.config'
 import { ArrowLeft, Check, RefreshCw, ShoppingCart } from 'lucide-react'
 import { useLocale } from 'next-intl'
 import Image from 'next/image'
@@ -44,6 +45,81 @@ const CIRCLE_SIZE_MAP: Record<string, number> = {
   '18': 264,
   '19': 276,
   '20': 289,
+}
+
+const BRACELET_PLACEHOLDER_IMAGE = '/images/bracelet-placeholder.png'
+
+const dataUrlToFile = (dataUrl: string, filename: string): File | null => {
+  try {
+    const [metadata, base64Data] = dataUrl.split(',')
+    if (!metadata || !base64Data) {
+      return null
+    }
+
+    const mimeMatch = metadata.match(/data:(.*?);/)
+    if (!mimeMatch) {
+      return null
+    }
+
+    const mime = mimeMatch[1]
+    const binary = atob(base64Data)
+    const byteLength = binary.length
+    const bytes = new Uint8Array(byteLength)
+
+    for (let i = 0; i < byteLength; i += 1) {
+      bytes[i] = binary.charCodeAt(i)
+    }
+
+    return new File([bytes], filename, { type: mime })
+  } catch (error) {
+    console.error('Failed to transform data URL into file', error)
+    return null
+  }
+}
+
+const uploadBraceletDesignImage = async (
+  designId: string,
+  dataUrl: string,
+): Promise<string | null> => {
+  if (!dataUrl.startsWith('data:')) {
+    return null
+  }
+
+  const extensionMatch = dataUrl.match(/^data:image\/([a-zA-Z0-9+]+);/)
+  const rawExtension = extensionMatch?.[1]?.toLowerCase() ?? 'png'
+  const extension = rawExtension === 'jpeg' ? 'jpg' : rawExtension
+
+  const file = dataUrlToFile(dataUrl, `${designId}.${extension}`)
+  if (!file) {
+    return null
+  }
+
+  const formData = new FormData()
+  formData.append('image', file)
+  formData.append('design_id', designId)
+
+  try {
+    const response = await fetch(getLaravelApiEndpoint('bracelet-designs/upload-image'), {
+      method: 'POST',
+      body: formData,
+    })
+
+    if (!response.ok) {
+      const errorText = await response.text().catch(() => 'Unknown error')
+      console.error('Failed to upload bracelet design image:', response.status, errorText)
+      return null
+    }
+
+    const payload = await response.json().catch(() => null)
+    if (payload && typeof payload.url === 'string') {
+      return payload.url
+    }
+
+    return null
+  } catch (error) {
+    console.error('Error uploading bracelet design image:', error)
+    return null
+  }
 }
 
 type BeadShape = 'circle' | 'square' | 'triangle'
@@ -563,10 +639,28 @@ export default function BraceletDesigner() {
         stageRef.current.offsetHeight
       }
 
+      // Generate unique ID for this bracelet design
+      const designId = generateBraceletId()
+
       // Generate thumbnail image of the bracelet design
-      const thumbnailImage = stageRef.current
+      const rawThumbnail = stageRef.current
         ? await generateBraceletThumbnail(stageRef.current)
-        : '/images/bracelet-placeholder.png'
+        : BRACELET_PLACEHOLDER_IMAGE
+
+      let designImageUrl = BRACELET_PLACEHOLDER_IMAGE
+
+      if (typeof rawThumbnail === 'string') {
+        if (rawThumbnail.startsWith('data:')) {
+          const uploadedUrl = await uploadBraceletDesignImage(designId, rawThumbnail)
+          if (uploadedUrl) {
+            designImageUrl = uploadedUrl
+          } else {
+            console.warn('Falling back to placeholder image for bracelet design thumbnail')
+          }
+        } else if (rawThumbnail.startsWith('http') || rawThumbnail.startsWith('/')) {
+          designImageUrl = rawThumbnail
+        }
+      }
 
       // Create bracelet design data
       const braceletBeads = beads.map((bead) => ({
@@ -577,16 +671,13 @@ export default function BraceletDesigner() {
         price: bead.price,
       }))
 
-      // Generate unique ID for this bracelet design
-      const designId = generateBraceletId()
-
       // Add to cart
       addItem({
         id: designId,
         slug: 'custom-bracelet',
         title: generateBraceletTitle(beads.length, wristLength, locale),
         price: calculateTotalPrice(),
-        image: thumbnailImage,
+        image: designImageUrl,
         category: locale === 'th' ? 'สร้อยข้อมือออกแบบเอง' : 'Custom Bracelet',
         isCustomBracelet: true,
         braceletDesign: {
@@ -595,6 +686,7 @@ export default function BraceletDesigner() {
           beadSize,
           totalPrice: calculateTotalPrice(),
           designId,
+          designImageUrl,
         },
       })
 

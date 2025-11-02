@@ -16,6 +16,7 @@ interface BraceletDesign {
   beadSize: number
   totalPrice: number
   designId: string
+  designImageUrl?: string
 }
 
 interface CheckoutItem {
@@ -108,6 +109,7 @@ export async function POST(request: NextRequest) {
           wristLength: item.braceletDesign?.wristLength,
           beadSize: item.braceletDesign?.beadSize,
           beadCount: item.braceletDesign?.beads.length,
+          designImageUrl: item.braceletDesign?.designImageUrl,
           beads: item.braceletDesign?.beads.map(bead => ({
             stoneName: bead.stoneName,
             size: bead.size,
