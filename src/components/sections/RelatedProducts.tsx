@@ -7,9 +7,12 @@ import { getProductImageUrl } from '@/lib/utils/image-helper'
 
 interface RelatedProductsProps {
   products: Product[]
+  buildHref?: (product: Product) => string
 }
 
-export default function RelatedProducts({ products }: RelatedProductsProps) {
+const defaultBuildHref = (product: Product) => `/charmspacer/product/${product.slug}`
+
+export default function RelatedProducts({ products, buildHref = defaultBuildHref }: RelatedProductsProps) {
   return (
     <section className="py-12 md:py-16 border-t border-gray-800">
       <Container>
@@ -19,7 +22,7 @@ export default function RelatedProducts({ products }: RelatedProductsProps) {
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
           {products.map((product) => (
-            <Link key={product.id} href={`/charmspacer/product/${product.slug}`} className="group">
+            <Link key={product.id} href={buildHref(product)} className="group">
               <div className="space-y-2">
                 <div className="relative aspect-square bg-gray-800 overflow-hidden">
                   <Image
