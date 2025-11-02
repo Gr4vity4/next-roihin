@@ -1,10 +1,10 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { Link } from '@/i18n/navigation'
 import type { OrderResource } from '@/lib/types/order'
 import { useLocale, useTranslations } from 'next-intl'
+import { useEffect, useMemo, useState } from 'react'
 
 const MAX_RECENT_ORDERS = 3
 
@@ -195,7 +195,7 @@ export default function MemberDashboard() {
   return (
     <>
       {/* Header */}
-      <div className="mb-8 mt-8">
+      {/* <div className="mb-8 mt-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
           {(() => {
             if (user?.name) {
@@ -210,10 +210,10 @@ export default function MemberDashboard() {
           })()}
         </h1>
         <p className="text-gray-600">{t('subtitle')}</p>
-      </div>
+      </div> */}
 
       {/* Recent Orders */}
-      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+      <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mt-8">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-semibold text-gray-900">{t('recentOrders.title')}</h2>
           <Link href="/member/orders" className="text-[#005635] hover:underline text-sm">
