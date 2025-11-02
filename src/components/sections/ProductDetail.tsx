@@ -26,8 +26,18 @@ export default function ProductDetail({ product, category, language = 'en' }: Pr
   const { addItem } = useCart()
 
   const colorPrices = product.acf.color_prices || []
+  const hasColorOptions = colorPrices.length > 0
+  const multipleColorOptions = colorPrices.length > 1
   const selectedPrice = colorPrices[selectedColor]?.price
   const selectedColorData = colorPrices[selectedColor]
+  const colorLabel =
+    language === 'th'
+      ? multipleColorOptions
+        ? 'เลือกสี:'
+        : 'สี:'
+      : multipleColorOptions
+        ? 'Select Color:'
+        : 'Color:'
 
   // Build gallery images based on selected color
   const allImages = (() => {
@@ -184,7 +194,7 @@ export default function ProductDetail({ product, category, language = 'en' }: Pr
             </div>
 
             {/* Price and Color Selection */}
-            {colorPrices.length > 0 && (
+            {hasColorOptions && (
               <div className="space-y-4">
                 <div>
                   <Typography variant="h3" className="text-2xl text-white font-prompt">
@@ -192,44 +202,40 @@ export default function ProductDetail({ product, category, language = 'en' }: Pr
                   </Typography>
                 </div>
 
-                {colorPrices.length > 1 && (
-                  <div>
-                    <label className="block text-sm text-gray-400 mb-3">
-                      {language === 'th' ? 'เลือกสี:' : 'Select Color:'}
-                    </label>
-                    <div className="flex flex-wrap gap-2">
-                      {colorPrices.map((colorPrice, index) => (
-                        <button
-                          key={index}
-                          onClick={() => setSelectedColor(index)}
-                          disabled={!colorPrice.available}
-                          className={`px-4 py-2 border rounded-lg transition-all ${
-                            selectedColor === index
-                              ? 'border-white bg-white/10 text-white'
-                              : colorPrice.available
-                              ? 'border-gray-600 text-gray-300 hover:border-gray-400'
-                              : 'border-gray-800 text-gray-600 cursor-not-allowed'
-                          }`}
-                        >
-                          <div className="flex items-center gap-3">
-                            {colorPrice.color_icon?.url && (
-                              <div className="relative w-8 h-8 overflow-hidden rounded-md bg-black/20">
-                                <Image
-                                  src={colorPrice.color_icon.url}
-                                  alt={colorPrice.color}
-                                  fill
-                                  className="object-cover"
-                                  sizes="32px"
-                                />
-                              </div>
-                            )}
-                            <span className="capitalize">{colorPrice.color}</span>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
+                <div>
+                  <label className="block text-sm text-gray-400 mb-3">{colorLabel}</label>
+                  <div className="flex flex-wrap gap-2">
+                    {colorPrices.map((colorPrice, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setSelectedColor(index)}
+                        disabled={!colorPrice.available}
+                        className={`px-4 py-2 border rounded-lg transition-all ${
+                          selectedColor === index
+                            ? 'border-white bg-white/10 text-white'
+                            : colorPrice.available
+                            ? 'border-gray-600 text-gray-300 hover:border-gray-400'
+                            : 'border-gray-800 text-gray-600 cursor-not-allowed'
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          {colorPrice.color_icon?.url && (
+                            <div className="relative w-8 h-8 overflow-hidden rounded-md bg-black/20">
+                              <Image
+                                src={colorPrice.color_icon.url}
+                                alt={colorPrice.color}
+                                fill
+                                className="object-cover"
+                                sizes="32px"
+                              />
+                            </div>
+                          )}
+                          <span className="capitalize">{colorPrice.color}</span>
+                        </div>
+                      </button>
+                    ))}
                   </div>
-                )}
+                </div>
               </div>
             )}
 
