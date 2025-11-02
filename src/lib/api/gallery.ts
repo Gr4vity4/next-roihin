@@ -146,3 +146,7 @@ export async function getRecentPersonalizedDesigns(count: number = 8): Promise<L
     return []
   }
 }
+
+export async function getAllRecentPersonalizedDesigns(): Promise<LaravelGalleryImage[]> {
+  return getRecentPersonalizedDesigns(Number.MAX_SAFE_INTEGER)
+}

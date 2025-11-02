@@ -1,7 +1,7 @@
 'use client'
 
 import { Link } from '@/i18n/navigation'
-import { getRecentPersonalizedDesigns } from '@/lib/api/gallery'
+import { getAllRecentPersonalizedDesigns, getRecentPersonalizedDesigns } from '@/lib/api/gallery'
 import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
@@ -12,16 +12,24 @@ import type { LaravelGalleryImage } from '@/lib/types/laravel'
 
 type RecentPersonalizedDesignsSectionProps = {
   initialImages?: LaravelGalleryImage[]
+  maxDisplay?: number | null
+  showViewMoreButton?: boolean
+  viewMoreHref?: string
 }
 
 export default function RecentPersonalizedDesignsSection({
   initialImages = [],
+  maxDisplay,
+  showViewMoreButton = true,
+  viewMoreHref = '/personalized/recent-designs',
 }: RecentPersonalizedDesignsSectionProps) {
   const t = useTranslations('personalizedPage.recentDesigns')
   const [galleryImages, setGalleryImages] = useState<LaravelGalleryImage[]>(initialImages)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null)
   const [isLoading, setIsLoading] = useState(initialImages.length === 0)
+  const isUnlimited = maxDisplay === null
+  const effectiveLimit = typeof maxDisplay === 'number' && maxDisplay > 0 ? maxDisplay : 8
 
   useEffect(() => {
     setGalleryImages(initialImages)
@@ -40,7 +48,9 @@ export default function RecentPersonalizedDesignsSection({
 
     async function fetchImages() {
       try {
-        const images = await getRecentPersonalizedDesigns(8)
+        const images = isUnlimited
+          ? await getAllRecentPersonalizedDesigns()
+          : await getRecentPersonalizedDesigns(effectiveLimit)
         if (!isSubscribed) return
         setGalleryImages(images)
       } catch (error) {
@@ -55,15 +65,17 @@ export default function RecentPersonalizedDesignsSection({
     return () => {
       isSubscribed = false
     }
-  }, [initialImages.length])
+  }, [initialImages.length, isUnlimited, effectiveLimit])
 
   // Don't render if loading or no images
   if (isLoading || galleryImages.length === 0) {
     return null
   }
 
-  // Ensure we have exactly 8 slots (fill empty ones with placeholders)
-  const displayImages = Array.from({ length: 8 }, (_, index) => galleryImages[index] ?? null)
+  // Build the display array, filling empty slots with placeholders when limited
+  const displayImages = isUnlimited
+    ? galleryImages
+    : Array.from({ length: effectiveLimit }, (_, index) => galleryImages[index] ?? null)
 
   const handleImageClick = (index: number) => {
     const design = galleryImages[index]
@@ -101,7 +113,7 @@ export default function RecentPersonalizedDesignsSection({
 
             {/* Gallery Grid - 4 columns on desktop, 2 on mobile */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mb-12">
-              {displayImages.slice(0, 8).map((design, index) => {
+              {displayImages.map((design, index) => {
                 const imageUrl = design?.image_url ?? ''
                 return (
                   <button
@@ -143,9 +155,14 @@ export default function RecentPersonalizedDesignsSection({
               >
                 {t('orderButton')}
               </Link>
-              <button className="w-full sm:w-auto px-8 py-3 bg-[#D4AF37] hover:bg-[#B8941F] text-white rounded-md transition-colors">
-                {t('viewMoreButton')}
-              </button>
+              {showViewMoreButton ? (
+                <Link
+                  href={viewMoreHref}
+                  className="w-full sm:w-auto px-8 py-3 bg-[#D4AF37] hover:bg-[#B8941F] text-white rounded-md transition-colors text-center"
+                >
+                  {t('viewMoreButton')}
+                </Link>
+              ) : null}
             </div>
           </div>
         </Container>
