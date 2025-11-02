@@ -1,16 +1,19 @@
 'use client'
 
-import { createContext, useContext, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useState } from 'react'
+
 import { useLocalStorage } from '@/hooks/useLocalStorage'
-import { getErrorMessage } from '@/lib/utils/error-handler'
 import type { SimpleUser } from '@/lib/types/auth'
+import { getErrorMessage } from '@/lib/utils/error-handler'
+
+const SESSION_HEARTBEAT_INTERVAL_MS = 60_000
 
 interface AuthContextType {
   isLoggedIn: boolean
   user: SimpleUser | null
   login: (email: string, password: string) => Promise<void>
   register: (data: RegisterData) => Promise<void>
-  logout: () => void
+  logout: () => Promise<void>
   loading: boolean
   error: string | null
 }
@@ -27,10 +30,103 @@ interface RegisterData {
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useLocalStorage<SimpleUser | null>('user', null)
-  const [isLoggedIn, setIsLoggedIn] = useState(!!user)
+  const [user, setUser, removeUser] = useLocalStorage<SimpleUser | null>('user', null)
+  const [isLoggedIn, setIsLoggedIn] = useState(() => !!user)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const handleSessionExpired = useCallback(() => {
+    removeUser()
+    setIsLoggedIn(false)
+  }, [removeUser])
+
+  const checkSession = useCallback(async () => {
+    try {
+      const response = await fetch('/api/auth/session', {
+        method: 'GET',
+        cache: 'no-store',
+        headers: {
+          'Accept': 'application/json',
+        },
+      })
+
+      if ([401, 403, 419].includes(response.status)) {
+        handleSessionExpired()
+        return
+      }
+
+      if (!response.ok) {
+        console.error('Session heartbeat failed:', response.statusText)
+        return
+      }
+
+      const data = await response.json()
+      const nextUser: SimpleUser | null =
+        data?.simpleUser ??
+        (data?.user && typeof data.user === 'object'
+          ? {
+              id: data.user.id,
+              name: data.user.name,
+              email: data.user.email,
+              phone: data.user.phone ?? null,
+            }
+          : null)
+
+      if (!nextUser) {
+        handleSessionExpired()
+        return
+      }
+
+      setUser(nextUser)
+      setIsLoggedIn(true)
+      setError(null)
+    } catch (err) {
+      if ((err as Error).name === 'AbortError') {
+        return
+      }
+      console.error('Session heartbeat error:', err)
+    }
+  }, [handleSessionExpired, setUser])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return
+    }
+
+    let isActive = true
+    let intervalId: ReturnType<typeof setInterval> | null = null
+
+    const runHeartbeat = () => {
+      if (!isActive) return
+      void checkSession()
+    }
+
+    runHeartbeat()
+    intervalId = setInterval(runHeartbeat, SESSION_HEARTBEAT_INTERVAL_MS)
+
+    const handleFocus = () => runHeartbeat()
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        runHeartbeat()
+      }
+    }
+
+    window.addEventListener('focus', handleFocus)
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+
+    return () => {
+      isActive = false
+      if (intervalId) {
+        clearInterval(intervalId)
+      }
+      window.removeEventListener('focus', handleFocus)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
+  }, [checkSession])
+
+  useEffect(() => {
+    setIsLoggedIn(!!user)
+  }, [user])
 
   const login = async (email: string, password: string) => {
     setLoading(true)
@@ -103,15 +199,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  const logout = async () => {
+  const logout = useCallback(async () => {
     setIsLoggedIn(false)
-    setUser(null)
+    removeUser()
     setError(null)
 
-    await fetch('/api/auth/logout', {
-      method: 'POST',
-    })
-  }
+    try {
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+      })
+    } catch (err) {
+      console.error('Logout request failed:', err)
+    }
+  }, [removeUser])
 
   return (
     <AuthContext.Provider value={{ 

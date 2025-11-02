@@ -1,76 +1,97 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 export function useLocalStorage<T>(key: string, initialValue: T) {
-  // State to store our value
-  // Pass initial state function to useState so logic is only executed once
+  const initialRef = useRef(initialValue)
+
   const [storedValue, setStoredValue] = useState<T>(() => {
     if (typeof window === 'undefined') {
-      return initialValue
+      return initialRef.current
     }
 
     try {
-      // Get from local storage by key
       const item = window.localStorage.getItem(key)
-      // Parse stored json or if none return initialValue
-      return item ? JSON.parse(item) : initialValue
+      return item ? (JSON.parse(item) as T) : initialRef.current
     } catch (error) {
-      // If error also return initialValue
       console.error(`Error reading localStorage key "${key}":`, error)
-      return initialValue
+      return initialRef.current
     }
   })
 
-  // Return a wrapped version of useState's setter function that ...
-  // ... persists the new value to localStorage.
-  const setValue = (value: T | ((val: T) => T)) => {
-    try {
-      // Allow value to be a function so we have same API as useState
-      const valueToStore = value instanceof Function ? value(storedValue) : value
+  const setValue = useCallback(
+    (value: T | ((val: T) => T)) => {
+      setStoredValue(prevValue => {
+        const valueToStore = value instanceof Function ? value(prevValue) : value
 
-      // Save state
-      setStoredValue(valueToStore)
+        try {
+          if (typeof window !== 'undefined') {
+            window.localStorage.setItem(key, JSON.stringify(valueToStore))
+          }
+        } catch (error) {
+          console.error(`Error setting localStorage key "${key}":`, error)
+        }
 
-      // Save to local storage
-      if (typeof window !== 'undefined') {
-        window.localStorage.setItem(key, JSON.stringify(valueToStore))
-      }
-    } catch (error) {
-      // A more advanced implementation would handle the error case
-      console.error(`Error setting localStorage key "${key}":`, error)
-    }
-  }
+        return valueToStore
+      })
+    },
+    [key]
+  )
 
-  // Remove value from storage
-  const removeValue = () => {
+  const removeValue = useCallback(() => {
     try {
       if (typeof window !== 'undefined') {
         window.localStorage.removeItem(key)
       }
-      setStoredValue(initialValue)
     } catch (error) {
       console.error(`Error removing localStorage key "${key}":`, error)
+    } finally {
+      setStoredValue(initialRef.current)
     }
-  }
+  }, [key])
 
-  // Sync state when storage changes in another tab/window
   useEffect(() => {
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === key && e.newValue !== null) {
-        try {
-          setStoredValue(JSON.parse(e.newValue))
-        } catch (error) {
-          console.error(`Error syncing localStorage key "${key}":`, error)
-        }
+    initialRef.current = initialValue
+  }, [initialValue])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return
+    }
+
+    try {
+      const item = window.localStorage.getItem(key)
+      setStoredValue(item ? (JSON.parse(item) as T) : initialRef.current)
+    } catch (error) {
+      console.error(`Error refreshing localStorage key "${key}":`, error)
+      setStoredValue(initialRef.current)
+    }
+  }, [key])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return undefined
+    }
+
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key !== key) {
+        return
+      }
+
+      if (event.newValue === null) {
+        setStoredValue(initialRef.current)
+        return
+      }
+
+      try {
+        setStoredValue(JSON.parse(event.newValue) as T)
+      } catch (error) {
+        console.error(`Error syncing localStorage key "${key}":`, error)
       }
     }
 
-    // Listen for changes in other tabs/windows
-    if (typeof window !== 'undefined') {
-      window.addEventListener('storage', handleStorageChange)
-      return () => window.removeEventListener('storage', handleStorageChange)
-    }
+    window.addEventListener('storage', handleStorageChange)
+    return () => window.removeEventListener('storage', handleStorageChange)
   }, [key])
 
   return [storedValue, setValue, removeValue] as const
