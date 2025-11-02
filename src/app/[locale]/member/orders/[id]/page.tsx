@@ -1,12 +1,12 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
-import { useLocale, useTranslations } from 'next-intl'
-import { Link } from '@/i18n/navigation'
 import Button from '@/components/Button'
+import { Link } from '@/i18n/navigation'
 import type { OrderResource } from '@/lib/types/order'
-import { ArrowLeft, Package, MapPin, CreditCard, Clock } from 'lucide-react'
+import { ArrowLeft, Clock, CreditCard, MapPin, Package } from 'lucide-react'
+import { useLocale, useTranslations } from 'next-intl'
+import { useParams, useRouter } from 'next/navigation'
+import { useEffect, useMemo, useState } from 'react'
 
 interface OrderDetailResponseBody {
   data?: OrderResource
@@ -213,7 +213,7 @@ export default function OrderDetailPage() {
   const orderDate = formatOrderDate(order.placed_at, locale)
 
   return (
-    <div className="max-w-7xl mx-auto pt-8 pb-12">
+    <div className="max-w-7xl mx-auto pt-8 pb-12 font-prompt">
       {/* Back Button */}
       <div className="mb-6">
         <Link href="/member/orders">
@@ -228,7 +228,7 @@ export default function OrderDetailPage() {
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
           <div>
             <div className="flex items-center flex-wrap gap-3 mb-2">
-              <h1 className="text-2xl font-bold text-gray-900">{order.order_number}</h1>
+              <h1 className="text-2xl font-bold text-gray-900 ">{order.order_number}</h1>
               <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getStatusPillColor(status)}`}>
                 {renderStatusChip(status, order.status_label)}
               </span>
@@ -242,7 +242,7 @@ export default function OrderDetailPage() {
           </div>
           <div className="text-right">
             <p className="text-sm text-gray-600 mb-1">{t('detail.totalAmount')}</p>
-            <p className="text-3xl font-bold text-gray-900">{totalFormatted}</p>
+            <p className="text-3xl font-bold text-gray-900 ">{totalFormatted}</p>
           </div>
         </div>
       </div>
@@ -268,12 +268,12 @@ export default function OrderDetailPage() {
                         {tThankYou('orderDetails.color', { defaultValue: 'Color' })}: {item.options.color as string}
                       </p>
                     )}
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-gray-500 ">
                       {tThankYou('orderDetails.quantity', { defaultValue: 'Quantity' })}: {item.quantity}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-gray-900 font-medium">
+                    <p className="text-gray-900 font-medium ">
                       {formatCurrency(item.subtotal_amount_minor, order.currency, locale)}
                     </p>
                   </div>
@@ -285,11 +285,11 @@ export default function OrderDetailPage() {
             <div className="mt-6 space-y-2 border-t border-gray-200 pt-4">
               <div className="flex justify-between text-sm text-gray-600">
                 <span>{tThankYou('orderDetails.subtotal', { defaultValue: 'Subtotal' })}</span>
-                <span className="text-gray-900 font-medium">{subtotalFormatted}</span>
+                <span className="text-gray-900 font-medium ">{subtotalFormatted}</span>
               </div>
               <div className="flex justify-between text-sm text-gray-600">
                 <span>{tThankYou('orderDetails.shipping', { defaultValue: 'Shipping' })}</span>
-                <span className="text-gray-900 font-medium">
+                <span className="text-gray-900 font-medium ">
                   {order.shipping_amount_minor > 0
                     ? shippingFormatted
                     : tThankYou('orderDetails.shippingFree', { defaultValue: 'Free' })}
@@ -298,20 +298,20 @@ export default function OrderDetailPage() {
               {order.discount_amount_minor > 0 && (
                 <div className="flex justify-between text-sm text-gray-600">
                   <span>{t('detail.discount')}</span>
-                  <span className="text-green-600 font-medium">
+                  <span className="text-green-600 font-medium ">
                     -{formatCurrency(order.discount_amount_minor, order.currency, locale)}
                   </span>
                 </div>
               )}
               <div className="flex justify-between text-base text-gray-900 font-semibold pt-2 border-t border-gray-200">
                 <span>{tThankYou('orderDetails.total', { defaultValue: 'Total' })}</span>
-                <span>{totalFormatted}</span>
+                <span className=''>{totalFormatted}</span>
               </div>
             </div>
           </div>
 
           {/* Shipping Address */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 ">
             <div className="flex items-center gap-2 mb-4">
               <MapPin className="w-5 h-5 text-gray-600" />
               <h3 className="text-lg font-semibold text-gray-900">
