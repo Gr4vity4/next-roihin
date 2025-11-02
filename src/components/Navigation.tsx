@@ -51,7 +51,6 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
 
   const userMenuItems = useMemo(() => {
     return [
-      { name: tUser('dashboard'), href: '/member' },
       { name: tUser('profile'), href: '/member/profile' },
       { name: tUser('orders'), href: '/member/orders' },
       { name: tUser('addresses'), href: '/member/addresses' },
