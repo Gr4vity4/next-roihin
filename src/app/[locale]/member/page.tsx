@@ -1,22 +1,195 @@
 'use client'
 
+import { useEffect, useMemo, useState } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { Link } from '@/i18n/navigation'
-import { useTranslations } from 'next-intl'
+import type { OrderResource } from '@/lib/types/order'
+import { useLocale, useTranslations } from 'next-intl'
+
+const MAX_RECENT_ORDERS = 3
+
+interface OrdersResponseBody {
+  data?: OrderResource[]
+  error?: string
+}
+
+function formatCurrency(amountMinor: number, currency: string, locale: string): string {
+  const resolvedLocale = locale === 'th' ? 'th-TH' : 'en-US'
+  try {
+    return new Intl.NumberFormat(resolvedLocale, {
+      style: 'currency',
+      currency: currency || 'THB',
+    }).format((amountMinor ?? 0) / 100)
+  } catch {
+    return `${currency ?? 'THB'} ${((amountMinor ?? 0) / 100).toFixed(2)}`
+  }
+}
+
+function formatOrderDate(value: string | null, locale: string): string {
+  if (!value) {
+    return '—'
+  }
+
+  try {
+    const date = new Date(value)
+    return new Intl.DateTimeFormat(locale === 'th' ? 'th-TH' : 'en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    }).format(date)
+  } catch {
+    return value
+  }
+}
+
+function getStatusBadgeColor(status: string): string {
+  switch (status) {
+    case 'delivered':
+      return 'bg-green-100 text-green-800'
+    case 'processing':
+      return 'bg-yellow-100 text-yellow-800'
+    case 'pending':
+      return 'bg-amber-100 text-amber-800'
+    case 'shipped':
+      return 'bg-blue-100 text-blue-800'
+    case 'cancelled':
+      return 'bg-red-100 text-red-800'
+    default:
+      return 'bg-gray-100 text-gray-800'
+  }
+}
 
 export default function MemberDashboard() {
+  const locale = useLocale()
   const t = useTranslations('member.dashboard')
+  const tOrders = useTranslations('member.orders')
   const { user } = useAuth()
 
-  const recentOrders = [
-    { id: 'ORD-001', date: '2024-01-15', status: 'Delivered', total: '฿3,500' },
-    { id: 'ORD-002', date: '2024-01-20', status: 'Processing', total: '฿2,800' },
-    { id: 'ORD-003', date: '2024-01-25', status: 'Shipped', total: '฿4,200' },
-  ]
+  const [orders, setOrders] = useState<OrderResource[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  const getStatusTranslation = (status: string) => {
-    const statusKey = status.toLowerCase() as 'delivered' | 'processing' | 'shipped' | 'cancelled'
-    return t(`recentOrders.statuses.${statusKey}`)
+  useEffect(() => {
+    let isMounted = true
+
+    async function loadOrders() {
+      if (!user) {
+        if (isMounted) {
+          setOrders([])
+          setLoading(false)
+          setError(null)
+        }
+        return
+      }
+
+      setLoading(true)
+      setError(null)
+
+      try {
+        const response = await fetch('/api/orders', { cache: 'no-store' })
+
+        if (response.status === 401) {
+          if (!isMounted) return
+          setOrders([])
+          setError('unauthorized')
+          return
+        }
+
+        const body: OrdersResponseBody = await response.json()
+
+        if (!response.ok) {
+          throw new Error(body?.error || 'FAILED')
+        }
+
+        if (!isMounted) return
+        setOrders(body?.data ?? [])
+      } catch (err) {
+        if (!isMounted) return
+        setError(err instanceof Error ? err.message : 'unknown')
+      } finally {
+        if (isMounted) {
+          setLoading(false)
+        }
+      }
+    }
+
+    void loadOrders()
+
+    return () => {
+      isMounted = false
+    }
+  }, [user])
+
+  const recentOrders = useMemo(() => orders.slice(0, MAX_RECENT_ORDERS), [orders])
+
+  const renderStatusLabel = (status: string, fallback?: string | null) => {
+    const normalized = status?.toLowerCase?.()
+    if (!normalized) {
+      return fallback ?? '—'
+    }
+
+    try {
+      const translated = t(`recentOrders.statuses.${normalized}`)
+      if (translated && !translated.includes(`recentOrders.statuses.${normalized}`)) {
+        return translated
+      }
+    } catch {
+      // ignore missing translation - we will fallback below
+    }
+
+    return fallback ?? status ?? normalized
+  }
+
+  const renderTableBody = () => {
+    if (loading) {
+      return (
+        <tr>
+          <td colSpan={4} className="py-6 px-4 text-center text-sm text-gray-500">
+            {tOrders('loading')}
+          </td>
+        </tr>
+      )
+    }
+
+    if (error) {
+      return (
+        <tr>
+          <td colSpan={4} className="py-6 px-4 text-center text-sm text-red-600">
+            {error === 'unauthorized' ? tOrders('errors.unauthorized') : tOrders('errors.loadFailed')}
+          </td>
+        </tr>
+      )
+    }
+
+    if (recentOrders.length === 0) {
+      return (
+        <tr>
+          <td colSpan={4} className="py-6 px-4 text-center text-sm text-gray-500">
+            {tOrders('empty.title')}
+          </td>
+        </tr>
+      )
+    }
+
+    return recentOrders.map((order) => {
+      const status = order.status?.toLowerCase?.() ?? ''
+      const statusLabel = renderStatusLabel(status, order.status_label)
+      const orderDate = formatOrderDate(order.placed_at, locale)
+      const totalFormatted = formatCurrency(order.total_amount_minor, order.currency, locale)
+
+      return (
+        <tr key={order.id} className="border-b border-gray-100">
+          <td className="py-3 px-4 text-sm font-medium text-gray-900">{order.order_number}</td>
+          <td className="py-3 px-4 text-sm text-gray-600">{orderDate}</td>
+          <td className="py-3 px-4">
+            <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusBadgeColor(status)}`}>
+              {statusLabel}
+            </span>
+          </td>
+          <td className="py-3 px-4 text-sm text-gray-900 text-right">{totalFormatted}</td>
+        </tr>
+      )
+    })
   }
 
   return (
@@ -39,18 +212,6 @@ export default function MemberDashboard() {
         <p className="text-gray-600">{t('subtitle')}</p>
       </div>
 
-      {/* Stats Grid */}
-      {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            {stats.map((stat) => (
-              <div key={stat.label} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-sm text-gray-500">{stat.label}</span>
-                </div>
-                <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
-              </div>
-            ))}
-          </div> */}
-
       {/* Recent Orders */}
       <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
         <div className="flex items-center justify-between mb-4">
@@ -69,28 +230,7 @@ export default function MemberDashboard() {
                 <th className="text-right py-3 px-4 text-sm font-medium text-gray-600">{t('recentOrders.columns.total')}</th>
               </tr>
             </thead>
-            <tbody>
-              {recentOrders.map((order) => (
-                <tr key={order.id} className="border-b border-gray-100">
-                  <td className="py-3 px-4 text-sm font-medium text-gray-900">{order.id}</td>
-                  <td className="py-3 px-4 text-sm text-gray-600">{order.date}</td>
-                  <td className="py-3 px-4">
-                    <span
-                      className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        order.status === 'Delivered'
-                          ? 'bg-green-100 text-green-800'
-                          : order.status === 'Processing'
-                          ? 'bg-yellow-100 text-yellow-800'
-                          : 'bg-blue-100 text-blue-800'
-                      }`}
-                    >
-                      {getStatusTranslation(order.status)}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4 text-sm text-gray-900 text-right">{order.total}</td>
-                </tr>
-              ))}
-            </tbody>
+            <tbody>{renderTableBody()}</tbody>
           </table>
         </div>
       </div>
