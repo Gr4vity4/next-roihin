@@ -15,6 +15,7 @@ type RecentPersonalizedDesignsSectionProps = {
   maxDisplay?: number | null
   showViewMoreButton?: boolean
   viewMoreHref?: string
+  showDivider?: boolean
 }
 
 export default function RecentPersonalizedDesignsSection({
@@ -22,6 +23,7 @@ export default function RecentPersonalizedDesignsSection({
   maxDisplay,
   showViewMoreButton = true,
   viewMoreHref = '/personalized/recent-designs',
+  showDivider = true,
 }: RecentPersonalizedDesignsSectionProps) {
   const t = useTranslations('personalizedPage.recentDesigns')
   const [galleryImages, setGalleryImages] = useState<LaravelGalleryImage[]>(initialImages)
@@ -98,10 +100,11 @@ export default function RecentPersonalizedDesignsSection({
       <section className="py-16 sm:py-20 md:py-24">
         <Container padding="lg">
           <div className="max-w-6xl mx-auto">
-            {/* Top Divider */}
-            <div className="flex justify-center mb-12">
-              <div className="w-32 sm:w-48 md:w-64 h-[1px] bg-gray-300" />
-            </div>
+            {showDivider ? (
+              <div className="flex justify-center mb-12">
+                <div className="w-32 sm:w-48 md:w-64 h-[1px] bg-gray-300" />
+              </div>
+            ) : null}
 
             {/* Section Title */}
             <div className="text-center mb-12">

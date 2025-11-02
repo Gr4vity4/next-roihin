@@ -40,18 +40,21 @@ export default async function RecentPersonalizedDesignsPage({
 
   return (
     <FontProvider fonts={{ th: 'font-prompt', en: 'font-playfair' }}>
-      <main className="min-h-screen pt-28">
-        <NavigationWithSuspense />
+      <div className="min-h-screen flex flex-col">
+        <NavigationWithSuspense position="static" />
 
-        <RecentPersonalizedDesignsSection
-          initialImages={recentDesigns}
-          maxDisplay={null}
-          showViewMoreButton={false}
-        />
+        <main className="flex-1">
+          <RecentPersonalizedDesignsSection
+            initialImages={recentDesigns}
+            maxDisplay={null}
+            showViewMoreButton={false}
+            showDivider={false}
+          />
+        </main>
 
         <Footer />
         <ChatWidget />
-      </main>
+      </div>
     </FontProvider>
   )
 }

@@ -17,7 +17,8 @@ interface NavigationProps {
 export default function Navigation({ position = 'fixed' }: NavigationProps = {}) {
   const pathname = usePathname()
   const isCustomPage = pathname === '/custom'
-  const [isScrolled, setIsScrolled] = useState(isCustomPage)
+  const isFixed = position === 'fixed'
+  const [isScrolled, setIsScrolled] = useState(isCustomPage || !isFixed)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false)
@@ -75,6 +76,11 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
   }, [])
 
   useEffect(() => {
+    if (!isFixed) {
+      setIsScrolled(true)
+      return
+    }
+
     // Skip scroll handling for custom page
     if (isCustomPage) {
       setIsScrolled(true)
@@ -104,7 +110,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
       window.removeEventListener('resize', handleResize)
       window.removeEventListener('load', handleLoad)
     }
-  }, [scrollThreshold, calculateScrollThreshold, isCustomPage])
+  }, [scrollThreshold, calculateScrollThreshold, isCustomPage, isFixed])
 
   // Close menus when clicking outside
   useEffect(() => {
@@ -146,9 +152,11 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
   return (
     <nav
       className={cn(
-        position === 'fixed' ? 'fixed top-0 left-0 right-0 z-50' : 'static bg-black',
+        isFixed
+          ? 'fixed top-0 left-0 right-0 z-50'
+          : 'sticky top-0 left-0 right-0 z-50 bg-black shadow-[0_8px_32px_rgba(0,0,0,0.5)] border-b border-white/10',
         'transition-all duration-300',
-        position === 'fixed' &&
+        isFixed &&
           (isScrolled
             ? 'bg-black shadow-[0_8px_32px_rgba(0,0,0,0.5)] border-b border-white/10'
             : 'bg-transparent'),
@@ -159,35 +167,34 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
         className={cn(
           'hidden min-[1408px]:block relative transition-all duration-300',
           isScrolled ? 'h-20' : 'h-[230px]',
+          !isFixed && 'h-20',
         )}
       >
-        {/* Video Background - always present but fades out when scrolled */}
-        <div
-          className={cn(
-            'absolute inset-0 w-full h-full transition-opacity duration-300',
-            isScrolled ? 'opacity-0 pointer-events-none' : 'opacity-100',
-          )}
-        >
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="absolute top-0 left-0 w-full h-full object-cover object-top"
-            ref={(el) => {
-              if (el) el.playbackRate = 0.5
-            }}
+        {isFixed && (
+          <div
+            className={cn(
+              'absolute inset-0 w-full h-full transition-opacity duration-300',
+              isScrolled ? 'opacity-0 pointer-events-none' : 'opacity-100',
+            )}
           >
-            <source src="/videos/main.mp4" type="video/mp4" />
-          </video>
-          {/* Dark overlay with blur for better text visibility */}
-          <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" />
-        </div>
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="absolute top-0 left-0 w-full h-full object-cover object-top"
+              ref={(el) => {
+                if (el) el.playbackRate = 0.5
+              }}
+            >
+              <source src="/videos/main.mp4" type="video/mp4" />
+            </video>
+            <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" />
+          </div>
+        )}
 
-        {/* Navigation Content */}
         <div className="relative z-10 container-fluid mx-auto px-10 h-full">
-          {isScrolled ? (
-            // Scrolled state - horizontal layout
+          {isScrolled || !isFixed ? (
             <div className="flex items-center justify-between h-full">
               <Link href="/" className="flex items-center">
                 <div className="relative w-16 h-16">
