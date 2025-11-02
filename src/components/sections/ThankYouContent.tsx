@@ -152,7 +152,7 @@ export default function ThankYouContent() {
               {t('notFound.message')}
             </Typography>
             <Link
-              href="/cart"
+              href="/checkout"
               className="inline-block px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors"
             >
               {t('notFound.backToCart')}
