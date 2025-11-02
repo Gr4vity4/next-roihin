@@ -211,15 +211,17 @@ export default function ProductDetail({ product, category, language = 'en' }: Pr
                               : 'border-gray-800 text-gray-600 cursor-not-allowed'
                           }`}
                         >
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-3">
                             {colorPrice.color_icon?.url && (
-                              <Image
-                                src={colorPrice.color_icon.url}
-                                alt={colorPrice.color}
-                                width={20}
-                                height={20}
-                                className="rounded-full"
-                              />
+                              <div className="relative w-8 h-8 overflow-hidden rounded-md bg-black/20">
+                                <Image
+                                  src={colorPrice.color_icon.url}
+                                  alt={colorPrice.color}
+                                  fill
+                                  className="object-cover"
+                                  sizes="32px"
+                                />
+                              </div>
                             )}
                             <span className="capitalize">{colorPrice.color}</span>
                           </div>
