@@ -9,27 +9,52 @@ import { FontProvider } from '../providers/FontProvider'
 import { Container } from '../ui'
 import { PersonalizedDesignModal } from '../ui/PersonalizedDesignModal'
 
-export default function RecentPersonalizedDesignsSection() {
+type RecentPersonalizedDesignsSectionProps = {
+  initialImages?: string[]
+}
+
+export default function RecentPersonalizedDesignsSection({
+  initialImages = [],
+}: RecentPersonalizedDesignsSectionProps) {
   const t = useTranslations('personalizedPage.recentDesigns')
-  const [galleryImages, setGalleryImages] = useState<string[]>([])
+  const [galleryImages, setGalleryImages] = useState<string[]>(initialImages)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(initialImages.length === 0)
 
-  // Fetch random 8 images from WordPress API
   useEffect(() => {
+    setGalleryImages(initialImages)
+    if (initialImages.length > 0) {
+      setIsLoading(false)
+    }
+  }, [initialImages])
+
+  // Fetch recent personalized gallery images from Laravel API when none are preloaded
+  useEffect(() => {
+    if (initialImages.length > 0) {
+      return
+    }
+
+    let isSubscribed = true
+
     async function fetchImages() {
       try {
         const images = await getRecentPersonalizedDesigns(8)
+        if (!isSubscribed) return
         setGalleryImages(images)
       } catch (error) {
         console.error('Failed to fetch gallery images:', error)
       } finally {
-        setIsLoading(false)
+        if (isSubscribed) {
+          setIsLoading(false)
+        }
       }
     }
     fetchImages()
-  }, [])
+    return () => {
+      isSubscribed = false
+    }
+  }, [initialImages.length])
 
   // Don't render if loading or no images
   if (isLoading || galleryImages.length === 0) {

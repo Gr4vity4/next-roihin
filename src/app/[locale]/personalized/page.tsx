@@ -8,6 +8,7 @@ import PersonalizedExpertiseSection from '@/components/sections/PersonalizedExpe
 import PersonalizedGallerySection from '@/components/sections/PersonalizedGallerySection'
 import PersonalizedHeroSection from '@/components/sections/PersonalizedHeroSection'
 import RecentPersonalizedDesignsSection from '@/components/sections/RecentPersonalizedDesignsSection'
+import { getRecentPersonalizedDesigns } from '@/lib/api/gallery'
 import { content } from '@/config/content.config'
 import { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
@@ -48,7 +49,9 @@ export default async function PersonalizedPage({
 }) {
   const { locale } = await params
   setRequestLocale(locale)
-  const t = await getTranslations('personalizedPage')
+  const translationsPromise = getTranslations('personalizedPage')
+  const recentDesignsPromise = getRecentPersonalizedDesigns(8)
+  const [t, recentDesigns] = await Promise.all([translationsPromise, recentDesignsPromise])
   const { personalizedPage } = content
 
   return (
@@ -74,7 +77,7 @@ export default async function PersonalizedPage({
         <PersonalizedExpertiseSection />
 
         {/* Recent Personalized Designs Section */}
-        <RecentPersonalizedDesignsSection />
+        <RecentPersonalizedDesignsSection initialImages={recentDesigns} />
 
         {/* CTA Section */}
         {/* <PersonalizedCTASection buttons={personalizedPage.ctaSection.buttons} /> */}

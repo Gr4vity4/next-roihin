@@ -82,13 +82,13 @@ export async function getRandomGalleryPhotos(count: number = 10): Promise<string
 
 /**
  * Get recent personalized bracelet designs from Laravel API
- * Uses the "inspired" gallery for recent designs
+ * Uses the "recently-personalized" gallery managed in the admin CMS
  * @param count Number of photos to select (default: 8)
  * @returns Array of prioritized image URLs (sorted by sort order)
  */
 export async function getRecentPersonalizedDesigns(count: number = 8): Promise<string[]> {
   try {
-    const url = buildLaravelApiUrl('galleries/inspired')
+    const url = buildLaravelApiUrl('galleries/recently-personalized')
 
     const response = await fetch(url, {
       ...getFetchConfig('gallery'),
