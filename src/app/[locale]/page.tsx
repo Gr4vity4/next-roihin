@@ -18,7 +18,10 @@ export const revalidate = 300
 
 export default async function Home() {
   // Fetch latest inspired gallery images from Laravel admin REST endpoint
-  const galleryImages = (await getRecentPersonalizedDesigns(10)).filter((url): url is string => Boolean(url))
+  const recentDesigns = await getRecentPersonalizedDesigns(10)
+  const galleryImages = recentDesigns
+    .map(design => design.image_url)
+    .filter((url): url is string => Boolean(url))
 
   return (
     <FontProvider fonts={{ th: 'font-prompt', en: 'font-playfair' }}>

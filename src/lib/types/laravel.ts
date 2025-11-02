@@ -71,13 +71,40 @@ export const LaravelTestimonialSchema = z.object({
 export type LaravelTestimonial = z.infer<typeof LaravelTestimonialSchema>
 
 /**
+ * Laravel API Gallery Image Asset Schema
+ */
+export const LaravelGalleryImageAssetSchema = z.object({
+  id: z.number(),
+  image_path: z.string().nullable(),
+  image_url: z.string().nullable(),
+  sort_order: z.number().optional(),
+})
+
+export type LaravelGalleryImageAsset = z.infer<typeof LaravelGalleryImageAssetSchema>
+
+/**
  * Laravel API Gallery Image Schema
  */
 export const LaravelGalleryImageSchema = z.object({
   id: z.number(),
-  image_path: z.string(),
-  image_url: z.string(),
-  sort_order: z.number(),
+  image_path: z.string().nullable(),
+  image_url: z.string().nullable(),
+  sort_order: z.number().optional(),
+  title: z.string().nullable().optional(),
+  description: z.string().nullable().optional(),
+  score_finance: z.number().nullable().optional(),
+  score_work: z.number().nullable().optional(),
+  score_love: z.number().nullable().optional(),
+  score_health: z.number().nullable().optional(),
+  score_spirit: z.number().nullable().optional(),
+  stones_for_design: z.string().nullable().optional(),
+  charm_spacer: z.string().nullable().optional(),
+  stone_size: z.string().nullable().optional(),
+  budget: z.string().nullable().optional(),
+  designed_date: z.string().nullable().optional(),
+  sub_gallery: z.array(LaravelGalleryImageAssetSchema).optional(),
+  created_at: z.string().nullable().optional(),
+  updated_at: z.string().nullable().optional(),
 })
 
 export type LaravelGalleryImage = z.infer<typeof LaravelGalleryImageSchema>

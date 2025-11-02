@@ -52,6 +52,7 @@ export default async function PersonalizedPage({
   const translationsPromise = getTranslations('personalizedPage')
   const recentDesignsPromise = getRecentPersonalizedDesigns(8)
   const [t, recentDesigns] = await Promise.all([translationsPromise, recentDesignsPromise])
+  const recentDesignsWithImages = recentDesigns.filter(design => Boolean(design.image_url))
   const { personalizedPage } = content
 
   return (
@@ -77,7 +78,7 @@ export default async function PersonalizedPage({
         <PersonalizedExpertiseSection />
 
         {/* Recent Personalized Designs Section */}
-        <RecentPersonalizedDesignsSection initialImages={recentDesigns} />
+        <RecentPersonalizedDesignsSection initialImages={recentDesignsWithImages} />
 
         {/* CTA Section */}
         {/* <PersonalizedCTASection buttons={personalizedPage.ctaSection.buttons} /> */}

@@ -2,13 +2,15 @@
 
 import { X } from 'lucide-react'
 import Image from 'next/image'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import type { LaravelGalleryImage } from '@/lib/types/laravel'
 
 interface PersonalizedDesignModalProps {
   isOpen: boolean
   onClose: () => void
   images?: string[]
   title?: string
+  design?: LaravelGalleryImage
 }
 
 export function PersonalizedDesignModal({
@@ -16,19 +18,40 @@ export function PersonalizedDesignModal({
   onClose,
   images = [],
   title = 'ออกแบบโดย',
+  design,
 }: PersonalizedDesignModalProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
 
-  // Mock data matching the reference design
-  const mockImages =
-    images.length > 0
-      ? images
-      : [
-          '/images/placeholder-bracelet-1.jpg',
-          '/images/placeholder-bracelet-2.jpg',
-          '/images/placeholder-bracelet-3.jpg',
-          '/images/placeholder-bracelet-4.jpg',
-        ]
+  const defaultPlaceholderImages = useMemo(
+    () => [
+      '/images/placeholder-bracelet-1.jpg',
+      '/images/placeholder-bracelet-2.jpg',
+      '/images/placeholder-bracelet-3.jpg',
+      '/images/placeholder-bracelet-4.jpg',
+    ],
+    [],
+  )
+
+  const galleryImagesFromDesign = useMemo(() => {
+    if (!design) {
+      return []
+    }
+
+    const subGalleryImages = (design.sub_gallery ?? [])
+      .map(asset => asset?.image_url)
+      .filter((url): url is string => Boolean(url))
+
+    const primaryImage = design.image_url ? [design.image_url] : []
+
+    return [...primaryImage, ...subGalleryImages]
+  }, [design])
+
+  const galleryImages =
+    galleryImagesFromDesign.length > 0
+      ? galleryImagesFromDesign
+      : images.length > 0
+        ? images
+        : defaultPlaceholderImages
 
   // Lock body scroll when modal is open
   useEffect(() => {
@@ -53,24 +76,62 @@ export function PersonalizedDesignModal({
     return () => window.removeEventListener('keydown', handleEscape)
   }, [isOpen, onClose])
 
+  useEffect(() => {
+    if (isOpen) {
+      setSelectedImageIndex(0)
+    }
+  }, [isOpen, galleryImages.length, design?.id])
+
+  useEffect(() => {
+    if (selectedImageIndex >= galleryImages.length) {
+      setSelectedImageIndex(0)
+    }
+  }, [galleryImages.length, selectedImageIndex])
+
   if (!isOpen) return null
 
-  const properties = [
-    { name: 'การเงิน โชคลาภ', rating: 5, label: 'ดีเยี่ยมที่สุด' },
-    { name: 'การงาน ธุรกิจ การลงทุน', rating: 5, label: 'ดีมาก' },
-    { name: 'ความรัก ความสุข โชคดี', rating: 3, label: 'ปานกลาง' },
-    { name: 'สุขภาพ สมดุลชีวิต', rating: 3, label: 'ปานกลาง' },
-    { name: 'จิตวิญญาณ ความมั่นคง', rating: 4, label: 'ดี' },
-  ]
+  const designerName = design?.title || 'ROIHIN Stone & Bracelet'
+  const designedDate = design?.designed_date || '22 August 2025'
+  const charmSpacer = design?.charm_spacer || 'None'
+  const stoneSize = design?.stone_size || '8 mm.'
+  const budget = design?.budget || 'ระดับสูง (8,000 ขึ้นไป)'
+  const description = design?.description
+  const energyScores = [
+    { key: 'score_finance' as const, name: 'การเงิน โชคลาภ', fallbackRating: 5, fallbackLabel: 'ดีเยี่ยมที่สุด' },
+    { key: 'score_work' as const, name: 'การงาน ธุรกิจ การลงทุน', fallbackRating: 5, fallbackLabel: 'ดีมาก' },
+    { key: 'score_love' as const, name: 'ความรัก ความสุข โชคดี', fallbackRating: 3, fallbackLabel: 'ปานกลาง' },
+    { key: 'score_health' as const, name: 'สุขภาพ สมดุลชีวิต', fallbackRating: 3, fallbackLabel: 'ปานกลาง' },
+    { key: 'score_spirit' as const, name: 'จิตวิญญาณ ความมั่นคง', fallbackRating: 4, fallbackLabel: 'ดี' },
+  ].map(({ key, name, fallbackRating, fallbackLabel }) => {
+    const rawScore = design?.[key]
+    const rating =
+      typeof rawScore === 'number'
+        ? Math.max(0, Math.min(8, rawScore))
+        : fallbackRating
+    return {
+      name,
+      rating,
+      label: fallbackLabel,
+    }
+  })
 
-  const stones = [
-    'Black Tourmaline',
-    'Red Garnet',
-    "Red Tiger's Eye",
-    'Labradorite',
-    'Phantom Amethyst',
-    'Golden Rutilated Quartz',
-  ]
+  const stones = design?.stones_for_design
+    ? design.stones_for_design
+        .split(/[\n,]+/)
+        .map(stone => stone.trim())
+        .filter(Boolean)
+    : [
+        'Black Tourmaline',
+        'Red Garnet',
+        "Red Tiger's Eye",
+        'Labradorite',
+        'Phantom Amethyst',
+        'Golden Rutilated Quartz',
+      ]
+
+  const mainImageAlt = design?.title || 'Personalized Bracelet'
+
+  const properties = energyScores
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -100,8 +161,8 @@ export function PersonalizedDesignModal({
               {/* Main Image */}
               <div className="relative aspect-square w-full bg-gray-100 rounded-2xl overflow-hidden">
                 <Image
-                  src={mockImages[selectedImageIndex]}
-                  alt="Personalized Bracelet"
+                  src={galleryImages[selectedImageIndex]}
+                  alt={mainImageAlt}
                   fill
                   className="object-cover"
                   sizes="(max-width: 768px) 100vw, 45vw"
@@ -111,7 +172,7 @@ export function PersonalizedDesignModal({
 
               {/* Thumbnail Strip */}
               <div className="grid grid-cols-4 gap-3">
-                {mockImages.slice(0, 4).map((img, index) => (
+                {galleryImages.map((img, index) => (
                   <button
                     key={index}
                     onClick={() => setSelectedImageIndex(index)}
@@ -136,8 +197,8 @@ export function PersonalizedDesignModal({
               <div className="pt-6 flex items-start justify-between">
                 <div className="space-y-1">
                   <p className="text-xs text-gray-500">{title}</p>
-                  <p className="font-medium text-gray-800">ROIHIN Stone & Bracelet</p>
-                  <p className="text-xs text-gray-500">22 August 2025</p>
+                  <p className="font-medium text-gray-800">{designerName}</p>
+                  <p className="text-xs text-gray-500">{designedDate}</p>
                 </div>
                 <div className="flex gap-3 pt-1">
                   <button
@@ -197,19 +258,25 @@ export function PersonalizedDesignModal({
 
               {/* Description */}
               <div className="text-gray-700 leading-relaxed text-sm md:text-base space-y-2">
-                <p>
-                  กำไลเส้นนี้เปล่งประกายพลังแห่งความมั่นใจและการตัดสินใจที่เฉียบขาด
-                  เสริมไฟในใจให้ลุกไหม้ นำพลังงานแห่งความกล้าและแรงขับเคลื่อนมาเถื่อ
-                  หนุนการงานและการเงิน ช่วยปลดหนี้และสร้างโอกาสใหม่ ๆ ด้านการเงิน ได้อย่างมั่นคง
-                  พลังงานของหินยังค่อยปกป้องจากสิ่งไม่ดีและพลังลบ เสริมสุขภาพทั้งกายและใจให้แข็งแรง
-                  พร้อมทั้งช่วยให้จิตใจสงบ มีสมาธิ ลดความฟุ้งซ่าน
-                  และเพิ่มความเฉียบแหลมในความคิดและความจำ เถื่อ หนุนพลังจิตวิญญาณให้สูงขึ้น
-                  ในด้านความสัมพันธ์ กำไลช่วยเสริมความ เข้าใจและความผกพันกับคู่ครอง
-                  ทำให้ความรักมั่นคงและรำรับ อีกทั้ง ยังดึงดูดโชคดี ไม่ว่าจะเป็นโชคลาภ
-                  การได้เพื่อนร่วมงานดี ๆ หรือโอกาสที่ นำประกำใจ
-                  กำไลเส้นนี้จึงเป็นเครื่องรางที่ครอบคลุมทั้งพลังแห่งความ สำเร็จ ความสุข ความรัก
-                  และการคุ้มครองให้แคล้วคลาดปลอดภัย
-                </p>
+                {description ? (
+                  description.split('\n').map((paragraph, index) => (
+                    <p key={index}>{paragraph.trim()}</p>
+                  ))
+                ) : (
+                  <p>
+                    กำไลเส้นนี้เปล่งประกายพลังแห่งความมั่นใจและการตัดสินใจที่เฉียบขาด
+                    เสริมไฟในใจให้ลุกไหม้ นำพลังงานแห่งความกล้าและแรงขับเคลื่อนมาเถื่อ
+                    หนุนการงานและการเงิน ช่วยปลดหนี้และสร้างโอกาสใหม่ ๆ ด้านการเงิน ได้อย่างมั่นคง
+                    พลังงานของหินยังค่อยปกป้องจากสิ่งไม่ดีและพลังลบ เสริมสุขภาพทั้งกายและใจให้แข็งแรง
+                    พร้อมทั้งช่วยให้จิตใจสงบ มีสมาธิ ลดความฟุ้งซ่าน
+                    และเพิ่มความเฉียบแหลมในความคิดและความจำ เถื่อ หนุนพลังจิตวิญญาณให้สูงขึ้น
+                    ในด้านความสัมพันธ์ กำไลช่วยเสริมความ เข้าใจและความผกพันกับคู่ครอง
+                    ทำให้ความรักมั่นคงและรำรับ อีกทั้ง ยังดึงดูดโชคดี ไม่ว่าจะเป็นโชคลาภ
+                    การได้เพื่อนร่วมงานดี ๆ หรือโอกาสที่ นำประกำใจ
+                    กำไลเส้นนี้จึงเป็นเครื่องรางที่ครอบคลุมทั้งพลังแห่งความ สำเร็จ ความสุข ความรัก
+                    และการคุ้มครองให้แคล้วคลาดปลอดภัย
+                  </p>
+                )}
               </div>
 
               {/* Properties Table */}
@@ -253,13 +320,13 @@ export function PersonalizedDesignModal({
                 <div className="space-y-2">
                   <h3 className="font-medium text-gray-800 text-sm">ชาร์มและตัวคั่น</h3>
                   <div className="px-4 py-3 border border-gray-300 rounded-full text-sm text-gray-700 text-center">
-                    None
+                    {charmSpacer}
                   </div>
                 </div>
                 <div className="space-y-2">
                   <h3 className="font-medium text-gray-800 text-sm">ขนาดหิน</h3>
                   <div className="px-4 py-3 border border-gray-300 rounded-full text-sm text-gray-700 text-center">
-                    8 mm.
+                    {stoneSize}
                   </div>
                 </div>
               </div>
@@ -268,7 +335,7 @@ export function PersonalizedDesignModal({
               <div className="space-y-2">
                 <h3 className="font-medium text-gray-800 text-sm">งบประมาณการจัดทำ</h3>
                 <div className="px-6 py-3 border border-gray-300 rounded-full text-center text-gray-700">
-                  ระดับสูง (8,000 ขึ้นไป)
+                  {budget}
                 </div>
               </div>
             </div>

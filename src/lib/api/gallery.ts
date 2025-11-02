@@ -1,6 +1,6 @@
 import { getFetchConfig } from '@/config/cache.config'
 import { buildLaravelApiUrl } from '@/config/api.config'
-import { LaravelSingleGalleryResponseSchema, type LaravelGalleryImage } from '@/lib/types/laravel'
+import { LaravelSingleGalleryResponseSchema, type LaravelGalleryImage, type LaravelGalleryImageAsset } from '@/lib/types/laravel'
 
 /**
  * Get curated personalized gallery images from Laravel API
@@ -84,9 +84,9 @@ export async function getRandomGalleryPhotos(count: number = 10): Promise<string
  * Get recent personalized bracelet designs from Laravel API
  * Uses the "recently-personalized" gallery managed in the admin CMS
  * @param count Number of photos to select (default: 8)
- * @returns Array of prioritized image URLs (sorted by sort order)
+ * @returns Array of prioritized gallery image objects (sorted by sort order)
  */
-export async function getRecentPersonalizedDesigns(count: number = 8): Promise<string[]> {
+export async function getRecentPersonalizedDesigns(count: number = 8): Promise<LaravelGalleryImage[]> {
   try {
     const url = buildLaravelApiUrl('galleries/recently-personalized')
 
@@ -122,16 +122,25 @@ export async function getRecentPersonalizedDesigns(count: number = 8): Promise<s
       return aOrder - bOrder
     })
 
-    const prioritizedUrls = sortedByPriority
-      .map(image => image.image_url)
-      .filter((url): url is string => Boolean(url))
+    const prioritizedDesigns = sortedByPriority
+      .filter(image => Boolean(image.image_url))
+      .map<LaravelGalleryImage>((image) => ({
+        ...image,
+        sub_gallery: (image.sub_gallery ?? [])
+          .slice()
+          .sort((a: LaravelGalleryImageAsset, b: LaravelGalleryImageAsset) => {
+            const aOrder = typeof a.sort_order === 'number' ? a.sort_order : Number.MAX_SAFE_INTEGER
+            const bOrder = typeof b.sort_order === 'number' ? b.sort_order : Number.MAX_SAFE_INTEGER
+            return aOrder - bOrder
+          }),
+      }))
 
-    if (prioritizedUrls.length === 0) {
+    if (prioritizedDesigns.length === 0) {
       return []
     }
 
     // Respect requested count while preserving priority order
-    return prioritizedUrls.slice(0, count)
+    return prioritizedDesigns.slice(0, count)
   } catch (error) {
     console.error('Error fetching recent personalized designs:', error)
     return []
