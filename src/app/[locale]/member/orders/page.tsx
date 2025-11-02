@@ -1,10 +1,10 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
-import { Link } from '@/i18n/navigation'
 import Button from '@/components/Button'
-import { useLocale, useTranslations } from 'next-intl'
+import { Link } from '@/i18n/navigation'
 import type { OrderResource, OrderStatus } from '@/lib/types/order'
+import { useLocale, useTranslations } from 'next-intl'
+import { useEffect, useMemo, useState } from 'react'
 
 type FilterStatus = 'all' | OrderStatus
 
@@ -192,20 +192,20 @@ export default function OrdersPage() {
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <div className="flex items-center flex-wrap gap-3 mb-2">
-                    <h3 className="text-lg font-semibold text-gray-900">{order.order_number}</h3>
+                    <h3 className="text-lg font-semibold font-prompt text-gray-900">{order.order_number}</h3>
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusPillColor(status)}`}>
                       {renderStatusChip(status, order.status_label)}
                     </span>
                   </div>
                   <p className="text-sm text-gray-500">{t('orderCard.orderedOn', { date: orderDate })}</p>
                 </div>
-                <p className="text-xl font-bold text-gray-900">{totalFormatted}</p>
+                <p className="text-xl font-bold text-gray-900 font-prompt">{totalFormatted}</p>
               </div>
 
               <div className="border-t border-gray-200 pt-4">
                 <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                   <div className="space-y-1">
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-gray-600 font-prompt">
                       {t('orderCard.items', { count: itemsCount })}
                     </p>
                     {trackingNumber && (
