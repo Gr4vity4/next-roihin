@@ -54,13 +54,12 @@ export default function CrystalProductPage() {
   }, [slug, locale])
 
   useEffect(() => {
-    const crystalId = product?.id
-
-    if (!crystalId) {
+    if (!product?.id) {
       setRelatedProducts([])
       return
     }
 
+    const crystalId = product.id
     let isCancelled = false
 
     async function fetchRelatedProducts() {

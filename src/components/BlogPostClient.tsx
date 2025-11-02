@@ -86,8 +86,17 @@ export default function BlogPostClient({ slug }: BlogPostClientProps) {
     notFound()
   }
 
-  const formattedDate = formatThaiDate(article.date)
+  const formattedDate = article.date ? formatThaiDate(article.date) : ''
+  const heroImageSrc = article.heroImage || content.blog.hero.backgroundImage
   const currentUrl = `${siteConfig.url}/blog/${encodeURIComponent(article.slug)}`
+  const authorRecord =
+    article.author && typeof article.author === 'object'
+      ? (article.author as Record<string, unknown>)
+      : null
+  const authorDescription =
+    authorRecord && typeof authorRecord.description === 'string'
+      ? (authorRecord.description as string)
+      : undefined
 
   const breadcrumbItems = [
     {
@@ -111,7 +120,7 @@ export default function BlogPostClient({ slug }: BlogPostClientProps) {
         <section className="relative">
           <div className="relative w-full h-[400px] lg:h-[500px]">
             <Image
-              src={article.heroImage}
+              src={heroImageSrc}
               alt={article.title}
               fill
               className="object-cover"
@@ -162,7 +171,7 @@ export default function BlogPostClient({ slug }: BlogPostClientProps) {
 
               <article className="prose prose-lg max-w-none">
                 <SafeHtml
-                  html={article.content}
+                  html={article.content ?? ''}
                   className=" text-gray-800 leading-8 [&_h3]:text-2xl [&_h3]:font-bold [&_h3]:text-[#006039] [&_h3]:mt-8 [&_h3]:mb-4 [&_h4]:text-xl [&_h4]:font-semibold [&_h4]:text-[#006039] [&_h4]:mt-6 [&_h4]:mb-3 [&_p]:mb-4 [&_p]:leading-8 [&_ul]:list-disc [&_ul]:list-inside [&_ul]:mb-4 [&_ul]:space-y-2 [&_li]:leading-7 [&_strong]:font-semibold [&_strong]:text-[#006039]"
                 />
               </article>
@@ -199,12 +208,12 @@ export default function BlogPostClient({ slug }: BlogPostClientProps) {
                       <Typography variant="h4" className="text-gray-900 mb-1">
                         {article.author.name}
                       </Typography>
-                      {article.author.description && (
+                      {authorDescription && (
                         <Typography
                           variant="caption"
                           className="text-gray-600"
                         >
-                          {article.author.description}
+                          {authorDescription}
                         </Typography>
                       )}
                     </div>
@@ -215,7 +224,7 @@ export default function BlogPostClient({ slug }: BlogPostClientProps) {
               <SocialShare
                 url={currentUrl}
                 title={article.title}
-                description={article.excerpt}
+                description={article.excerpt ?? ''}
                 className="mt-8"
               />
             </div>
@@ -224,7 +233,7 @@ export default function BlogPostClient({ slug }: BlogPostClientProps) {
 
         <RelatedArticles
           articles={Object.values(content.blog.articles)}
-          currentArticleId={article.id}
+          currentArticleId={String(article.id)}
         />
       </main>
 

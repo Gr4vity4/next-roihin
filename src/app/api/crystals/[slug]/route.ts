@@ -25,13 +25,13 @@ function resolveResponseLocale(payload: unknown, fallback: CrystalLocale): Cryst
 }
 
 interface RouteParams {
-  params: {
+  params: Promise<{
     slug: string
-  }
+  }>
 }
 
 export async function GET(request: NextRequest, { params }: RouteParams) {
-  const slug = params.slug
+  const { slug } = await params
   const searchParams = request.nextUrl.searchParams
   const locale = parseLocale(searchParams.get('lang') || searchParams.get('locale'))
 

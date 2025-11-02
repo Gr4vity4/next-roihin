@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useLocale } from 'next-intl'
 import { Typography } from '@/components/ui'
 import Image from 'next/image'
-import type { Testimonial } from '@/lib/types/wordpress-settings'
+import type { Testimonial } from '@/lib/types/testimonials'
 
 // Loading component
 function TestimonialsLoading() {

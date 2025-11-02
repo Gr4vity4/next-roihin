@@ -4,10 +4,11 @@ import { cancelOrder } from '@/lib/api/orders'
 import { getErrorMessage } from '@/lib/utils/error-handler'
 
 interface RouteParams {
-  params: { orderId: string }
+  params: Promise<{ orderId: string }>
 }
 
 export async function POST(request: Request, { params }: RouteParams) {
+  const { orderId } = await params
   try {
     const token = await getAuthToken()
 
@@ -16,14 +17,14 @@ export async function POST(request: Request, { params }: RouteParams) {
     }
 
     const payload = await request.json().catch(() => ({}))
-    const data = await cancelOrder(token, params.orderId, payload)
+    const data = await cancelOrder(token, orderId, payload)
     return NextResponse.json(data, { status: 200 })
   } catch (error) {
     if (error instanceof Error && error.message === 'UNAUTHORIZED') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    console.error('Order cancel POST error:', error)
+    console.error(`Order cancel POST error (${orderId}):`, error)
     return NextResponse.json(
       { error: getErrorMessage(error, 'Failed to cancel order') },
       { status: 400 }

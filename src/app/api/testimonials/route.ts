@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getFetchConfig, getCacheHeaders } from '@/config/cache.config'
 import { buildLaravelApiUrl } from '@/config/api.config'
 import { LaravelTestimonialsResponseSchema } from '@/lib/types/laravel'
-import type { TestimonialsResponse, Testimonial } from '@/lib/types/wordpress-settings'
+import type { Testimonial, TestimonialsResponse } from '@/lib/types/testimonials'
 
 const DEFAULT_AVATAR = '/images/default-avatar.svg'
 

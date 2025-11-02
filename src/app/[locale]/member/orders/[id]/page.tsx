@@ -190,7 +190,7 @@ export default function OrderDetailPage() {
       <div className="max-w-7xl mx-auto pt-8">
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-10 text-center">
           <h3 className="text-lg font-medium text-gray-900 mb-2">Order Not Found</h3>
-          <p className="text-gray-500 mb-6">The order you're looking for doesn't exist or you don't have permission to view it.</p>
+          <p className="text-gray-500 mb-6">The order you&apos;re looking for doesn&apos;t exist or you don&apos;t have permission to view it.</p>
           <Link href="/member/orders">
             <Button>Back to Orders</Button>
           </Link>
@@ -259,26 +259,31 @@ export default function OrderDetailPage() {
               </h3>
             </div>
             <div className="space-y-4">
-              {order.items.map((item) => (
-                <div key={item.id} className="flex justify-between gap-4 pb-4 border-b border-gray-100 last:border-0 last:pb-0">
-                  <div className="flex-1">
-                    <p className="text-gray-900 font-medium">{item.product_name}</p>
-                    {item.options?.color && (
-                      <p className="text-sm text-gray-500">
-                        {tThankYou('orderDetails.color', { defaultValue: 'Color' })}: {item.options.color as string}
+              {order.items.map((item) => {
+                const color =
+                  typeof item.options?.color === 'string' ? item.options.color : null
+
+                return (
+                  <div key={item.id} className="flex justify-between gap-4 pb-4 border-b border-gray-100 last:border-0 last:pb-0">
+                    <div className="flex-1">
+                      <p className="text-gray-900 font-medium">{item.product_name}</p>
+                      {color && (
+                        <p className="text-sm text-gray-500">
+                          {tThankYou('orderDetails.color', { defaultValue: 'Color' })}: {color}
+                        </p>
+                      )}
+                      <p className="text-sm text-gray-500 ">
+                        {tThankYou('orderDetails.quantity', { defaultValue: 'Quantity' })}: {item.quantity}
                       </p>
-                    )}
-                    <p className="text-sm text-gray-500 ">
-                      {tThankYou('orderDetails.quantity', { defaultValue: 'Quantity' })}: {item.quantity}
-                    </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-gray-900 font-medium ">
+                        {formatCurrency(item.subtotal_amount_minor, order.currency, locale)}
+                      </p>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-gray-900 font-medium ">
-                      {formatCurrency(item.subtotal_amount_minor, order.currency, locale)}
-                    </p>
-                  </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
 
             {/* Order Summary */}

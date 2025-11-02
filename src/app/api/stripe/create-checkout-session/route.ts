@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { stripe } from '@/lib/stripe'
+import { getStripeClient } from '@/lib/stripe'
 import Stripe from 'stripe'
 
 interface BraceletBead {
@@ -47,6 +47,7 @@ interface CheckoutSessionRequest {
 
 export async function POST(request: NextRequest) {
   try {
+    const stripe = getStripeClient()
     const body: CheckoutSessionRequest = await request.json()
     const { items, shippingAddress, locale } = body
 

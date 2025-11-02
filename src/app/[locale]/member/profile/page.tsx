@@ -194,9 +194,12 @@ export default function ProfilePage() {
           buttons: ['clear'],
           showEvent: 'focus',
           onSelect: ({ formattedDate }) => {
+            const normalizedBirthDate = Array.isArray(formattedDate)
+              ? formattedDate[0] ?? ''
+              : formattedDate ?? ''
             setFormData((prev) => ({
               ...prev,
-              birthDate: formattedDate ?? '',
+              birthDate: normalizedBirthDate,
             }))
           },
         })

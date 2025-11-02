@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { stripe } from '@/lib/stripe'
+import { getStripeClient } from '@/lib/stripe'
 import Stripe from 'stripe'
 import type { OrderCreateRequest } from '@/lib/types/order'
 
@@ -23,9 +23,12 @@ export async function POST(request: NextRequest) {
   }
 
   let event: Stripe.Event
+  let stripe: Stripe
 
   try {
     // Verify webhook signature
+    stripe = getStripeClient()
+
     event = stripe.webhooks.constructEvent(
       body,
       signature,

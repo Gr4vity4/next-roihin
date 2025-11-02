@@ -4,13 +4,13 @@ import { setDefaultAddress } from '@/lib/api/addresses'
 import { getErrorMessage } from '@/lib/utils/error-handler'
 
 type RouteContext = {
-  params: {
+  params: Promise<{
     addressId: string
-  }
+  }>
 }
 
-export async function POST(_request: Request, context: RouteContext) {
-  const { addressId } = context.params
+export async function POST(_request: Request, { params }: RouteContext) {
+  const { addressId } = await params
 
   try {
     const token = await getAuthToken()
@@ -22,7 +22,7 @@ export async function POST(_request: Request, context: RouteContext) {
     const data = await setDefaultAddress(token, addressId)
     return NextResponse.json(data)
   } catch (error) {
-    console.error(`Addresses set default error (${context.params.addressId}):`, error)
+    console.error(`Addresses set default error (${addressId}):`, error)
     return NextResponse.json(
       { error: getErrorMessage(error, 'Failed to set default address') },
       { status: 400 }

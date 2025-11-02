@@ -157,7 +157,7 @@ function toStringOrEmpty(value: unknown): string {
   return ''
 }
 
-function extractImage(source: RawStoneRecord, keys: string[]): string {
+function extractImage(source: RawStoneRecord, keys: readonly string[]): string {
   for (const key of keys) {
     const value = source[key]
     if (typeof value === 'string' && value.trim() !== '') {

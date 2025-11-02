@@ -1,4 +1,5 @@
 import type { NextConfig } from 'next'
+import type { RemotePattern } from 'next/dist/shared/lib/image-config'
 import createNextIntlPlugin from 'next-intl/plugin'
 
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts')
@@ -27,13 +28,13 @@ const additionalConnectOrigins = [laravelApiOrigin, wordpressOrigin, 'https://ap
 
 const connectSrcDirective = `connect-src 'self' ${additionalConnectOrigins.join(' ')}`
 
-const toRemotePattern = (origin: string) => {
+const toRemotePattern = (origin: string): RemotePattern => {
   const url = new URL(origin)
   return {
-    protocol: url.protocol.replace(':', ''),
+    protocol: url.protocol.replace(':', '') as RemotePattern['protocol'],
     hostname: url.hostname,
-    port: url.port && url.port !== '80' && url.port !== '443' ? url.port : '',
-    pathname: '/**' as const,
+    port: url.port && url.port !== '80' && url.port !== '443' ? url.port : undefined,
+    pathname: '/**',
   }
 }
 
@@ -42,14 +43,12 @@ const remotePatterns = [
   {
     protocol: 'https',
     hostname: 'images.unsplash.com',
-    port: '',
-    pathname: '/**' as const,
+    pathname: '/**',
   },
   {
     protocol: 'https',
     hostname: 'static.wixstatic.com',
-    port: '',
-    pathname: '/**' as const,
+    pathname: '/**',
   },
 ] satisfies NonNullable<NextConfig['images']>['remotePatterns']
 

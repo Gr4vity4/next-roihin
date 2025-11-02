@@ -1,12 +1,16 @@
 import Image from 'next/image'
 import { getPersonalizedGalleryImages } from '@/lib/api/gallery'
+import type { LaravelGalleryImage } from '@/lib/types/laravel'
 
 export default async function PersonalizedGallerySection() {
   // Fetch curated gallery images from Laravel admin via REST API
   const galleryImages = await getPersonalizedGalleryImages()
 
   // Filter out images without a usable URL
-  const imagesWithUrl = galleryImages.filter(image => Boolean(image.image_url))
+  const imagesWithUrl = galleryImages.filter(
+    (image): image is LaravelGalleryImage & { image_url: string } =>
+      typeof image.image_url === 'string' && image.image_url.length > 0,
+  )
 
   if (imagesWithUrl.length === 0) {
     return null

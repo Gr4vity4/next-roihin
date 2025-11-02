@@ -40,12 +40,12 @@ export default async function MemberLayout({
   params,
 }: {
   children: React.ReactNode
-  params: { locale?: string }
+  params: Promise<{ locale?: string }>
 }) {
+  const { locale = '' } = await params
   const isAuthenticated = await ensureAuthenticated()
 
   if (!isAuthenticated) {
-    const locale = params?.locale || ''
     redirect(locale ? `/${locale}` : '/')
   }
 

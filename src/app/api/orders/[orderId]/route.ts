@@ -4,10 +4,11 @@ import { fetchOrder } from '@/lib/api/orders'
 import { getErrorMessage } from '@/lib/utils/error-handler'
 
 interface RouteParams {
-  params: { orderId: string }
+  params: Promise<{ orderId: string }>
 }
 
 export async function GET(_: Request, { params }: RouteParams) {
+  const { orderId } = await params
   try {
     const token = await getAuthToken()
 
@@ -15,7 +16,7 @@ export async function GET(_: Request, { params }: RouteParams) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const data = await fetchOrder(token, params.orderId)
+    const data = await fetchOrder(token, orderId)
     return NextResponse.json(data, { status: 200 })
   } catch (error) {
     if (error instanceof Error) {
@@ -28,7 +29,7 @@ export async function GET(_: Request, { params }: RouteParams) {
       }
     }
 
-    console.error('Order detail GET error:', error)
+    console.error(`Order detail GET error (${orderId}):`, error)
     return NextResponse.json(
       { error: getErrorMessage(error, 'Failed to load order') },
       { status: 500 }

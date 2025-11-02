@@ -1,5 +1,5 @@
 import { getFetchConfig } from '@/config/cache.config'
-import type { SiteSettings } from '@/lib/types/wordpress-settings'
+import type { SiteSettings } from '@/lib/types/site-settings'
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api'
 

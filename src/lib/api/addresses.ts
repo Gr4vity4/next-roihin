@@ -106,7 +106,7 @@ export async function createAddress(
 ): Promise<{ item: ShippingAddressResponseItem }>
 export async function createAddress(
   token: string,
-  payload: Record<string, unknown>
+  payload: (ShippingAddressPayload & { set_default?: boolean }) | Record<string, unknown>
 ): Promise<{ item: ShippingAddressResponseItem }> {
   const response = await fetch(getLaravelApiEndpoint('/addresses'), {
     method: 'POST',

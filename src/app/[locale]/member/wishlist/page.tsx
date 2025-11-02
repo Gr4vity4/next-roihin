@@ -143,9 +143,11 @@ export default function WishlistPage() {
     const cartColorLabel = typeof rawCartColor === 'string'
       ? rawCartColor
       : (rawCartColor !== null && rawCartColor !== undefined ? String(rawCartColor) : null)
-    const productCategory = item.product && typeof (item.product as { category?: unknown }).category === 'string'
-      ? (item.product as { category: string }).category
-      : undefined
+    const rawCategory =
+      item.product && typeof item.product === 'object'
+        ? (item.product as Record<string, unknown>).category
+        : undefined
+    const productCategory = typeof rawCategory === 'string' ? rawCategory : undefined
     const cartItem = {
       id: item.color ? `${item.product_id}-${item.color}` : String(item.product_id),
       slug: item.product?.slug || `product-${item.product_id}`,
@@ -155,7 +157,7 @@ export default function WishlistPage() {
         ?? item.price?.min_price
         ?? 0,
       image: resolveWishlistItemImageUrl(item, cartColorLabel),
-      color: item.color,
+      color: cartColorLabel ?? undefined,
       category: productCategory,
     }
 

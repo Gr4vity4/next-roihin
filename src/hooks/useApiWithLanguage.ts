@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useLocale } from 'next-intl'
 import { getErrorMessage } from '@/lib/utils/error-handler'
-import type { Testimonial } from '@/lib/types/wordpress-settings'
+import type { Testimonial } from '@/lib/types/testimonials'
 import type { BankData } from '@/lib/types/bank'
 import type { Product } from '@/lib/types/products'
 

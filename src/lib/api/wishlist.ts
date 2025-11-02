@@ -1,5 +1,6 @@
 import { getLaravelApiEndpoint } from '@/config/api.config'
 import type {
+  WishlistItem,
   WishlistToggleParams,
   WishlistToggleResponse,
   WishlistResponse,
@@ -114,16 +115,39 @@ export async function fetchWishlist(token: string): Promise<WishlistResponse> {
 
   const result = await response.json() as { data?: unknown; meta?: Record<string, unknown> }
   const entries: RawWishlistItem[] = Array.isArray(result.data) ? (result.data as RawWishlistItem[]) : []
-  const total = result.meta?.total ?? entries.length
+  const totalValue = result.meta?.total
+  const total = typeof totalValue === 'number' && Number.isFinite(totalValue)
+    ? totalValue
+    : entries.length
 
   const items = entries.map((entry) => {
     const product = entry.product ?? {}
+    const productIdValue =
+      typeof product?.id === 'number' && Number.isFinite(product.id)
+        ? product.id
+        : entry.product_id
+    const productSlug =
+      typeof product?.slug === 'string' && product.slug.trim() !== ''
+        ? product.slug
+        : `product-${productIdValue}`
+    const productTitle =
+      typeof product?.title === 'string' && product.title.trim() !== ''
+        ? product.title
+        : `Product ${productIdValue}`
+    const productAcfData =
+      product?.acf && typeof product.acf === 'object'
+        ? (product.acf as Record<string, unknown>)
+        : undefined
     const addedAt = typeof entry.added_at === 'string' ? Date.parse(entry.added_at) : Date.now()
-    const featuredImage = product.featured_image_url ?? product.gallery_urls?.[0] ?? null
-    const galleryUrlsRaw = Array.isArray(product.gallery_urls) ? product.gallery_urls : []
+    const rawFeaturedImage =
+      typeof product?.featured_image_url === 'string' && product.featured_image_url.trim() !== ''
+        ? product.featured_image_url
+        : null
+    const galleryUrlsRaw = Array.isArray(product?.gallery_urls) ? product.gallery_urls : []
     const galleryUrls = galleryUrlsRaw
       .map((url) => (typeof url === 'string' ? url : null))
       .filter((url): url is string => url !== null && url.trim() !== '')
+    const normalizedFeaturedImage = rawFeaturedImage ?? (galleryUrls[0] ?? undefined)
     const rawOptionId = entry.product_color_option_id ?? null
 
     const parseNumericValue = (value: unknown): number => {
@@ -246,8 +270,9 @@ export async function fetchWishlist(token: string): Promise<WishlistResponse> {
       }
     }
 
-    const productColorPricesRaw = Array.isArray((product as { acf?: unknown }).acf?.color_prices)
-      ? ((product as { acf?: { color_prices?: unknown } }).acf?.color_prices as unknown[])
+    const colorPrices = productAcfData?.color_prices
+    const productColorPricesRaw = Array.isArray(colorPrices)
+      ? (colorPrices as unknown[])
       : []
 
     const productColorPrices: NormalizedColorOption[] = productColorPricesRaw
@@ -277,9 +302,14 @@ export async function fetchWishlist(token: string): Promise<WishlistResponse> {
       return productColorPrices.find(option => option.color?.toLowerCase() === lowered) ?? null
     }
 
+    const normalizedOptionId =
+      normalizedEntryOption && normalizedEntryOption.id !== null
+        ? normalizedEntryOption.id
+        : null
+
     const selectedOption =
       findById(colorOptionId) ??
-      (normalizedEntryOption?.id !== null ? findById(normalizedEntryOption.id) : null) ??
+      (normalizedOptionId !== null ? findById(normalizedOptionId) : null) ??
       normalizedEntryOption ??
       findByColor(entry.color ?? null) ??
       (productColorPrices.length === 1 ? productColorPrices[0] : null)
@@ -349,18 +379,17 @@ export async function fetchWishlist(token: string): Promise<WishlistResponse> {
       product_color_option_id: colorOptionId,
       color: colorLabel,
       color_key: colorKey,
-      note: null,
       added_at: Number.isNaN(addedAt) ? Date.now() : addedAt,
       product: product.id
         ? {
-            id: product.id,
-            slug: product.slug,
-            title: product.title,
-            featured_image_url: featuredImage,
+            id: productIdValue,
+            slug: productSlug,
+            title: productTitle,
+            featured_image_url: normalizedFeaturedImage,
             gallery_urls: galleryUrls,
-            excerpt: product.excerpt,
-            acf: product.acf,
-            product_category: product.product_category,
+            excerpt: typeof product?.excerpt === 'string' ? product.excerpt : undefined,
+            acf: productAcfData as NonNullable<WishlistItem['product']>['acf'],
+            product_category: product?.product_category,
           }
         : undefined,
       price: {

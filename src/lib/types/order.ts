@@ -63,3 +63,33 @@ export interface CancelOrderPayload {
   reason?: string
   notes?: string
 }
+
+export interface OrderCreateItem {
+  product_id: number
+  quantity: number
+  price: number
+  total: number
+}
+
+export interface OrderCreateBilling {
+  first_name: string
+  last_name: string
+  email: string
+  phone: string
+  address_1: string
+  address_2?: string | null
+  city: string
+  state: string
+  postcode: string
+  country: string
+}
+
+export interface OrderCreateRequest {
+  items: OrderCreateItem[]
+  billing: OrderCreateBilling
+  payment_method: string
+  shipping_total: number
+  total: number
+  subtotal: number
+  note?: string
+}

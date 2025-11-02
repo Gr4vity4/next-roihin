@@ -4,13 +4,13 @@ import { updateAddress, deleteAddress } from '@/lib/api/addresses'
 import { getErrorMessage } from '@/lib/utils/error-handler'
 
 type RouteContext = {
-  params: {
+  params: Promise<{
     addressId: string
-  }
+  }>
 }
 
-export async function PATCH(request: Request, context: RouteContext) {
-  const { addressId } = context.params
+export async function PATCH(request: Request, { params }: RouteContext) {
+  const { addressId } = await params
 
   try {
     const token = await getAuthToken()
@@ -23,7 +23,7 @@ export async function PATCH(request: Request, context: RouteContext) {
     const data = await updateAddress(token, addressId, payload)
     return NextResponse.json(data)
   } catch (error) {
-    console.error(`Addresses PATCH error (${context.params.addressId}):`, error)
+    console.error(`Addresses PATCH error (${addressId}):`, error)
     return NextResponse.json(
       { error: getErrorMessage(error, 'Failed to update address') },
       { status: 400 }
@@ -31,8 +31,8 @@ export async function PATCH(request: Request, context: RouteContext) {
   }
 }
 
-export async function DELETE(_request: Request, context: RouteContext) {
-  const { addressId } = context.params
+export async function DELETE(_request: Request, { params }: RouteContext) {
+  const { addressId } = await params
 
   try {
     const token = await getAuthToken()
@@ -44,7 +44,7 @@ export async function DELETE(_request: Request, context: RouteContext) {
     await deleteAddress(token, addressId)
     return new NextResponse(null, { status: 204 })
   } catch (error) {
-    console.error(`Addresses DELETE error (${context.params.addressId}):`, error)
+    console.error(`Addresses DELETE error (${addressId}):`, error)
     return NextResponse.json(
       { error: getErrorMessage(error, 'Failed to delete address') },
       { status: 400 }

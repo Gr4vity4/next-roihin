@@ -193,24 +193,29 @@ export default function ThankYouContent() {
               <div className="bg-white rounded-xl shadow-md p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('orderDetails.title')}</h3>
                 <div className="space-y-4 max-h-80 overflow-y-auto pr-2">
-                  {order.items.map((item) => (
-                    <div key={item.id} className="flex justify-between gap-4">
-                      <div className="flex-1">
-                        <p className="text-gray-900 font-medium">{item.product_name}</p>
-                        {item.options?.color && (
+                  {order.items.map((item) => {
+                    const color =
+                      typeof item.options?.color === 'string' ? item.options.color : null
+
+                    return (
+                      <div key={item.id} className="flex justify-between gap-4">
+                        <div className="flex-1">
+                          <p className="text-gray-900 font-medium">{item.product_name}</p>
+                          {color && (
+                            <p className="text-sm text-gray-500">
+                              {t('orderDetails.color')}: {color}
+                            </p>
+                          )}
                           <p className="text-sm text-gray-500">
-                            {t('orderDetails.color')}: {item.options.color as string}
+                            {t('orderDetails.quantity')}: {item.quantity}
                           </p>
-                        )}
-                        <p className="text-sm text-gray-500">
-                          {t('orderDetails.quantity')}: {item.quantity}
-                        </p>
+                        </div>
+                        <div className="text-right text-gray-900 font-medium">
+                          {formatCurrency(item.subtotal_amount_minor, locale, order.currency)}
+                        </div>
                       </div>
-                      <div className="text-right text-gray-900 font-medium">
-                        {formatCurrency(item.subtotal_amount_minor, locale, order.currency)}
-                      </div>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
 
                 <div className="mt-6 space-y-2 border-t border-gray-200 pt-4 text-sm">
