@@ -1,39 +1,60 @@
 import { getFetchConfig } from '@/config/cache.config'
 import { buildLaravelApiUrl } from '@/config/api.config'
-import { LaravelSingleGalleryResponseSchema, type LaravelGalleryImage, type LaravelGalleryImageAsset } from '@/lib/types/laravel'
+import {
+  LaravelSingleGalleryResponseSchema,
+  type LaravelGalleryImage,
+  type LaravelGalleryImageAsset,
+} from '@/lib/types/laravel'
 
 /**
- * Get curated personalized gallery images from Laravel API
- * @returns Array of gallery image objects
+ * Fetch gallery images by slug from the Laravel API.
+ * Returns images sorted by admin-defined sort order.
  */
-export async function getPersonalizedGalleryImages(): Promise<LaravelGalleryImage[]> {
+export async function getGalleryImagesBySlug(slug: string): Promise<LaravelGalleryImage[]> {
   try {
-    const url = buildLaravelApiUrl('galleries/personalized')
+    const url = buildLaravelApiUrl(`galleries/${slug}`)
 
     const response = await fetch(url, {
       ...getFetchConfig('gallery'),
     })
 
     if (!response.ok) {
-      console.error(`Failed to fetch gallery photos: ${response.status} ${response.statusText}`)
+      console.error(`Failed to fetch ${slug} gallery: ${response.status} ${response.statusText}`)
       return []
     }
 
     const data = await response.json()
 
-    // Validate response with Zod schema
     const validatedData = LaravelSingleGalleryResponseSchema.safeParse(data)
 
     if (!validatedData.success) {
-      console.error('Invalid gallery response format:', validatedData.error)
+      console.error(`Invalid ${slug} gallery response format:`, validatedData.error)
       return []
     }
 
-    return validatedData.data.data.images ?? []
+    const galleryImages = validatedData.data.data.images ?? []
+
+    if (galleryImages.length === 0) {
+      return []
+    }
+
+    return [...galleryImages].sort((a, b) => {
+      const aOrder = typeof a.sort_order === 'number' ? a.sort_order : Number.MAX_SAFE_INTEGER
+      const bOrder = typeof b.sort_order === 'number' ? b.sort_order : Number.MAX_SAFE_INTEGER
+      return aOrder - bOrder
+    })
   } catch (error) {
-    console.error('Error fetching gallery photos:', error)
+    console.error(`Error fetching ${slug} gallery:`, error)
     return []
   }
+}
+
+/**
+ * Get curated personalized gallery images from Laravel API
+ * @returns Array of gallery image objects
+ */
+export async function getPersonalizedGalleryImages(): Promise<LaravelGalleryImage[]> {
+  return getGalleryImagesBySlug('personalized')
 }
 
 /**

@@ -11,17 +11,18 @@ import {
   TestimonialsSection,
 } from '@/components/sections'
 import { content } from '@/config/content.config'
-import { getRecentPersonalizedDesigns } from '@/lib/api/gallery'
+import { getGalleryImagesBySlug } from '@/lib/api/gallery'
 // Configure route segment caching for home page (dynamic content with testimonials)
 // Revalidate every 5 minutes
 export const revalidate = 300
 
 export default async function Home() {
-  // Fetch latest inspired gallery images from Laravel admin REST endpoint
-  const recentDesigns = await getRecentPersonalizedDesigns(10)
-  const galleryImages = recentDesigns
-    .map(design => design.image_url)
-    .filter((url): url is string => Boolean(url))
+  // Fetch Inspired gallery images from Laravel admin REST endpoint
+  const inspiredGalleryImages = await getGalleryImagesBySlug('inspired')
+  const galleryImages = inspiredGalleryImages
+    .filter(image => Boolean(image.image_url))
+    .slice(0, 12)
+    .map(image => image.image_url as string)
 
   return (
     <FontProvider fonts={{ th: 'font-prompt', en: 'font-playfair' }}>
