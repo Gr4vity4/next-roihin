@@ -642,7 +642,30 @@
       "subtitle": "Latest personalized stone bracelet designs",
       "imageAlt": "Personalized stone bracelet",
       "orderButton": "Order personalized design here",
-      "viewMoreButton": "View more designs"
+      "viewMoreButton": "View more designs",
+      "modal": {
+        "designedBy": "Designed by",
+        "energyDescriptionTitle": "Energy Description",
+        "ratingScale": {
+          "title": "Rating Scale:",
+          "excellent": "Excellent",
+          "veryGood": "Very Good",
+          "good": "Good",
+          "moderate": "Moderate"
+        },
+        "energyScores": {
+          "title": "Energy Scores:",
+          "finance": "Abundance and Wealth",
+          "work": "Career and success",
+          "love": "Love and relationship",
+          "health": "Health and well-being",
+          "spirit": "Meditation and spiritual"
+        },
+        "stonesUsedTitle": "Used Crystals",
+        "charmsAndSpacersTitle": "Charms and Spacers",
+        "beadSizeTitle": "Bead Size",
+        "budgetTitle": "Budget"
+      }
     }
   }
 }

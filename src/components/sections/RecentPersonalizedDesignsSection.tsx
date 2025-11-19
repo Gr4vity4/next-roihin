@@ -176,7 +176,6 @@ export default function RecentPersonalizedDesignsSection({
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         design={selectedDesign}
-        title={'ออกแบบโดย'}
       />
     </FontProvider>
   )

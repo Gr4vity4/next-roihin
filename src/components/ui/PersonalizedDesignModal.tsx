@@ -2,6 +2,7 @@
 
 import { X } from 'lucide-react'
 import Image from 'next/image'
+import { useTranslations } from 'next-intl'
 import { useEffect, useMemo, useState } from 'react'
 import type { LaravelGalleryImage } from '@/lib/types/laravel'
 
@@ -9,7 +10,6 @@ interface PersonalizedDesignModalProps {
   isOpen: boolean
   onClose: () => void
   images?: string[]
-  title?: string
   design?: LaravelGalleryImage
 }
 
@@ -17,9 +17,9 @@ export function PersonalizedDesignModal({
   isOpen,
   onClose,
   images = [],
-  title = 'ออกแบบโดย',
   design,
 }: PersonalizedDesignModalProps) {
+  const t = useTranslations('personalizedPage.recentDesigns.modal')
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
 
   const defaultPlaceholderImages = useMemo(
@@ -96,22 +96,24 @@ export function PersonalizedDesignModal({
   const stoneSize = design?.stone_size || '8 mm.'
   const budget = design?.budget || 'ระดับสูง (8,000 ขึ้นไป)'
   const description = design?.description
-  const energyScores = [
-    { key: 'score_finance' as const, name: 'การเงิน โชคลาภ', fallbackRating: 5, fallbackLabel: 'ดีเยี่ยมที่สุด' },
-    { key: 'score_work' as const, name: 'การงาน ธุรกิจ การลงทุน', fallbackRating: 5, fallbackLabel: 'ดีมาก' },
-    { key: 'score_love' as const, name: 'ความรัก ความสุข โชคดี', fallbackRating: 3, fallbackLabel: 'ปานกลาง' },
-    { key: 'score_health' as const, name: 'สุขภาพ สมดุลชีวิต', fallbackRating: 3, fallbackLabel: 'ปานกลาง' },
-    { key: 'score_spirit' as const, name: 'จิตวิญญาณ ความมั่นคง', fallbackRating: 4, fallbackLabel: 'ดี' },
-  ].map(({ key, name, fallbackRating, fallbackLabel }) => {
+  const energyScoreDefinitions = [
+    { key: 'score_finance' as const, translationKey: 'finance', fallbackRating: 5, ratingLabelKey: 'excellent' },
+    { key: 'score_work' as const, translationKey: 'work', fallbackRating: 5, ratingLabelKey: 'veryGood' },
+    { key: 'score_love' as const, translationKey: 'love', fallbackRating: 3, ratingLabelKey: 'moderate' },
+    { key: 'score_health' as const, translationKey: 'health', fallbackRating: 3, ratingLabelKey: 'moderate' },
+    { key: 'score_spirit' as const, translationKey: 'spirit', fallbackRating: 4, ratingLabelKey: 'good' },
+  ] as const
+
+  const energyScores = energyScoreDefinitions.map(({ key, translationKey, fallbackRating, ratingLabelKey }) => {
     const rawScore = design?.[key]
     const rating =
       typeof rawScore === 'number'
         ? Math.max(0, Math.min(8, rawScore))
         : fallbackRating
     return {
-      name,
+      name: t(`energyScores.${translationKey}`),
       rating,
-      label: fallbackLabel,
+      label: t(`ratingScale.${ratingLabelKey}`),
     }
   })
 
@@ -196,7 +198,7 @@ export function PersonalizedDesignModal({
               {/* Designer Info and Actions */}
               <div className="pt-6 flex items-start justify-between">
                 <div className="space-y-1">
-                  <p className="text-xs text-gray-500">{title}</p>
+                  <p className="text-xs text-gray-500">{t('designedBy')}</p>
                   <p className="font-medium text-gray-800">{designerName}</p>
                   <p className="text-xs text-gray-500">{designedDate}</p>
                 </div>
@@ -254,7 +256,9 @@ export function PersonalizedDesignModal({
             {/* Right Section - Details */}
             <div className="space-y-6">
               {/* Title */}
-              <h2 className="text-3xl md:text-4xl font-light text-gray-800">คำอธิบายพลังงาน</h2>
+              <h2 className="text-3xl md:text-4xl font-light text-gray-800">
+                {t('energyDescriptionTitle')}
+              </h2>
 
               {/* Description */}
               <div className="text-gray-700 leading-relaxed text-sm md:text-base space-y-2">
@@ -281,7 +285,7 @@ export function PersonalizedDesignModal({
 
               {/* Properties Table */}
               <div className="space-y-3">
-                <h3 className="font-medium text-gray-800">คะแนนพลังงาน</h3>
+                <h3 className="font-medium text-gray-800">{t('energyScores.title')}</h3>
                 {properties.map((prop, index) => (
                   <div key={index} className="flex items-center justify-between gap-4 text-sm">
                     <span className="text-gray-700 flex-1">{prop.name}</span>
@@ -302,7 +306,7 @@ export function PersonalizedDesignModal({
 
               {/* Stones Used */}
               <div className="space-y-3">
-                <h3 className="font-medium text-gray-800">หินที่ใช้ในการออกแบบ</h3>
+                <h3 className="font-medium text-gray-800">{t('stonesUsedTitle')}</h3>
                 <div className="flex flex-wrap gap-2">
                   {stones.map((stone, index) => (
                     <span
@@ -318,13 +322,13 @@ export function PersonalizedDesignModal({
               {/* Charm and Size Selection */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <h3 className="font-medium text-gray-800 text-sm">ชาร์มและตัวคั่น</h3>
+                  <h3 className="font-medium text-gray-800 text-sm">{t('charmsAndSpacersTitle')}</h3>
                   <div className="px-4 py-3 border border-gray-300 rounded-full text-sm text-gray-700 text-center">
                     {charmSpacer}
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <h3 className="font-medium text-gray-800 text-sm">ขนาดหิน</h3>
+                  <h3 className="font-medium text-gray-800 text-sm">{t('beadSizeTitle')}</h3>
                   <div className="px-4 py-3 border border-gray-300 rounded-full text-sm text-gray-700 text-center">
                     {stoneSize}
                   </div>
@@ -333,7 +337,7 @@ export function PersonalizedDesignModal({
 
               {/* Price and Production Time */}
               <div className="space-y-2">
-                <h3 className="font-medium text-gray-800 text-sm">งบประมาณการจัดทำ</h3>
+                <h3 className="font-medium text-gray-800 text-sm">{t('budgetTitle')}</h3>
                 <div className="px-6 py-3 border border-gray-300 rounded-full text-center text-gray-700">
                   {budget}
                 </div>
