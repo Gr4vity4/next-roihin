@@ -48,8 +48,8 @@ export default async function ShopPage({ params }: ShopPageProps) {
       <NavigationWithSuspense />
 
       <main className="min-h-screen bg-black text-white">
-        <section className="relative isolate overflow-hidden border-b border-white/10 bg-gradient-to-b from-black via-black/70 to-black">
-          <div className="container mx-auto max-w-5xl px-6 py-24 text-center">
+        <section className="relative isolate overflow-hidden border-b border-white/10 bg-gradient-to-b from-black via-black/70 to-black pt-28 min-[1408px]:pt-[260px]">
+          <div className="container mx-auto max-w-5xl px-6 pb-24 text-center">
             <p className="text-sm uppercase tracking-[0.5em] text-white/50">{t('hero.label')}</p>
             <h1 className="mt-6 text-4xl font-light tracking-[0.15em] text-white md:text-5xl">
               {t('hero.title')}
