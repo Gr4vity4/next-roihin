@@ -106,8 +106,8 @@ export default async function ShopListingPage({ params, searchParams }: ShopList
       <NavigationWithSuspense />
 
       <main className="min-h-screen bg-black text-white">
-        <section className="border-b border-white/10 bg-black/80">
-          <div className="container mx-auto max-w-5xl px-6 py-16 md:py-20">
+        <section className="mt-24 border-b border-white/10 bg-black/80 md:mt-28 min-[1408px]:mt-[230px]">
+          <div className="container mx-auto max-w-5xl px-6 py-20 md:py-24 min-[1408px]:py-[160px]">
             <Link
               href="/shop"
               className="text-xs uppercase tracking-[0.4em] text-white/40 hover:text-gold transition-colors"
