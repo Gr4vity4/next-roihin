@@ -216,16 +216,18 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
             />
           </Link>
           {openDesktopDropdown === item.id && (
-            <div className="absolute left-0 mt-3 w-48 rounded-xl bg-white/95 backdrop-blur shadow-2xl border border-white/20 py-2">
-              {item.children.map((child) => (
-                <Link
-                  key={child.id}
-                  href={child.href}
-                  className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100"
-                >
-                  {child.label}
-                </Link>
-              ))}
+            <div className="absolute left-0 top-full pt-3">
+              <div className="w-48 rounded-xl bg-white/95 backdrop-blur shadow-2xl border border-white/20 py-2">
+                {item.children.map((child) => (
+                  <Link
+                    key={child.id}
+                    href={child.href}
+                    className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100"
+                  >
+                    {child.label}
+                  </Link>
+                ))}
+              </div>
             </div>
           )}
         </div>
