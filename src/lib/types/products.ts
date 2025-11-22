@@ -35,6 +35,7 @@ export interface Product {
   product_category: ProductCategory
   crystal_id?: number | null
   is_favorite?: boolean
+  is_arrival?: boolean
 }
 
 /**
@@ -62,6 +63,7 @@ export interface LaravelProductResponse {
   }
   crystal_id: number | null
   is_favorite: boolean
+  is_arrival: boolean
 }
 
 /**
@@ -71,7 +73,15 @@ export interface LaravelProductsResponse {
   data: LaravelProductResponse[]
   meta: {
     locale: string
+    pagination?: PaginationMeta
   }
+}
+
+export interface PaginationMeta {
+  current_page: number
+  per_page: number
+  total: number
+  last_page: number
 }
 
 export interface Category {

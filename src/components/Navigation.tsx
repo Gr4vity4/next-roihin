@@ -1,6 +1,7 @@
 'use client'
 
 import AuthModal from '@/components/AuthModal'
+import { SHOP_COLLECTIONS } from '@/config/shop.config'
 import { useAuth } from '@/contexts/AuthContext'
 import { useCart } from '@/contexts/CartContext'
 import { Link, usePathname, useRouter } from '@/i18n/navigation'
@@ -14,6 +15,17 @@ interface NavigationProps {
   position?: 'fixed' | 'static'
 }
 
+interface NavigationItem {
+  id: string
+  label: string
+  href: string
+  children?: Array<{
+    id: string
+    label: string
+    href: string
+  }>
+}
+
 export default function Navigation({ position = 'fixed' }: NavigationProps = {}) {
   const pathname = usePathname()
   const isCustomPage = pathname === '/custom'
@@ -22,6 +34,8 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false)
+  const [openDesktopDropdown, setOpenDesktopDropdown] = useState<string | null>(null)
+  const [openMobileDropdown, setOpenMobileDropdown] = useState<string | null>(null)
   const [scrollThreshold, setScrollThreshold] = useState(10)
   const [authModalOpen, setAuthModalOpen] = useState(false)
   const [authModalMode, setAuthModalMode] = useState<'sign-in' | 'sign-up'>('sign-in')
@@ -32,22 +46,46 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
   const { isLoggedIn, user, logout } = useAuth()
   const { itemCount } = useCart()
   const t = useTranslations('navigation')
+  const tShopMenu = useTranslations('navigation.shopMenu')
   const tUser = useTranslations('userMenu')
   const tCommon = useTranslations('common')
 
-  const navItems = useMemo(() => {
+  const shopMenuItems = useMemo(() => {
+    const collections = SHOP_COLLECTIONS.map((collection) => ({
+      id: collection.slug,
+      label: tShopMenu(`categories.${collection.slug}`),
+      href: `/shop/${collection.slug}`,
+    }))
+
     return [
-      { name: t('home'), href: '/' },
-      { name: t('about'), href: '/about' },
-      { name: t('personalized'), href: '/personalized' },
-      { name: t('charmspacer'), href: '/charmspacer' },
-      { name: t('crystal'), href: '/crystal' },
-      { name: t('diy'), href: '/custom' },
-      { name: t('testimonial'), href: '/testimonial' },
-      { name: t('customerService'), href: '/customer-service' },
-      { name: t('blog'), href: '/blog' },
+      {
+        id: 'new-arrivals',
+        label: tShopMenu('newArrival'),
+        href: '/shop/new-arrivals',
+      },
+      ...collections,
     ]
-  }, [t])
+  }, [tShopMenu])
+
+  const navItems: NavigationItem[] = useMemo(() => {
+    return [
+      { id: 'home', label: t('home'), href: '/' },
+      {
+        id: 'shop',
+        label: t('shop'),
+        href: '/shop',
+        children: shopMenuItems,
+      },
+      { id: 'about', label: t('about'), href: '/about' },
+      { id: 'personalized', label: t('personalized'), href: '/personalized' },
+      { id: 'charmspacer', label: t('charmspacer'), href: '/charmspacer' },
+      { id: 'crystal', label: t('crystal'), href: '/crystal' },
+      { id: 'diy', label: t('diy'), href: '/custom' },
+      { id: 'testimonial', label: t('testimonial'), href: '/testimonial' },
+      { id: 'customerService', label: t('customerService'), href: '/customer-service' },
+      { id: 'blog', label: t('blog'), href: '/blog' },
+    ]
+  }, [t, shopMenuItems])
 
   const userMenuItems = useMemo(() => {
     return [
@@ -130,6 +168,12 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
     }
   }, [isUserMenuOpen, isLanguageMenuOpen])
 
+  useEffect(() => {
+    if (!isMobileMenuOpen) {
+      setOpenMobileDropdown(null)
+    }
+  }, [isMobileMenuOpen])
+
   const handleLogout = () => {
     logout()
     setIsUserMenuOpen(false)
@@ -146,6 +190,53 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
     setIsLanguageMenuOpen(false)
     // Use next-intl's router to switch locale
     router.replace(pathname, { locale: newLocale })
+  }
+
+  const renderDesktopNavItem = (item: NavigationItem, variant: 'compact' | 'default') => {
+    const linkClass =
+      variant === 'compact'
+        ? 'font-medium text-sm text-white transition-colors hover:text-gold tracking-widest'
+        : 'font-medium text-base text-white transition-colors hover:text-gold tracking-wider'
+
+    if (item.children && item.children.length > 0) {
+      return (
+        <div
+          key={item.id}
+          className="relative"
+          onMouseEnter={() => setOpenDesktopDropdown(item.id)}
+          onMouseLeave={() => setOpenDesktopDropdown(null)}
+        >
+          <Link href={item.href} className={`${linkClass} flex items-center gap-1`}>
+            {item.label}
+            <ChevronDown
+              className={cn(
+                'w-3 h-3 transition-transform',
+                openDesktopDropdown === item.id && 'rotate-180'
+              )}
+            />
+          </Link>
+          {openDesktopDropdown === item.id && (
+            <div className="absolute left-0 mt-3 w-48 rounded-xl bg-white/95 backdrop-blur shadow-2xl border border-white/20 py-2">
+              {item.children.map((child) => (
+                <Link
+                  key={child.id}
+                  href={child.href}
+                  className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100"
+                >
+                  {child.label}
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      )
+    }
+
+    return (
+      <Link key={item.id} href={item.href} className={linkClass}>
+        {item.label}
+      </Link>
+    )
   }
 
   return (
@@ -207,15 +298,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                 </div>
               </Link>
               <div className="flex items-center space-x-6">
-                {navItems.map((item) => (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className=" font-medium text-sm text-white transition-colors hover:text-gold tracking-widest"
-                  >
-                    {item.name}
-                  </Link>
-                ))}
+                {navItems.map((item) => renderDesktopNavItem(item, 'compact'))}
 
                 {/* Cart Icon */}
                 <Link
@@ -493,15 +576,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
 
                 {/* Menu Items */}
                 <div className="flex items-center space-x-8 mt-4">
-                  {navItems.map((item) => (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      className="font-medium text-base text-white transition-colors hover:text-gold tracking-wider"
-                    >
-                      {item.name}
-                    </Link>
-                  ))}
+                  {navItems.map((item) => renderDesktopNavItem(item, 'default'))}
                 </div>
               </div>
             </div>
@@ -566,14 +641,57 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
           <div className="absolute top-full left-0 right-0 bg-black border-t border-gray-800 shadow-lg w-full">
             <div className="px-4 py-4">
               {navItems.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className="block py-3  text-white hover:text-gold transition-colors"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {item.name}
-                </Link>
+                item.children && item.children.length > 0 ? (
+                  <div key={item.id} className="border-b border-gray-800">
+                    <div className="flex items-center justify-between">
+                      <Link
+                        href={item.href}
+                        className="flex-1 py-3 text-white hover:text-gold transition-colors"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        {item.label}
+                      </Link>
+                      <button
+                        type="button"
+                        className="p-2 text-white"
+                        onClick={() =>
+                          setOpenMobileDropdown((current) => (current === item.id ? null : item.id))
+                        }
+                        aria-expanded={openMobileDropdown === item.id}
+                      >
+                        <ChevronDown
+                          className={cn(
+                            'w-4 h-4 transition-transform',
+                            openMobileDropdown === item.id && 'rotate-180'
+                          )}
+                        />
+                      </button>
+                    </div>
+                    {openMobileDropdown === item.id && (
+                      <div className="pl-4 pb-3 space-y-2">
+                        {item.children.map((child) => (
+                          <Link
+                            key={child.id}
+                            href={child.href}
+                            className="block text-white/80 hover:text-gold transition-colors py-1"
+                            onClick={() => setIsMobileMenuOpen(false)}
+                          >
+                            {child.label}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <Link
+                    key={item.id}
+                    href={item.href}
+                    className="block py-3  text-white hover:text-gold transition-colors"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {item.label}
+                  </Link>
+                )
               ))}
 
               {/* Language Switcher for Mobile */}

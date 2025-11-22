@@ -4,7 +4,8 @@ import {
   CatalogResponse,
   ProductDetailResponse,
   LaravelProductResponse,
-  LaravelProductsResponse
+  LaravelProductsResponse,
+  PaginationMeta
 } from '@/lib/types/products'
 import { getFetchConfig } from '@/config/cache.config'
 import { buildLaravelApiUrl } from '@/config/api.config'
@@ -31,6 +32,52 @@ function transformLaravelProduct(laravelProduct: LaravelProductResponse): Produc
     product_category: laravelProduct.product_category,
     crystal_id: laravelProduct.crystal_id,
     is_favorite: laravelProduct.is_favorite,
+    is_arrival: laravelProduct.is_arrival,
+  }
+}
+
+export interface ProductListResult {
+  products: Product[]
+  pagination?: PaginationMeta
+}
+
+export interface FetchProductsOptions {
+  category?: string
+  isArrival?: boolean
+  perPage?: number
+  page?: number
+  crystalId?: string | number
+  language?: 'en' | 'th'
+}
+
+export async function fetchProducts(options: FetchProductsOptions = {}): Promise<ProductListResult> {
+  const { category, isArrival, perPage, page, crystalId, language = 'en' } = options
+
+  const params: Record<string, string | number | boolean | undefined> = {
+    locale: language,
+    category,
+    crystal_id: crystalId,
+    per_page: perPage,
+    page,
+  }
+
+  if (typeof isArrival === 'boolean') {
+    params.is_arrival = isArrival ? '1' : '0'
+  }
+
+  const url = buildLaravelApiUrl('products', params)
+  const response = await fetch(url, getFetchConfig('api'))
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch products (${response.status}): ${response.statusText}`)
+  }
+
+  const apiResponse: LaravelProductsResponse = await response.json()
+  const products = apiResponse.data.map(transformLaravelProduct)
+
+  return {
+    products,
+    pagination: apiResponse.meta?.pagination,
   }
 }
 
@@ -70,12 +117,13 @@ export async function getProductsByCategory(
   perPage: number = 12,
   language: 'en' | 'th' = 'en'
 ): Promise<Product[]> {
-  // Fetch all products and filter by category
-  const allProducts = await getAllProducts(language)
+  const { products } = await fetchProducts({
+    category: categorySlug,
+    perPage,
+    language,
+  })
 
-  return allProducts
-    .filter(product => product.product_category?.slug === categorySlug)
-    .slice(0, perPage)
+  return products
 }
 
 export async function getProductsByCrystalId(

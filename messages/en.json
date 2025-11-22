@@ -1,6 +1,7 @@
 {
   "navigation": {
     "home": "Home",
+    "shop": "Shop",
     "about": "About us",
     "personalized": "Personalized Design",
     "charmspacer": "Charm / Spacer",
@@ -8,7 +9,95 @@
     "diy": "DIY",
     "testimonial": "Testimonial",
     "customerService": "Contact",
-    "blog": "Blogs"
+    "blog": "Blogs",
+    "shopMenu": {
+      "newArrival": "New Arrivals",
+      "categories": {
+        "bracelet": "Bracelet",
+        "ring": "Ring",
+        "earring": "Earring",
+        "pandents": "Pandents",
+        "nacklace": "Nacklace",
+        "rough-crystal": "Rough Crystal",
+        "perfume": "Perfume",
+        "gifts": "Gifts"
+      }
+    }
+  },
+  "shop": {
+    "pageTitle": "Shop | ROIHIN Thailand",
+    "pageDescription": "Discover bracelets, earrings, pendants, perfumes, and mindful gifts crafted by ROIHIN.",
+    "hero": {
+      "label": "ROIHIN COLLECTIONS",
+      "title": "Shop the Energy You Carry",
+      "subtitle": "Explore made-to-order bracelets, natural stones, aromatherapy, and gifts that tune into your intentions.",
+      "cta": "View new arrivals"
+    },
+    "landing": {
+      "label": "CURATED SETS",
+      "title": "Collections for Every Intention",
+      "description": "Each category holds a distinct ritual—choose the path that resonates with the shift you want to invite.",
+      "newFlag": "NEW DROPS",
+      "collectionFlag": "COLLECTION"
+    },
+    "newArrivals": {
+      "title": "New Arrivals",
+      "description": "Freshly energized jewels and objects leaving the studio this week.",
+      "cta": "Shop new arrivals"
+    },
+    "categories": {
+      "bracelet": {
+        "title": "Bracelet Collection",
+        "description": "Layered beadwork, signature charms, and custom tuning designed for daily rituals.",
+        "cta": "Shop bracelets"
+      },
+      "ring": {
+        "title": "Ring Collection",
+        "description": "Minimal rings pairing precious metals with protective stones.",
+        "cta": "Shop rings"
+      },
+      "earring": {
+        "title": "Earring Collection",
+        "description": "Lightweight drops and studs amplified with healing crystals.",
+        "cta": "Shop earrings"
+      },
+      "pandents": {
+        "title": "Pendant Collection",
+        "description": "Statement pendants and charms that carry layered rituals.",
+        "cta": "Shop pendants"
+      },
+      "nacklace": {
+        "title": "Necklace Collection",
+        "description": "Necklaces for stacking and spotlight moments with fluid silhouettes.",
+        "cta": "Shop necklaces"
+      },
+      "rough-crystal": {
+        "title": "Rough Crystal Collection",
+        "description": "Raw crystals curated for altar displays, meditation, and mindful décor.",
+        "cta": "Shop raw crystals"
+      },
+      "perfume": {
+        "title": "Perfume Collection",
+        "description": "Crystal-infused fragrances blended for modern rituals.",
+        "cta": "Shop perfumes"
+      },
+      "gifts": {
+        "title": "Gift Collection",
+        "description": "Curated gift sets for birthdays, milestones, and everyday gratitude.",
+        "cta": "Shop gifts"
+      }
+    },
+    "listing": {
+      "breadcrumb": "Back to shop",
+      "empty": "Pieces are being polished right now. Please check back soon.",
+      "newLabel": "New",
+      "pagination": {
+        "previous": "Previous",
+        "next": "Next",
+        "page": "Page {current} of {total}",
+        "summary": "Showing {start}-{end} of {total} pieces"
+      }
+    }
   },
   "auth": {
     "signIn": {
