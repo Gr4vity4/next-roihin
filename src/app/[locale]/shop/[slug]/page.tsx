@@ -106,27 +106,56 @@ export default async function ShopListingPage({ params, searchParams }: ShopList
       <NavigationWithSuspense />
 
       <main className="min-h-screen bg-black text-white">
-        <section className="mt-24 border-b border-white/10 bg-black/80 md:mt-28 min-[1408px]:mt-[230px]">
-          <div className="container mx-auto max-w-5xl px-6 py-20 md:py-24 min-[1408px]:py-[160px]">
-            <Link
-              href="/shop"
-              className="text-xs uppercase tracking-[0.4em] text-white/40 hover:text-gold transition-colors"
-            >
-              {t('listing.breadcrumb')}
-            </Link>
-            <h1 className="mt-4 text-3xl font-light tracking-[0.2em] md:text-4xl">{sectionTitle}</h1>
-            <p className="mt-4 max-w-3xl text-white/70">{sectionDescription}</p>
+        <section className="relative isolate border-b border-white/10 bg-gradient-to-b from-black via-black/95 to-black/80 pt-28 md:pt-36 lg:pt-40 min-[1408px]:pt-[320px]">
+          <div className="pointer-events-none absolute inset-0 overflow-hidden opacity-70">
+            <div className="absolute -top-40 right-[-10%] h-96 w-96 rounded-full bg-gold/20 blur-[160px]" />
+            <div className="absolute -bottom-24 left-[-10%] h-72 w-72 rounded-full bg-emerald-500/20 blur-[140px]" />
+          </div>
+          <div className="container relative z-10 mx-auto max-w-5xl px-6 py-20 md:py-24 min-[1408px]:py-[160px]">
+            <div className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.15em] text-white/50">
+              <Link href="/shop" className="transition-colors hover:text-gold">
+                {t('listing.breadcrumb')}
+              </Link>
+              <span className="text-white/30">/</span>
+              <span className="text-white">{sectionTitle}</span>
+            </div>
+            <div className="mt-6 max-w-3xl space-y-4">
+              <h1 className="text-3xl font-light tracking-[0.05em] md:text-4xl">{sectionTitle}</h1>
+              <p className="text-white/70">{sectionDescription}</p>
+            </div>
           </div>
         </section>
 
         <section className="container mx-auto max-w-6xl px-6 py-12 md:py-16">
           {products.length === 0 ? (
-            <div className="rounded-3xl border border-white/10 bg-white/5 p-12 text-center">
-              <p className="text-white/60">{t('listing.empty')}</p>
+            <div className="rounded-3xl border border-white/10 bg-gradient-to-b from-white/5 to-white/0 p-12 text-center">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full border border-white/10 text-2xl text-gold">
+                ✨
+              </div>
+              <h2 className="mt-6 text-2xl font-light text-white">
+                {t('listing.emptyState.title')}
+              </h2>
+              <p className="mt-3 text-white/70">
+                {t('listing.emptyState.description')}
+              </p>
+              <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+                <Link
+                  href="/shop"
+                  className="rounded-full border border-white/40 px-6 py-2 text-xs uppercase tracking-[0.18em] text-white hover:border-gold hover:text-gold transition-colors"
+                >
+                  {t('listing.emptyState.primaryCta')}
+                </Link>
+                <Link
+                  href="/personalized"
+                  className="rounded-full border border-transparent bg-white text-xs uppercase tracking-[0.18em] text-black px-6 py-2 hover:bg-gold transition-colors"
+                >
+                  {t('listing.emptyState.secondaryCta')}
+                </Link>
+              </div>
             </div>
           ) : (
             <div className="space-y-10">
-              <div className="grid gap-6 md:grid-cols-2">
+              <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
                 {products.map((product) => (
                   <ShopProductCard
                     key={product.id}
@@ -139,7 +168,6 @@ export default async function ShopListingPage({ params, searchParams }: ShopList
 
               <PaginationControls
                 currentPage={page}
-                totalPages={totalPages}
                 buildHref={buildHref}
                 previousLabel={t('listing.pagination.previous')}
                 nextLabel={t('listing.pagination.next')}

@@ -2,7 +2,6 @@ import { Link } from '@/i18n/navigation'
 
 interface PaginationControlsProps {
   currentPage: number
-  totalPages: number
   buildHref: (page: number) => string
   previousLabel: string
   nextLabel: string
@@ -14,7 +13,6 @@ interface PaginationControlsProps {
 
 export default function PaginationControls({
   currentPage,
-  totalPages,
   buildHref,
   previousLabel,
   nextLabel,

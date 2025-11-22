@@ -91,6 +91,26 @@
       "breadcrumb": "Back to shop",
       "empty": "Pieces are being polished right now. Please check back soon.",
       "newLabel": "New",
+      "hero": {
+        "pills": {
+          "collection": "CURATED COLLECTION",
+          "newArrivals": "NEW RELEASES",
+          "count": "{count, plural, =0 {Awaiting drop} one {# piece ready} other {# pieces ready}}"
+        },
+        "stat": {
+          "categoryLabel": "Collection",
+          "piecesLabel": "Pieces crafted",
+          "piecesValue": "{count, plural, =0 {Crafting now} one {# piece live} other {# pieces live}}",
+          "fulfillmentLabel": "Fulfillment",
+          "fulfillmentValue": "Hand finished in Bangkok"
+        }
+      },
+      "emptyState": {
+        "title": "Collection in progress",
+        "description": "We're refining this assortment. Explore other categories or start your own commission while we finish polishing each piece.",
+        "primaryCta": "Browse all collections",
+        "secondaryCta": "Design your own"
+      },
       "pagination": {
         "previous": "Previous",
         "next": "Next",
