@@ -4,6 +4,7 @@ import { Footer } from '@/components/sections'
 import { SHOP_COLLECTIONS } from '@/config/shop.config'
 import { Link } from '@/i18n/navigation'
 import { getTranslations } from 'next-intl/server'
+import { ArrowRight } from 'lucide-react'
 import type { Metadata } from 'next'
 
 export const revalidate = 600
@@ -93,7 +94,7 @@ export default async function ShopPage({ params }: ShopPageProps) {
                   <span className="inline-flex items-center gap-3 text-xs uppercase tracking-[0.22em] text-white/60">
                     {card.cta}
                     <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/30 text-sm transition-colors group-hover:border-gold group-hover:text-gold">
-                      →
+                      <ArrowRight className="h-4 w-4" aria-hidden />
                     </span>
                   </span>
                 </div>

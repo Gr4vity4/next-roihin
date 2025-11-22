@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import { ArrowRight } from 'lucide-react'
 import { Link } from '@/i18n/navigation'
 import { getProductImageUrl } from '@/lib/utils/image-helper'
 import type { Product } from '@/lib/types/products'
@@ -80,7 +81,7 @@ export default function ShopProductCard({ product, locale, newLabel }: ShopProdu
               'transition-colors group-hover:border-gold group-hover:text-gold'
             )}
           >
-            →
+            <ArrowRight className="h-3 w-3" aria-hidden />
           </span>
         </span>
       </div>
