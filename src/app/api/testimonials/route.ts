@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getFetchConfig, getCacheHeaders } from '@/config/cache.config'
-import { buildLaravelApiUrl } from '@/config/api.config'
+import { buildLaravelApiUrl, LARAVEL_API_URL } from '@/config/api.config'
 import { LaravelTestimonialsResponseSchema } from '@/lib/types/laravel'
 import type { Testimonial, TestimonialsResponse } from '@/lib/types/testimonials'
 
@@ -41,18 +41,17 @@ export async function GET(request: NextRequest) {
     const validatedData = LaravelTestimonialsResponseSchema.parse(responseData)
 
     // Transform Laravel testimonials to our format
-    const transformedTestimonials: Testimonial[] = validatedData.data
-      .map((item, index) => {
-        return {
-          id: `testimonial-${item.id}`,
-          avatar: item.avatar || DEFAULT_AVATAR,
-          message: item.message,
-          date: formatDate(item.date, language),
-          isActive: item.is_active,
-          sortOrder: item.sort_order,
-          reviewImage: item.review_image,
-        }
-      })
+    const transformedTestimonials: Testimonial[] = validatedData.data.map((item) => {
+      return {
+        id: `testimonial-${item.id}`,
+        avatar: item.avatar || DEFAULT_AVATAR,
+        message: item.message,
+        date: formatDate(item.date, language),
+        isActive: item.is_active,
+        sortOrder: item.sort_order,
+        reviewImage: resolveStorageAssetUrl(item.review_image),
+      }
+    })
 
     const result: TestimonialsResponse = {
       testimonials: transformedTestimonials,
@@ -84,6 +83,39 @@ export async function GET(request: NextRequest) {
       },
     )
   }
+}
+
+function resolveStorageAssetUrl(value?: string | null): string | null {
+  if (!value) {
+    return null
+  }
+
+  const trimmed = value.trim()
+  if (!trimmed) {
+    return null
+  }
+
+  if (/^https?:\/\//i.test(trimmed)) {
+    return trimmed
+  }
+
+  const baseUrl = (LARAVEL_API_URL || '').replace(/\/$/, '')
+  const normalizedPath = trimmed.replace(/^\/+/, '')
+
+  if (!baseUrl) {
+    return normalizedPath.startsWith('/') ? normalizedPath : `/${normalizedPath}`
+  }
+
+  if (normalizedPath.startsWith('storage/')) {
+    return `${baseUrl}/${normalizedPath}`
+  }
+
+  if (normalizedPath.startsWith('public/')) {
+    const withoutPublic = normalizedPath.replace(/^public\//, '')
+    return `${baseUrl}/storage/${withoutPublic}`
+  }
+
+  return `${baseUrl}/storage/${normalizedPath}`
 }
 
 /**
