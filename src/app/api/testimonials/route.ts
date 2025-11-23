@@ -42,9 +42,11 @@ export async function GET(request: NextRequest) {
 
     // Transform Laravel testimonials to our format
     const transformedTestimonials: Testimonial[] = validatedData.data.map((item) => {
+      const avatar = resolveStorageAssetUrl(item.avatar) ?? DEFAULT_AVATAR
+
       return {
         id: `testimonial-${item.id}`,
-        avatar: item.avatar || DEFAULT_AVATAR,
+        avatar,
         message: item.message,
         date: formatDate(item.date, language),
         isActive: item.is_active,
