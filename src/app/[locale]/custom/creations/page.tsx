@@ -43,8 +43,8 @@ export default async function AllDIYCreationsPage({
 
   return (
     <>
-      <NavigationWithSuspense />
-      <main className="min-h-screen bg-white pt-24">
+      <NavigationWithSuspense position="static" />
+      <main className="min-h-screen bg-white pt-12 md:pt-16">
         <section className="mx-auto max-w-7xl px-4 py-12 md:px-8 md:py-16">
           <div className="text-center">
             <h1 className="text-3xl font-bold text-gray-900 md:text-4xl">{t('title')}</h1>
