@@ -71,6 +71,73 @@ export const LaravelTestimonialSchema = z.object({
 export type LaravelTestimonial = z.infer<typeof LaravelTestimonialSchema>
 
 /**
+ * Laravel API Recently DIY Stone Schema
+ */
+export const LaravelRecentlyDiyStoneSchema = z.object({
+  id: z.number(),
+  stone_id: z.number().optional().nullable(),
+  name: z
+    .object({
+      en: z.string().nullable().optional(),
+      th: z.string().nullable().optional(),
+    })
+    .partial()
+    .default({}),
+  energy: z
+    .object({
+      en: z.string().nullable().optional(),
+      th: z.string().nullable().optional(),
+    })
+    .partial()
+    .default({}),
+  sort_order: z.number().optional(),
+  created_at: z.string().nullable().optional(),
+  updated_at: z.string().nullable().optional(),
+})
+
+export type LaravelRecentlyDiyStone = z.infer<typeof LaravelRecentlyDiyStoneSchema>
+
+/**
+ * Laravel API Recently DIY Schema
+ */
+export const LaravelRecentlyDiySchema = z.object({
+  id: z.number(),
+  title: z
+    .object({
+      en: z.string().nullable().optional(),
+      th: z.string().nullable().optional(),
+    })
+    .partial()
+    .default({}),
+  designer_name: z
+    .object({
+      en: z.string().nullable().optional(),
+      th: z.string().nullable().optional(),
+    })
+    .partial()
+    .default({}),
+  description: z
+    .object({
+      en: z.string().nullable().optional(),
+      th: z.string().nullable().optional(),
+    })
+    .partial()
+    .default({}),
+  price: z.number().nullable().optional(),
+  price_currency: z.string().nullable().optional(),
+  image: z.string().nullable().optional(),
+  image_url: z.string().nullable().optional(),
+  designed_at: z.string().nullable().optional(),
+  sort_order: z.number().optional(),
+  is_published: z.boolean().optional(),
+  stones: z.array(LaravelRecentlyDiyStoneSchema).optional(),
+  created_at: z.string().nullable().optional(),
+  updated_at: z.string().nullable().optional(),
+})
+
+export type LaravelRecentlyDiy = z.infer<typeof LaravelRecentlyDiySchema>
+
+/**
  * Laravel API Gallery Image Asset Schema
  */
 export const LaravelGalleryImageAssetSchema = z.object({
@@ -251,6 +318,26 @@ export const LaravelTestimonialsResponseSchema = z.object({
 })
 
 export type LaravelTestimonialsResponse = z.infer<typeof LaravelTestimonialsResponseSchema>
+
+/**
+ * Laravel API Recently DIY Response Schema
+ */
+export const LaravelRecentlyDiyResponseSchema = z.object({
+  data: z.array(LaravelRecentlyDiySchema),
+  meta: LaravelMetaSchema,
+})
+
+export type LaravelRecentlyDiyResponse = z.infer<typeof LaravelRecentlyDiyResponseSchema>
+
+/**
+ * Laravel API Single Recently DIY Response Schema
+ */
+export const LaravelSingleRecentlyDiyResponseSchema = z.object({
+  data: LaravelRecentlyDiySchema,
+  meta: LaravelMetaSchema,
+})
+
+export type LaravelSingleRecentlyDiyResponse = z.infer<typeof LaravelSingleRecentlyDiyResponseSchema>
 
 /**
  * Laravel API Galleries Response Schema

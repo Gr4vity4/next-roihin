@@ -2,14 +2,31 @@
 
 import { Link } from '@/i18n/navigation'
 import { diyCreations } from '@/lib/data/diy-creations'
+import { fetchRecentlyDiyDesigns } from '@/lib/api/recently-diy'
 import { DIYCreation } from '@/lib/types/diy-creation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useLocale } from 'next-intl'
 import DIYCreationCard from './DIYCreationCard'
 import DIYCreationModal from './DIYCreationModal'
 
 export default function LatestDIYCreations() {
   const [selectedCreation, setSelectedCreation] = useState<DIYCreation | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [creations, setCreations] = useState<DIYCreation[]>(diyCreations)
+  const locale = (useLocale() as 'th' | 'en') ?? 'th'
+
+  useEffect(() => {
+    let mounted = true
+
+    fetchRecentlyDiyDesigns(8, locale).then((items) => {
+      if (!mounted || items.length === 0) return
+      setCreations(items)
+    })
+
+    return () => {
+      mounted = false
+    }
+  }, [locale])
 
   const handleCardClick = (creation: DIYCreation) => {
     setSelectedCreation(creation)
@@ -33,7 +50,7 @@ export default function LatestDIYCreations() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {diyCreations.map((creation) => (
+          {creations.map((creation) => (
             <DIYCreationCard
               key={creation.id}
               creation={creation}
