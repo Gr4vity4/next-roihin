@@ -1,7 +1,6 @@
 'use client'
 
 import { Link } from '@/i18n/navigation'
-import { diyCreations } from '@/lib/data/diy-creations'
 import { fetchRecentlyDiyDesigns } from '@/lib/api/recently-diy'
 import { DIYCreation } from '@/lib/types/diy-creation'
 import { useEffect, useState } from 'react'
@@ -12,7 +11,7 @@ import DIYCreationModal from './DIYCreationModal'
 export default function LatestDIYCreations() {
   const [selectedCreation, setSelectedCreation] = useState<DIYCreation | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [creations, setCreations] = useState<DIYCreation[]>(diyCreations)
+  const [creations, setCreations] = useState<DIYCreation[]>([])
   const locale = (useLocale() as 'th' | 'en') ?? 'th'
 
   useEffect(() => {
