@@ -1,8 +1,6 @@
 import { getLaravelApiEndpoint } from '@/config/api.config'
 import { NextRequest, NextResponse } from 'next/server'
 
-const DEFAULT_IMAGE = '/images/357c3a_ac4bc1a787364c358512be32cc1ffc30~mv2.avif'
-
 interface RouteParams {
   params: Promise<{
     title: string // This is actually a slug now, but keeping the name for backwards compatibility

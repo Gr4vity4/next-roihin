@@ -6,11 +6,13 @@ import type { SiteTranslations } from '@/lib/types/translations'
  * NOTE: Currently using hardcoded data. This will be replaced with Laravel API endpoint later.
  * WordPress ACF endpoint (/wp-json/acf/v3/options/options) is not implemented in the back-end yet.
  *
- * @param _language - Language code (currently unused, Thai data only)
+ * @param language - Language code (currently returns Thai data for both locales)
  * @returns Site translations and settings object
  */
-export async function getSiteTranslations(_language: 'th' | 'en' = 'th'): Promise<SiteTranslations | null> {
+export async function getSiteTranslations(language: 'th' | 'en' = 'th'): Promise<SiteTranslations | null> {
   try {
+    const normalizedLanguage: 'th' | 'en' = language === 'en' ? 'en' : 'th'
+
     // TODO: Replace with Laravel API endpoint when implemented
     // Temporary hardcoded data matching WordPress ACF structure
     const hardcodedData: SiteTranslations = {
@@ -47,7 +49,12 @@ export async function getSiteTranslations(_language: 'th' | 'en' = 'th'): Promis
       },
     }
 
-    return hardcodedData
+    const translationsByLanguage: Record<'th' | 'en', SiteTranslations> = {
+      th: hardcodedData,
+      en: hardcodedData,
+    }
+
+    return translationsByLanguage[normalizedLanguage]
   } catch (error) {
     console.error('Error returning site translations:', error)
     return null

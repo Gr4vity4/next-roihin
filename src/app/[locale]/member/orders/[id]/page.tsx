@@ -5,7 +5,7 @@ import { Link } from '@/i18n/navigation'
 import type { OrderResource } from '@/lib/types/order'
 import { ArrowLeft, Clock, CreditCard, MapPin, Package } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
-import { useParams, useRouter } from 'next/navigation'
+import { useParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 
 interface OrderDetailResponseBody {
@@ -80,7 +80,6 @@ function formatOrderDate(value: string | null, locale: string): string {
 
 export default function OrderDetailPage() {
   const params = useParams()
-  const router = useRouter()
   const locale = useLocale()
   const t = useTranslations('member.orders')
   const tThankYou = useTranslations('thankYou')

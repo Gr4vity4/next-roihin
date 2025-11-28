@@ -13,9 +13,9 @@ interface DIYCreationModalProps {
 }
 
 export default function DIYCreationModal({ creation, isOpen, onClose }: DIYCreationModalProps) {
-  if (!creation) return null
-
   const locale = (useLocale() as 'th' | 'en') ?? 'th'
+
+  if (!creation) return null
 
   const pickLocale = (primary?: string, secondary?: string) =>
     (locale === 'th' ? primary : secondary) || (locale === 'th' ? secondary : primary) || ''
