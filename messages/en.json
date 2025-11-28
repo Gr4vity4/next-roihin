@@ -730,6 +730,21 @@
       }
     }
   },
+  "diyCreations": {
+    "latest": {
+      "title": "Latest DIY creations",
+      "description": "Explore personalized stone bracelet designs from our community to spark your own ideas.",
+      "cta": "View all creations"
+    },
+    "allPage": {
+      "metaTitle": "DIY creations gallery | ROIHIN",
+      "metaDescription": "Browse every DIY stone bracelet designed by our community for inspiration.",
+      "title": "All DIY creations",
+      "description": "Browse every DIY stone bracelet designed by our community and find inspiration for your own piece.",
+      "emptyTitle": "No DIY creations yet",
+      "emptyDescription": "We are preparing new community designs. Please check back soon."
+    }
+  },
   "personalizedPage": {
     "hero": {
       "title": "Personalized stone bracelet",

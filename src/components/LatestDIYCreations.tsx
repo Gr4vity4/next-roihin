@@ -4,7 +4,7 @@ import { Link } from '@/i18n/navigation'
 import { fetchRecentlyDiyDesigns } from '@/lib/api/recently-diy'
 import { DIYCreation } from '@/lib/types/diy-creation'
 import { useEffect, useState } from 'react'
-import { useLocale } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import DIYCreationCard from './DIYCreationCard'
 import DIYCreationModal from './DIYCreationModal'
 
@@ -13,6 +13,7 @@ export default function LatestDIYCreations() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [creations, setCreations] = useState<DIYCreation[]>([])
   const locale = (useLocale() as 'th' | 'en') ?? 'th'
+  const t = useTranslations('diyCreations')
 
   useEffect(() => {
     let mounted = true
@@ -41,11 +42,8 @@ export default function LatestDIYCreations() {
     <section className="py-16 px-4 md:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">ผลงาน DIY ล่าสุด</h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            สำรวจผลงานการออกแบบสร้อยข้อมือหินเฉพาะบุคคลจากลูกค้าของเรา
-            เพื่อเป็นแรงบันดาลใจในการสร้างสรรค์ผลงานของคุณเอง
-          </p>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{t('latest.title')}</h2>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">{t('latest.description')}</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -60,10 +58,10 @@ export default function LatestDIYCreations() {
 
         <div className="text-center mt-12">
           <Link
-            href="/custom"
+            href="/custom/creations"
             className="inline-flex items-center gap-2 px-6 py-3 border hover:bg-gray-50"
           >
-            ดูผลงานทั้งหมด
+            {t('latest.cta')}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
