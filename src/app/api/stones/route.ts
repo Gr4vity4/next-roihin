@@ -400,7 +400,7 @@ async function fetchStonesFromEndpoint(
   params: Record<string, string>,
 ): Promise<StonesFetchResult> {
   const url = buildLaravelApiUrl(endpoint, params)
-  const response = await fetch(url, getFetchConfig('api'))
+  const response = await fetch(url, { cache: 'no-store' })
 
   if (!response.ok) {
     const httpError = new Error(`Failed to fetch stones from ${endpoint}: ${response.status}`)
@@ -447,7 +447,11 @@ export async function GET(request: Request) {
         }
 
         return NextResponse.json(stones, {
-          headers: getCacheHeaders(),
+          headers: {
+            'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0',
+          },
         })
       } catch (error) {
         const message = getErrorMessage(error, `Failed to fetch stones from ${endpoint}`)
@@ -468,14 +472,25 @@ export async function GET(request: Request) {
       },
       {
         status: 500,
-        headers: getCacheHeaders(),
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        },
       },
     )
   } catch (error) {
     console.error('Error fetching stones:', error)
     return NextResponse.json(
       { error: getErrorMessage(error, 'Failed to fetch stones') },
-      { status: 500, headers: getCacheHeaders() }
+      {
+        status: 500,
+        headers: {
+          'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0',
+        }
+      }
     )
   }
 }
