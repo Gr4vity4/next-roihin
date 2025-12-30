@@ -48,6 +48,8 @@ const CIRCLE_SIZE_MAP: Record<string, number> = {
 }
 
 const BRACELET_PLACEHOLDER_IMAGE = '/images/bracelet-placeholder.png'
+const STONE_FALLBACK_IMAGE = '/images/logo.avif'
+const STONE_FALLBACK_BG = '#d1d5db'
 
 const dataUrlToFile = (dataUrl: string, filename: string): File | null => {
   try {
@@ -482,20 +484,24 @@ export default function BraceletDesigner() {
           return
         }
         console.error('Failed to load stone image:', validImageUrl, 'for stone:', stone.title)
-        // Create a placeholder div with the stone title
+        // Create a placeholder div with the logo
         const placeholder = document.createElement('div')
         placeholder.style.width = '100%'
         placeholder.style.height = '100%'
         placeholder.style.display = 'flex'
         placeholder.style.alignItems = 'center'
         placeholder.style.justifyContent = 'center'
-        placeholder.style.backgroundColor = '#e5e7eb'
+        placeholder.style.backgroundColor = STONE_FALLBACK_BG
         placeholder.style.borderRadius = '50%'
-        placeholder.style.fontSize = '10px'
-        placeholder.style.color = '#6b7280'
-        placeholder.style.textAlign = 'center'
-        placeholder.style.padding = '2px'
-        placeholder.textContent = stone.title.substring(0, 2).toUpperCase()
+        const logo = document.createElement('img')
+        logo.src = STONE_FALLBACK_IMAGE
+        logo.alt = 'ROIHIN'
+        logo.style.width = '70%'
+        logo.style.height = '70%'
+        logo.style.objectFit = 'contain'
+        logo.style.pointerEvents = 'none'
+        logo.draggable = false
+        placeholder.appendChild(logo)
         el.innerHTML = ''
         el.appendChild(placeholder)
       }
@@ -510,13 +516,17 @@ export default function BraceletDesigner() {
       placeholder.style.display = 'flex'
       placeholder.style.alignItems = 'center'
       placeholder.style.justifyContent = 'center'
-      placeholder.style.backgroundColor = '#e5e7eb'
+      placeholder.style.backgroundColor = STONE_FALLBACK_BG
       placeholder.style.borderRadius = '50%'
-      placeholder.style.fontSize = '10px'
-      placeholder.style.color = '#6b7280'
-      placeholder.style.textAlign = 'center'
-      placeholder.style.padding = '2px'
-      placeholder.textContent = stone.title.substring(0, 2).toUpperCase()
+      const logo = document.createElement('img')
+      logo.src = STONE_FALLBACK_IMAGE
+      logo.alt = 'ROIHIN'
+      logo.style.width = '70%'
+      logo.style.height = '70%'
+      logo.style.objectFit = 'contain'
+      logo.style.pointerEvents = 'none'
+      logo.draggable = false
+      placeholder.appendChild(logo)
       el.appendChild(placeholder)
     }
 
@@ -894,12 +904,18 @@ export default function BraceletDesigner() {
                                     }}
                                   />
                                 ) : null}
-                                <span
-                                  className="text-xs text-gray-600 absolute inset-0 flex items-center justify-center"
+                                <div
+                                  className="absolute inset-0 flex items-center justify-center bg-gray-300 rounded-full"
                                   style={{ display: validImageUrl ? 'none' : 'flex' }}
                                 >
-                                  {stoneInfo.title.substring(0, 2).toUpperCase()}
-                                </span>
+                                  <Image
+                                    src={STONE_FALLBACK_IMAGE}
+                                    alt="ROIHIN"
+                                    width={28}
+                                    height={28}
+                                    className="object-contain"
+                                  />
+                                </div>
                               </button>
                               {/* Price tooltip */}
                               <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-1 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
@@ -920,31 +936,40 @@ export default function BraceletDesigner() {
               {/* preview single bead image */}
               <div className="col-span-full md:col-span-3 flex justify-center">
                 {lastSelectedBead ? (
-                  <div className="relative w-24 h-24 bg-transparent">
+                  <div className="relative w-24 h-24 rounded-full overflow-hidden bg-gray-300 flex items-center justify-center">
                     {(() => {
                       const validImageUrl = getValidStoneImageUrl(lastSelectedBead, 'preview_image')
-                      if (validImageUrl) {
-                        return (
-                          <Image
-                            src={validImageUrl}
-                            alt={lastSelectedBead.title}
-                            width={96}
-                            height={96}
-                            onError={(e) => {
-                              const target = e.target as HTMLImageElement
-                              target.style.display = 'none'
-                            }}
-                          />
-                        )
-                      } else {
-                        return (
-                          <div className="w-24 h-24 bg-gray-200 rounded-lg flex items-center justify-center">
-                            <span className="text-2xl text-gray-500">
-                              {lastSelectedBead.title.substring(0, 2).toUpperCase()}
-                            </span>
+                      return (
+                        <>
+                          {validImageUrl ? (
+                            <Image
+                              src={validImageUrl}
+                              alt={lastSelectedBead.title}
+                              width={96}
+                              height={96}
+                              className="w-full h-full object-contain"
+                              onError={(e) => {
+                                const target = e.currentTarget
+                                target.style.display = 'none'
+                                const fallback = target.nextElementSibling as HTMLElement
+                                if (fallback) fallback.style.display = 'flex'
+                              }}
+                            />
+                          ) : null}
+                          <div
+                            className="absolute inset-0 flex items-center justify-center bg-gray-300 rounded-full"
+                            style={{ display: validImageUrl ? 'none' : 'flex' }}
+                          >
+                            <Image
+                              src={STONE_FALLBACK_IMAGE}
+                              alt="ROIHIN"
+                              width={48}
+                              height={48}
+                              className="object-contain"
+                            />
                           </div>
-                        )
-                      }
+                        </>
+                      )
                     })()}
                   </div>
                 ) : (
@@ -1077,7 +1102,7 @@ export default function BraceletDesigner() {
 
                     return Object.entries(groupedBeads).map(([key, group]) => (
                       <div key={key} className="flex items-center gap-2 text-xs text-gray-600 py-1">
-                        <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0 bg-gray-100">
+                        <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0 bg-gray-300">
                           {(() => {
                             const stoneImageUrl = group.stoneSetting
                               ? getValidStoneImageUrl(group.stoneSetting)
@@ -1097,10 +1122,16 @@ export default function BraceletDesigner() {
                                     if (parent) {
                                       const fallback = document.createElement('div')
                                       fallback.className =
-                                        'w-full h-full flex items-center justify-center bg-gray-200 text-gray-600 text-[8px]'
-                                      fallback.textContent =
-                                        group.stoneSetting?.title?.substring(0, 2).toUpperCase() ||
-                                        'NA'
+                                        'w-full h-full flex items-center justify-center bg-gray-300 rounded-full'
+                                      const logo = document.createElement('img')
+                                      logo.src = STONE_FALLBACK_IMAGE
+                                      logo.alt = 'ROIHIN'
+                                      logo.style.width = '70%'
+                                      logo.style.height = '70%'
+                                      logo.style.objectFit = 'contain'
+                                      logo.style.pointerEvents = 'none'
+                                      logo.draggable = false
+                                      fallback.appendChild(logo)
                                       parent.appendChild(fallback)
                                     }
                                   }}
@@ -1108,8 +1139,14 @@ export default function BraceletDesigner() {
                               )
                             }
                             return (
-                              <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-600 text-[8px]">
-                                {group.stoneSetting?.title?.substring(0, 2).toUpperCase() || 'NA'}
+                              <div className="w-full h-full flex items-center justify-center bg-gray-300 rounded-full">
+                                <Image
+                                  src={STONE_FALLBACK_IMAGE}
+                                  alt="ROIHIN"
+                                  width={16}
+                                  height={16}
+                                  className="object-contain"
+                                />
                               </div>
                             )
                           })()}
