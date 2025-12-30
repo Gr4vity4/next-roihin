@@ -191,11 +191,11 @@ export default function BraceletDesigner() {
     key?: 'stone_image' | 'preview_image',
   ): string | null => {
     if (!key) {
-      if (isValidImageUrl(stone.stone_image)) {
-        return stone.stone_image
-      }
       if (isValidImageUrl(stone.preview_image)) {
         return stone.preview_image
+      }
+      if (isValidImageUrl(stone.stone_image)) {
+        return stone.stone_image
       }
     } else {
       if (key === 'stone_image') {
@@ -462,18 +462,25 @@ export default function BraceletDesigner() {
     const validImageUrl = getValidStoneImageUrl(stone)
     if (validImageUrl) {
       const img = document.createElement('img')
-      // Use Next.js image optimization endpoint to bypass CORS
+      // Try Next.js image proxy first (same-origin for html2canvas), then fall back to direct URL.
       const encodedUrl = encodeURIComponent(validImageUrl)
-      img.src = `/_next/image?url=${encodedUrl}&w=${imageWidth * 2}&q=75`
+      const proxiedUrl = `/_next/image?url=${encodedUrl}&w=${imageWidth * 2}&q=75`
       img.style.width = '100%'
       img.style.height = '100%'
       img.style.objectFit = 'contain'
       img.style.pointerEvents = 'none'
       img.draggable = false
-      img.crossOrigin = 'anonymous' // Enable CORS for html2canvas
+      img.crossOrigin = 'anonymous' // Enable CORS for html2canvas via proxy
 
       // Add error handler for failed image loads
+      let triedDirect = false
       img.onerror = () => {
+        if (!triedDirect) {
+          triedDirect = true
+          img.removeAttribute('crossorigin')
+          img.src = validImageUrl
+          return
+        }
         console.error('Failed to load stone image:', validImageUrl, 'for stone:', stone.title)
         // Create a placeholder div with the stone title
         const placeholder = document.createElement('div')
@@ -493,6 +500,7 @@ export default function BraceletDesigner() {
         el.appendChild(placeholder)
       }
 
+      img.src = proxiedUrl
       el.appendChild(img)
     } else {
       // Create a placeholder if no valid image URL
@@ -574,11 +582,7 @@ export default function BraceletDesigner() {
     }
 
     const price = getStonePrice(stone, beadSize)
-    const originalImageUrl = getValidStoneImageUrl(stone)
-    // Use proxied URL for consistency
-    const imageUrl = originalImageUrl
-      ? `/_next/image?url=${encodeURIComponent(originalImageUrl)}&w=${imageWidth * 2}&q=75`
-      : ''
+    const imageUrl = getValidStoneImageUrl(stone) ?? ''
 
     const newBead: Bead = {
       id: beadId,
