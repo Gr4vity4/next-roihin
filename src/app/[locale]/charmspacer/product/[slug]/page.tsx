@@ -5,11 +5,10 @@ import ChatWidget from '@/components/ChatWidget'
 import { Footer } from '@/components/sections'
 import ProductDetail from '@/components/sections/ProductDetail'
 import RelatedProducts from '@/components/sections/RelatedProducts'
-import { REVALIDATE_SEMI_STATIC } from '@/config/cache.config'
 import { getProductBySlug } from '@/lib/api/products'
 import { getLocale } from 'next-intl/server'
 
-export const revalidate = REVALIDATE_SEMI_STATIC
+export const revalidate = 0
 
 interface ProductPageProps {
   params: Promise<{ slug: string; locale: string }>

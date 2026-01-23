@@ -10,12 +10,11 @@ import {
   SignatureCharmSection,
   TestimonialsSection,
 } from '@/components/sections'
-import { REVALIDATE_DYNAMIC } from '@/config/cache.config'
 import { content } from '@/config/content.config'
 import { getGalleryImagesBySlug } from '@/lib/api/gallery'
 // Configure route segment caching for home page (dynamic content with testimonials)
 // Revalidate every 5 minutes
-export const revalidate = REVALIDATE_DYNAMIC
+export const revalidate = 0
 
 export default async function Home() {
   // Fetch Inspired gallery images from Laravel admin REST endpoint

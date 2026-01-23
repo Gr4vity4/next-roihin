@@ -8,14 +8,13 @@ import PersonalizedExpertiseSection from '@/components/sections/PersonalizedExpe
 import PersonalizedGallerySection from '@/components/sections/PersonalizedGallerySection'
 import PersonalizedHeroSection from '@/components/sections/PersonalizedHeroSection'
 import RecentPersonalizedDesignsSection from '@/components/sections/RecentPersonalizedDesignsSection'
-import { REVALIDATE_SEMI_STATIC } from '@/config/cache.config'
 import { getRecentPersonalizedDesigns } from '@/lib/api/gallery'
 import { content } from '@/config/content.config'
 import { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 // Configure route segment caching for personalized page (semi-static content)
 // Revalidate every 15 minutes
-export const revalidate = REVALIDATE_SEMI_STATIC
+export const revalidate = 0
 
 export async function generateMetadata({
   params,

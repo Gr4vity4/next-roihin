@@ -2,13 +2,12 @@ import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import ChatWidget from '@/components/ChatWidget'
 import { Footer } from '@/components/sections'
 import { SHOP_COLLECTIONS } from '@/config/shop.config'
-import { REVALIDATE_10_MIN } from '@/config/cache.config'
 import { Link } from '@/i18n/navigation'
 import { getTranslations } from 'next-intl/server'
 import { ArrowRight } from 'lucide-react'
 import type { Metadata } from 'next'
 
-export const revalidate = REVALIDATE_10_MIN
+export const revalidate = 0
 
 interface ShopPageProps {
   params: Promise<{ locale: string }>

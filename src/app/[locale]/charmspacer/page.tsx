@@ -4,13 +4,12 @@ import ChatWidget from '@/components/ChatWidget'
 import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import { Footer } from '@/components/sections'
 import PersonalizedHeroSection from '@/components/sections/PersonalizedHeroSection'
-import { REVALIDATE_SEMI_STATIC } from '@/config/cache.config'
 import { getAllProducts } from '@/lib/api/products'
 import { Product } from '@/lib/types/products'
 import { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 
-export const revalidate = REVALIDATE_SEMI_STATIC
+export const revalidate = 0
 
 interface CharmspacerPageProps {
   params: Promise<{ locale: string }>

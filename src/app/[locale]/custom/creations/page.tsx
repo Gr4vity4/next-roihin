@@ -2,14 +2,13 @@ import ChatWidget from '@/components/ChatWidget'
 import DIYCreationsGallery from '@/components/DIYCreationsGallery'
 import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import { Footer } from '@/components/sections'
-import { REVALIDATE_DYNAMIC } from '@/config/cache.config'
 import { fetchRecentlyDiyDesigns } from '@/lib/api/recently-diy'
 import { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 
 const ALL_DIY_LIMIT = Number.MAX_SAFE_INTEGER
 
-export const revalidate = REVALIDATE_DYNAMIC
+export const revalidate = 0
 
 export async function generateMetadata({
   params,

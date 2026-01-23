@@ -7,11 +7,10 @@ import AboutHeroSection from '@/components/sections/AboutHeroSection'
 import AboutContentSection from '@/components/sections/AboutContentSection'
 import AboutFeaturesSection from '@/components/sections/AboutFeaturesSection'
 import AboutTestimonialSection from '@/components/sections/AboutTestimonialSection'
-import { REVALIDATE_SEMI_STATIC } from '@/config/cache.config'
 
 // Configure route segment caching for about page (semi-static content)
 // Revalidate every 15 minutes
-export const revalidate = REVALIDATE_SEMI_STATIC
+export const revalidate = 0
 
 interface AboutPageProps {
   params: Promise<{ locale: string }>

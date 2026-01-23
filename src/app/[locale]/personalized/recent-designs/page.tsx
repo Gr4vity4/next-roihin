@@ -3,12 +3,11 @@ import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import { FontProvider } from '@/components/providers/FontProvider'
 import { Footer } from '@/components/sections'
 import RecentPersonalizedDesignsSection from '@/components/sections/RecentPersonalizedDesignsSection'
-import { REVALIDATE_SEMI_STATIC } from '@/config/cache.config'
 import { getAllRecentPersonalizedDesigns } from '@/lib/api/gallery'
 import type { Metadata } from 'next'
 import { getTranslations, setRequestLocale } from 'next-intl/server'
 
-export const revalidate = REVALIDATE_SEMI_STATIC
+export const revalidate = 0
 
 export async function generateMetadata({
   params,

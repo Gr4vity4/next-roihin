@@ -1,12 +1,11 @@
 import ChatWidget from '@/components/ChatWidget'
 import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import { BlogHeroSection, BlogPostsSection, Footer } from '@/components/sections'
-import { REVALIDATE_DYNAMIC } from '@/config/cache.config'
 import { content } from '@/config/content.config'
 import type { Metadata } from 'next'
 // Configure route segment caching for blog (dynamic content from WordPress API)
 // Revalidate every 5 minutes
-export const revalidate = REVALIDATE_DYNAMIC
+export const revalidate = 0
 
 export const metadata: Metadata = {
   title: 'Blog - Stone Wisdom | ROIHIN STONE & BRACELET',
