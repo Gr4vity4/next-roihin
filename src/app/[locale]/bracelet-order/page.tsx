@@ -1,9 +1,10 @@
 import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import { Footer } from '@/components/sections'
 import BraceletOrderForm from '@/components/sections/BraceletOrderForm'
+import { REVALIDATE_SEMI_STATIC } from '@/config/cache.config'
 import { Metadata } from 'next'
 
-export const revalidate = 900
+export const revalidate = REVALIDATE_SEMI_STATIC
 
 export const metadata: Metadata = {
   title: 'สั่งออกแบบกำไลหินเฉพาะบุคคล - ROIHIN STONE & BRACELET',

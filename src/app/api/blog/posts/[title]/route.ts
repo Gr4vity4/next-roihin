@@ -1,4 +1,5 @@
 import { getLaravelApiEndpoint } from '@/config/api.config'
+import { getCacheHeaders, getFetchConfig } from '@/config/cache.config'
 import { NextRequest, NextResponse } from 'next/server'
 
 interface RouteParams {
@@ -27,9 +28,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         },
         {
           status: 400,
-          headers: {
-            'Cache-Control': 'no-cache',
-          },
+          headers: getCacheHeaders('noCache'),
         },
       )
     }
@@ -46,9 +45,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         'Content-Type': 'application/json',
         'Accept-Language': lang,
       },
-      next: {
-        revalidate: 300, // Cache for 5 minutes (single posts change less frequently)
-      },
+      ...getFetchConfig('blogPosts'),
     })
 
     if (!response.ok) {
@@ -60,9 +57,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
           },
           {
             status: 404,
-            headers: {
-              'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
-            },
+            headers: getCacheHeaders('shortTerm'),
           },
         )
       }
@@ -79,9 +74,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     }
 
     return NextResponse.json(result, {
-      headers: {
-        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
-      },
+      headers: getCacheHeaders('shortTerm'),
     })
   } catch (error) {
     console.error('Post by title API error:', error)
@@ -96,9 +89,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         },
         {
           status: 502,
-          headers: {
-            'Cache-Control': 'no-cache',
-          },
+          headers: getCacheHeaders('noCache'),
         },
       )
     }
@@ -113,9 +104,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       },
       {
         status: 500,
-        headers: {
-          'Cache-Control': 'no-cache',
-        },
+        headers: getCacheHeaders('noCache'),
       },
     )
   }

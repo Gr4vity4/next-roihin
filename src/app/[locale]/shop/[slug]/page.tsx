@@ -4,6 +4,7 @@ import { Footer } from '@/components/sections'
 import ShopProductCard from '@/components/shop/ProductCard'
 import PaginationControls from '@/components/shop/PaginationControls'
 import { getShopCollection } from '@/config/shop.config'
+import { REVALIDATE_DYNAMIC } from '@/config/cache.config'
 import { fetchProducts } from '@/lib/api/products'
 import type { Product } from '@/lib/types/products'
 import { Link } from '@/i18n/navigation'
@@ -11,7 +12,7 @@ import { getTranslations } from 'next-intl/server'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
-export const revalidate = 300
+export const revalidate = REVALIDATE_DYNAMIC
 
 const ITEMS_PER_PAGE = 20
 

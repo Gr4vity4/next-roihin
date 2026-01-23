@@ -1,5 +1,6 @@
 import BlogPostClient from '@/components/BlogPostClient'
 import { siteConfig } from '@/config/site.config'
+import { getFetchConfig } from '@/config/cache.config'
 import type { Metadata } from 'next'
 
 interface BlogPost {
@@ -48,7 +49,7 @@ async function getArticleBySlug(
     const apiUrl = `${baseUrl}/api/blog/posts/${encodeURIComponent(decodedSlug)}?lang=${lang}`
 
     const response = await fetch(apiUrl, {
-      next: { revalidate: 300 }, // Cache for 5 minutes
+      ...getFetchConfig('blogPosts'),
     })
 
     if (!response.ok) {
