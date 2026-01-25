@@ -8,7 +8,7 @@ import { Category, Product } from '@/lib/types/products'
 import { ChevronLeft, ChevronRight, ShoppingCart } from 'lucide-react'
 import Image from 'next/image'
 import { Link, useRouter } from '@/i18n/navigation'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { getProductImageUrl } from '@/lib/utils/image-helper'
 
 interface ProductDetailProps {
@@ -20,6 +20,7 @@ interface ProductDetailProps {
 export default function ProductDetail({ product, category, language = 'en' }: ProductDetailProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const [selectedColor, setSelectedColor] = useState(0)
+  const [selectedColorImageIndex, setSelectedColorImageIndex] = useState(0)
   const [isAdding, setIsAdding] = useState(false)
   const router = useRouter()
   const { addItem } = useCart()
@@ -38,25 +39,33 @@ export default function ProductDetail({ product, category, language = 'en' }: Pr
         ? 'Select Color:'
         : 'Color:'
 
-  // Build gallery images based on selected color
+  // Product gallery (featured + uploaded gallery images)
   const allImages = (() => {
-    const selectedColorGallery = selectedColorData?.gallery_images || []
+    const rawImages = [product.featured_image_url, ...product.gallery_urls].filter(
+      (url): url is string => typeof url === 'string' && url.trim() !== '',
+    )
 
-    // If selected color has gallery images, use only those
-    if (selectedColorGallery.length > 0) {
-      return selectedColorGallery.map(url => getProductImageUrl(url))
+    const resolvedImages = rawImages.map((url) => getProductImageUrl(url))
+
+    if (resolvedImages.length === 0) {
+      return [getProductImageUrl('')]
     }
 
-    // Fallback to featured image and general gallery_urls
-    return [product.featured_image_url, ...product.gallery_urls]
-      .filter(Boolean)
-      .map(url => getProductImageUrl(url))
+    return Array.from(new Set(resolvedImages))
   })()
 
-  // Reset image index when color changes
-  useEffect(() => {
-    setSelectedImageIndex(0)
-  }, [selectedColor])
+  // Selected color preview images (when provided by API)
+  const colorPreviewImages = (() => {
+    const rawImages = (selectedColorData?.gallery_images || []).filter(
+      (url): url is string => typeof url === 'string' && url.trim() !== '',
+    )
+
+    if (rawImages.length === 0 && selectedColorData?.color_icon?.url) {
+      rawImages.push(selectedColorData.color_icon.url)
+    }
+
+    return Array.from(new Set(rawImages.map((url) => getProductImageUrl(url))))
+  })()
 
   const handlePrevImage = () => {
     setSelectedImageIndex((prev) => (prev === 0 ? allImages.length - 1 : prev - 1))
@@ -64,6 +73,18 @@ export default function ProductDetail({ product, category, language = 'en' }: Pr
 
   const handleNextImage = () => {
     setSelectedImageIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1))
+  }
+
+  const handlePrevColorImage = () => {
+    setSelectedColorImageIndex((prev) =>
+      prev === 0 ? colorPreviewImages.length - 1 : prev - 1,
+    )
+  }
+
+  const handleNextColorImage = () => {
+    setSelectedColorImageIndex((prev) =>
+      prev === colorPreviewImages.length - 1 ? 0 : prev + 1,
+    )
   }
 
   return (
@@ -135,16 +156,18 @@ export default function ProductDetail({ product, category, language = 'en' }: Pr
 
             {/* Thumbnail Gallery */}
             {allImages.length > 1 && (
-              <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
+              <div className="flex gap-2 overflow-x-auto pb-2 snap-x snap-mandatory">
                 {allImages.map((image, index) => (
                   <button
                     key={index}
                     onClick={() => setSelectedImageIndex(index)}
-                    className={`relative aspect-square bg-gray-900 overflow-hidden border-2 transition-colors ${
+                    className={`relative h-20 w-20 flex-none snap-start bg-gray-900 overflow-hidden border-2 transition-colors ${
                       selectedImageIndex === index
                         ? 'border-white'
                         : 'border-gray-700 hover:border-gray-500'
                     }`}
+                    aria-label={`View image ${index + 1}`}
+                    type="button"
                   >
                     <Image
                       src={image}
@@ -207,7 +230,10 @@ export default function ProductDetail({ product, category, language = 'en' }: Pr
                     {colorPrices.map((colorPrice, index) => (
                       <button
                         key={index}
-                        onClick={() => setSelectedColor(index)}
+                        onClick={() => {
+                          setSelectedColor(index)
+                          setSelectedColorImageIndex(0)
+                        }}
                         disabled={!colorPrice.available}
                         className={`px-4 py-2 border rounded-lg transition-all ${
                           selectedColor === index
@@ -216,12 +242,13 @@ export default function ProductDetail({ product, category, language = 'en' }: Pr
                             ? 'border-gray-600 text-gray-300 hover:border-gray-400'
                             : 'border-gray-800 text-gray-600 cursor-not-allowed'
                         }`}
+                        type="button"
                       >
                         <div className="flex items-center gap-3">
                           {colorPrice.color_icon?.url && (
                             <div className="relative w-8 h-8 overflow-hidden rounded-md bg-black/20">
                               <Image
-                                src={colorPrice.color_icon.url}
+                                src={getProductImageUrl(colorPrice.color_icon.url)}
                                 alt={colorPrice.color}
                                 fill
                                 className="object-cover"
@@ -234,6 +261,67 @@ export default function ProductDetail({ product, category, language = 'en' }: Pr
                       </button>
                     ))}
                   </div>
+
+                  {colorPreviewImages.length > 0 && (
+                    <div className="mt-4 space-y-3">
+                      <div className="relative aspect-square w-full overflow-hidden rounded-lg border border-gray-800 bg-gray-900">
+                        <Image
+                          src={colorPreviewImages[selectedColorImageIndex] || getProductImageUrl('')}
+                          alt={`${selectedColorData?.color || 'Selected color'} preview`}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 1024px) 100vw, 50vw"
+                        />
+
+                        {colorPreviewImages.length > 1 && (
+                          <>
+                            <button
+                              onClick={handlePrevColorImage}
+                              className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
+                              aria-label="Previous color image"
+                              type="button"
+                            >
+                              <ChevronLeft className="w-5 h-5" />
+                            </button>
+                            <button
+                              onClick={handleNextColorImage}
+                              className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
+                              aria-label="Next color image"
+                              type="button"
+                            >
+                              <ChevronRight className="w-5 h-5" />
+                            </button>
+                          </>
+                        )}
+                      </div>
+
+                      {colorPreviewImages.length > 1 && (
+                        <div className="flex gap-2 overflow-x-auto pb-2 snap-x snap-mandatory">
+                          {colorPreviewImages.map((image, index) => (
+                            <button
+                              key={index}
+                              onClick={() => setSelectedColorImageIndex(index)}
+                              className={`relative h-16 w-16 flex-none snap-start bg-gray-900 overflow-hidden border-2 transition-colors ${
+                                selectedColorImageIndex === index
+                                  ? 'border-white'
+                                  : 'border-gray-700 hover:border-gray-500'
+                              }`}
+                              aria-label={`View color image ${index + 1}`}
+                              type="button"
+                            >
+                              <Image
+                                src={image}
+                                alt={`${product.title} color thumbnail ${index + 1}`}
+                                fill
+                                className="object-cover"
+                                sizes="64px"
+                              />
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             )}
