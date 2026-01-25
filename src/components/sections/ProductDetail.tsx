@@ -264,13 +264,13 @@ export default function ProductDetail({ product, category, language = 'en' }: Pr
 
                   {colorPreviewImages.length > 0 && (
                     <div className="mt-4 space-y-3">
-                      <div className="relative aspect-square w-full overflow-hidden rounded-lg border border-gray-800 bg-gray-900">
+                      <div className="relative aspect-square w-full lg:w-1/2 overflow-hidden rounded-lg border border-gray-800 bg-gray-900">
                         <Image
                           src={colorPreviewImages[selectedColorImageIndex] || getProductImageUrl('')}
                           alt={`${selectedColorData?.color || 'Selected color'} preview`}
                           fill
                           className="object-cover"
-                          sizes="(max-width: 1024px) 100vw, 50vw"
+                          sizes="(max-width: 1024px) 100vw, 25vw"
                         />
 
                         {colorPreviewImages.length > 1 && (
