@@ -1,6 +1,6 @@
+import { getProductImageUrl } from '@/lib/utils/image-helper'
 import Image from 'next/image'
 import Link from 'next/link'
-import { getProductImageUrl } from '@/lib/utils/image-helper'
 
 interface Product {
   id: string
@@ -46,7 +46,7 @@ export default function ProductGrid({ products, currentLocale }: ProductGridProp
             <h3 className="text-sm md:text-base text-white font-light">
               {product.title}
             </h3>
-            <p className="mt-1 text-sm md:text-base text-gray-400">
+            <p className="mt-1 text-sm md:text-base text-gray-400 font-prompt">
               {formatPrice(product.price)}
             </p>
           </div>
