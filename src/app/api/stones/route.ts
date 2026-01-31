@@ -1,4 +1,3 @@
-import { getCacheHeaders, getFetchConfig } from '@/config/cache.config'
 import { NextResponse } from 'next/server'
 import { buildLaravelApiUrl, LARAVEL_API_URL } from '@/config/api.config'
 import { getErrorMessage } from '@/lib/utils/error-handler'
