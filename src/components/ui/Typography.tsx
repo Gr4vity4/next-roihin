@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/utils'
 import { containsNumbers } from '@/lib/utils/text'
-import { HTMLAttributes, ReactNode, createElement, isValidElement } from 'react'
+import { HTMLAttributes, ReactNode, cloneElement, createElement, isValidElement } from 'react'
 import { useFontContext } from '@/components/providers/FontProvider'
 
 interface TypographyProps extends HTMLAttributes<HTMLElement> {
@@ -45,6 +45,38 @@ const colorClasses = {
   primary: 'text-[#006039]', // Direct hex value for green
   highlight: 'text-[#D4AF37]', // Direct hex value for gold
 } as const
+
+const AMPERSAND_CHAR = '&'
+
+const wrapAmpersandsWithPromptFont = (node: ReactNode): ReactNode => {
+  if (typeof node === 'string') {
+    if (!node.includes(AMPERSAND_CHAR)) return node
+
+    const parts = node.split(AMPERSAND_CHAR)
+    return parts.flatMap((part, index) => [
+      part,
+      index < parts.length - 1
+        ? createElement(
+            'span',
+            { key: `ampersand-${index}`, className: 'font-prompt' },
+            AMPERSAND_CHAR,
+          )
+        : null,
+    ])
+  }
+
+  if (Array.isArray(node)) {
+    return node.map((child) => wrapAmpersandsWithPromptFont(child))
+  }
+
+  if (isValidElement(node)) {
+    const elementChildren = (node.props as { children?: ReactNode }).children
+    if (!elementChildren) return node
+    return cloneElement(node, undefined, wrapAmpersandsWithPromptFont(elementChildren))
+  }
+
+  return node
+}
 
 export default function Typography({
   variant,
@@ -121,6 +153,6 @@ export default function Typography({
       ),
       ...props,
     },
-    children,
+    wrapAmpersandsWithPromptFont(children),
   )
 }
