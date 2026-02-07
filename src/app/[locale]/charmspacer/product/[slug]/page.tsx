@@ -60,7 +60,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <ProductDetail product={product} category={category} language={locale} />
         
         {related && related.length > 0 && (
-          <RelatedProducts products={related} />
+          <RelatedProducts products={related} locale={locale} />
         )}
       </main>
 

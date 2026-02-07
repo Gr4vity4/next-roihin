@@ -141,7 +141,9 @@ export default function CrystalPage() {
         setCurrentPage((prev) => (prev === result.currentPage ? prev : result.currentPage))
       } catch (err) {
         console.error('Error fetching crystals:', err)
-        setError('Failed to load crystals')
+        setError(
+          locale === 'th' ? 'ไม่สามารถโหลดรายการหินได้' : 'Failed to load crystals',
+        )
         setCrystals([])
       } finally {
         setIsLoading(false)
@@ -239,7 +241,9 @@ export default function CrystalPage() {
                 {isLoading && (
                   <div className="text-center py-12">
                     <div className="inline-block w-8 h-8 border-4 border-gold-500 border-t-transparent rounded-full animate-spin" />
-                    <p className="text-gray-400 text-lg mt-4">Loading crystals...</p>
+                    <p className="text-gray-400 text-lg mt-4">
+                      {locale === 'th' ? 'กำลังโหลดรายการหิน...' : 'Loading crystals...'}
+                    </p>
                   </div>
                 )}
 

@@ -5,6 +5,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { Heart } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import AuthModal from '@/components/AuthModal'
+import { useLocale } from 'next-intl'
 
 interface WishlistButtonProps {
   product: {
@@ -29,6 +30,8 @@ export default function WishlistButton({
   size = 'md',
   showText = false,
 }: WishlistButtonProps) {
+  const locale = useLocale()
+  const isThai = locale === 'th'
   const { toggleItem, isInWishlist, loading, checkFavorite } = useWishlist()
   const { isLoggedIn } = useAuth()
   const [isWishlisted, setIsWishlisted] = useState(false)
@@ -95,6 +98,9 @@ export default function WishlistButton({
 
   return (
     <>
+      {/*
+        Keep localized labels inside the component so reusable buttons adapt to current locale.
+      */}
       <button
         onClick={handleToggleWishlist}
         disabled={isProcessing}
@@ -113,8 +119,24 @@ export default function WishlistButton({
           ${isProcessing ? 'opacity-50 cursor-not-allowed' : ''}
           ${className}
         `}
-        aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
-        title={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
+        aria-label={
+          isWishlisted
+            ? isThai
+              ? 'ลบออกจากรายการโปรด'
+              : 'Remove from wishlist'
+            : isThai
+              ? 'เพิ่มลงรายการโปรด'
+              : 'Add to wishlist'
+        }
+        title={
+          isWishlisted
+            ? isThai
+              ? 'ลบออกจากรายการโปรด'
+              : 'Remove from wishlist'
+            : isThai
+              ? 'เพิ่มลงรายการโปรด'
+              : 'Add to wishlist'
+        }
       >
         <div className={`relative ${isAnimating ? 'animate-ping' : ''}`}>
           <Heart
@@ -130,7 +152,13 @@ export default function WishlistButton({
 
         {showText && (
           <span className={`text-sm font-medium ${isWishlisted ? 'text-red-400' : 'text-white'}`}>
-            {isWishlisted ? 'บันทึกแล้ว' : 'บันทึก'}
+            {isWishlisted
+              ? isThai
+                ? 'บันทึกแล้ว'
+                : 'Saved'
+              : isThai
+                ? 'บันทึก'
+                : 'Save'}
           </span>
         )}
 

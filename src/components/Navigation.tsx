@@ -630,7 +630,15 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                 'focus:outline-none focus:ring-2 focus:ring-gold-400 focus:ring-offset-2',
                 isScrolled ? 'text-white hover:bg-white/10' : 'text-white hover:bg-white/10',
               )}
-              aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+              aria-label={
+                isMobileMenuOpen
+                  ? locale === 'th'
+                    ? 'ปิดเมนู'
+                    : 'Close menu'
+                  : locale === 'th'
+                    ? 'เปิดเมนู'
+                    : 'Open menu'
+              }
               aria-expanded={isMobileMenuOpen}
             >
               {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -700,7 +708,9 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
               <div className="border-t border-gray-800 mt-3 pt-3">
                 <div className="flex items-center justify-between py-3">
                   <div className="flex items-center space-x-2">
-                    <span className="text-white">ภาษา / Language</span>
+                    <span className="text-white">
+                      {locale === 'th' ? 'ภาษา' : 'Language'}
+                    </span>
                   </div>
                   <div className="flex space-x-2">
                     <button

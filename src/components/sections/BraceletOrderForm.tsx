@@ -2,10 +2,13 @@
 
 import { Calendar } from 'lucide-react'
 import { useState } from 'react'
+import { useLocale } from 'next-intl'
 import { Container } from '../ui'
 import Modal from '../ui/Modal'
 
 export default function BraceletOrderForm() {
+  const locale = useLocale()
+  const isThai = locale === 'th'
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -65,6 +68,36 @@ export default function BraceletOrderForm() {
     },
     { number: 6, title: 'จัดส่ง', subtitle: 'จัดส่งฟรีทั่วประเทศโดย EMS ไปรษณีย์ไทย' },
   ]
+
+  const monthNames = isThai
+    ? [
+        'มกราคม',
+        'กุมภาพันธ์',
+        'มีนาคม',
+        'เมษายน',
+        'พฤษภาคม',
+        'มิถุนายน',
+        'กรกฎาคม',
+        'สิงหาคม',
+        'กันยายน',
+        'ตุลาคม',
+        'พฤศจิกายน',
+        'ธันวาคม',
+      ]
+    : [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December',
+      ]
 
   const validateForm = () => {
     const errors: string[] = []
@@ -255,7 +288,7 @@ export default function BraceletOrderForm() {
                     className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#006039] focus:border-transparent ${
                       fieldErrors.firstName ? 'border-red-500' : 'border-gray-300'
                     }`}
-                    placeholder="First Name"
+                    placeholder={isThai ? 'ชื่อ' : 'First Name'}
                   />
                 </div>
                 <div>
@@ -274,7 +307,7 @@ export default function BraceletOrderForm() {
                     className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#006039] focus:border-transparent ${
                       fieldErrors.lastName ? 'border-red-500' : 'border-gray-300'
                     }`}
-                    placeholder="Last Name"
+                    placeholder={isThai ? 'นามสกุล' : 'Last Name'}
                   />
                 </div>
               </div>
@@ -300,7 +333,7 @@ export default function BraceletOrderForm() {
                       fieldErrors.birthDate ? 'border-red-500' : 'border-gray-300'
                     }`}
                   >
-                    <option value="">Day</option>
+                    <option value="">{isThai ? 'วัน' : 'Day'}</option>
                     {Array.from({ length: 31 }, (_, i) => i + 1).map((day) => (
                       <option key={day} value={day}>
                         {day}
@@ -322,21 +355,8 @@ export default function BraceletOrderForm() {
                       fieldErrors.birthDate ? 'border-red-500' : 'border-gray-300'
                     }`}
                   >
-                    <option value="">Month</option>
-                    {[
-                      'January',
-                      'February',
-                      'March',
-                      'April',
-                      'May',
-                      'June',
-                      'July',
-                      'August',
-                      'September',
-                      'October',
-                      'November',
-                      'December',
-                    ].map((month, index) => (
+                    <option value="">{isThai ? 'เดือน' : 'Month'}</option>
+                    {monthNames.map((month, index) => (
                       <option key={month} value={index + 1}>
                         {month}
                       </option>
@@ -357,7 +377,7 @@ export default function BraceletOrderForm() {
                       fieldErrors.birthDate ? 'border-red-500' : 'border-gray-300'
                     }`}
                   >
-                    <option value="">Year</option>
+                    <option value="">{isThai ? 'ปี' : 'Year'}</option>
                     {Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i).map(
                       (year) => (
                         <option key={year} value={year}>
@@ -391,7 +411,7 @@ export default function BraceletOrderForm() {
                   className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#006039] focus:border-transparent ${
                     fieldErrors.email ? 'border-red-500' : 'border-gray-300'
                   }`}
-                  placeholder="Email Address"
+                  placeholder={isThai ? 'อีเมล' : 'Email Address'}
                 />
               </div>
 
@@ -412,7 +432,7 @@ export default function BraceletOrderForm() {
                   className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#006039] focus:border-transparent ${
                     fieldErrors.phone ? 'border-red-500' : 'border-gray-300'
                   }`}
-                  placeholder="Mobile No."
+                  placeholder={isThai ? 'เบอร์โทรศัพท์' : 'Mobile No.'}
                 />
               </div>
 
@@ -434,7 +454,9 @@ export default function BraceletOrderForm() {
                       fieldErrors.wristSize ? 'border-red-500' : 'border-gray-300'
                     }`}
                   >
-                    <option value="">Wrist size (cm.)</option>
+                    <option value="">
+                      {isThai ? 'ขนาดรอบข้อมือ (ซม.)' : 'Wrist size (cm.)'}
+                    </option>
                     {Array.from({ length: 10 }, (_, i) => 14 + i).map((size) => (
                       <option key={size} value={size}>
                         {size} cm.
@@ -458,7 +480,9 @@ export default function BraceletOrderForm() {
                       fieldErrors.beadSize ? 'border-red-500' : 'border-gray-300'
                     }`}
                   >
-                    <option value="">Bead size (mm.)</option>
+                    <option value="">
+                      {isThai ? 'ขนาดเม็ดหิน (มม.)' : 'Bead size (mm.)'}
+                    </option>
                     {[6, 8, 10, 12].map((size) => (
                       <option key={size} value={size}>
                         {size} mm.
@@ -482,7 +506,7 @@ export default function BraceletOrderForm() {
                       fieldErrors.budget ? 'border-red-500' : 'border-gray-300'
                     }`}
                   >
-                    <option value="">Budget</option>
+                    <option value="">{isThai ? 'งบประมาณ' : 'Budget'}</option>
                     <option value="1000-3000">1,000-3,000 บาท</option>
                     <option value="3000-5000">3,000-5,000 บาท</option>
                     <option value="5000-10000">5,000-10,000 บาท</option>
@@ -618,7 +642,7 @@ export default function BraceletOrderForm() {
                   className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
                   onClick={() => document.getElementById('fileInput')?.click()}
                 >
-                  UPLOAD
+                  {isThai ? 'อัปโหลด' : 'UPLOAD'}
                 </button>
                 <input
                   id="fileInput"

@@ -39,6 +39,7 @@ function findStartingPrice(product: Product) {
 }
 
 export default function ShopProductCard({ product, locale, newLabel }: ShopProductCardProps) {
+  const isThai = locale === 'th'
   const price = findStartingPrice(product)
   const imageUrl = getProductImageUrl(product.featured_image_url)
 
@@ -74,7 +75,7 @@ export default function ShopProductCard({ product, locale, newLabel }: ShopProdu
           </p>
         )}
         <span className="mt-auto inline-flex items-center gap-2 pt-6 text-xs uppercase tracking-[0.3em] text-white/60">
-          <span>VIEW</span>
+          <span>{isThai ? 'ดูสินค้า' : 'VIEW'}</span>
           <span
             className={cn(
               'inline-flex h-6 w-6 items-center justify-center rounded-full border border-white/30 text-[10px]',

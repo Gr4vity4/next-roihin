@@ -8,16 +8,23 @@ import { getProductImageUrl } from '@/lib/utils/image-helper'
 interface RelatedProductsProps {
   products: Product[]
   buildHref?: (product: Product) => string
+  locale?: 'en' | 'th'
 }
 
 const defaultBuildHref = (product: Product) => `/charmspacer/product/${product.slug}`
 
-export default function RelatedProducts({ products, buildHref = defaultBuildHref }: RelatedProductsProps) {
+export default function RelatedProducts({
+  products,
+  buildHref = defaultBuildHref,
+  locale = 'th',
+}: RelatedProductsProps) {
+  const isThai = locale === 'th'
+
   return (
     <section className="py-12 md:py-16 border-t border-gray-800">
       <Container>
         <Typography variant="h2" className="text-2xl md:text-3xl text-white text-center mb-8">
-          สินค้าที่เกี่ยวข้อง
+          {isThai ? 'สินค้าที่เกี่ยวข้อง' : 'Related Products'}
         </Typography>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
@@ -41,7 +48,10 @@ export default function RelatedProducts({ products, buildHref = defaultBuildHref
                   </h3>
                   {product.acf.color_prices?.[0]?.price && (
                     <p className="text-xs text-gray-400 font-prompt">
-                      ฿{product.acf.color_prices[0].price.toLocaleString('th-TH')}
+                      ฿
+                      {product.acf.color_prices[0].price.toLocaleString(
+                        isThai ? 'th-TH' : 'en-US',
+                      )}
                     </p>
                   )}
                 </div>

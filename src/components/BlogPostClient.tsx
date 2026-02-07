@@ -26,6 +26,7 @@ interface BlogPostClientProps {
 
 export default function BlogPostClient({ slug }: BlogPostClientProps) {
   const locale = useLocale() as 'en' | 'th'
+  const isThai = locale === 'th'
   const router = useRouter()
   const [article, setArticle] = useState<BlogPostDetailsResponse['post'] | null>(null)
   const [loading, setLoading] = useState(true)
@@ -72,7 +73,7 @@ export default function BlogPostClient({ slug }: BlogPostClientProps) {
           <Container>
             <div className="py-16 text-center">
               <Typography variant="h3" className="text-gray-600">
-                Loading...
+                {isThai ? 'กำลังโหลด...' : 'Loading...'}
               </Typography>
             </div>
           </Container>
@@ -146,7 +147,7 @@ export default function BlogPostClient({ slug }: BlogPostClientProps) {
                   {article.author && (
                     <>
                       <span className="text-gray-400">•</span>
-                      <span>By {article.author.name}</span>
+                      <span>{isThai ? 'โดย' : 'By'} {article.author.name}</span>
                     </>
                   )}
                 </div>

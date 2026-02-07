@@ -1,4 +1,5 @@
 import { Link } from '@/i18n/navigation'
+import { useLocale } from 'next-intl'
 import { Typography } from '.'
 
 // Simple SVG icon component
@@ -26,8 +27,13 @@ interface BreadcrumbProps {
 }
 
 export default function Breadcrumb({ items, className = '' }: BreadcrumbProps) {
+  const locale = useLocale()
+
   return (
-    <nav className={`flex items-center text-sm ${className}`} aria-label="Breadcrumb">
+    <nav
+      className={`flex items-center text-sm ${className}`}
+      aria-label={locale === 'th' ? 'เส้นทางหน้า' : 'Breadcrumb'}
+    >
       <ol className="flex items-center space-x-2">
         {items.map((item, index) => (
           <li key={index} className="flex items-center">

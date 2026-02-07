@@ -137,14 +137,14 @@ export default function ProductDetail({ product, category, language = 'en' }: Pr
                       <button
                         onClick={handlePrevImage}
                         className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
-                        aria-label="Previous image"
+                        aria-label={language === 'th' ? 'รูปก่อนหน้า' : 'Previous image'}
                       >
                         <ChevronLeft className="w-5 h-5" />
                       </button>
                       <button
                         onClick={handleNextImage}
                         className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
-                        aria-label="Next image"
+                        aria-label={language === 'th' ? 'รูปถัดไป' : 'Next image'}
                       >
                         <ChevronRight className="w-5 h-5" />
                       </button>
@@ -166,7 +166,11 @@ export default function ProductDetail({ product, category, language = 'en' }: Pr
                         ? 'border-white'
                         : 'border-gray-700 hover:border-gray-500'
                     }`}
-                    aria-label={`View image ${index + 1}`}
+                    aria-label={
+                      language === 'th'
+                        ? `ดูรูปที่ ${index + 1}`
+                        : `View image ${index + 1}`
+                    }
                     type="button"
                   >
                     <Image
@@ -278,7 +282,11 @@ export default function ProductDetail({ product, category, language = 'en' }: Pr
                             <button
                               onClick={handlePrevColorImage}
                               className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
-                              aria-label="Previous color image"
+                              aria-label={
+                                language === 'th'
+                                  ? 'รูปสีสินค้า ก่อนหน้า'
+                                  : 'Previous color image'
+                              }
                               type="button"
                             >
                               <ChevronLeft className="w-5 h-5" />
@@ -286,7 +294,11 @@ export default function ProductDetail({ product, category, language = 'en' }: Pr
                             <button
                               onClick={handleNextColorImage}
                               className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors"
-                              aria-label="Next color image"
+                              aria-label={
+                                language === 'th'
+                                  ? 'รูปสีสินค้า ถัดไป'
+                                  : 'Next color image'
+                              }
                               type="button"
                             >
                               <ChevronRight className="w-5 h-5" />
@@ -306,7 +318,11 @@ export default function ProductDetail({ product, category, language = 'en' }: Pr
                                   ? 'border-white'
                                   : 'border-gray-700 hover:border-gray-500'
                               }`}
-                              aria-label={`View color image ${index + 1}`}
+                              aria-label={
+                                language === 'th'
+                                  ? `ดูรูปสีสินค้า ${index + 1}`
+                                  : `View color image ${index + 1}`
+                              }
                               type="button"
                             >
                               <Image

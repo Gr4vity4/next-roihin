@@ -20,7 +20,7 @@ export default function BlogHeroSection({
       <div className="relative w-full h-[400px] lg:h-[500px]">
         <Image
           src={backgroundImage}
-          alt="Blog page header"
+          alt={title}
           fill
           className="object-cover"
           priority

@@ -1,8 +1,12 @@
 import { Link } from '@/i18n/navigation'
 import { Container, Typography } from '@/components/ui'
 import { ArrowLeft } from 'lucide-react'
+import { getLocale } from 'next-intl/server'
 
-export default function NotFound() {
+export default async function NotFound() {
+  const locale = await getLocale()
+  const isThai = locale === 'th'
+
   return (
     <div className="min-h-screen bg-white flex items-center justify-center">
       <Container>
@@ -17,14 +21,16 @@ export default function NotFound() {
             variant="h2"
                         className="text-[#006039] mb-4"
           >
-            ไม่พบบทความที่คุณค้นหา
+            {isThai ? 'ไม่พบบทความที่คุณค้นหา' : 'Article not found'}
           </Typography>
           
           <Typography
             variant="body"
                         className="text-gray-600 mb-8 max-w-xl mx-auto"
           >
-            ขออภัย บทความที่คุณกำลังมองหาอาจถูกลบ หรือย้ายไปแล้ว กรุณาตรวจสอบ URL หรือกลับไปที่หน้าบล็อกเพื่อค้นหาบทความอื่นๆ
+            {isThai
+              ? 'ขออภัย บทความที่คุณกำลังมองหาอาจถูกลบ หรือย้ายไปแล้ว กรุณากลับไปหน้าบล็อกเพื่อค้นหาบทความอื่น'
+              : 'Sorry, the article you are looking for may have been removed or moved. Please return to the blog to browse other articles.'}
           </Typography>
 
           {/* Action Buttons */}
@@ -37,7 +43,7 @@ export default function NotFound() {
               <Typography
                 variant="body"
                               >
-                กลับไปบล็อก
+                {isThai ? 'กลับไปบล็อก' : 'Back to blog'}
               </Typography>
             </Link>
             
@@ -48,7 +54,7 @@ export default function NotFound() {
               <Typography
                 variant="body"
                               >
-                กลับหน้าแรก
+                {isThai ? 'กลับหน้าแรก' : 'Back to home'}
               </Typography>
             </Link>
           </div>

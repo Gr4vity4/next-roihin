@@ -4,7 +4,7 @@ import Footer from '@/components/sections/Footer'
 import TestimonialsClient from '@/components/TestimonialsClient'
 import { Typography } from '@/components/ui'
 import { Link } from '@/i18n/navigation'
-import { getTranslations } from 'next-intl/server'
+import { getLocale, getTranslations } from 'next-intl/server'
 import Image from 'next/image'
 
 // Configure route segment caching for testimonials (dynamic content)
@@ -12,6 +12,8 @@ import Image from 'next/image'
 export const revalidate = 0
 
 export default async function TestimonialPage() {
+  const locale = await getLocale()
+  const isThai = locale === 'th'
   const tCommon = await getTranslations('common')
 
   return (
@@ -24,7 +26,7 @@ export default async function TestimonialPage() {
           <div className="relative w-full h-[290px]">
             <Image
               src="/images/357c3a_c78543e690504fdd80ac15754320656b~mv2.avif"
-              alt="Testimonial page header image"
+              alt={isThai ? 'ภาพส่วนหัวหน้ารีวิว' : 'Testimonial page header image'}
               fill
               className="object-cover"
               priority
@@ -38,10 +40,12 @@ export default async function TestimonialPage() {
             {/* Section title */}
             <div className="text-center mb-12">
               <Typography variant="h2" className="text-white mb-4">
-                TESTIMONIALS
+                {isThai ? 'รีวิวจากลูกค้า' : 'TESTIMONIALS'}
               </Typography>
               <Typography variant="body" className="text-gray-300">
-                เสียงตอบรับจากลูกค้าที่ใช้บริการจริง
+                {isThai
+                  ? 'เสียงตอบรับจากลูกค้าที่ใช้บริการจริง'
+                  : 'Feedback from real customers'}
               </Typography>
             </div>
 
@@ -51,7 +55,9 @@ export default async function TestimonialPage() {
             {/* Call to action */}
             <div className="text-center mt-12">
               <Typography variant="body" className="text-gray-400 mb-4">
-                พร้อมที่จะเริ่มต้นการเปลี่ยนแปลงชีวิตของคุณแล้วหรือยัง?
+                {isThai
+                  ? 'พร้อมที่จะเริ่มต้นการเปลี่ยนแปลงชีวิตของคุณแล้วหรือยัง?'
+                  : 'Ready to begin your life transformation?'}
               </Typography>
               <Link
                 href="/custom"

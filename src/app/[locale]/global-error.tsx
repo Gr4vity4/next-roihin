@@ -9,6 +9,9 @@ interface GlobalErrorProps {
 }
 
 export default function GlobalError({ error, reset }: GlobalErrorProps) {
+  const isThai =
+    typeof window !== 'undefined' && document.documentElement.lang.startsWith('th')
+
   useEffect(() => {
     // Log the error to an error reporting service
     console.error('Global error:', error)
@@ -38,22 +41,20 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
                 </div>
                 
                 <Typography variant="h2" className="text-gray-900 mb-2">
-                  เกิดข้อผิดพลาด
+                  {isThai ? 'เกิดข้อผิดพลาด' : 'Something went wrong'}
                 </Typography>
                 
                 <Typography variant="h2" className="text-gray-900 mb-4 text-xl">
-                  Something went wrong
+                  {isThai ? 'ระบบเกิดข้อผิดพลาด' : 'An unexpected error occurred'}
                 </Typography>
                 
                 <Typography 
                   variant="body" 
                   className="text-gray-600 mb-6"
                 >
-                  ขออภัยในความไม่สะดวก เกิดข้อผิดพลาดที่ไม่คาดคิด กรุณาลองใหม่อีกครั้ง
-                </Typography>
-                
-                <Typography variant="body" className="text-gray-600 mb-8">
-                  We apologize for the inconvenience. An unexpected error occurred. Please try again.
+                  {isThai
+                    ? 'ขออภัยในความไม่สะดวก เกิดข้อผิดพลาดที่ไม่คาดคิด กรุณาลองใหม่อีกครั้ง'
+                    : 'We apologize for the inconvenience. An unexpected error occurred. Please try again.'}
                 </Typography>
               </div>
 
@@ -62,14 +63,14 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
                   onClick={reset}
                   className="w-full bg-[#006039] text-white px-6 py-3 hover:bg-[#006039]/90 transition-colors font-medium"
                 >
-                  ลองใหม่อีกครั้ง / Try Again
+                  {isThai ? 'ลองใหม่อีกครั้ง' : 'Try Again'}
                 </button>
                 
                 <button
                   onClick={() => window.location.href = "/"}
                   className="block w-full bg-gray-200 text-gray-700 px-6 py-3 hover:bg-gray-300 transition-colors font-medium"
                 >
-                  กลับหน้าแรก / Back to Home
+                  {isThai ? 'กลับหน้าแรก' : 'Back to Home'}
                 </button>
               </div>
 

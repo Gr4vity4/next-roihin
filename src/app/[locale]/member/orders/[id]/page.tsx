@@ -82,6 +82,7 @@ export default function OrderDetailPage() {
   const params = useParams()
   const locale = useLocale()
   const t = useTranslations('member.orders')
+  const tCommon = useTranslations('common')
   const tThankYou = useTranslations('thankYou')
 
   const orderId = params.id as string
@@ -177,7 +178,7 @@ export default function OrderDetailPage() {
         <div className="bg-white rounded-xl shadow-sm border border-red-100 p-10 text-center">
           <p className="text-red-600 font-medium mb-4">{t('errors.unauthorized')}</p>
           <Link href="/login">
-            <Button>Sign In</Button>
+            <Button>{tCommon('signIn')}</Button>
           </Link>
         </div>
       </div>
@@ -185,13 +186,19 @@ export default function OrderDetailPage() {
   }
 
   if (error === 'not_found' || !order) {
+    const notFoundTitle = locale === 'th' ? 'ไม่พบคำสั่งซื้อ' : 'Order Not Found'
+    const notFoundDescription =
+      locale === 'th'
+        ? 'ไม่พบคำสั่งซื้อที่คุณค้นหา หรือคุณไม่มีสิทธิ์เข้าถึงคำสั่งซื้อนี้'
+        : "The order you're looking for doesn't exist or you don't have permission to view it."
+
     return (
       <div className="max-w-7xl mx-auto pt-8">
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-10 text-center">
-          <h3 className="text-lg font-medium text-gray-900 mb-2">Order Not Found</h3>
-          <p className="text-gray-500 mb-6">The order you&apos;re looking for doesn&apos;t exist or you don&apos;t have permission to view it.</p>
+          <h3 className="text-lg font-medium text-gray-900 mb-2">{notFoundTitle}</h3>
+          <p className="text-gray-500 mb-6">{notFoundDescription}</p>
           <Link href="/member/orders">
-            <Button>Back to Orders</Button>
+            <Button>{t('detail.backToOrders')}</Button>
           </Link>
         </div>
       </div>
