@@ -36,7 +36,8 @@ function renderSizeEntries(sizePrices: CrystalSizePricing | undefined) {
     }))
 }
 
-export default function CrystalProductDetail({ product }: CrystalProductDetailProps) {
+export default function CrystalProductDetail({ product, locale }: CrystalProductDetailProps) {
+  const isThai = locale === 'th'
   const sizeEntries = renderSizeEntries(product.sizePrices)
   const colorDisplay = product.color || product.toneColors?.join(', ')
 
@@ -68,29 +69,39 @@ export default function CrystalProductDetail({ product }: CrystalProductDetailPr
             </div>
 
             <div className="flex-1 space-y-3">
-              <DetailRow label="ธาตุพลังงาน" value={product.story.energyElement} />
               <DetailRow
-                label="จักระ"
+                label={isThai ? 'ธาตุพลังงาน' : 'Energy Element'}
+                value={product.story.energyElement}
+              />
+              <DetailRow
+                label={isThai ? 'จักระ' : 'Chakra'}
                 value={product.story.connectedChakras?.join(', ')}
               />
               <DetailRow
-                label="ลัคนา"
+                label={isThai ? 'ลัคนา' : 'Ascendant'}
                 value={product.story.ascendant?.join(', ')}
               />
               <DetailRow
-                label="ดาวประจำ"
+                label={isThai ? 'ดาวประจำ' : 'Ruling Planet'}
                 value={product.story.starRelations?.join(', ')}
               />
               <DetailRow
-                label="สี"
+                label={isThai ? 'สี' : 'Color'}
                 value={colorDisplay}
               />
-              {product.category && <DetailRow label="หมวดหมู่" value={product.category} />}
+              {product.category && (
+                <DetailRow
+                  label={isThai ? 'หมวดหมู่' : 'Category'}
+                  value={product.category}
+                />
+              )}
             </div>
 
             {sizeEntries.length > 0 && (
               <div className="mt-6">
-                <h3 className="text-base md:text-lg text-gray-900 font-medium mb-2">ราคาตามขนาด</h3>
+                <h3 className="text-base md:text-lg text-gray-900 font-medium mb-2">
+                  {isThai ? 'ราคาตามขนาด' : 'Price by size'}
+                </h3>
                 <div className="grid grid-cols-2 gap-2">
                   {sizeEntries.map(({ label, value }) => (
                     <div

@@ -20,24 +20,27 @@ export async function generateMetadata({ params }: ThankYouPageProps): Promise<M
   }
 }
 
-function ThankYouLoading() {
+function ThankYouLoading({ loadingLabel }: { loadingLabel: string }) {
   return (
     <div className="flex justify-center items-center min-h-[400px]">
       <div className="text-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-        <p className="text-gray-600">Loading order details...</p>
+        <p className="text-gray-600">{loadingLabel}</p>
       </div>
     </div>
   )
 }
 
-export default function ThankYouPage() {
+export default async function ThankYouPage({ params }: ThankYouPageProps) {
+  const { locale } = await params
+  const t = await getTranslations({ locale, namespace: 'thankYou' })
+
   return (
     <>
       <NavigationWithSuspense position="static" />
       
       <main className="min-h-screen bg-black">
-        <Suspense fallback={<ThankYouLoading />}>
+        <Suspense fallback={<ThankYouLoading loadingLabel={t('loading')} />}>
           <ThankYouContent />
         </Suspense>
       </main>

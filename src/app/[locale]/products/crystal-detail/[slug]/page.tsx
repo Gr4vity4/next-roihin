@@ -76,6 +76,7 @@ export default async function CrystalProductPage({ params }: CrystalProductPageP
         {related && related.length > 0 && (
           <RelatedProducts
             products={related}
+            locale={locale}
             buildHref={(relatedProduct) => `/products/crystal-detail/${relatedProduct.slug}`}
           />
         )}

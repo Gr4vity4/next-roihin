@@ -722,7 +722,7 @@ export default function BraceletDesigner() {
 
   const openConfirmDialog = () => {
     if (beads.length === 0) {
-      alert('กรุณาเลือกหินอย่างน้อย 1 ชิ้น')
+      alert(locale === 'th' ? 'กรุณาเลือกหินอย่างน้อย 1 ชิ้น' : 'Please select at least one stone')
       return
     }
     setShowConfirmDialog(true)
@@ -740,7 +740,7 @@ export default function BraceletDesigner() {
             }}
           >
             <SelectTrigger className="w-[100px] font-prompt">
-              <SelectValue placeholder="Select length" />
+              <SelectValue placeholder={locale === 'th' ? 'เลือกรอบข้อมือ' : 'Select length'} />
             </SelectTrigger>
             <SelectContent className="font-prompt">
               <SelectItem value="14">14 cm</SelectItem>
@@ -763,7 +763,7 @@ export default function BraceletDesigner() {
             }}
           >
             <SelectTrigger className="w-[100px] font-prompt">
-              <SelectValue placeholder="Select size" />
+              <SelectValue placeholder={locale === 'th' ? 'เลือกขนาด' : 'Select size'} />
             </SelectTrigger>
             <SelectContent className="font-prompt">
               <SelectItem value="6">6 mm</SelectItem>
@@ -865,7 +865,9 @@ export default function BraceletDesigner() {
               </TabsList>
 
               {loading ? (
-                <div className="mt-6 text-center">Loading stones...</div>
+                <div className="mt-6 text-center">
+                  {locale === 'th' ? 'กำลังโหลดข้อมูลหิน...' : 'Loading stones...'}
+                </div>
               ) : (
                 <>
                   {Object.keys(STONE_CATEGORIES).map((category) => (
@@ -886,7 +888,11 @@ export default function BraceletDesigner() {
                                 className="w-11 h-11 transition-transform overflow-hidden cursor-pointer active:scale-95 rounded-lg relative"
                                 title={`${stoneInfo.title} - ฿${price}`}
                                 onClick={() => addBead(stoneInfo)}
-                                aria-label={`Add ${stoneInfo.title} - ฿${price}`}
+                                aria-label={
+                                  locale === 'th'
+                                    ? `เพิ่ม ${stoneInfo.title} - ฿${price}`
+                                    : `Add ${stoneInfo.title} - ฿${price}`
+                                }
                               >
                                 {validImageUrl ? (
                                   <Image
@@ -974,7 +980,9 @@ export default function BraceletDesigner() {
                   </div>
                 ) : (
                   <div className="w-24 h-24 bg-gray-200 flex items-center justify-center text-gray-400">
-                    <span className="text-sm text-center">No bead selected</span>
+                    <span className="text-sm text-center">
+                      {locale === 'th' ? 'ยังไม่ได้เลือกหิน' : 'No bead selected'}
+                    </span>
                   </div>
                 )}
               </div>
@@ -1039,7 +1047,9 @@ export default function BraceletDesigner() {
                 ) : (
                   <div className="flex flex-col items-center justify-center h-full text-gray-400">
                     <span className="text-lg">เลือกหินมงคลเพื่อดูรายละเอียด</span>
-                    <span className="text-sm mt-2">Select a bead to see details</span>
+                    <span className="text-sm mt-2">
+                      {locale === 'th' ? 'เลือกหินเพื่อดูรายละเอียด' : 'Select a bead to see details'}
+                    </span>
                   </div>
                 )}
               </div>

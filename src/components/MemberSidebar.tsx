@@ -4,10 +4,12 @@ import { Link } from '@/i18n/navigation'
 import { usePathname, useRouter } from '@/i18n/navigation'
 import { useState } from 'react'
 import { cn } from '@/lib/utils'
+import { useAuth } from '@/contexts/AuthContext'
+import { useLocale, useTranslations } from 'next-intl'
 
 const menuItems = [
   {
-    label: 'Dashboard',
+    label: 'dashboard',
     href: '/member',
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -16,7 +18,7 @@ const menuItems = [
     ),
   },
   {
-    label: 'Profile',
+    label: 'profile',
     href: '/member/profile',
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -25,7 +27,7 @@ const menuItems = [
     ),
   },
   {
-    label: 'Orders',
+    label: 'orders',
     href: '/member/orders',
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -34,7 +36,7 @@ const menuItems = [
     ),
   },
   {
-    label: 'Addresses',
+    label: 'addresses',
     href: '/member/addresses',
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -44,7 +46,7 @@ const menuItems = [
     ),
   },
   {
-    label: 'Wishlist',
+    label: 'wishlist',
     href: '/member/wishlist',
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -53,7 +55,7 @@ const menuItems = [
     ),
   },
   {
-    label: 'Settings',
+    label: 'settings',
     href: '/member/settings',
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -67,11 +69,14 @@ const menuItems = [
 export default function MemberSidebar() {
   const pathname = usePathname()
   const router = useRouter()
+  const locale = useLocale()
+  const tUser = useTranslations('userMenu')
+  const { user, logout } = useAuth()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   const handleSignOut = () => {
-    // Mock sign out - redirect to sign in page
-    router.push('/sign-in')
+    logout()
+    router.push('/')
   }
 
   return (
@@ -105,11 +110,18 @@ export default function MemberSidebar() {
           <div className="p-6 border-b border-gray-200">
             <div className="flex items-center space-x-3">
               <div className="w-12 h-12 bg-[#005635] rounded-full flex items-center justify-center text-white font-semibold">
-                JD
+                {(user?.name || 'U')
+                  .split(' ')
+                  .map((part) => part[0])
+                  .join('')
+                  .toUpperCase()
+                  .slice(0, 2)}
               </div>
               <div>
-                <p className="font-semibold text-gray-900">John Doe</p>
-                <p className="text-sm text-gray-500">demo@roihin.com</p>
+                <p className="font-semibold text-gray-900">
+                  {user?.name || (locale === 'th' ? 'สมาชิก' : 'Member')}
+                </p>
+                <p className="text-sm text-gray-500">{user?.email || '-'}</p>
               </div>
             </div>
           </div>
@@ -130,7 +142,7 @@ export default function MemberSidebar() {
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     {item.icon}
-                    <span>{item.label}</span>
+                    <span>{tUser(item.label)}</span>
                   </Link>
                 </li>
               ))}
@@ -146,7 +158,7 @@ export default function MemberSidebar() {
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
               </svg>
-              <span>Sign Out</span>
+              <span>{tUser('signOut')}</span>
             </button>
           </div>
         </div>

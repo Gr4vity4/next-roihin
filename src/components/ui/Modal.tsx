@@ -3,6 +3,7 @@
 import { ReactNode } from 'react'
 import * as Dialog from '@radix-ui/react-dialog'
 import { X } from 'lucide-react'
+import { useLocale } from 'next-intl'
 
 interface ModalProps {
   isOpen: boolean
@@ -23,6 +24,7 @@ export default function Modal({
   closeOnOverlayClick = true,
   size = 'md',
 }: ModalProps) {
+  const locale = useLocale()
   const sizeClasses = {
     sm: 'max-w-sm',
     md: 'max-w-md',
@@ -58,7 +60,7 @@ export default function Modal({
                     type="button"
                     className="ml-auto inline-flex items-center justify-center rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
                   >
-                    <span className="sr-only">Close</span>
+                    <span className="sr-only">{locale === 'th' ? 'ปิด' : 'Close'}</span>
                     <X className="h-6 w-6" aria-hidden="true" />
                   </button>
                 </Dialog.Close>

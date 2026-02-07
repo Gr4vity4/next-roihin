@@ -36,14 +36,14 @@ export default function CrystalProductPage() {
         const crystalData = await getCrystalBySlug(slug, locale as 'en' | 'th')
 
         if (!crystalData) {
-          setError('Product not found')
+          setError(locale === 'th' ? 'ไม่พบสินค้า' : 'Product not found')
           setProduct(null)
         } else {
           setProduct(crystalData)
         }
       } catch (err) {
         console.error('Error fetching crystal product:', err)
-        setError('Failed to load product')
+        setError(locale === 'th' ? 'ไม่สามารถโหลดสินค้าได้' : 'Failed to load product')
         setProduct(null)
       } finally {
         setIsLoading(false)
@@ -80,7 +80,11 @@ export default function CrystalProductPage() {
         console.error('Error fetching related products:', err)
         if (!isCancelled) {
           setRelatedProducts([])
-          setRelatedError('Failed to load related products')
+          setRelatedError(
+            locale === 'th'
+              ? 'ไม่สามารถโหลดสินค้าที่เกี่ยวข้องได้'
+              : 'Failed to load related products',
+          )
         }
       } finally {
         if (!isCancelled) {
@@ -104,7 +108,9 @@ export default function CrystalProductPage() {
         <main className="min-h-screen bg-white flex items-center justify-center">
           <div className="text-center">
             <div className="inline-block w-12 h-12 border-4 border-gold-500 border-t-transparent rounded-full animate-spin" />
-            <p className="text-gray-600 text-lg mt-4">Loading crystal...</p>
+            <p className="text-gray-600 text-lg mt-4">
+              {locale === 'th' ? 'กำลังโหลดข้อมูลหิน...' : 'Loading crystal...'}
+            </p>
           </div>
         </main>
         <Footer />
@@ -134,7 +140,11 @@ export default function CrystalProductPage() {
         {!relatedError && isRelatedLoading && relatedProducts.length === 0 && (
           <div className="container max-w-5xl mx-auto px-4 py-12 flex flex-col items-center text-gray-500 text-sm">
             <div className="inline-block w-8 h-8 border-4 border-gold-500 border-t-transparent rounded-full animate-spin mb-4" />
-            <span>Loading related products...</span>
+            <span>
+              {locale === 'th'
+                ? 'กำลังโหลดสินค้าที่เกี่ยวข้อง...'
+                : 'Loading related products...'}
+            </span>
           </div>
         )}
 

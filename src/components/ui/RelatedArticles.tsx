@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import { Link } from '@/i18n/navigation'
+import { useLocale } from 'next-intl'
 import { Typography } from '.'
 
 interface RelatedArticle {
@@ -27,29 +28,23 @@ interface RelatedArticlesProps {
   className?: string
 }
 
-function RelatedArticleCard({ article }: { article: RelatedArticle }) {
+function RelatedArticleCard({ article, locale }: { article: RelatedArticle; locale: 'th' | 'en' }) {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
-    const thaiOptions: Intl.DateTimeFormatOptions = {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    }
-    const englishOptions: Intl.DateTimeFormatOptions = {
+    const options: Intl.DateTimeFormatOptions = {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
     }
 
-    return {
-      thai: date.toLocaleDateString('th-TH', thaiOptions),
-      english: date.toLocaleDateString('en-US', englishOptions),
-    }
+    return date.toLocaleDateString(locale === 'th' ? 'th-TH' : 'en-US', options)
   }
 
   const formattedDate = formatDate(article.date)
   // Use article ID as slug
   const slug = article.id
+  const title = locale === 'th' ? article.title.thai : article.title.english
+  const excerpt = locale === 'th' ? article.excerpt.thai : article.excerpt.english
 
   return (
     <Link href={`/blog/${slug}`} className="group">
@@ -58,7 +53,7 @@ function RelatedArticleCard({ article }: { article: RelatedArticle }) {
         <div className="relative w-full h-48">
           <Image
             src={article.image}
-            alt={article.title.thai}
+            alt={title}
             fill
             className="object-cover group-hover:scale-105 transition-transform duration-300"
           />
@@ -72,7 +67,7 @@ function RelatedArticleCard({ article }: { article: RelatedArticle }) {
            
             className="mb-2 text-gray-900 group-hover:text-[#006039] transition-colors line-clamp-2"
           >
-            {article.title.thai}
+            {title}
           </Typography>
 
           {/* Article Excerpt */}
@@ -81,13 +76,13 @@ function RelatedArticleCard({ article }: { article: RelatedArticle }) {
            
             className="text-gray-600 text-sm line-clamp-3 mb-4"
           >
-            {article.excerpt.thai}
+            {excerpt}
           </Typography>
 
           {/* Article Meta */}
           <div className="flex items-center justify-between text-sm text-gray-500 pt-4 border-t border-gray-100">
             <Typography variant="caption" className="text-gray-500">
-              {formattedDate.thai}
+              {formattedDate}
             </Typography>
           </div>
         </div>
@@ -101,6 +96,7 @@ export default function RelatedArticles({
   currentArticleId,
   className = '',
 }: RelatedArticlesProps) {
+  const locale = useLocale() as 'th' | 'en'
   // Filter out current article and limit to 3 related articles
   const relatedArticles = articles.filter((article) => article.id !== currentArticleId).slice(0, 3)
 
@@ -114,17 +110,19 @@ export default function RelatedArticles({
         {/* Section Header */}
         <div className="text-center mb-8">
           <Typography variant="h3" className="text-[#006039] mb-2">
-            บทความที่เกี่ยวข้อง
+            {locale === 'th' ? 'บทความที่เกี่ยวข้อง' : 'Related Articles'}
           </Typography>
           <Typography variant="body" className="text-gray-600">
-            เรียนรู้เพิ่มเติมเกี่ยวกับพลังงานหิน
+            {locale === 'th'
+              ? 'เรียนรู้เพิ่มเติมเกี่ยวกับพลังงานหิน'
+              : 'Learn more about crystal energy'}
           </Typography>
         </div>
 
         {/* Related Articles Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {relatedArticles.map((article) => (
-            <RelatedArticleCard key={article.id} article={article} />
+            <RelatedArticleCard key={article.id} article={article} locale={locale} />
           ))}
         </div>
       </div>

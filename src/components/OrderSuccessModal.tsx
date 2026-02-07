@@ -4,6 +4,7 @@ import Modal from '@/components/ui/Modal'
 import { CircleCheck, Mail, Clock } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { useLocale } from 'next-intl'
 
 interface OrderSuccessModalProps {
   isOpen: boolean
@@ -23,6 +24,8 @@ export default function OrderSuccessModal({
   total,
 }: OrderSuccessModalProps) {
   const router = useRouter()
+  const locale = useLocale()
+  const isThai = locale === 'th'
   const [countdown, setCountdown] = useState(5)
 
   useEffect(() => {
@@ -75,19 +78,27 @@ export default function OrderSuccessModal({
           />
         </div>
 
-        <h3 className="text-xl font-semibold text-gray-900 mb-2">สั่งซื้อสำเร็จ!</h3>
+        <h3 className="text-xl font-semibold text-gray-900 mb-2">
+          {isThai ? 'สั่งซื้อสำเร็จ!' : 'Order placed successfully!'}
+        </h3>
 
-        <p className="text-gray-600 mb-6">ขอบคุณสำหรับการสั่งซื้อของคุณ</p>
+        <p className="text-gray-600 mb-6">
+          {isThai ? 'ขอบคุณสำหรับการสั่งซื้อของคุณ' : 'Thank you for your order.'}
+        </p>
 
         <div className="bg-gray-50 rounded-lg p-4 mb-6">
           {orderNumber && (
             <p className="text-sm text-gray-700 mb-2">
-              <span className="font-medium">หมายเลขคำสั่งซื้อ:</span> #{orderNumber}
+              <span className="font-medium">
+                {isThai ? 'หมายเลขคำสั่งซื้อ:' : 'Order number:'}
+              </span>{' '}
+              #{orderNumber}
             </p>
           )}
           {total && (
             <p className="text-sm text-gray-700">
-              <span className="font-medium">ยอดรวม:</span> ฿{total.toLocaleString('th-TH')}
+              <span className="font-medium">{isThai ? 'ยอดรวม:' : 'Total:'}</span>{' '}
+              ฿{total.toLocaleString(isThai ? 'th-TH' : 'en-US')}
             </p>
           )}
         </div>
@@ -95,25 +106,30 @@ export default function OrderSuccessModal({
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
           <p className="text-sm text-blue-800">
             <span className="font-medium inline-flex items-center gap-1">
-              <Mail className="w-4 h-4 inline" /> อีเมลยืนยัน:
+              <Mail className="w-4 h-4 inline" /> {isThai ? 'อีเมลยืนยัน:' : 'Confirmation email:'}
             </span>{' '}
-            เราได้ส่งรายละเอียดคำสั่งซื้อไปยังอีเมลของคุณแล้ว
+            {isThai
+              ? 'เราได้ส่งรายละเอียดคำสั่งซื้อไปยังอีเมลของคุณแล้ว'
+              : 'We have sent your order details to your email.'}
           </p>
         </div>
 
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6">
           <p className="text-sm text-amber-800">
             <span className="font-medium inline-flex items-center gap-1">
-              <Clock className="w-4 h-4 inline" /> การดำเนินการ:
+              <Clock className="w-4 h-4 inline" /> {isThai ? 'การดำเนินการ:' : 'Processing:'}
             </span>{' '}
-            ทีมงานจะตรวจสอบการชำระเงินและจัดส่งสินค้าภายใน 1-2 วันทำการ
+            {isThai
+              ? 'ทีมงานจะตรวจสอบการชำระเงินและจัดส่งสินค้าภายใน 1-2 วันทำการ'
+              : 'Our team will verify payment and ship your order within 1-2 business days.'}
           </p>
         </div>
 
         <div className="bg-gray-50 rounded-lg p-3 mb-6 text-center">
           <p className="text-sm text-gray-600">
-            กำลังนำคุณไปยังหน้าสมาชิกใน{' '}
-            <span className="font-bold text-green-600">{countdown}</span> วินาที...
+            {isThai ? 'กำลังนำคุณไปยังหน้าสมาชิกใน ' : 'Redirecting you to member page in '}
+            <span className="font-bold text-green-600">{countdown}</span>{' '}
+            {isThai ? 'วินาที...' : 'seconds...'}
           </p>
         </div>
 
@@ -123,14 +139,14 @@ export default function OrderSuccessModal({
             className="flex-1 px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors"
             onClick={handleGoToMember}
           >
-            ไปยังหน้าสมาชิก
+            {isThai ? 'ไปยังหน้าสมาชิก' : 'Go to member page'}
           </button>
           <button
             type="button"
             className="flex-1 px-6 py-3 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors"
             onClick={handleViewOrder}
           >
-            ดูรายละเอียดคำสั่งซื้อ
+            {isThai ? 'ดูรายละเอียดคำสั่งซื้อ' : 'View order details'}
           </button>
         </div>
       </div>

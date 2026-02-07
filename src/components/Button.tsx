@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils'
 import { cva, type VariantProps } from 'class-variance-authority'
+import { useLocale } from 'next-intl'
 import { ButtonHTMLAttributes, forwardRef } from 'react'
 
 const buttonVariants = cva(
@@ -62,6 +63,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref,
   ) => {
+    const locale = useLocale()
+
     return (
       <button
         className={cn(
@@ -95,7 +98,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
               />
             </svg>
-            <span>Loading...</span>
+            <span>{locale === 'th' ? 'กำลังโหลด...' : 'Loading...'}</span>
           </>
         ) : (
           <>

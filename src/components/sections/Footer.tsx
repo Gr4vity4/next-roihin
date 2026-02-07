@@ -3,7 +3,7 @@
 import { Link } from '@/i18n/navigation'
 import { cn } from '@/lib/utils'
 import { MapPin } from 'lucide-react'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import Image from 'next/image'
 import FooterColumn, { type FooterLink } from '../FooterColumn'
 import SocialLinks, { type SocialLink } from '../SocialLinks'
@@ -25,6 +25,8 @@ export default function Footer({
   textColor = 'text-white',
   className = '',
 }: FooterProps) {
+  const locale = useLocale()
+  const isThai = locale === 'th'
   const t = useTranslations('navigation')
 
   // Use same navigation items as navbar
@@ -49,8 +51,9 @@ export default function Footer({
   ]
 
   const contactInfo = {
-    address:
-      '101/54 หมู่บ้าน ภัสสร 70 (เกาะแก้ว) หมู่ที่ 4 ตำบลเกาะแก้ว อ.เมืองภูเก็ต จ.ภูเก็ต 83000',
+    address: isThai
+      ? '101/54 หมู่บ้าน ภัสสร 70 (เกาะแก้ว) หมู่ที่ 4 ตำบลเกาะแก้ว อ.เมืองภูเก็ต จ.ภูเก็ต 83000'
+      : '101/54 Passorn 70 Village (Ko Kaew), Village No. 4, Ko Kaew, Mueang Phuket, Phuket 83000',
     socialLinks: [
       { platform: 'facebook' as const, href: 'https://www.facebook.com/roihin42896395' },
       { platform: 'instagram' as const, href: 'http://instagram.com/roihinstone2489_6395' },
@@ -62,7 +65,9 @@ export default function Footer({
     ] as SocialLink[],
   }
 
-  const copyright = '© 2021 All rights is reserved by Roihin Stone and Bracelet'
+  const copyright = isThai
+    ? '© 2021 สงวนลิขสิทธิ์โดย Roihin Stone and Bracelet'
+    : '© 2021 All rights reserved by Roihin Stone and Bracelet'
   return (
     <>
       <footer

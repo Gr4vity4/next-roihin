@@ -1,6 +1,7 @@
 'use client'
 
 import { DIYCreation } from '@/lib/types/diy-creation'
+import { useLocale } from 'next-intl'
 import Image from 'next/image'
 
 interface DIYCreationCardProps {
@@ -9,6 +10,9 @@ interface DIYCreationCardProps {
 }
 
 export default function DIYCreationCard({ creation, onClick }: DIYCreationCardProps) {
+  const locale = useLocale()
+  const isThai = locale === 'th'
+
   return (
     <div
       onClick={onClick}
@@ -25,14 +29,18 @@ export default function DIYCreationCard({ creation, onClick }: DIYCreationCardPr
       </div>
 
       <div className="p-4">
-        <h3 className="font-semibold text-gray-900 mb-1 line-clamp-1">{creation.titleTh}</h3>
-        <p className="text-sm text-gray-600 mb-2">โดย {creation.designerNameTh}</p>
+        <h3 className="font-semibold text-gray-900 mb-1 line-clamp-1">
+          {isThai ? creation.titleTh : creation.title}
+        </h3>
+        <p className="text-sm text-gray-600 mb-2">
+          {isThai ? 'โดย' : 'By'} {isThai ? creation.designerNameTh : creation.designerName}
+        </p>
         <div className="flex items-center gap-1">
           {creation.stones.slice(0, 3).map((stone, index) => (
             <div
               key={index}
               className="w-6 h-6 rounded-full bg-gradient-to-br from-gray-200 to-gray-400 ring-1 ring-white"
-              title={stone.nameTh}
+              title={isThai ? stone.nameTh : stone.name}
             />
           ))}
           {creation.stones.length > 3 && (

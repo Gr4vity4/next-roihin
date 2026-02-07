@@ -2,7 +2,7 @@
 
 import { X } from 'lucide-react'
 import Image from 'next/image'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import { useEffect, useMemo, useState } from 'react'
 import type { LaravelGalleryImage } from '@/lib/types/laravel'
 
@@ -19,6 +19,8 @@ export function PersonalizedDesignModal({
   images = [],
   design,
 }: PersonalizedDesignModalProps) {
+  const locale = useLocale()
+  const isThai = locale === 'th'
   const t = useTranslations('personalizedPage.recentDesigns.modal')
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
 
@@ -91,7 +93,7 @@ export function PersonalizedDesignModal({
   if (!isOpen) return null
 
   const designerName = design?.title || 'ROIHIN Stone & Bracelet'
-  const designedDate = design?.designed_date || '22 August 2025'
+  const designedDate = design?.designed_date || (isThai ? '22 สิงหาคม 2025' : '22 August 2025')
   const charmSpacer = design?.charm_spacer || 'None'
   const stoneSize = design?.stone_size || '8 mm.'
   const budget = design?.budget || 'ระดับสูง (8,000 ขึ้นไป)'
@@ -131,7 +133,7 @@ export function PersonalizedDesignModal({
         'Golden Rutilated Quartz',
       ]
 
-  const mainImageAlt = design?.title || 'Personalized Bracelet'
+  const mainImageAlt = design?.title || (isThai ? 'กำไลเฉพาะบุคคล' : 'Personalized Bracelet')
 
   const properties = energyScores
 
@@ -150,7 +152,7 @@ export function PersonalizedDesignModal({
         <button
           onClick={onClose}
           className="absolute top-4 right-4 z-10 p-2 bg-white rounded-full shadow-lg hover:bg-gray-100 transition-colors"
-          aria-label="Close modal"
+          aria-label={isThai ? 'ปิดหน้าต่าง' : 'Close modal'}
         >
           <X className="w-5 h-5 text-gray-700" />
         </button>
@@ -186,7 +188,9 @@ export function PersonalizedDesignModal({
                   >
                     <Image
                       src={img}
-                      alt={`Thumbnail ${index + 1}`}
+                      alt={
+                        isThai ? `รูปย่อ ${index + 1}` : `Thumbnail ${index + 1}`
+                      }
                       fill
                       className="object-cover"
                       sizes="(max-width: 768px) 25vw, 12vw"
@@ -205,7 +209,7 @@ export function PersonalizedDesignModal({
                 <div className="flex gap-3 pt-1">
                   <button
                     className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                    aria-label="Add to wishlist"
+                    aria-label={isThai ? 'เพิ่มลงรายการโปรด' : 'Add to wishlist'}
                   >
                     <svg
                       className="w-5 h-5 text-gray-700"
@@ -223,7 +227,7 @@ export function PersonalizedDesignModal({
                   </button>
                   <button
                     className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                    aria-label="Share"
+                    aria-label={isThai ? 'แชร์' : 'Share'}
                   >
                     <svg
                       className="w-5 h-5 text-gray-700"

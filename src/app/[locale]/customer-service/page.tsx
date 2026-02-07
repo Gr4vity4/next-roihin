@@ -4,9 +4,53 @@ import ChatWidget from '@/components/ChatWidget'
 import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import Footer from '@/components/sections/Footer'
 import { Container, Typography } from '@/components/ui'
+import { useLocale } from 'next-intl'
 import Image from 'next/image'
 
 export default function CustomerServicePage() {
+  const locale = useLocale()
+  const isThai = locale === 'th'
+
+  const content = isThai
+    ? {
+        heroAlt: 'บริการลูกค้า',
+        contactTitle: 'ติดต่อสอบถาม',
+        addressLabel: 'ที่อยู่:',
+        address: `ร้อยหิน Stone & Bracelet
+101/54 หมู่บ้าน ภัสสร 70 (เกาะแก้ว) หมู่ที่ 4 ตำบลเกาะแก้ว อำเภอเมืองภูเก็ต จังหวัดภูเก็ต 83000`,
+        phoneLabel: 'โทรศัพท์:',
+        phone: '+6683 826 5195',
+        emailLabel: 'อีเมล์:',
+        email: 'info.roihin@gmail.com',
+        afterSalesTitle: 'บริการหลังการขาย',
+        warrantyTitle: 'รับประกันภายใน 7 วัน',
+        warrantySubtitle: '(นับตั้งแต่ลูกค้าได้รับสินค้า)',
+        warrantyDescription:
+          'กำไลหินมงคลได้รับการออกแบบอย่างปราณีตและตรวจสอบสินค้าก่อนนำส่งลูกค้าทุกครั้ง หากสินค้าเกิดข้อผิดพลาดจากตัวสินค้าเอง เช่น หินบิ่น ชำรุด หรือไหมยืดเกิดการขาด ย้วย หรือเสียหายโดยมิได้เกิดจากการใช้งานของลูกค้า ทางร้านยินดีดูแล เปลี่ยนสินค้า หรือคืนเงินเต็มจำนวนตามเงื่อนไขที่กำหนด',
+        lifetimeTitle: 'ยินดีดูแลสินค้า ตลอดอายุการใช้งาน',
+        lifetimeDescription:
+          'เมื่อไหมยืดร้อยหินหมดอายุการใช้งาน ทางร้อยหินยินดีให้บริการดูแล ทำความสะอาดหิน และเปลี่ยนไหมร้อยให้โดยไม่มีค่าใช้จ่าย (ยกเว้นค่าจัดส่งคืนสินค้า)',
+      }
+    : {
+        heroAlt: 'Customer Service',
+        contactTitle: 'Contact Us',
+        addressLabel: 'Address:',
+        address: `Roihin Stone & Bracelet
+101/54 Passorn 70 Village (Ko Kaew), Village No. 4, Ko Kaew Subdistrict, Mueang Phuket District, Phuket 83000`,
+        phoneLabel: 'Phone:',
+        phone: '+6683 826 5195',
+        emailLabel: 'Email:',
+        email: 'info.roihin@gmail.com',
+        afterSalesTitle: 'After-Sales Service',
+        warrantyTitle: '7-Day Warranty',
+        warrantySubtitle: '(from the date customer receives the product)',
+        warrantyDescription:
+          'Every bracelet is carefully crafted and inspected before delivery. If a defect occurs due to product issues, such as chipped stones or damaged elastic not caused by misuse, we are happy to assist with replacement or refund based on our service policy.',
+        lifetimeTitle: 'Lifetime Care Service',
+        lifetimeDescription:
+          'When the bracelet string reaches end-of-life, we provide cleaning and restringing services at no additional charge (excluding return shipping fees).',
+      }
+
   return (
     <>
       <NavigationWithSuspense />
@@ -17,7 +61,7 @@ export default function CustomerServicePage() {
         <section className="relative w-full h-[420px] overflow-hidden">
           <Image
             src="/images/357c3a_ac4bc1a787364c358512be32cc1ffc30~mv2.avif"
-            alt="Customer Service"
+            alt={content.heroAlt}
             fill
             className="object-cover"
             priority
@@ -55,7 +99,7 @@ export default function CustomerServicePage() {
                     className="text-4xl lg:text-5xl font-bold text-white mb-8"
                     textShadow
                   >
-                    ติดต่อสอบถาม
+                    {content.contactTitle}
                   </Typography>
 
                   <div className="space-y-6">
@@ -64,12 +108,14 @@ export default function CustomerServicePage() {
                       className="text-lg text-white leading-relaxed"
                       textShadow
                     >
-                      <strong className="text-xl">ที่อยู่:</strong>
+                      <strong className="text-xl">{content.addressLabel}</strong>
                       <br />
-                      ร้อยหิน Stone & Bracelet
-                      <br />
-                      101/54 หมู่บ้าน ภัสสร 70 (เกาะแก้ว) หมู่ที่ 4 ตำบลเกาะแก้ว อำเภอเมืองภูเก็ต
-                      จังหวัดภูเก็ต 83000
+                      {content.address.split('\n').map((line) => (
+                        <span key={line}>
+                          {line}
+                          <br />
+                        </span>
+                      ))}
                     </Typography>
 
                     <Typography
@@ -77,9 +123,9 @@ export default function CustomerServicePage() {
                       className="text-lg text-white leading-relaxed"
                       textShadow
                     >
-                      <strong className="text-xl">โทรศัพท์:</strong>
+                      <strong className="text-xl">{content.phoneLabel}</strong>
                       <br />
-                      +6683 826 5195
+                      {content.phone}
                     </Typography>
 
                     <Typography
@@ -87,9 +133,9 @@ export default function CustomerServicePage() {
                       className="text-lg text-white leading-relaxed"
                       textShadow
                     >
-                      <strong className="text-xl">อีเมล์:</strong>
+                      <strong className="text-xl">{content.emailLabel}</strong>
                       <br />
-                      info.roihin@gmail.com
+                      {content.email}
                     </Typography>
                   </div>
                 </div>
@@ -101,7 +147,7 @@ export default function CustomerServicePage() {
                     className="text-3xl lg:text-4xl font-bold text-white mb-8"
                     textShadow
                   >
-                    บริการหลังการขาย
+                    {content.afterSalesTitle}
                   </Typography>
 
                   <div className="space-y-6">
@@ -110,9 +156,9 @@ export default function CustomerServicePage() {
                       className="text-lg text-white leading-relaxed"
                       textShadow
                     >
-                      <strong className="text-xl">รับประกันภายใน 7 วัน</strong>
+                      <strong className="text-xl">{content.warrantyTitle}</strong>
                       <br />
-                      (นับตั้งแต่ลูกค้าได้รับสินค้า)
+                      {content.warrantySubtitle}
                     </Typography>
 
                     <Typography
@@ -120,14 +166,7 @@ export default function CustomerServicePage() {
                       className="text-lg text-white leading-relaxed"
                       textShadow
                     >
-                      กำไลหินมงคลได้รับการออกแบบอย่างปราณีตและตรวจสอบสินค้าก่อนนำส่งลูกค้าทุกครั้ง
-                      อนึ่งหากสินค้าเกิดข้อผิดพลาดทั้งที่ตัวของหินที่อาจบิ่น ชำรุดหรือเสียหาย
-                      หรือไหมยืดเกิดการขาด ย้วยหรือเสียหายซึ่งเหตุอันมิได้เกิดจากลูกค้า
-                      ทางร้านยินดีรับเปลี่ยนหิน ดูแล ดดยไม่เรียกร้องค่าเสียหายใด ๆ
-                      จากลูกค้าหรือยินดีคืนเงินเต็มจำนวนในกรณีสเหตุสุดวิสัย
-                      (ทั้งนี้ทางร้อยหินขอสงวนสิทธิ์ในการตรวจสอบเหตุอันพิสูจน์แล้วว่ามิใดเป็นการกระทำใด
-                      ๆ อันไม่เหมาะสมต่อสินค้าจากลูกค้า จึงดำเนินการคืนเงินภายใน 15
-                      วันหลังได้ทำการตกลงกับลูกค้า)
+                      {content.warrantyDescription}
                     </Typography>
 
                     <Typography
@@ -135,7 +174,7 @@ export default function CustomerServicePage() {
                       className="text-lg text-white leading-relaxed"
                       textShadow
                     >
-                      <strong className="text-xl">ยินดีดูแลสินค้า ตลอดอายุการใช้งาน</strong>
+                      <strong className="text-xl">{content.lifetimeTitle}</strong>
                     </Typography>
 
                     <Typography
@@ -143,9 +182,7 @@ export default function CustomerServicePage() {
                       className="text-lg text-white leading-relaxed"
                       textShadow
                     >
-                      เมื่อไหมยืดร้อยหินหมดอายุการใช้งาน ทางร้อยหินยินดีให้บริการดูแล ทำความสะอาดหิน
-                      เปลี่ยนไหมร้อยให้โดยไม่มีค่าใช้จ่ายใด ๆ เว้นแต่ค่าบริการส่งสินค้าคืนลูกค้า
-                      (ค่าบริการจัดส่งในประเทศ 60 บาท หรือ 120 บาทสำหรับพื้นที่ห่างไกล)
+                      {content.lifetimeDescription}
                     </Typography>
                   </div>
                 </div>

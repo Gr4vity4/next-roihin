@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import { Link } from '@/i18n/navigation'
 import { Container, Typography } from '@/components/ui'
+import { useLocale } from 'next-intl'
 
 interface ErrorProps {
   error: Error & { digest?: string }
@@ -31,6 +32,9 @@ function HomeIcon({ className }: { className?: string }) {
 }
 
 export default function Error({ error, reset }: ErrorProps) {
+  const locale = useLocale()
+  const isThai = locale === 'th'
+
   useEffect(() => {
     // Log the error to an error reporting service
     console.error('Application error:', error)
@@ -62,30 +66,23 @@ export default function Error({ error, reset }: ErrorProps) {
             variant="h2"
             className="text-[#006039] mb-4 text-2xl lg:text-3xl"
           >
-            เกิดข้อผิดพลาด
+            {isThai ? 'เกิดข้อผิดพลาด' : 'Something went wrong'}
           </Typography>
           
           <Typography
             variant="h3"
             className="text-gray-800 mb-6 text-xl"
           >
-            Something went wrong
+            {isThai ? 'ระบบเกิดข้อผิดพลาด' : 'An unexpected error occurred'}
           </Typography>
           
           <Typography
             variant="body"
             className="text-gray-600 mb-6 max-w-xl mx-auto leading-relaxed"
           >
-            ขออภัยในความไม่สะดวก เกิดข้อผิดพลาดที่ไม่คาดคิด 
-            กรุณาลองรีเฟรชหน้าเว็บหรือติดต่อเราหากปัญหายังคงอยู่
-          </Typography>
-
-          <Typography
-            variant="body"
-            className="text-gray-500 mb-8 max-w-xl mx-auto"
-          >
-            We apologize for the inconvenience. An unexpected error occurred. 
-            Please try refreshing the page or contact us if the problem persists.
+            {isThai
+              ? 'ขออภัยในความไม่สะดวก เกิดข้อผิดพลาดที่ไม่คาดคิด กรุณาลองรีเฟรชหน้าเว็บหรือติดต่อเราหากปัญหายังคงอยู่'
+              : 'We apologize for the inconvenience. Please refresh the page or contact us if the problem persists.'}
           </Typography>
 
           {/* Action Buttons */}
@@ -98,7 +95,7 @@ export default function Error({ error, reset }: ErrorProps) {
               <Typography
                 variant="body"
               >
-                ลองใหม่อีกครั้ง / Try Again
+                {isThai ? 'ลองใหม่อีกครั้ง' : 'Try Again'}
               </Typography>
             </button>
             
@@ -110,7 +107,7 @@ export default function Error({ error, reset }: ErrorProps) {
               <Typography
                 variant="body"
               >
-                กลับหน้าแรก / Go Home
+                {isThai ? 'กลับหน้าแรก' : 'Go Home'}
               </Typography>
             </Link>
           </div>
@@ -121,21 +118,16 @@ export default function Error({ error, reset }: ErrorProps) {
               variant="h4"
               className="text-gray-800 mb-3"
             >
-              ต้องการความช่วยเหลือ? / Need Help?
+              {isThai ? 'ต้องการความช่วยเหลือ?' : 'Need Help?'}
             </Typography>
             
             <Typography
               variant="body"
               className="text-gray-600 mb-2"
             >
-              หากปัญหายังคงอยู่ กรุณาติดต่อเราที่:
-            </Typography>
-            
-            <Typography
-              variant="body"
-              className="text-gray-600 mb-4"
-            >
-              If the problem persists, please contact us at:
+              {isThai
+                ? 'หากปัญหายังคงอยู่ กรุณาติดต่อเราได้ที่:'
+                : 'If the problem persists, please contact us at:'}
             </Typography>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center text-sm">
@@ -143,7 +135,7 @@ export default function Error({ error, reset }: ErrorProps) {
                 href="/customer-service" 
                 className="text-[#006039] hover:text-[#004D2E] transition-colors"
               >
-                ศูนย์ช่วยเหลือ / Customer Service
+                {isThai ? 'ศูนย์ช่วยเหลือ' : 'Customer Service'}
               </Link>
             </div>
           </div>

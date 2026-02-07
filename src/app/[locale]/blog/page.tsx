@@ -7,43 +7,60 @@ import type { Metadata } from 'next'
 // Revalidate every 5 minutes
 export const revalidate = 0
 
-export const metadata: Metadata = {
-  title: 'Blog - Stone Wisdom | ROIHIN STONE & BRACELET',
-  description:
-    'Discover the ancient wisdom and modern insights of natural stone healing. Learn about stone energy, spiritual practices, and healing techniques.',
-  keywords: [
-    'stone healing',
-    'crystal therapy',
-    'spiritual wisdom',
-    'natural stones',
-    'chakra healing',
-    'meditation',
-    'energy healing',
-    'stone knowledge',
-    'พลังหิน',
-    'การรักษาด้วยหิน',
-    'จักระ',
-    'สมาธิ',
-  ],
-  openGraph: {
-    title: 'Blog - Stone Wisdom | ROIHIN STONE & BRACELET',
-    description: 'Discover the ancient wisdom and modern insights of natural stone healing.',
-    type: 'website',
-    images: [
-      {
-        url: content.blog.hero.backgroundImage,
-        width: 1200,
-        height: 630,
-        alt: 'Stone Wisdom Blog - ROIHIN STONE & BRACELET',
-      },
+interface BlogPageProps {
+  params: Promise<{ locale: string }>
+}
+
+export async function generateMetadata({ params }: BlogPageProps): Promise<Metadata> {
+  const { locale } = await params
+  const isThai = locale === 'th'
+
+  const title = isThai
+    ? 'บทความพลังหิน | ROIHIN STONE & BRACELET'
+    : 'Blog - Stone Wisdom | ROIHIN STONE & BRACELET'
+  const description = isThai
+    ? 'ค้นพบความรู้เรื่องพลังงานหิน เทคนิคการบำบัด และแนวทางพัฒนาจิตวิญญาณจากบทความของ ROIHIN'
+    : 'Discover the ancient wisdom and modern insights of natural stone healing. Learn about stone energy, spiritual practices, and healing techniques.'
+
+  return {
+    title,
+    description,
+    keywords: [
+      'stone healing',
+      'crystal therapy',
+      'spiritual wisdom',
+      'natural stones',
+      'chakra healing',
+      'meditation',
+      'energy healing',
+      'stone knowledge',
+      'พลังหิน',
+      'การรักษาด้วยหิน',
+      'จักระ',
+      'สมาธิ',
     ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Blog - Stone Wisdom | ROIHIN STONE & BRACELET',
-    description: 'Discover the ancient wisdom and modern insights of natural stone healing.',
-    images: [content.blog.hero.backgroundImage],
-  },
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      images: [
+        {
+          url: content.blog.hero.backgroundImage,
+          width: 1200,
+          height: 630,
+          alt: isThai
+            ? 'บล็อกความรู้พลังหิน - ROIHIN STONE & BRACELET'
+            : 'Stone Wisdom Blog - ROIHIN STONE & BRACELET',
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [content.blog.hero.backgroundImage],
+    },
+  }
 }
 
 export default function BlogPage() {

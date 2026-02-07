@@ -1,5 +1,6 @@
 import { Link } from '@/i18n/navigation'
 import { Container, Typography } from '@/components/ui'
+import { getLocale } from 'next-intl/server'
 
 // Simple SVG icon component
 function HomeIcon({ className }: { className?: string }) {
@@ -10,7 +11,10 @@ function HomeIcon({ className }: { className?: string }) {
   )
 }
 
-export default function NotFound() {
+export default async function NotFound() {
+  const locale = await getLocale()
+  const isThai = locale === 'th'
+
   return (
     <div className="min-h-screen bg-white flex items-center justify-center">
       <Container>
@@ -27,30 +31,23 @@ export default function NotFound() {
             variant="h2"
             className="text-[#006039] mb-4 text-2xl lg:text-3xl"
           >
-            ไม่พบหน้าที่คุณค้นหา
+            {isThai ? 'ไม่พบหน้าที่คุณค้นหา' : 'Page Not Found'}
           </Typography>
           
           <Typography
             variant="h3"
             className="text-gray-800 mb-6 text-xl"
           >
-            Page Not Found
+            {isThai ? 'ไม่พบหน้าที่คุณค้นหา' : 'Page Not Found'}
           </Typography>
           
           <Typography
             variant="body"
             className="text-gray-600 mb-8 max-w-xl mx-auto leading-relaxed"
           >
-            ขออภัย หน้าที่คุณกำลังมองหาอาจถูกลบ ย้ายที่ หรือไม่เคยมีอยู่เลย 
-            กรุณาตรวจสอบ URL หรือกลับไปที่หน้าแรกเพื่อค้นหาสิ่งที่คุณต้องการ
-          </Typography>
-
-          <Typography
-            variant="body"
-            className="text-gray-500 mb-8 max-w-xl mx-auto"
-          >
-            Sorry, the page you are looking for might have been removed, moved, or never existed. 
-            Please check the URL or return to the homepage to find what you&apos;re looking for.
+            {isThai
+              ? 'ขออภัย หน้าที่คุณกำลังมองหาอาจถูกลบ ย้ายที่ หรือไม่เคยมีอยู่เลย กรุณาตรวจสอบ URL หรือกลับไปที่หน้าแรกเพื่อค้นหาสิ่งที่คุณต้องการ'
+              : "Sorry, the page you are looking for might have been removed, moved, or never existed. Please check the URL or return to the homepage."}
           </Typography>
 
           {/* Action Buttons */}
@@ -63,7 +60,7 @@ export default function NotFound() {
               <Typography
                 variant="body"
               >
-                กลับหน้าแรก / Go Home
+                {isThai ? 'กลับหน้าแรก' : 'Go Home'}
               </Typography>
             </Link>
             
@@ -75,10 +72,7 @@ export default function NotFound() {
                 variant="body"
                 className="mr-1"
               >
-                ดูบล็อก
-              </Typography>
-              <Typography variant="body">
-                / View Blog
+                {isThai ? 'ดูบล็อก' : 'View Blog'}
               </Typography>
             </Link>
           </div>
@@ -89,24 +83,24 @@ export default function NotFound() {
               variant="caption"
               className="text-gray-500 mb-4 block"
             >
-              หรือคุณอาจสนใจ / Or you might be interested in:
+              {isThai ? 'หรือคุณอาจสนใจ:' : 'You might also be interested in:'}
             </Typography>
             
             <div className="flex flex-wrap justify-center gap-4 text-sm">
               <Link href="/about" className="text-[#006039] hover:text-[#004D2E] transition-colors">
-                เกี่ยวกับเรา / About
+                {isThai ? 'เกี่ยวกับเรา' : 'About'}
               </Link>
               <span className="text-gray-300">•</span>
               <Link href="/personalized" className="text-[#006039] hover:text-[#004D2E] transition-colors">
-                สร้างสร้อยส่วนตัว / Personalized
+                {isThai ? 'สร้างสร้อยส่วนตัว' : 'Personalized'}
               </Link>
               <span className="text-gray-300">•</span>
               <Link href="/charmspacer" className="text-[#006039] hover:text-[#004D2E] transition-colors">
-                จี้และแต่ง / Charms
+                {isThai ? 'จี้และแต่ง' : 'Charms'}
               </Link>
               <span className="text-gray-300">•</span>
               <Link href="/customer-service" className="text-[#006039] hover:text-[#004D2E] transition-colors">
-                ติดต่อ / Contact
+                {isThai ? 'ติดต่อ' : 'Contact'}
               </Link>
             </div>
           </div>

@@ -28,32 +28,45 @@ const prompt = Prompt({
   display: 'swap',
 })
 
-export const metadata: Metadata = {
-  title: 'ROIHIN STONE & BRACELET - Personalized Stone Bracelet',
-  description: 'Transform your life on a spiritual level with personalized stone stringing science',
-  icons: {
-    icon: [
-      {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const isThai = locale === 'th'
+
+  return {
+    title: isThai
+      ? 'ROIHIN STONE & BRACELET - กำไลหินเฉพาะบุคคล'
+      : 'ROIHIN STONE & BRACELET - Personalized Stone Bracelet',
+    description: isThai
+      ? 'เปลี่ยนแปลงชีวิตในระดับจิตวิญญาณด้วยศาสตร์ร้อยหินเฉพาะบุคคล'
+      : 'Transform your life on a spiritual level with personalized stone stringing science',
+    icons: {
+      icon: [
+        {
+          url: '/images/icons/roihin-32x32.avif',
+          sizes: '32x32',
+          type: 'image/avif',
+        },
+        {
+          url: '/images/icons/roihin-192x192.avif',
+          sizes: '192x192',
+          type: 'image/avif',
+        },
+      ],
+      shortcut: {
         url: '/images/icons/roihin-32x32.avif',
-        sizes: '32x32',
         type: 'image/avif',
       },
-      {
-        url: '/images/icons/roihin-192x192.avif',
-        sizes: '192x192',
+      apple: {
+        url: '/images/icons/roihin-180x180.avif',
+        sizes: '180x180',
         type: 'image/avif',
       },
-    ],
-    shortcut: {
-      url: '/images/icons/roihin-32x32.avif',
-      type: 'image/avif',
     },
-    apple: {
-      url: '/images/icons/roihin-180x180.avif',
-      sizes: '180x180',
-      type: 'image/avif',
-    },
-  },
+  }
 }
 
 export function generateStaticParams() {

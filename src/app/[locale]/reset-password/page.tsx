@@ -8,8 +8,11 @@ import Button from '@/components/Button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Link } from '@/i18n/navigation'
+import { useLocale } from 'next-intl'
 
 function ResetPasswordForm() {
+  const locale = useLocale()
+  const isThai = locale === 'th'
   const router = useRouter()
   const searchParams = useSearchParams()
   const token = searchParams.get('token')
@@ -35,16 +38,24 @@ function ResetPasswordForm() {
 
   const validatePassword = (value: string) => {
     if (value.length < 8) {
-      return 'รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร'
+      return isThai
+        ? 'รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร'
+        : 'Password must be at least 8 characters'
     }
     if (!/[A-Z]/.test(value)) {
-      return 'รหัสผ่านต้องมีตัวพิมพ์ใหญ่อย่างน้อย 1 ตัว'
+      return isThai
+        ? 'รหัสผ่านต้องมีตัวพิมพ์ใหญ่อย่างน้อย 1 ตัว'
+        : 'Password must include at least one uppercase letter'
     }
     if (!/[a-z]/.test(value)) {
-      return 'รหัสผ่านต้องมีตัวพิมพ์เล็กอย่างน้อย 1 ตัว'
+      return isThai
+        ? 'รหัสผ่านต้องมีตัวพิมพ์เล็กอย่างน้อย 1 ตัว'
+        : 'Password must include at least one lowercase letter'
     }
     if (!/[0-9]/.test(value)) {
-      return 'รหัสผ่านต้องมีตัวเลขอย่างน้อย 1 ตัว'
+      return isThai
+        ? 'รหัสผ่านต้องมีตัวเลขอย่างน้อย 1 ตัว'
+        : 'Password must include at least one number'
     }
     return ''
   }
@@ -61,7 +72,7 @@ function ResetPasswordForm() {
     }
     
     if (password !== confirmPassword) {
-      newErrors.confirmPassword = 'รหัสผ่านไม่ตรงกัน'
+      newErrors.confirmPassword = isThai ? 'รหัสผ่านไม่ตรงกัน' : 'Passwords do not match'
     }
     
     if (Object.keys(newErrors).length > 0) {
@@ -104,11 +115,18 @@ function ResetPasswordForm() {
           router.push('/')
         }, 3000)
       } else {
-        setErrors({ password: data.error || 'Failed to reset password' })
+        setErrors({
+          password:
+            data.error || (isThai ? 'ไม่สามารถรีเซ็ตรหัสผ่านได้' : 'Failed to reset password'),
+        })
       }
     } catch (error) {
       console.error('Network error:', error)
-      setErrors({ password: 'Network error. Please try again.' })
+      setErrors({
+        password: isThai
+          ? 'เกิดข้อผิดพลาดด้านเครือข่าย กรุณาลองใหม่อีกครั้ง'
+          : 'Network error. Please try again.',
+      })
     } finally {
       setIsLoading(false)
     }
@@ -123,13 +141,15 @@ function ResetPasswordForm() {
               <CheckCircle2 className="w-10 h-10 text-green-600" />
             </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              รีเซ็ตรหัสผ่านสำเร็จ!
+              {isThai ? 'รีเซ็ตรหัสผ่านสำเร็จ!' : 'Password reset successful!'}
             </h1>
             <p className="text-gray-600 mb-6">
-              รหัสผ่านของคุณได้รับการเปลี่ยนแปลงเรียบร้อยแล้ว
+              {isThai
+                ? 'รหัสผ่านของคุณได้รับการเปลี่ยนแปลงเรียบร้อยแล้ว'
+                : 'Your password has been updated successfully.'}
             </p>
             <p className="text-sm text-gray-500">
-              กำลังเปลี่ยนเส้นทางไปยังหน้าหลัก...
+              {isThai ? 'กำลังเปลี่ยนเส้นทางไปยังหน้าหลัก...' : 'Redirecting to homepage...'}
             </p>
           </div>
         </div>
@@ -143,21 +163,21 @@ function ResetPasswordForm() {
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              ตั้งรหัสผ่านใหม่
+              {isThai ? 'ตั้งรหัสผ่านใหม่' : 'Set a new password'}
             </h1>
             <p className="text-gray-600">
-              กรุณากรอกรหัสผ่านใหม่ของคุณ
+              {isThai ? 'กรุณากรอกรหัสผ่านใหม่ของคุณ' : 'Please enter your new password'}
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="password">รหัสผ่านใหม่</Label>
+              <Label htmlFor="password">{isThai ? 'รหัสผ่านใหม่' : 'New password'}</Label>
               <div className="relative">
                 <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="กรอกรหัสผ่านใหม่"
+                  placeholder={isThai ? 'กรอกรหัสผ่านใหม่' : 'Enter new password'}
                   value={password}
                   onChange={(e) => {
                     setPassword(e.target.value)
@@ -188,27 +208,33 @@ function ResetPasswordForm() {
               )}
               <ul className="text-xs text-gray-500 space-y-1 mt-2">
                 <li className={password.length >= 8 ? 'text-green-600' : ''}>
-                  • อย่างน้อย 8 ตัวอักษร
+                  {isThai ? '• อย่างน้อย 8 ตัวอักษร' : '• At least 8 characters'}
                 </li>
                 <li className={/[A-Z]/.test(password) ? 'text-green-600' : ''}>
-                  • มีตัวพิมพ์ใหญ่อย่างน้อย 1 ตัว
+                  {isThai
+                    ? '• มีตัวพิมพ์ใหญ่อย่างน้อย 1 ตัว'
+                    : '• At least one uppercase letter'}
                 </li>
                 <li className={/[a-z]/.test(password) ? 'text-green-600' : ''}>
-                  • มีตัวพิมพ์เล็กอย่างน้อย 1 ตัว
+                  {isThai
+                    ? '• มีตัวพิมพ์เล็กอย่างน้อย 1 ตัว'
+                    : '• At least one lowercase letter'}
                 </li>
                 <li className={/[0-9]/.test(password) ? 'text-green-600' : ''}>
-                  • มีตัวเลขอย่างน้อย 1 ตัว
+                  {isThai ? '• มีตัวเลขอย่างน้อย 1 ตัว' : '• At least one number'}
                 </li>
               </ul>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">ยืนยันรหัสผ่าน</Label>
+              <Label htmlFor="confirmPassword">
+                {isThai ? 'ยืนยันรหัสผ่าน' : 'Confirm password'}
+              </Label>
               <div className="relative">
                 <Input
                   id="confirmPassword"
                   type={showConfirmPassword ? 'text' : 'password'}
-                  placeholder="ยืนยันรหัสผ่านใหม่"
+                  placeholder={isThai ? 'ยืนยันรหัสผ่านใหม่' : 'Confirm new password'}
                   value={confirmPassword}
                   onChange={(e) => {
                     setConfirmPassword(e.target.value)
@@ -245,7 +271,7 @@ function ResetPasswordForm() {
               size="lg"
               isLoading={isLoading}
             >
-              บันทึกรหัสผ่านใหม่
+              {isThai ? 'บันทึกรหัสผ่านใหม่' : 'Save new password'}
             </Button>
           </form>
 
@@ -254,7 +280,7 @@ function ResetPasswordForm() {
               href="/"
               className="text-sm text-gray-600 hover:text-[#005635] transition-colors"
             >
-              กลับไปหน้าหลัก
+              {isThai ? 'กลับไปหน้าหลัก' : 'Back to homepage'}
             </Link>
           </div>
         </div>
