@@ -1,3 +1,4 @@
+import GoogleAnalytics from '@/components/GoogleAnalytics'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { CartProvider } from '@/contexts/CartContext'
 import { TranslationProvider } from '@/contexts/TranslationContext'
@@ -95,6 +96,9 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale}>
+      <head>
+        <GoogleAnalytics />
+      </head>
       <body
         className={`${inter.variable} ${playfairDisplay.variable} ${prompt.variable} antialiased`}
       >
