@@ -1,3 +1,4 @@
+import { Link } from '@/i18n/navigation'
 import { cn } from '@/lib/utils'
 
 export interface FooterLink {
@@ -18,9 +19,9 @@ export default function FooterColumn({ title, links, className = '' }: FooterCol
       <ul className="space-y-2 text-gray-400  text-sm">
         {links.map((link, index) => (
           <li key={index}>
-            <a href={link.href} className="hover:text-white transition-colors">
+            <Link href={link.href} className="hover:text-white transition-colors">
               {link.text}
-            </a>
+            </Link>
           </li>
         ))}
       </ul>
