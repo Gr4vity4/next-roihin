@@ -20,27 +20,20 @@ export default async function NotFound() {
       <Container>
         <div className="text-center max-w-2xl mx-auto">
           {/* Decorative Element */}
-          <div className="w-24 h-24 bg-[#D4AF37] bg-opacity-10 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="w-24 h-24 bg-[#D4AF37]/10 rounded-full flex items-center justify-center mx-auto mb-6">
             <Typography variant="h1" className="text-[#D4AF37] text-4xl font-bold">
               404
             </Typography>
           </div>
-          
+
           {/* Error Message */}
           <Typography
             variant="h2"
-            className="text-[#006039] mb-4 text-2xl lg:text-3xl"
+            className="text-[#006039] mb-6 text-2xl lg:text-3xl"
           >
             {isThai ? 'ไม่พบหน้าที่คุณค้นหา' : 'Page Not Found'}
           </Typography>
-          
-          <Typography
-            variant="h3"
-            className="text-gray-800 mb-6 text-xl"
-          >
-            {isThai ? 'ไม่พบหน้าที่คุณค้นหา' : 'Page Not Found'}
-          </Typography>
-          
+
           <Typography
             variant="body"
             className="text-gray-600 mb-8 max-w-xl mx-auto leading-relaxed"
