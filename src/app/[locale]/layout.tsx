@@ -1,4 +1,8 @@
 import GoogleAnalytics from '@/components/GoogleAnalytics'
+import {
+  GoogleTagManagerNoScript,
+  GoogleTagManagerScript,
+} from '@/components/GoogleTagManager'
 import { AuthProvider } from '@/contexts/AuthContext'
 import { CartProvider } from '@/contexts/CartContext'
 import { TranslationProvider } from '@/contexts/TranslationContext'
@@ -97,11 +101,13 @@ export default async function LocaleLayout({
   return (
     <html lang={locale}>
       <head>
+        <GoogleTagManagerScript />
         <GoogleAnalytics />
       </head>
       <body
         className={`${inter.variable} ${playfairDisplay.variable} ${prompt.variable} antialiased`}
       >
+        <GoogleTagManagerNoScript />
         <NextIntlClientProvider messages={messages}>
           <TranslationProvider>
             <AuthProvider>
