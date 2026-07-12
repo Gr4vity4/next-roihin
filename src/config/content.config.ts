@@ -30,6 +30,7 @@ export const content = {
     cta: {
       text: 'เรียนรู้เพิ่มเติม',
       variant: 'primary' as const,
+      href: '/personalized',
     },
   },
 

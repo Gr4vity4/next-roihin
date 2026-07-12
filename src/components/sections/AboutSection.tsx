@@ -1,6 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
+import { Link } from '@/i18n/navigation'
 import Button from '../Button'
 import { Container, Typography } from '../ui'
 import { useTranslations } from 'next-intl'
@@ -57,13 +58,21 @@ export default function AboutSection({
 
           {ctaButton && (
             <div className="mt-10">
-              <Button
-                variant={ctaButton.variant}
-                size={ctaButton.size || 'lg'}
-                onClick={ctaButton.onClick}
-              >
-                {buttonText}
-              </Button>
+              {ctaButton.href ? (
+                <Link href={ctaButton.href}>
+                  <Button variant={ctaButton.variant} size={ctaButton.size || 'lg'}>
+                    {buttonText}
+                  </Button>
+                </Link>
+              ) : (
+                <Button
+                  variant={ctaButton.variant}
+                  size={ctaButton.size || 'lg'}
+                  onClick={ctaButton.onClick}
+                >
+                  {buttonText}
+                </Button>
+              )}
             </div>
           )}
         </div>
