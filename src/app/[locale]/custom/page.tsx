@@ -1,6 +1,6 @@
 import BraceletDesigner from '@/components/BraceletDesigner'
 import ChatWidget from '@/components/ChatWidget'
-import LatestDIYCreations from '@/components/LatestDIYCreations'
+// import LatestDIYCreations from '@/components/LatestDIYCreations'
 import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import { Footer } from '@/components/sections'
 import { Metadata } from 'next'
@@ -18,7 +18,8 @@ export default function CustomPage() {
         <div className="px-4 md:px-8">
           <BraceletDesigner />
         </div>
-        <LatestDIYCreations />
+        {/* Hidden for now — restore by uncommenting this and the import above */}
+        {/* <LatestDIYCreations /> */}
       </main>
       {/* Footer */}
       <Footer />
