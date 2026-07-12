@@ -732,7 +732,9 @@ export default function BraceletDesigner() {
     <>
       <div className="container mx-auto min-h-24 grid grid-cols-12 gap-4 md:gap-0">
         <div className="col-span-6 md:col-span-4 flex justify-center flex-col">
-          <span className="text-[#006039] text-lg">ความยาวรอบข้อมือ</span>
+          <span className="text-[#006039] text-lg">
+            {locale === 'th' ? 'ความยาวรอบข้อมือ' : 'Wrist Length'}
+          </span>
           <Select
             value={wristLength}
             onValueChange={(value) => {
@@ -755,7 +757,9 @@ export default function BraceletDesigner() {
         </div>
         {/* Bead Size */}
         <div className="col-span-6 md:col-span-4 flex justify-center flex-col">
-          <span className="text-[#006039] text-lg">ขนาดหิน</span>
+          <span className="text-[#006039] text-lg">
+            {locale === 'th' ? 'ขนาดหิน' : 'Bead Size'}
+          </span>
           <Select
             value={String(beadSize)}
             onValueChange={(value) => {
@@ -775,7 +779,9 @@ export default function BraceletDesigner() {
         </div>
         {/* Summary Price and Bead Count */}
         <div className="col-span-12 md:col-span-4 flex justify-center flex-col">
-          <span className="text-[#006039] text-lg">ราคารวม</span>
+          <span className="text-[#006039] text-lg">
+            {locale === 'th' ? 'ราคารวม' : 'Total Price'}
+          </span>
           <span className="font-prompt text-2xl font-bold">฿{calculateTotalPrice()}</span>
           {/* {basePrice > 0 && (
             <span className="text-xs text-gray-600">รวมค่าดีไซน์ ฿{basePrice}</span>
@@ -834,7 +840,7 @@ export default function BraceletDesigner() {
               leftIcon={<ArrowLeft className="w-4 h-4" />}
               onClick={undoBead}
             >
-              ย้อนกลับ
+              {locale === 'th' ? 'ย้อนกลับ' : 'Undo'}
             </Button>
             <Button
               variant="ghost"
@@ -842,7 +848,7 @@ export default function BraceletDesigner() {
               leftIcon={<Check className="w-4 h-4" />}
               onClick={openConfirmDialog}
             >
-              ยืนยันแบบ
+              {locale === 'th' ? 'ยืนยันแบบ' : 'Confirm Design'}
             </Button>
             <Button
               variant="ghost"
@@ -850,7 +856,7 @@ export default function BraceletDesigner() {
               leftIcon={<RefreshCw className="w-4 h-4" />}
               onClick={clearBeads}
             >
-              เริ่มใหม่
+              {locale === 'th' ? 'เริ่มใหม่' : 'Start Over'}
             </Button>
           </div>
         </div>
@@ -859,9 +865,11 @@ export default function BraceletDesigner() {
           <div className="col-span-12 md:col-span-6">
             <Tabs defaultValue="Stone" className="w-full">
               <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="Stone">หิน</TabsTrigger>
-                <TabsTrigger value="Charm">ชาร์ม</TabsTrigger>
-                <TabsTrigger value="Pendant">ตัวคั่น/จี้</TabsTrigger>
+                <TabsTrigger value="Stone">{locale === 'th' ? 'หิน' : 'Stone'}</TabsTrigger>
+                <TabsTrigger value="Charm">{locale === 'th' ? 'ชาร์ม' : 'Charm'}</TabsTrigger>
+                <TabsTrigger value="Pendant">
+                  {locale === 'th' ? 'ตัวคั่น/จี้' : 'Spacer/Pendant'}
+                </TabsTrigger>
               </TabsList>
 
               {loading ? (
@@ -1011,7 +1019,9 @@ export default function BraceletDesigner() {
                       <div className="grid grid-cols-2 gap-2 text-md">
                         {lastSelectedBead.story.energy_element && (
                           <div className="flex flex-col">
-                            <span className="font-semibold text-gray-600">ธาตุพลังงาน:</span>
+                            <span className="font-semibold text-gray-600">
+                              {locale === 'th' ? 'ธาตุพลังงาน:' : 'Energy Element:'}
+                            </span>
                             <span className="text-gray-600">
                               {lastSelectedBead.story.energy_element}
                             </span>
@@ -1019,7 +1029,9 @@ export default function BraceletDesigner() {
                         )}
                         {lastSelectedBead.story.connected_chakras && (
                           <div className="flex flex-col">
-                            <span className="font-semibold text-gray-600">จักระ:</span>
+                            <span className="font-semibold text-gray-600">
+                              {locale === 'th' ? 'จักระ:' : 'Chakras:'}
+                            </span>
                             <span className="text-gray-600">
                               {lastSelectedBead.story.connected_chakras}
                             </span>
@@ -1027,7 +1039,9 @@ export default function BraceletDesigner() {
                         )}
                         {lastSelectedBead.story.ascendant && (
                           <div className="flex flex-col">
-                            <span className="font-semibold text-gray-600">ลัคนา:</span>
+                            <span className="font-semibold text-gray-600">
+                              {locale === 'th' ? 'ลัคนา:' : 'Ascendant:'}
+                            </span>
                             <span className="text-gray-600">
                               {lastSelectedBead.story.ascendant}
                             </span>
@@ -1035,7 +1049,9 @@ export default function BraceletDesigner() {
                         )}
                         {lastSelectedBead.story.star_relations && (
                           <div className="flex flex-col">
-                            <span className="font-semibold text-gray-600">ดาวประจำ:</span>
+                            <span className="font-semibold text-gray-600">
+                              {locale === 'th' ? 'ดาวประจำ:' : 'Ruling Star:'}
+                            </span>
                             <span className="text-gray-600">
                               {lastSelectedBead.story.star_relations}
                             </span>
@@ -1046,7 +1062,11 @@ export default function BraceletDesigner() {
                   </>
                 ) : (
                   <div className="flex flex-col items-center justify-center h-full text-gray-400">
-                    <span className="text-lg">เลือกหินมงคลเพื่อดูรายละเอียด</span>
+                    <span className="text-lg">
+                      {locale === 'th'
+                        ? 'เลือกหินมงคลเพื่อดูรายละเอียด'
+                        : 'Select a stone to see its details'}
+                    </span>
                     <span className="text-sm mt-2">
                       {locale === 'th' ? 'เลือกหินเพื่อดูรายละเอียด' : 'Select a bead to see details'}
                     </span>
@@ -1075,22 +1095,28 @@ export default function BraceletDesigner() {
           <div className="space-y-6">
             {/* Order Summary */}
             <div className="space-y-2">
-              <h3 className="font-semibold text-lg">รายละเอียดสร้อยข้อมือ</h3>
+              <h3 className="font-semibold text-lg">
+                {locale === 'th' ? 'รายละเอียดสร้อยข้อมือ' : 'Bracelet Details'}
+              </h3>
               <div className="bg-gray-50 p-4 rounded-lg space-y-2">
                 <div className="flex justify-between">
-                  <span>ความยาวรอบข้อมือ:</span>
+                  <span>{locale === 'th' ? 'ความยาวรอบข้อมือ:' : 'Wrist Length:'}</span>
                   <span className="font-medium">{wristLength} cm</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>ขนาดหิน:</span>
+                  <span>{locale === 'th' ? 'ขนาดหิน:' : 'Bead Size:'}</span>
                   <span className="font-medium">{beadSize} mm</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>จำนวนหิน:</span>
-                  <span className="font-medium">{beads.length} ชิ้น</span>
+                  <span>{locale === 'th' ? 'จำนวนหิน:' : 'Number of Beads:'}</span>
+                  <span className="font-medium">
+                    {beads.length} {locale === 'th' ? 'ชิ้น' : 'pcs'}
+                  </span>
                 </div>
                 <div className="border-t pt-2">
-                  <div className="text-sm text-gray-600 mb-2">สรุปจำนวนหิน:</div>
+                  <div className="text-sm text-gray-600 mb-2">
+                    {locale === 'th' ? 'สรุปจำนวนหิน:' : 'Bead Summary:'}
+                  </div>
                   {(() => {
                     // Group beads by stone title and size
                     const groupedBeads = beads.reduce((acc, bead) => {
@@ -1173,18 +1199,22 @@ export default function BraceletDesigner() {
                 </div>
                 {basePrice > 0 && (
                   <div className="flex justify-between pt-2 text-sm">
-                    <span>ค่าดีไซน์สร้อยข้อมือ:</span>
+                    <span>
+                      {locale === 'th' ? 'ค่าดีไซน์สร้อยข้อมือ:' : 'Bracelet Design Fee:'}
+                    </span>
                     <span className="font-prompt">฿{basePrice}</span>
                   </div>
                 )}
                 <div className="flex justify-between">
-                  <span>ราคาหิน:</span>
+                  <span>{locale === 'th' ? 'ราคาหิน:' : 'Beads Price:'}</span>
                   <span className="font-prompt">
                     ฿{beads.reduce((total, bead) => total + bead.price, 0)}
                   </span>
                 </div>
                 <div className="flex justify-between border-t pt-2">
-                  <span className="font-semibold">ราคารวมทั้งหมด:</span>
+                  <span className="font-semibold">
+                    {locale === 'th' ? 'ราคารวมทั้งหมด:' : 'Grand Total:'}
+                  </span>
                   <span className="font-prompt font-bold text-lg text-green-600">
                     ฿{calculateTotalPrice()}
                   </span>
