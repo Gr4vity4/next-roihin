@@ -5,21 +5,36 @@ import { Metadata } from 'next'
 
 export const revalidate = 0
 
-export const metadata: Metadata = {
-  title: 'สั่งออกแบบกำไลหินเฉพาะบุคคล - ROIHIN STONE & BRACELET',
-  description: 'ฟอร์มสั่งออกแบบกำไลหินตามเดือนเกิด และพลังหินที่เหมาะกับคุณ',
-  openGraph: {
-    title: 'สั่งออกแบบกำไลหินเฉพาะบุคคล - ROIHIN STONE & BRACELET',
-    description: 'ฟอร์มสั่งออกแบบกำไลหินตามเดือนเกิด และพลังหินที่เหมาะกับคุณ',
-    images: [
-      {
-        url: '/images/banner/personalized-banner.avif',
-        width: 1200,
-        height: 630,
-        alt: 'Personalized Stone Bracelet Order Form',
-      },
-    ],
-  },
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const isThai = locale === 'th'
+  const title = isThai
+    ? 'สั่งออกแบบกำไลหินเฉพาะบุคคล - ROIHIN STONE & BRACELET'
+    : 'Order Your Personalized Stone Bracelet - ROIHIN STONE & BRACELET'
+  const description = isThai
+    ? 'ฟอร์มสั่งออกแบบกำไลหินตามเดือนเกิด และพลังหินที่เหมาะกับคุณ'
+    : 'Order form for a personalized stone bracelet designed around your birth date and the stone energy that suits you'
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: [
+        {
+          url: '/images/banner/personalized-banner.avif',
+          width: 1200,
+          height: 630,
+          alt: 'Personalized Stone Bracelet Order Form',
+        },
+      ],
+    },
+  }
 }
 
 export default function BraceletOrderPage() {
