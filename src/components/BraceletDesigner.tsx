@@ -971,7 +971,7 @@ export default function BraceletDesigner() {
               return (
                 <div
                   ref={popoverRef}
-                  className="bead-popover absolute z-30 flex items-center gap-1 rounded-full border border-gray-200 bg-white p-1.5 shadow-lg"
+                  className="bead-popover absolute z-30 flex items-center gap-1 rounded-full border border-white/40 bg-white/60 backdrop-blur-md p-1.5 shadow-lg"
                   style={{ left: popover.left, top: popover.top }}
                   role="toolbar"
                   aria-label={locale === 'th' ? 'จัดการหิน' : 'Bead actions'}
