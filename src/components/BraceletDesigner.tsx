@@ -25,7 +25,15 @@ import {
   generateBraceletTitle,
 } from '@/lib/utils/braceletImageGenerator'
 import { getLaravelApiEndpoint } from '@/config/api.config'
-import { ArrowLeft, Check, RefreshCw, ShoppingCart } from 'lucide-react'
+import {
+  ArrowLeft,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  RefreshCw,
+  ShoppingCart,
+  Trash2,
+} from 'lucide-react'
 import { useLocale } from 'next-intl'
 import Image from 'next/image'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -46,6 +54,11 @@ const CIRCLE_SIZE_MAP: Record<string, number> = {
   '19': 276,
   '20': 289,
 }
+
+// Bead action popover dimensions (px) — 3 x 44px buttons + gaps + padding + border
+const BEAD_POPOVER_WIDTH = 154
+const BEAD_POPOVER_HEIGHT = 58
+const BEAD_POPOVER_GAP = 10
 
 const BRACELET_PLACEHOLDER_IMAGE = '/images/bracelet-placeholder.png'
 const STONE_FALLBACK_IMAGE = '/images/logo.avif'
@@ -152,12 +165,12 @@ export default function BraceletDesigner() {
   const [loading, setLoading] = useState(true)
   const [showConfirmDialog, setShowConfirmDialog] = useState(false)
   const [basePrice, setBasePrice] = useState(0)
-  const [draggedBead, setDraggedBead] = useState<string | null>(null)
+  const [selectedBeadId, setSelectedBeadId] = useState<string | null>(null)
   const [isAddingToCart, setIsAddingToCart] = useState(false)
   const stageRef = useRef<HTMLDivElement>(null)
   const ringRef = useRef<HTMLDivElement>(null)
   const beadsLayerRef = useRef<HTMLDivElement>(null)
-  const draggedBeadRef = useRef<string | null>(null)
+  const popoverRef = useRef<HTMLDivElement>(null)
 
   // Helper function to validate if a string is a valid URL
   const isValidImageUrl = (url: string | undefined | null): boolean => {
@@ -338,8 +351,6 @@ export default function BraceletDesigner() {
 
   useEffect(() => {
     computeGeometry()
-    window.addEventListener('resize', computeGeometry)
-    return () => window.removeEventListener('resize', computeGeometry)
   }, [computeGeometry])
 
   // Render all beads using angle-based placement
@@ -393,6 +404,18 @@ export default function BraceletDesigner() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wristLength, beads])
 
+  // Recompute the stage centre and re-lay beads out when the window resizes,
+  // so bead positions (and the popover geometry) stay in sync with the stage
+  useEffect(() => {
+    const handleResize = () => {
+      computeGeometry()
+      renderBeads()
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [computeGeometry, beads])
+
   const nudgeFull = () => {
     if (!stageRef.current) return
     stageRef.current.animate(
@@ -406,14 +429,139 @@ export default function BraceletDesigner() {
     )
   }
 
-  // Update the ref whenever draggedBead changes
+  // Reflect selection state on the imperative bead elements
   useEffect(() => {
-    draggedBeadRef.current = draggedBead
-  }, [draggedBead])
+    beads.forEach((bead) => {
+      bead.el?.classList.toggle('selected', bead.id === selectedBeadId)
+    })
+  }, [selectedBeadId, beads])
 
-  const relayoutBeadsWithNewOrder = (newBeads: Bead[]) => {
-    setBeads(newBeads)
-    renderBeads()
+  // Dismiss the bead popover on outside tap, Escape, or viewport width change.
+  // pointerdown instead of click: iOS Safari doesn't synthesize click events for
+  // taps on non-interactive elements. Taps on beads or the popover are exempted
+  // by containment checks so their own handlers decide what happens.
+  useEffect(() => {
+    if (!selectedBeadId) return
+
+    const close = () => setSelectedBeadId(null)
+    const onPointerDown = (e: PointerEvent) => {
+      const target = e.target instanceof Element ? e.target : null
+      if (target && (popoverRef.current?.contains(target) || target.closest('.bead'))) return
+      close()
+    }
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') close()
+    }
+    // Only close on width changes: mobile browsers fire resize on URL-bar collapse
+    let lastWidth = window.innerWidth
+    const onResize = () => {
+      if (window.innerWidth !== lastWidth) {
+        lastWidth = window.innerWidth
+        close()
+      }
+    }
+
+    document.addEventListener('pointerdown', onPointerDown)
+    document.addEventListener('keydown', onKeyDown)
+    window.addEventListener('resize', onResize)
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown)
+      document.removeEventListener('keydown', onKeyDown)
+      window.removeEventListener('resize', onResize)
+    }
+  }, [selectedBeadId])
+
+  // Swap the selected bead with its neighbour; +1 = clockwise along the strand
+  const moveSelectedBead = (direction: 1 | -1) => {
+    if (!selectedBeadId) return
+    setBeads((prev) => {
+      const index = prev.findIndex((b) => b.id === selectedBeadId)
+      const target = index + direction
+      if (index === -1 || target < 0 || target >= prev.length) return prev
+      const next = [...prev]
+      ;[next[index], next[target]] = [next[target], next[index]]
+      return next
+    })
+  }
+
+  const removeSelectedBead = () => {
+    if (!selectedBeadId) return
+    const bead = beads.find((b) => b.id === selectedBeadId)
+    bead?.el?.remove()
+    setBeads((prev) => prev.filter((b) => b.id !== selectedBeadId))
+    setSelectedBeadId(null)
+  }
+
+  // Compute the popover position: radially outside the ring at the bead's angle,
+  // clamped horizontally so it stays on screen for small viewports
+  const getSelectedBeadPopover = () => {
+    if (!selectedBeadId) return null
+    const index = beads.findIndex((b) => b.id === selectedBeadId)
+    if (index === -1) return null
+
+    const radius = (CIRCLE_SIZE_MAP[wristLength] || 238) / 2
+    let currentAngle = START
+    let theta = START
+    for (const bead of beads) {
+      const chordToRadiusRatio = Math.min(bead.imageWidth / (2 * radius), 1)
+      const span = 2 * Math.asin(chordToRadiusRatio)
+      if (bead.id === selectedBeadId) {
+        theta = currentAngle + span / 2
+        break
+      }
+      currentAngle += span
+    }
+
+    const { cx, cy } = geometryRef.current
+    const ux = Math.cos(theta)
+    const uy = Math.sin(theta)
+    const stageWidth = cx * 2
+    const stageHeight = cy * 2
+    // Let the popover spill into the page margins where the viewport allows it,
+    // so side beads keep their popover outside the ring on wide screens
+    const stageRect = stageRef.current?.getBoundingClientRect()
+    const spillLeft = stageRect ? Math.max(8, stageRect.left - 8) : 8
+    const spillRight = stageRect ? Math.max(8, window.innerWidth - stageRect.right - 8) : 8
+    const clampLeft = (value: number) =>
+      Math.min(Math.max(value, -spillLeft), stageWidth - BEAD_POPOVER_WIDTH + spillRight)
+    // Allow a 12px overhang past the stage — less than the 16px gap to the
+    // Undo/Confirm button row below it, so the popover never covers controls
+    const clampTop = (value: number) =>
+      Math.min(Math.max(value, -12), stageHeight - BEAD_POPOVER_HEIGHT + 12)
+
+    // Offset that makes the popover's box clear the bead at any angle
+    const extent =
+      Math.abs(ux) * (BEAD_POPOVER_WIDTH / 2) + Math.abs(uy) * (BEAD_POPOVER_HEIGHT / 2)
+    const beadHalf = beads[index].imageWidth / 2
+    const outward = radius + beadHalf + BEAD_POPOVER_GAP + extent
+
+    let left = clampLeft(cx + ux * outward - BEAD_POPOVER_WIDTH / 2)
+    let top = clampTop(cy + uy * outward - BEAD_POPOVER_HEIGHT / 2)
+
+    // If clamping pushed the popover back onto the bead (large ring on a small
+    // stage), move it inside the ring instead: as close to the bead as its box
+    // can get with every corner clear of the bead ring, or centred when the
+    // ring is too tight for that
+    const beadCenterX = cx + radius * ux
+    const beadCenterY = cy + radius * uy
+    const overlapsBead =
+      left < beadCenterX + beadHalf &&
+      left + BEAD_POPOVER_WIDTH > beadCenterX - beadHalf &&
+      top < beadCenterY + beadHalf &&
+      top + BEAD_POPOVER_HEIGHT > beadCenterY - beadHalf
+    if (overlapsBead) {
+      const innerRadius = radius - beadHalf - BEAD_POPOVER_GAP
+      const fit =
+        extent * extent +
+        innerRadius * innerRadius -
+        (BEAD_POPOVER_WIDTH / 2) ** 2 -
+        (BEAD_POPOVER_HEIGHT / 2) ** 2
+      const inward = fit > 0 ? Math.max(0, Math.sqrt(fit) - extent) : 0
+      left = clampLeft(cx + ux * inward - BEAD_POPOVER_WIDTH / 2)
+      top = cy + uy * inward - BEAD_POPOVER_HEIGHT / 2
+    }
+
+    return { index, left, top }
   }
 
   const addBead = (stone: Stone['acf']) => {
@@ -454,11 +602,16 @@ export default function BraceletDesigner() {
     el.className = 'bead'
     el.style.width = imageWidth + 'px'
     el.style.height = imageHeight + 'px'
-    el.style.cursor = 'move'
+    el.style.cursor = 'pointer'
     el.style.position = 'relative'
     el.style.overflow = 'hidden'
-    el.draggable = true
     el.dataset.beadId = beadId
+    el.setAttribute('role', 'button')
+    el.tabIndex = 0
+    el.setAttribute(
+      'aria-label',
+      locale === 'th' ? `จัดการหิน ${stone.title}` : `Edit bead ${stone.title}`,
+    )
 
     // Use image element instead of background for better html2canvas compatibility
     const validImageUrl = getValidStoneImageUrl(stone)
@@ -530,57 +683,20 @@ export default function BraceletDesigner() {
       el.appendChild(placeholder)
     }
 
-    // Add drag event listeners to the bead element
-    el.addEventListener('dragstart', (e) => {
-      e.dataTransfer!.effectAllowed = 'move'
-      el.style.opacity = '0.5'
-      setDraggedBead(beadId)
-    })
+    // Tap or click a bead to open its action popover; tap again to dismiss.
+    // The outside-tap dismiss listener exempts .bead targets, so this toggle
+    // alone decides selection on bead taps.
+    const toggleSelection = () => {
+      setSelectedBeadId((prev) => (prev === beadId ? null : beadId))
+    }
 
-    el.addEventListener('dragend', () => {
-      el.style.opacity = '1'
-      setDraggedBead(null)
-    })
+    el.addEventListener('click', toggleSelection)
 
-    el.addEventListener('dragover', (e) => {
-      e.preventDefault()
-      e.dataTransfer!.dropEffect = 'move'
-    })
-
-    el.addEventListener('drop', (e) => {
-      e.preventDefault()
-      e.stopPropagation()
-
-      const dropBeadId = el.dataset.beadId
-      const currentDraggedBead = draggedBeadRef.current
-
-      if (!currentDraggedBead || !dropBeadId || currentDraggedBead === dropBeadId) {
-        return
+    el.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault()
+        toggleSelection()
       }
-
-      // Get current beads state
-      setBeads((currentBeads) => {
-        const draggedIndex = currentBeads.findIndex((b) => b.id === currentDraggedBead)
-        const dropIndex = currentBeads.findIndex((b) => b.id === dropBeadId)
-
-        if (draggedIndex === -1 || dropIndex === -1) {
-          return currentBeads
-        }
-
-        // Reorder beads
-        const newBeads = [...currentBeads]
-        const [removed] = newBeads.splice(draggedIndex, 1)
-        newBeads.splice(dropIndex, 0, removed)
-
-        // Relayout all beads with new order
-        setTimeout(() => {
-          relayoutBeadsWithNewOrder(newBeads)
-        }, 10)
-
-        return newBeads
-      })
-
-      setDraggedBead(null)
     })
 
     // Initial position (will be adjusted by renderBeads)
@@ -623,6 +739,9 @@ export default function BraceletDesigner() {
     if (lastBead.el) {
       lastBead.el.remove()
     }
+    if (lastBead.id === selectedBeadId) {
+      setSelectedBeadId(null)
+    }
 
     setBeads((prev) => {
       const newBeads = prev.slice(0, -1)
@@ -637,6 +756,7 @@ export default function BraceletDesigner() {
     })
     setBeads([])
     setLastSelectedBead(null)
+    setSelectedBeadId(null)
     // No need to call renderBeads when array is empty
   }
 
@@ -725,6 +845,8 @@ export default function BraceletDesigner() {
       alert(locale === 'th' ? 'กรุณาเลือกหินอย่างน้อย 1 ชิ้น' : 'Please select at least one stone')
       return
     }
+    // Clear selection so the highlight ring is not captured in the design thumbnail
+    setSelectedBeadId(null)
     setShowConfirmDialog(true)
   }
 
@@ -804,35 +926,89 @@ export default function BraceletDesigner() {
           // box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
           z-index: 10;
         }
-        .bead-list-item {
-          cursor: move;
-          transition: opacity 0.2s, transform 0.2s;
+        .bead.selected {
+          border-radius: 50%;
+          box-shadow: 0 0 0 3px #fff, 0 0 0 5px #006039;
+          z-index: 15;
         }
-        .bead-list-item.dragging {
-          opacity: 0.5;
+        .bead-popover {
+          animation: beadPopoverIn 0.15s ease-out;
+          transition: top 0.35s ease, left 0.35s ease;
         }
-        .bead-list-item.drag-over {
-          transform: translateY(2px);
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        @keyframes beadPopoverIn {
+          from {
+            opacity: 0;
+            transform: scale(0.9);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
         }
       `}</style>
 
       <div className="container mx-auto">
         <div className="flex items-center justify-center flex-col gap-4">
           {/* Stage */}
-          <section
-            ref={stageRef}
-            data-stage="true"
-            className="relative w-[520px] h-[320px] md:h-[360px] max-w-[90vw] aspect-square overflow-hidden"
-          >
-            <div className="absolute inset-0 grid place-items-center">
-              <div
-                ref={ringRef}
-                className="absolute w-[380px] h-[380px] rounded-full border-[4px] border-black left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none transition-all duration-[350ms] ease-in-out"
-              />
-            </div>
-            <div ref={beadsLayerRef} className="absolute inset-0 z-[3]" aria-hidden="true" />
-          </section>
+          <div className="relative">
+            <section
+              ref={stageRef}
+              data-stage="true"
+              className="relative w-[520px] h-[320px] md:h-[360px] max-w-[90vw] aspect-square overflow-hidden"
+            >
+              <div className="absolute inset-0 grid place-items-center">
+                <div
+                  ref={ringRef}
+                  className="absolute w-[380px] h-[380px] rounded-full border-[4px] border-black left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none transition-all duration-[350ms] ease-in-out"
+                />
+              </div>
+              <div ref={beadsLayerRef} className="absolute inset-0 z-[3]" />
+            </section>
+            {/* Bead action popover — rendered outside the clipped stage so it can sit outside the ring */}
+            {(() => {
+              const popover = getSelectedBeadPopover()
+              if (!popover) return null
+              return (
+                <div
+                  ref={popoverRef}
+                  className="bead-popover absolute z-30 flex items-center gap-1 rounded-full border border-gray-200 bg-white p-1.5 shadow-lg"
+                  style={{ left: popover.left, top: popover.top }}
+                  role="toolbar"
+                  aria-label={locale === 'th' ? 'จัดการหิน' : 'Bead actions'}
+                >
+                  <button
+                    type="button"
+                    className="flex h-11 w-11 items-center justify-center rounded-full text-gray-700 transition-colors hover:bg-gray-100 active:scale-95 disabled:opacity-30 disabled:pointer-events-none touch-manipulation cursor-pointer"
+                    onClick={() => moveSelectedBead(1)}
+                    disabled={popover.index === beads.length - 1}
+                    aria-label={locale === 'th' ? 'ย้ายหินไปทางซ้าย' : 'Move bead left'}
+                    title={locale === 'th' ? 'ย้ายไปทางซ้าย' : 'Move left'}
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                  </button>
+                  <button
+                    type="button"
+                    className="flex h-11 w-11 items-center justify-center rounded-full text-red-500 transition-colors hover:bg-red-50 active:scale-95 touch-manipulation cursor-pointer"
+                    onClick={removeSelectedBead}
+                    aria-label={locale === 'th' ? 'ลบหิน' : 'Remove bead'}
+                    title={locale === 'th' ? 'ลบหิน' : 'Remove bead'}
+                  >
+                    <Trash2 className="h-5 w-5" />
+                  </button>
+                  <button
+                    type="button"
+                    className="flex h-11 w-11 items-center justify-center rounded-full text-gray-700 transition-colors hover:bg-gray-100 active:scale-95 disabled:opacity-30 disabled:pointer-events-none touch-manipulation cursor-pointer"
+                    onClick={() => moveSelectedBead(-1)}
+                    disabled={popover.index === 0}
+                    aria-label={locale === 'th' ? 'ย้ายหินไปทางขวา' : 'Move bead right'}
+                    title={locale === 'th' ? 'ย้ายไปทางขวา' : 'Move right'}
+                  >
+                    <ChevronRight className="h-5 w-5" />
+                  </button>
+                </div>
+              )
+            })()}
+          </div>
           <div className="flex gap-2">
             <Button
               variant="ghost"
@@ -859,6 +1035,13 @@ export default function BraceletDesigner() {
               {locale === 'th' ? 'เริ่มใหม่' : 'Start Over'}
             </Button>
           </div>
+          {beads.length > 0 && (
+            <p className="text-xs text-gray-500">
+              {locale === 'th'
+                ? 'แตะหินบนสร้อยเพื่อย้ายหรือลบ'
+                : 'Tap a bead on the bracelet to move or remove it'}
+            </p>
+          )}
         </div>
 
         <div className="grid grid-cols-12 w-full mt-10 mb-20 gap-8">
