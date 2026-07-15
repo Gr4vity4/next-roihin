@@ -25,7 +25,7 @@ interface FontProviderProps {
  * @example
  * ```tsx
  * // Apply specific fonts for Thai and English
- * <FontProvider fonts={{ th: 'font-prompt', en: 'font-playfair' }}>
+ * <FontProvider fonts={{ th: 'font-prompt', en: 'font-bodoni' }}>
  *   <YourComponent />
  * </FontProvider>
  *
@@ -81,7 +81,7 @@ export function useFontContext() {
  * @example
  * ```tsx
  * const PersonalizedPageWithFont = withFontProvider(PersonalizedPage, {
- *   fonts: { th: 'font-prompt', en: 'font-playfair' }
+ *   fonts: { th: 'font-prompt', en: 'font-bodoni' }
  * })
  * ```
  */

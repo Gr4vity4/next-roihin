@@ -39,7 +39,7 @@ export default async function RecentPersonalizedDesignsPage({
   const recentDesigns = designs.filter(design => Boolean(design.image_url))
 
   return (
-    <FontProvider fonts={{ th: 'font-prompt', en: 'font-playfair' }}>
+    <FontProvider fonts={{ th: 'font-prompt', en: 'font-bodoni' }}>
       <div className="min-h-screen flex flex-col">
         <NavigationWithSuspense position="static" />
 

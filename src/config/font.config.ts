@@ -23,14 +23,14 @@ export type FontConfig = {
 export const fontConfig: FontConfig = {
   // Default fonts for the entire app
   default: {
-    th: 'font-mixed-lang', // Default Thai font (Prompt for Thai, Playfair for Latin)
-    en: 'font-mixed-lang', // Default English font (Playfair for Latin, Prompt for Thai)
+    th: 'font-mixed-lang', // Default Thai font (Prompt for Thai, Bodoni Moda for Latin)
+    en: 'font-mixed-lang', // Default English font (Bodoni Moda for Latin, Prompt for Thai)
   },
   // Page-specific overrides
   pages: {
     '/personalized': {
       th: 'font-prompt', // Use Prompt font for Thai personalized page
-      en: 'font-playfair', // Use Playfair font for English personalized page
+      en: 'font-bodoni', // Use Bodoni Moda font for English personalized page
     },
     // Add more page-specific configurations as needed
     // '/products': {
@@ -62,7 +62,7 @@ export function getPageFont(pathname: string, locale: 'th' | 'en'): string {
  */
 export const fontClasses = {
   inter: 'font-inter',
-  playfair: 'font-playfair',
+  bodoni: 'font-bodoni',
   prompt: 'font-prompt',
   mixed: 'font-mixed-lang',
 } as const

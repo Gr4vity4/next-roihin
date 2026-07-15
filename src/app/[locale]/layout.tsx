@@ -11,7 +11,7 @@ import { routing } from '@/i18n/routing'
 import type { Metadata } from 'next'
 import { NextIntlClientProvider } from 'next-intl'
 import { getMessages, setRequestLocale } from 'next-intl/server'
-import { Inter, Playfair_Display, Prompt } from 'next/font/google'
+import { Bodoni_Moda, Inter, Prompt } from 'next/font/google'
 import { notFound } from 'next/navigation'
 import '../globals.css'
 
@@ -20,9 +20,9 @@ const inter = Inter({
   variable: '--font-inter',
 })
 
-const playfairDisplay = Playfair_Display({
+const bodoniModa = Bodoni_Moda({
   subsets: ['latin'],
-  variable: '--font-playfair',
+  variable: '--font-bodoni',
   display: 'swap',
 })
 
@@ -105,7 +105,7 @@ export default async function LocaleLayout({
         <GoogleAnalytics />
       </head>
       <body
-        className={`${inter.variable} ${playfairDisplay.variable} ${prompt.variable} antialiased`}
+        className={`${inter.variable} ${bodoniModa.variable} ${prompt.variable} antialiased`}
       >
         <GoogleTagManagerNoScript />
         <NextIntlClientProvider messages={messages}>

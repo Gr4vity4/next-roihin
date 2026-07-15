@@ -25,7 +25,7 @@ export default async function Home() {
     .map(image => image.image_url as string)
 
   return (
-    <FontProvider fonts={{ th: 'font-prompt', en: 'font-playfair' }}>
+    <FontProvider fonts={{ th: 'font-prompt', en: 'font-bodoni' }}>
       <NavigationWithSuspense />
 
       {/* Main content wrapper - no padding needed, hero section will handle spacing */}

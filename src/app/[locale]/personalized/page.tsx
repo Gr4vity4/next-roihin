@@ -56,7 +56,7 @@ export default async function PersonalizedPage({
   const { personalizedPage } = content
 
   return (
-    <FontProvider fonts={{ th: 'font-prompt', en: 'font-playfair' }}>
+    <FontProvider fonts={{ th: 'font-prompt', en: 'font-bodoni' }}>
       <main className="min-h-screen">
         {/* Navigation */}
         <NavigationWithSuspense />

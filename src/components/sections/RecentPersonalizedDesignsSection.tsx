@@ -96,7 +96,7 @@ export default function RecentPersonalizedDesignsSection({
   const selectedDesign = typeof selectedImageIndex === 'number' ? galleryImages[selectedImageIndex] : undefined
 
   return (
-    <FontProvider fonts={{ th: 'font-prompt', en: 'font-playfair' }}>
+    <FontProvider fonts={{ th: 'font-prompt', en: 'font-bodoni' }}>
       <section className="py-16 sm:py-20 md:py-24">
         <Container padding="lg">
           <div className="max-w-6xl mx-auto">

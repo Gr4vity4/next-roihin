@@ -8,13 +8,13 @@ export default function PersonalizedContentSection() {
   const t = useTranslations('personalizedPage.content')
 
   return (
-    <FontProvider fonts={{ th: 'font-prompt', en: 'font-playfair' }}>
+    <FontProvider fonts={{ th: 'font-prompt', en: 'font-bodoni' }}>
       <section className="py-16 sm:py-20 md:py-24 bg-white">
         <Container padding="lg">
           <div className="max-w-5xl mx-auto">
             {/* Title Section */}
             <div className="text-center mb-12 sm:mb-16 md:mb-20">
-              <FontProvider fonts={{ th: 'font-playfair', en: 'font-playfair' }}>
+              <FontProvider fonts={{ th: 'font-bodoni', en: 'font-bodoni' }}>
                 <Typography variant="h2" align="center" className="mb-6">
                   <span className="text-gray-800">{t('title')}</span>
                   <br />
