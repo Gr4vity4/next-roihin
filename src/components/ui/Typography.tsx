@@ -48,7 +48,7 @@ const colorClasses = {
 
 const AMPERSAND_CHAR = '&'
 
-const wrapAmpersandsWithPromptFont = (node: ReactNode): ReactNode => {
+const wrapAmpersandsWithBodoniFont = (node: ReactNode): ReactNode => {
   if (typeof node === 'string') {
     if (!node.includes(AMPERSAND_CHAR)) return node
 
@@ -58,7 +58,7 @@ const wrapAmpersandsWithPromptFont = (node: ReactNode): ReactNode => {
       index < parts.length - 1
         ? createElement(
             'span',
-            { key: `ampersand-${index}`, className: 'font-prompt' },
+            { key: `ampersand-${index}`, className: 'font-bodoni' },
             AMPERSAND_CHAR,
           )
         : null,
@@ -66,13 +66,13 @@ const wrapAmpersandsWithPromptFont = (node: ReactNode): ReactNode => {
   }
 
   if (Array.isArray(node)) {
-    return node.map((child) => wrapAmpersandsWithPromptFont(child))
+    return node.map((child) => wrapAmpersandsWithBodoniFont(child))
   }
 
   if (isValidElement(node)) {
     const elementChildren = (node.props as { children?: ReactNode }).children
     if (!elementChildren) return node
-    return cloneElement(node, undefined, wrapAmpersandsWithPromptFont(elementChildren))
+    return cloneElement(node, undefined, wrapAmpersandsWithBodoniFont(elementChildren))
   }
 
   return node
@@ -153,6 +153,6 @@ export default function Typography({
       ),
       ...props,
     },
-    wrapAmpersandsWithPromptFont(children),
+    wrapAmpersandsWithBodoniFont(children),
   )
 }
