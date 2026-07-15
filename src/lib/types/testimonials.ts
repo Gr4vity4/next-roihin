@@ -8,8 +8,16 @@ export interface Testimonial {
   reviewImage?: string | null
 }
 
+export interface TestimonialsPagination {
+  page: number
+  perPage: number
+  total: number
+  totalPages: number
+}
+
 export interface TestimonialsResponse {
   testimonials: Testimonial[]
+  pagination?: TestimonialsPagination
   error?: string
   message?: string
 }

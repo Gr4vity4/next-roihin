@@ -1,10 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useLocale } from 'next-intl'
 import { Typography } from '@/components/ui'
 import Image from 'next/image'
-import type { Testimonial } from '@/lib/types/testimonials'
+import type { Testimonial, TestimonialsPagination } from '@/lib/types/testimonials'
+
+const PER_PAGE = 20
 
 // Loading component
 function TestimonialsLoading() {
@@ -57,26 +59,121 @@ function TestimonialsError({ error }: { error: string }) {
   )
 }
 
+// Build the list of page buttons, collapsing long runs into ellipses
+// (e.g. 1 … 4 5 6 … 12)
+function buildPageList(current: number, total: number): (number | '…')[] {
+  if (total <= 7) {
+    return Array.from({ length: total }, (_, i) => i + 1)
+  }
+
+  const pages: (number | '…')[] = [1]
+  const start = Math.max(2, current - 1)
+  const end = Math.min(total - 1, current + 1)
+
+  if (start > 2) pages.push('…')
+  for (let p = start; p <= end; p++) pages.push(p)
+  if (end < total - 1) pages.push('…')
+  pages.push(total)
+
+  return pages
+}
+
+function TestimonialsPaginationControls({
+  pagination,
+  onPageChange,
+  isThai,
+}: {
+  pagination: TestimonialsPagination
+  onPageChange: (page: number) => void
+  isThai: boolean
+}) {
+  const { page, totalPages } = pagination
+
+  if (totalPages <= 1) {
+    return null
+  }
+
+  const buttonBase =
+    'min-w-[2.5rem] h-10 px-3 rounded-full text-sm transition-colors duration-200'
+
+  return (
+    <nav
+      aria-label={isThai ? 'การแบ่งหน้ารีวิว' : 'Testimonials pagination'}
+      className="mt-10 flex flex-wrap items-center justify-center gap-2"
+    >
+      <button
+        type="button"
+        onClick={() => onPageChange(page - 1)}
+        disabled={page <= 1}
+        className={`${buttonBase} bg-white/10 text-gray-300 hover:bg-white/20 disabled:opacity-40 disabled:hover:bg-white/10`}
+      >
+        {isThai ? 'ก่อนหน้า' : 'Prev'}
+      </button>
+
+      {buildPageList(page, totalPages).map((item, index) =>
+        item === '…' ? (
+          <span key={`ellipsis-${index}`} className="px-1 text-gray-500">
+            …
+          </span>
+        ) : (
+          <button
+            key={item}
+            type="button"
+            onClick={() => onPageChange(item)}
+            aria-current={item === page ? 'page' : undefined}
+            className={`${buttonBase} ${
+              item === page
+                ? 'bg-gradient-to-r from-yellow-400 to-yellow-600 text-black font-semibold'
+                : 'bg-white/10 text-gray-300 hover:bg-white/20'
+            }`}
+          >
+            {item}
+          </button>
+        ),
+      )}
+
+      <button
+        type="button"
+        onClick={() => onPageChange(page + 1)}
+        disabled={page >= totalPages}
+        className={`${buttonBase} bg-white/10 text-gray-300 hover:bg-white/20 disabled:opacity-40 disabled:hover:bg-white/10`}
+      >
+        {isThai ? 'ถัดไป' : 'Next'}
+      </button>
+    </nav>
+  )
+}
+
 export default function TestimonialsClient() {
   const locale = useLocale() as 'en' | 'th'
   const [testimonials, setTestimonials] = useState<Testimonial[]>([])
+  const [pagination, setPagination] = useState<TestimonialsPagination | null>(null)
+  const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const listTopRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    setPage(1)
+  }, [locale])
 
   useEffect(() => {
     async function fetchTestimonials() {
       setLoading(true)
       setError(null)
-      
+
       try {
-        const response = await fetch(`/api/testimonials?lang=${locale}`)
-        
+        const response = await fetch(
+          `/api/testimonials?lang=${locale}&page=${page}&per_page=${PER_PAGE}`,
+        )
+
         if (!response.ok) {
           throw new Error(`Failed to fetch testimonials: ${response.status}`)
         }
-        
+
         const data = await response.json()
         setTestimonials(data.testimonials || [])
+        setPagination(data.pagination || null)
       } catch (err) {
         console.error('Error fetching testimonials:', err)
         setError(err instanceof Error ? err.message : 'Unknown error')
@@ -86,10 +183,22 @@ export default function TestimonialsClient() {
     }
 
     fetchTestimonials()
-  }, [locale])
+  }, [locale, page])
+
+  const handlePageChange = (nextPage: number) => {
+    if (nextPage === page || nextPage < 1 || (pagination && nextPage > pagination.totalPages)) {
+      return
+    }
+    setPage(nextPage)
+    listTopRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
 
   if (loading) {
-    return <TestimonialsLoading />
+    return (
+      <div ref={listTopRef} className="scroll-mt-28">
+        <TestimonialsLoading />
+      </div>
+    )
   }
 
   if (error) {
@@ -107,7 +216,7 @@ export default function TestimonialsClient() {
   }
 
   return (
-    <div className="space-y-8 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div ref={listTopRef} className="scroll-mt-28 space-y-8 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
       {testimonials.map((testimonial) => (
         <div key={testimonial.id} className="bg-white/5 backdrop-blur-sm rounded-lg p-4 sm:p-6">
           <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
@@ -159,6 +268,14 @@ export default function TestimonialsClient() {
           </div>
         </div>
       ))}
+
+      {pagination && (
+        <TestimonialsPaginationControls
+          pagination={pagination}
+          onPageChange={handlePageChange}
+          isThai={locale === 'th'}
+        />
+      )}
     </div>
   )
 }

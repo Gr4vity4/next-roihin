@@ -6,19 +6,27 @@ import type { Testimonial, TestimonialsResponse } from '@/lib/types/testimonials
 
 const DEFAULT_AVATAR = '/images/default-avatar.svg'
 
+const DEFAULT_PER_PAGE = 20
+const MAX_PER_PAGE = 100
+
 /**
  * GET /api/testimonials
- * Proxy endpoint to fetch testimonials from Laravel REST API
+ * Proxy endpoint to fetch testimonials from Laravel REST API.
+ * The Laravel API returns the full list; pagination happens here
+ * via `page` and `per_page` query params (20 per page by default).
  */
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
-    const limit = searchParams.get('limit') || '15'
     const language = (searchParams.get('lang') || 'en') as 'en' | 'th'
+    const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10) || 1)
+    const perPage = Math.min(
+      MAX_PER_PAGE,
+      Math.max(1, parseInt(searchParams.get('per_page') || String(DEFAULT_PER_PAGE), 10) || DEFAULT_PER_PAGE),
+    )
 
-    // Build Laravel API URL for testimonials
+    // Build Laravel API URL for testimonials (no limit — fetch the full list)
     const apiUrl = buildLaravelApiUrl('testimonials', {
-      limit: parseInt(limit),
       locale: language,
     })
 
@@ -55,8 +63,19 @@ export async function GET(request: NextRequest) {
       }
     })
 
+    const total = transformedTestimonials.length
+    const totalPages = Math.max(1, Math.ceil(total / perPage))
+    const currentPage = Math.min(page, totalPages)
+    const start = (currentPage - 1) * perPage
+
     const result: TestimonialsResponse = {
-      testimonials: transformedTestimonials,
+      testimonials: transformedTestimonials.slice(start, start + perPage),
+      pagination: {
+        page: currentPage,
+        perPage,
+        total,
+        totalPages,
+      },
     }
 
     return NextResponse.json(result, {
