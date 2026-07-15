@@ -94,29 +94,26 @@ export async function getCrystalBySlug(
   slug: string,
   lang?: 'en' | 'th'
 ): Promise<CrystalProduct | null> {
-  try {
-    const queryParams = new URLSearchParams()
-    if (lang) queryParams.append('lang', lang)
+  const queryParams = new URLSearchParams()
+  if (lang) queryParams.append('lang', lang)
 
-    const url = `${API_BASE_URL}/crystals/${slug}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`
+  const url = `${API_BASE_URL}/crystals/${slug}${queryParams.toString() ? `?${queryParams.toString()}` : ''}`
 
-    const response = await fetch(url, {
-      ...getFetchConfig('api'),
-    })
+  const response = await fetch(url, {
+    ...getFetchConfig('api'),
+  })
 
-    if (!response.ok) {
-      if (response.status === 404) {
-        return null
-      }
-      throw new Error(`Failed to fetch crystal: ${response.status}`)
+  if (!response.ok) {
+    // Only a true 404 means the crystal doesn't exist; other failures must
+    // surface as errors so callers don't render "not found" on a backend hiccup.
+    if (response.status === 404) {
+      return null
     }
-
-    const data: CrystalAPIResponse = await response.json()
-    return data.crystal || null
-  } catch (error) {
-    console.error(`Error fetching crystal with slug "${slug}":`, error)
-    return null
+    throw new Error(`Failed to fetch crystal: ${response.status}`)
   }
+
+  const data: CrystalAPIResponse = await response.json()
+  return data.crystal || null
 }
 
 /**
