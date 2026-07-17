@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { useLocale } from 'next-intl'
 import { Container } from '../ui'
 import Modal from '../ui/Modal'
+import PhoneInput from '../ui/PhoneInput'
 
 export default function BraceletOrderForm() {
   const locale = useLocale()
@@ -18,6 +19,7 @@ export default function BraceletOrderForm() {
       year: '',
     },
     email: '',
+    phoneCountry: 'th',
     phone: '',
     wristSize: '',
     beadSize: '',
@@ -254,6 +256,7 @@ export default function BraceletOrderForm() {
         year: '',
       },
       email: '',
+      phoneCountry: 'th',
       phone: '',
       wristSize: '',
       beadSize: '',
@@ -476,25 +479,30 @@ export default function BraceletOrderForm() {
 
               {/* Phone */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
                   {isThai
                     ? 'เบอร์ติดต่อ - เพื่อตรวจอัพเดทแบบเลขศาสตร์ (Mobile No.)'
                     : 'Mobile No. - for numerology check and design updates'}{' '}
                   <span className="text-red-500">*</span>
                 </label>
-                <input
-                  type="tel"
-                  value={formData.phone}
-                  onChange={(e) => {
-                    setFormData({ ...formData, phone: e.target.value })
+                <PhoneInput
+                  id="phone"
+                  lang={locale}
+                  country={formData.phoneCountry}
+                  phone={formData.phone}
+                  onCountryChange={(code) => setFormData({ ...formData, phoneCountry: code })}
+                  onPhoneChange={(phone) => {
+                    setFormData({ ...formData, phone })
                     if (fieldErrors.phone) {
                       setFieldErrors({ ...fieldErrors, phone: false })
                     }
                   }}
-                  className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#006039] focus:border-transparent ${
-                    fieldErrors.phone ? 'border-red-500' : 'border-gray-300'
-                  }`}
+                  hasError={fieldErrors.phone}
                   placeholder={isThai ? 'เบอร์โทรศัพท์' : 'Mobile No.'}
+                  searchPlaceholder={
+                    isThai ? 'ค้นหาประเทศหรือรหัส' : 'Search country or code'
+                  }
+                  noResultsText={isThai ? 'ไม่พบประเทศ' : 'No country found'}
                 />
               </div>
 

@@ -50,6 +50,11 @@ const remotePatterns = [
     hostname: 'static.wixstatic.com',
     pathname: '/**',
   },
+  {
+    protocol: 'https',
+    hostname: 'flagcdn.com',
+    pathname: '/**',
+  },
 ] satisfies NonNullable<NextConfig['images']>['remotePatterns']
 
 if (wordpressOrigin) {
