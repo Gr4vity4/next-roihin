@@ -1,5 +1,6 @@
 'use client'
 
+import { Link } from '@/i18n/navigation'
 import { cn } from '@/lib/utils'
 import { useTranslations } from 'next-intl'
 import { ReactNode } from 'react'
@@ -99,11 +100,17 @@ export default function ParallaxContentSection({
                       const buttonText = button.translationKey
                         ? t(`common.${button.translationKey}`)
                         : button.text
-                      return (
+                      const buttonClassName =
+                        'px-8 py-3 text-lg font-semibold text-white border-2 border-transparent hover:border-white transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent'
+                      return button.href ? (
+                        <Link key={index} href={button.href} className={buttonClassName}>
+                          {buttonText}
+                        </Link>
+                      ) : (
                         <button
                           key={index}
                           onClick={button.onClick}
-                          className="px-8 py-3 text-lg font-semibold text-white border-2 border-transparent hover:border-white transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent"
+                          className={buttonClassName}
                         >
                           {buttonText}
                         </button>

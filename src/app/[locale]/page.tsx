@@ -51,7 +51,11 @@ export default async function Home() {
           backgroundAlt={content.signatureCharm.background.alt}
           title={content.signatureCharm.title}
           subtitle={content.signatureCharm.subtitle}
-          ctaButton={{ ...content.signatureCharm.cta, translationKey: 'viewMoreCharms' }}
+          ctaButton={{
+            ...content.signatureCharm.cta,
+            translationKey: 'viewMoreCharms',
+            href: '/charmspacer',
+          }}
         />
 
         {/* Testimonials Section */}
