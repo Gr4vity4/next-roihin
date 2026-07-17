@@ -13,7 +13,7 @@ export const content = {
       text: 'สั่งออกแบบ',
       variant: 'gold' as const,
       highlight: true,
-      href: '/custom',
+      href: '/bracelet-order',
     },
     background: {
       image: '/images/background/357c3a_d5bbbe07a2cb43579ad4d33c6279ff5a~mv2.avif',

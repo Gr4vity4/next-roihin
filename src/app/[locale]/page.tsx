@@ -34,7 +34,7 @@ export default async function Home() {
         <HeroSection
           backgroundImage={content.hero.background.image}
           backgroundAlt={content.hero.background.alt}
-          ctaButton={{ ...content.hero.cta, translationKey: 'orderDesign' }}
+          ctaButton={{ ...content.hero.cta, translationKey: 'orderNow' }}
           className="pt-20 lg:pt-[230px]"
         />
 
