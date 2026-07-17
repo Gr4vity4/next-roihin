@@ -9,6 +9,7 @@ interface ShopProductCardProps {
   product: Product
   locale: string
   newLabel: string
+  collectionSlug?: string
 }
 
 function formatPrice(price: number, locale: string) {
@@ -38,14 +39,17 @@ function findStartingPrice(product: Product) {
   return Math.min(...prices)
 }
 
-export default function ShopProductCard({ product, locale, newLabel }: ShopProductCardProps) {
+export default function ShopProductCard({ product, locale, newLabel, collectionSlug }: ShopProductCardProps) {
   const isThai = locale === 'th'
   const price = findStartingPrice(product)
   const imageUrl = getProductImageUrl(product.featured_image_url)
+  const productHref = collectionSlug
+    ? `/shop/product/${product.slug}?from=${collectionSlug}`
+    : `/shop/product/${product.slug}`
 
   return (
     <Link
-      href={`/shop/product/${product.slug}`}
+      href={productHref}
       className="group rounded-3xl border border-white/10 bg-white/5 backdrop-blur hover:border-gold/70 transition-colors overflow-hidden flex flex-col"
     >
       <div className="relative aspect-square bg-black/40">

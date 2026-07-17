@@ -11,10 +11,16 @@ import { Link, useRouter } from '@/i18n/navigation'
 import { useId, useState } from 'react'
 import { getProductImageUrl } from '@/lib/utils/image-helper'
 
+interface BreadcrumbItem {
+  href: string
+  label: string
+}
+
 interface ProductDetailProps {
   product: Product
   category: Category
   language?: 'en' | 'th'
+  breadcrumb?: BreadcrumbItem[]
 }
 
 function DetailAccordionItem({ title, content }: { title: string; content: string }) {
@@ -58,7 +64,7 @@ function DetailAccordionItem({ title, content }: { title: string; content: strin
   )
 }
 
-export default function ProductDetail({ product, category, language = 'en' }: ProductDetailProps) {
+export default function ProductDetail({ product, category, language = 'en', breadcrumb }: ProductDetailProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const [selectedColor, setSelectedColor] = useState(0)
   const [selectedColorImageIndex, setSelectedColorImageIndex] = useState(0)
@@ -195,26 +201,29 @@ export default function ProductDetail({ product, category, language = 'en' }: Pr
         {/* Breadcrumb */}
         <nav className="mb-8">
           <ol className="flex items-center space-x-2 text-sm">
-            <li>
-              <Link
-                href="/charmspacer"
-                className="text-gray-400 hover:text-white transition-colors"
-              >
-                {language === 'th' ? 'ชาร์ม/สเปเซอร์' : 'Charm/Spacer'}
-              </Link>
-            </li>
-            <li className="text-gray-600">/</li>
-            <li>
-              <Link
-                href={`/charmspacer#${category.slug}`}
-                className="text-gray-400 hover:text-white transition-colors"
-              >
-                {language === 'th'
-                  ? category.name_th || category.name_en
-                  : category.name_en || category.name_th}
-              </Link>
-            </li>
-            <li className="text-gray-600">/</li>
+            {(breadcrumb ?? [
+              {
+                href: '/charmspacer',
+                label: language === 'th' ? 'ชาร์ม/สเปเซอร์' : 'Charm/Spacer',
+              },
+              {
+                href: `/charmspacer#${category.slug}`,
+                label:
+                  language === 'th'
+                    ? category.name_th || category.name_en
+                    : category.name_en || category.name_th,
+              },
+            ]).map((crumb) => (
+              <li key={crumb.href} className="flex items-center space-x-2">
+                <Link
+                  href={crumb.href}
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  {crumb.label}
+                </Link>
+                <span className="text-gray-600">/</span>
+              </li>
+            ))}
             <li className="text-white">{product.title}</li>
           </ol>
         </nav>

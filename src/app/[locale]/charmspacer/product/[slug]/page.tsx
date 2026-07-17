@@ -6,12 +6,15 @@ import { Footer } from '@/components/sections'
 import ProductDetail from '@/components/sections/ProductDetail'
 import RelatedProducts from '@/components/sections/RelatedProducts'
 import { getProductBySlug } from '@/lib/api/products'
-import { getLocale } from 'next-intl/server'
+import { getShopCollection } from '@/config/shop.config'
+import type { Product } from '@/lib/types/products'
+import { getLocale, getTranslations } from 'next-intl/server'
 
 export const revalidate = 0
 
 interface ProductPageProps {
   params: Promise<{ slug: string; locale: string }>
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>
 }
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
@@ -38,10 +41,18 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   }
 }
 
-export default async function ProductPage({ params }: ProductPageProps) {
+export default async function ProductPage({ params, searchParams }: ProductPageProps) {
   const { slug } = await params
   const locale = await getLocale() as 'en' | 'th'
-  
+
+  const resolvedSearchParams = searchParams ? await searchParams : undefined
+  const rawFrom = resolvedSearchParams?.from
+  const from =
+    typeof rawFrom === 'string' &&
+    (rawFrom === 'new-arrivals' || getShopCollection(rawFrom))
+      ? rawFrom
+      : undefined
+
   let productData
   try {
     productData = await getProductBySlug(slug, true, 6, locale)
@@ -52,15 +63,47 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   const { product, category, related } = productData
 
+  let breadcrumb: { href: string; label: string }[] | undefined
+  let relatedBuildHref: ((relatedProduct: Product) => string) | undefined
+
+  if (from) {
+    const [tNav, tShop] = await Promise.all([
+      getTranslations({ locale, namespace: 'navigation' }),
+      getTranslations({ locale, namespace: 'shop' }),
+    ])
+
+    breadcrumb = [
+      { href: '/shop', label: tNav('shop') },
+      {
+        href: `/shop/${from}`,
+        label:
+          from === 'new-arrivals'
+            ? tShop('newArrivals.title')
+            : tShop(`categories.${from}.title`),
+      },
+    ]
+    relatedBuildHref = (relatedProduct) =>
+      `/shop/product/${relatedProduct.slug}?from=${from}`
+  }
+
   return (
     <>
       <NavigationWithSuspense position="static" />
 
       <main className="min-h-screen bg-black">
-        <ProductDetail product={product} category={category} language={locale} />
-        
+        <ProductDetail
+          product={product}
+          category={category}
+          language={locale}
+          breadcrumb={breadcrumb}
+        />
+
         {related && related.length > 0 && (
-          <RelatedProducts products={related} locale={locale} />
+          <RelatedProducts
+            products={related}
+            locale={locale}
+            buildHref={relatedBuildHref}
+          />
         )}
       </main>
 

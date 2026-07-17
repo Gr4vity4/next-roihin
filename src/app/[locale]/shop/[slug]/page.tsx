@@ -162,6 +162,7 @@ export default async function ShopListingPage({ params, searchParams }: ShopList
                     product={product}
                     locale={locale}
                     newLabel={t('listing.newLabel')}
+                    collectionSlug={slug}
                   />
                 ))}
               </div>
