@@ -5,16 +5,57 @@ import Typography from '@/components/ui/Typography'
 import WishlistButton from '@/components/ui/WishlistButton'
 import { useCart } from '@/contexts/CartContext'
 import { Category, Product } from '@/lib/types/products'
-import { ChevronLeft, ChevronRight, ShoppingCart } from 'lucide-react'
+import { ChevronDown, ChevronLeft, ChevronRight, ShoppingCart } from 'lucide-react'
 import Image from 'next/image'
 import { Link, useRouter } from '@/i18n/navigation'
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { getProductImageUrl } from '@/lib/utils/image-helper'
 
 interface ProductDetailProps {
   product: Product
   category: Category
   language?: 'en' | 'th'
+}
+
+function DetailAccordionItem({ title, content }: { title: string; content: string }) {
+  const [isOpen, setIsOpen] = useState(false)
+  const contentId = useId()
+
+  return (
+    <div className="border-b border-gray-800 last:border-b-0">
+      <h3>
+        <button
+          type="button"
+          onClick={() => setIsOpen((prev) => !prev)}
+          aria-expanded={isOpen}
+          aria-controls={contentId}
+          className="flex w-full items-center justify-between gap-4 py-4 text-left group"
+        >
+          <span className="text-white font-medium group-hover:text-gray-300 transition-colors">
+            {title}
+          </span>
+          <ChevronDown
+            className={`w-5 h-5 flex-none text-gray-400 transition-transform duration-300 ${
+              isOpen ? 'rotate-180' : ''
+            }`}
+          />
+        </button>
+      </h3>
+      <div
+        id={contentId}
+        aria-hidden={!isOpen}
+        className={`grid transition-all duration-300 ease-in-out ${
+          isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+        }`}
+      >
+        <div className="overflow-hidden">
+          <p className="pb-4 text-gray-300 leading-relaxed whitespace-pre-line">
+            {content}
+          </p>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export default function ProductDetail({ product, category, language = 'en' }: ProductDetailProps) {
@@ -24,6 +65,67 @@ export default function ProductDetail({ product, category, language = 'en' }: Pr
   const [isAdding, setIsAdding] = useState(false)
   const router = useRouter()
   const { addItem } = useCart()
+
+  const pickLocalized = (th?: string, en?: string) => {
+    const thai = (th || '').trim()
+    const english = (en || '').trim()
+    return language === 'th' ? thai || english : english || thai
+  }
+
+  const detailSections = [
+    {
+      id: 'materials',
+      title: language === 'th' ? 'วัสดุ' : 'Materials',
+      content: pickLocalized(product.acf.materials_th, product.acf.materials_en),
+    },
+    {
+      id: 'composition',
+      title: language === 'th' ? 'ส่วนประกอบ' : 'Composition',
+      content: pickLocalized(product.acf.composition_th, product.acf.composition_en),
+    },
+    {
+      id: 'about-this-piece',
+      title: language === 'th' ? 'เกี่ยวกับชิ้นงานนี้' : 'About This Piece',
+      content: pickLocalized(
+        product.acf.about_this_piece_th,
+        product.acf.about_this_piece_en,
+      ),
+    },
+    {
+      id: 'who-is-this-for',
+      title: language === 'th' ? 'เหมาะสำหรับใคร' : 'Who Is This For',
+      content: pickLocalized(
+        product.acf.who_is_this_for_th,
+        product.acf.who_is_this_for_en,
+      ),
+    },
+    {
+      id: 'notes',
+      title: language === 'th' ? 'หมายเหตุ' : 'Notes',
+      content: pickLocalized(product.acf.notes_th, product.acf.notes_en),
+    },
+    {
+      id: 'shipping-options',
+      title: language === 'th' ? 'ตัวเลือกการจัดส่ง' : 'Shipping Options',
+      content: pickLocalized(
+        product.acf.shipping_options_th,
+        product.acf.shipping_options_en,
+      ),
+    },
+    {
+      id: 'gifting',
+      title: language === 'th' ? 'การมอบเป็นของขวัญ' : 'Gifting',
+      content: pickLocalized(product.acf.gifting_th, product.acf.gifting_en),
+    },
+    {
+      id: 'sustainability',
+      title: language === 'th' ? 'ความยั่งยืน' : 'Sustainability',
+      content: pickLocalized(
+        product.acf.sustainability_th,
+        product.acf.sustainability_en,
+      ),
+    },
+  ].filter((section) => section.content !== '')
 
   const colorPrices = product.acf.color_prices || []
   const hasColorOptions = colorPrices.length > 0
@@ -380,6 +482,19 @@ export default function ProductDetail({ product, category, language = 'en' }: Pr
                     className="prose prose-invert prose-sm max-w-none"
                   />
                 </div>
+              </div>
+            )}
+
+            {/* Additional Details (collapsible) */}
+            {detailSections.length > 0 && (
+              <div className="border-t border-gray-800">
+                {detailSections.map((section) => (
+                  <DetailAccordionItem
+                    key={section.id}
+                    title={section.title}
+                    content={section.content}
+                  />
+                ))}
               </div>
             )}
 

@@ -10,7 +10,26 @@ export interface ColorPrice {
   gallery_images?: string[]
 }
 
-export interface ProductACF {
+export interface ProductDetailSections {
+  materials_th?: string
+  materials_en?: string
+  composition_th?: string
+  composition_en?: string
+  about_this_piece_th?: string
+  about_this_piece_en?: string
+  who_is_this_for_th?: string
+  who_is_this_for_en?: string
+  notes_th?: string
+  notes_en?: string
+  shipping_options_th?: string
+  shipping_options_en?: string
+  gifting_th?: string
+  gifting_en?: string
+  sustainability_th?: string
+  sustainability_en?: string
+}
+
+export interface ProductACF extends ProductDetailSections {
   material?: string
   dimensions?: string
   color_prices?: ColorPrice[]
@@ -55,7 +74,7 @@ export interface LaravelProductResponse {
     color_prices: ColorPrice[]
     description_th: string
     description_en: string
-  }
+  } & ProductDetailSections
   product_category: {
     id: number
     name: string
