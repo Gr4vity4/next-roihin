@@ -499,10 +499,6 @@ export default function BraceletOrderForm() {
                   }}
                   hasError={fieldErrors.phone}
                   placeholder={isThai ? 'เบอร์โทรศัพท์' : 'Mobile No.'}
-                  searchPlaceholder={
-                    isThai ? 'ค้นหาประเทศหรือรหัส' : 'Search country or code'
-                  }
-                  noResultsText={isThai ? 'ไม่พบประเทศ' : 'No country found'}
                 />
               </div>
 

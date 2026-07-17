@@ -16,6 +16,8 @@ interface PhoneInputProps {
   /** 'th' lists countries by their Thai names */
   lang?: string
   hasError?: boolean
+  required?: boolean
+  disabled?: boolean
   placeholder?: string
   searchPlaceholder?: string
   noResultsText?: string
@@ -50,9 +52,11 @@ export default function PhoneInput({
   id,
   lang,
   hasError = false,
+  required = false,
+  disabled = false,
   placeholder,
-  searchPlaceholder = 'Search country or code',
-  noResultsText = 'No country found',
+  searchPlaceholder,
+  noResultsText,
 }: PhoneInputProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [search, setSearch] = useState('')
@@ -67,6 +71,8 @@ export default function PhoneInput({
   const listboxId = `${baseId}-listbox`
 
   const isThai = lang === 'th'
+  const searchText = searchPlaceholder ?? (isThai ? 'ค้นหาประเทศหรือรหัส' : 'Search country or code')
+  const noResults = noResultsText ?? (isThai ? 'ไม่พบประเทศ' : 'No country found')
   const selected = getCountryByCode(country) ?? countries[0]
   const displayName = (c: Country) => (isThai ? c.nameTh : c.name)
 
@@ -127,6 +133,31 @@ export default function PhoneInput({
     if (isOpen) searchInputRef.current?.focus({ preventScroll: true })
   }, [isOpen])
 
+  // Escape must be intercepted at window capture so it beats Radix Dialog's
+  // document-level capture listener — otherwise it dismisses the whole dialog
+  // (e.g. the address modal) instead of just this dropdown.
+  useEffect(() => {
+    if (!isOpen) return
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        e.stopPropagation()
+        setIsOpen(false)
+        setSearch('')
+        triggerRef.current?.focus()
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown, { capture: true })
+    return () => window.removeEventListener('keydown', handleKeyDown, { capture: true })
+  }, [isOpen])
+
+  useEffect(() => {
+    if (disabled && isOpen) {
+      setIsOpen(false)
+      setSearch('')
+    }
+  }, [disabled, isOpen])
+
   // Scroll only the list container — scrollIntoView would also scroll the page.
   useEffect(() => {
     if (!isOpen) return
@@ -147,12 +178,6 @@ export default function PhoneInput({
     <div
       ref={containerRef}
       className="relative"
-      onKeyDown={(e) => {
-        if (e.key === 'Escape' && isOpen) {
-          e.stopPropagation()
-          closeDropdown('trigger')
-        }
-      }}
       onBlur={(e) => {
         if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
           setIsOpen(false)
@@ -163,16 +188,17 @@ export default function PhoneInput({
       <div
         className={`flex w-full items-center rounded-md border bg-white focus-within:ring-2 focus-within:ring-[#006039] focus-within:border-transparent ${
           hasError ? 'border-red-500' : 'border-gray-300'
-        }`}
+        } ${disabled ? 'opacity-50' : ''}`}
       >
         <button
           ref={triggerRef}
           type="button"
           onClick={() => (isOpen ? closeDropdown() : openDropdown())}
+          disabled={disabled}
           aria-haspopup="listbox"
           aria-expanded={isOpen}
           aria-label={`${displayName(selected)} ${selected.dialCode}`}
-          className="flex shrink-0 items-center gap-1.5 rounded-l-md py-2 pl-4 pr-2 hover:bg-gray-50"
+          className="flex shrink-0 items-center gap-1.5 rounded-l-md py-2 pl-4 pr-2 enabled:hover:bg-gray-50 disabled:cursor-not-allowed"
         >
           <Flag country={selected} />
           <ChevronDown
@@ -186,8 +212,10 @@ export default function PhoneInput({
           type="tel"
           value={phone}
           onChange={(e) => onPhoneChange(e.target.value)}
+          required={required}
+          disabled={disabled}
           aria-invalid={hasError || undefined}
-          className="w-full rounded-r-md px-2 py-2 focus:outline-none"
+          className="w-full rounded-r-md px-2 py-2 focus:outline-none disabled:cursor-not-allowed"
           placeholder={placeholder}
         />
       </div>
@@ -206,7 +234,7 @@ export default function PhoneInput({
               aria-activedescendant={
                 filtered[activeIndex] ? `${baseId}-${filtered[activeIndex].code}` : undefined
               }
-              aria-label={searchPlaceholder}
+              aria-label={searchText}
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value)
@@ -227,7 +255,7 @@ export default function PhoneInput({
                 }
               }}
               className="w-full text-sm focus:outline-none"
-              placeholder={searchPlaceholder}
+              placeholder={searchText}
             />
           </div>
           {filtered.length > 0 ? (
@@ -265,7 +293,7 @@ export default function PhoneInput({
               })}
             </ul>
           ) : (
-            <p className="px-4 py-3 text-sm text-gray-500">{noResultsText}</p>
+            <p className="px-4 py-3 text-sm text-gray-500">{noResults}</p>
           )}
         </div>
       )}

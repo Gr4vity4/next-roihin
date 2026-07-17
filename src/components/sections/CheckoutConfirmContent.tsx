@@ -1,7 +1,9 @@
 'use client'
 
 import Container from '@/components/ui/Container'
+import PhoneInput from '@/components/ui/PhoneInput'
 import Typography from '@/components/ui/Typography'
+import { combinePhone, splitPhone } from '@/lib/data/countries'
 import { useAuth } from '@/contexts/AuthContext'
 import { useCart } from '@/contexts/CartContext'
 import { Link, useRouter } from '@/i18n/navigation'
@@ -34,6 +36,7 @@ export default function CheckoutConfirmContent() {
   const [orderError, setOrderError] = useState<string>('')
   const [addressLoading, setAddressLoading] = useState(false)
   const [defaultAddressId, setDefaultAddressId] = useState<string | null>(null)
+  const [phoneCountry, setPhoneCountry] = useState('th')
   const [shippingAddress, setShippingAddress] = useState<ShippingAddress>({
     fullName: '',
     email: '',
@@ -61,10 +64,12 @@ export default function CheckoutConfirmContent() {
 
         if (hasDefault && item) {
           setDefaultAddressId(id)
+          const parsedPhone = splitPhone(item.phone)
+          setPhoneCountry(parsedPhone.country)
           setShippingAddress({
             fullName: item.full_name,
             email: user?.email || '',
-            phone: item.phone,
+            phone: parsedPhone.phone,
             address: `${item.address}${item.subdistrict ? `, ${item.subdistrict}` : ''}`,
             district: item.district,
             province: item.province,
@@ -120,7 +125,7 @@ export default function CheckoutConfirmContent() {
         }),
         shipping_address: {
           full_name: shippingAddress.fullName,
-          phone: shippingAddress.phone,
+          phone: combinePhone(phoneCountry, shippingAddress.phone),
           address: shippingAddress.address,
           subdistrict: '',
           district: shippingAddress.district,
@@ -283,14 +288,16 @@ export default function CheckoutConfirmContent() {
                       >
                         {t('shippingAddress.phone')} {t('payment.required')}
                       </label>
-                      <input
-                        type="tel"
+                      <PhoneInput
                         id="phone"
-                        name="phone"
-                        value={shippingAddress.phone}
-                        onChange={handleAddressChange}
+                        lang={locale}
+                        country={phoneCountry}
+                        phone={shippingAddress.phone}
+                        onCountryChange={setPhoneCountry}
+                        onPhoneChange={(phone) =>
+                          setShippingAddress((prev) => ({ ...prev, phone }))
+                        }
                         required
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                       />
                     </div>
 

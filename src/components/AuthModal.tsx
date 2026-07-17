@@ -4,12 +4,14 @@ import Button from '@/components/Button'
 import ForgotPasswordModal from '@/components/ForgotPasswordModal'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import PhoneInput from '@/components/ui/PhoneInput'
 import { useAuth } from '@/contexts/AuthContext'
+import { combinePhone } from '@/lib/data/countries'
 import { X } from 'lucide-react'
 import { useRouter } from '@/i18n/navigation'
 import { Link } from '@/i18n/navigation'
 import { useEffect, useState } from 'react'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 
 interface AuthModalProps {
   isOpen: boolean
@@ -22,6 +24,7 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
   const router = useRouter()
   const { login, register } = useAuth()
   const t = useTranslations('auth')
+  const locale = useLocale()
   const [isLoading, setIsLoading] = useState(false)
   const [showForgotPassword, setShowForgotPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -33,6 +36,7 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
     firstName: '',
     lastName: '',
     email: '',
+    phoneCountry: 'th',
     phone: '',
     password: '',
     confirmPassword: '',
@@ -89,7 +93,7 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
         firstName: signUpData.firstName,
         lastName: signUpData.lastName,
         email: signUpData.email,
-        phone: signUpData.phone,
+        phone: combinePhone(signUpData.phoneCountry, signUpData.phone),
         password: signUpData.password,
         acceptTerms: signUpData.acceptTerms,
       })
@@ -241,14 +245,15 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
 
               <div className="space-y-2">
                 <Label htmlFor="phone">{t('signUp.phone')}</Label>
-                <Input
+                <PhoneInput
                   id="phone"
-                  type="tel"
+                  lang={locale}
+                  country={signUpData.phoneCountry}
+                  phone={signUpData.phone}
+                  onCountryChange={(code) => setSignUpData({ ...signUpData, phoneCountry: code })}
+                  onPhoneChange={(phone) => setSignUpData({ ...signUpData, phone })}
                   placeholder={t('signUp.phonePlaceholder')}
-                  value={signUpData.phone}
-                  onChange={(e) => setSignUpData({ ...signUpData, phone: e.target.value })}
                   required
-                  className="w-full font-prompt"
                 />
               </div>
 

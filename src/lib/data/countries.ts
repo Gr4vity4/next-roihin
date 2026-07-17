@@ -251,3 +251,42 @@ export const countries: Country[] = [
 export function getCountryByCode(code: string): Country | undefined {
   return countries.find((c) => c.code === code.toLowerCase())
 }
+
+// Countries sharing a dial code resolve to the entry people usually mean.
+const PREFERRED_DIAL_OWNER: Record<string, string> = {
+  '+1': 'us',
+  '+7': 'ru',
+  '+39': 'it',
+  '+44': 'gb',
+  '+262': 're',
+  '+590': 'gp',
+}
+
+const byDialCodeLength = [...countries].sort((a, b) => b.dialCode.length - a.dialCode.length)
+
+/** Parse a stored value like '+66 0812345678' back into selector state. */
+export function splitPhone(
+  full: string | null | undefined,
+  fallbackCountry = 'th',
+): { country: string; phone: string } {
+  const value = (full ?? '').trim()
+  if (value.startsWith('+')) {
+    const match = byDialCodeLength.find((c) => value.startsWith(c.dialCode))
+    if (match) {
+      return {
+        country: PREFERRED_DIAL_OWNER[match.dialCode] ?? match.code,
+        phone: value.slice(match.dialCode.length).trim(),
+      }
+    }
+  }
+  return { country: fallbackCountry, phone: value }
+}
+
+/** Combine selector state into the stored value, e.g. '+66 0812345678'. */
+export function combinePhone(countryCode: string, phone: string): string {
+  const national = phone.trim()
+  if (!national) return ''
+  if (national.startsWith('+')) return national
+  const dialCode = getCountryByCode(countryCode)?.dialCode
+  return dialCode ? `${dialCode} ${national}` : national
+}

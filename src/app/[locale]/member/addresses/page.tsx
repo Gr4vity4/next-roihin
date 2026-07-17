@@ -4,7 +4,9 @@ import Button from '@/components/Button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { useTranslations } from 'next-intl'
+import PhoneInput from '@/components/ui/PhoneInput'
+import { combinePhone, splitPhone } from '@/lib/data/countries'
+import { useLocale, useTranslations } from 'next-intl'
 import { useCallback, useEffect, useState } from 'react'
 
 interface Address {
@@ -24,6 +26,7 @@ interface Address {
 
 export default function AddressesPage() {
   const t = useTranslations('member.addresses')
+  const locale = useLocale()
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [editingAddress, setEditingAddress] = useState<Address | null>(null)
   const [addresses, setAddresses] = useState<Address[]>([])
@@ -31,6 +34,7 @@ export default function AddressesPage() {
   const [isFetching, setIsFetching] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [setAsDefault, setSetAsDefault] = useState(false)
+  const [phoneCountry, setPhoneCountry] = useState('th')
 
   const [formData, setFormData] = useState({
     full_name: '',
@@ -69,6 +73,7 @@ export default function AddressesPage() {
   }, [fetchAddresses])
 
   const handleAddAddress = () => {
+    setPhoneCountry('th')
     setFormData({
       full_name: '',
       phone: '',
@@ -84,9 +89,11 @@ export default function AddressesPage() {
   }
 
   const handleEditAddress = (address: Address) => {
+    const parsedPhone = splitPhone(address.phone)
+    setPhoneCountry(parsedPhone.country)
     setFormData({
       full_name: address.full_name,
-      phone: address.phone,
+      phone: parsedPhone.phone,
       address: address.address,
       subdistrict: address.subdistrict,
       district: address.district,
@@ -109,7 +116,10 @@ export default function AddressesPage() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify({
+            ...formData,
+            phone: combinePhone(phoneCountry, formData.phone),
+          }),
         })
 
         if (!response.ok) {
@@ -126,6 +136,7 @@ export default function AddressesPage() {
           },
           body: JSON.stringify({
             ...formData,
+            phone: combinePhone(phoneCountry, formData.phone),
             country: 'TH',
             set_default: setAsDefault,
           }),
@@ -307,11 +318,13 @@ export default function AddressesPage() {
 
             <div className="space-y-2">
               <Label htmlFor="phone">{t('form.phone')}</Label>
-              <Input
+              <PhoneInput
                 id="phone"
-                type="tel"
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                lang={locale}
+                country={phoneCountry}
+                phone={formData.phone}
+                onCountryChange={setPhoneCountry}
+                onPhoneChange={(phone) => setFormData({ ...formData, phone })}
                 required
               />
             </div>

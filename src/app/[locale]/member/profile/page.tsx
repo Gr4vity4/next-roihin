@@ -5,6 +5,8 @@ import 'air-datepicker/air-datepicker.css'
 import Button from '@/components/Button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import PhoneInput from '@/components/ui/PhoneInput'
+import { combinePhone, splitPhone } from '@/lib/data/countries'
 import type { ProfileData } from '@/lib/api/profile'
 import type AirDatepicker from 'air-datepicker'
 import type { AirDatepickerLocale } from 'air-datepicker'
@@ -33,6 +35,7 @@ export default function ProfilePage() {
     birthDate: '',
     gender: 'prefer_not_to_say' as GenderOption,
   })
+  const [phoneCountry, setPhoneCountry] = useState('th')
   const birthDateInputRef = useRef<HTMLInputElement | null>(null)
   const datepickerRef = useRef<AirDatepickerInstance | null>(null)
   const birthDateValueRef = useRef(formData.birthDate)
@@ -111,14 +114,15 @@ export default function ProfilePage() {
       }
 
       const { firstName, lastName } = splitName(profile.name)
-      const phoneValue = profile.shipping_phone || profile.phone || ''
+      const parsedPhone = splitPhone(profile.shipping_phone || profile.phone || '')
 
+      setPhoneCountry(parsedPhone.country)
       setFormData((prev) => ({
         ...prev,
         firstName,
         lastName,
         email: profile.email || '',
-        phone: phoneValue || '',
+        phone: parsedPhone.phone,
         birthDate: profile.birth_date ?? '',
         gender: normalizeGender(profile.gender),
       }))
@@ -260,7 +264,7 @@ export default function ProfilePage() {
 
     const payload = {
       name: safeName,
-      shipping_phone: trimmedPhone || null,
+      shipping_phone: combinePhone(phoneCountry, trimmedPhone) || null,
       birth_date: normalizedBirthDate,
       gender: formData.gender,
     }
@@ -285,14 +289,15 @@ export default function ProfilePage() {
         : responseData) as ProfileData
 
       const { firstName, lastName } = splitName(updatedProfile.name)
-      const updatedPhone = updatedProfile.shipping_phone || updatedProfile.phone || ''
+      const updatedPhone = splitPhone(updatedProfile.shipping_phone || updatedProfile.phone || '')
 
+      setPhoneCountry(updatedPhone.country)
       setFormData((prev) => ({
         ...prev,
         firstName: firstName || prev.firstName,
         lastName: lastName || prev.lastName,
         email: updatedProfile.email || prev.email,
-        phone: updatedPhone || '',
+        phone: updatedPhone.phone,
         birthDate: updatedProfile.birth_date ?? prev.birthDate,
         gender: normalizeGender(updatedProfile.gender),
       }))
@@ -403,13 +408,14 @@ export default function ProfilePage() {
           <div className="space-y-2">
             <Label htmlFor="phone">{t('fields.phone')}</Label>
             <div className="relative">
-              <Input
+              <PhoneInput
                 id="phone"
-                type="tel"
-                value={formData.phone || ''}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                lang={locale}
+                country={phoneCountry}
+                phone={formData.phone || ''}
+                onCountryChange={setPhoneCountry}
+                onPhoneChange={(phone) => setFormData({ ...formData, phone })}
                 disabled={!isEditing}
-                className="w-full"
                 placeholder={
                   isEditing
                     ? t('fields.phonePlaceholder')
