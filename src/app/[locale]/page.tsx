@@ -78,7 +78,11 @@ export default async function Home() {
           backgroundAlt={content.gallery.background.alt}
           ctaButtons={[
             { ...content.gallery.ctaButtons[0], translationKey: 'designByYourself' },
-            { ...content.gallery.ctaButtons[1], translationKey: 'designByRoihin' },
+            {
+              ...content.gallery.ctaButtons[1],
+              translationKey: 'designByRoihin',
+              href: '/bracelet-order',
+            },
           ]}
           images={galleryImages}
         />
