@@ -789,7 +789,9 @@
         "stonesUsedTitle": "Used Crystals",
         "charmsAndSpacersTitle": "Charms and Spacers",
         "beadSizeTitle": "Bead Size",
-        "budgetTitle": "Budget"
+        "budgetTitle": "Budget",
+        "designByRoihinButton": "Let ROIHIN design for you",
+        "designYourselfButton": "Design your own bracelet"
       }
     }
   }

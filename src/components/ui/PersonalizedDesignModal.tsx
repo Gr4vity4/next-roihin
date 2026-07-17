@@ -2,6 +2,7 @@
 
 import { X } from 'lucide-react'
 import Image from 'next/image'
+import { Link } from '@/i18n/navigation'
 import { useLocale, useTranslations } from 'next-intl'
 import { useEffect, useMemo, useState } from 'react'
 import type { LaravelGalleryImage } from '@/lib/types/laravel'
@@ -345,6 +346,22 @@ export function PersonalizedDesignModal({
                 <div className="px-6 py-3 border border-gray-300 rounded-full text-center text-gray-700">
                   {budget}
                 </div>
+              </div>
+
+              {/* CTA Buttons */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <Link
+                  href="/bracelet-order"
+                  className="px-6 py-3 bg-green-700 hover:bg-green-800 text-white rounded-md transition-colors text-center text-sm md:text-base"
+                >
+                  {t('designByRoihinButton')}
+                </Link>
+                <Link
+                  href="/custom"
+                  className="px-6 py-3 bg-[#D4AF37] hover:bg-[#B8941F] text-white rounded-md transition-colors text-center text-sm md:text-base"
+                >
+                  {t('designYourselfButton')}
+                </Link>
               </div>
             </div>
           </div>

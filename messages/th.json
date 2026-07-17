@@ -789,7 +789,9 @@
         "stonesUsedTitle": "หินที่ใช้ในการออกแบบ",
         "charmsAndSpacersTitle": "ชาร์มและตัวคั่น",
         "beadSizeTitle": "ขนาดหิน",
-        "budgetTitle": "งบประมาณการจัดทำ"
+        "budgetTitle": "งบประมาณการจัดทำ",
+        "designByRoihinButton": "ให้ร้อยหินช่วยออกแบบ",
+        "designYourselfButton": "ออกแบบกำไลหินด้วยตัวเอง"
       }
     }
   }
