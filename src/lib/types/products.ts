@@ -55,6 +55,7 @@ export interface Product {
   crystal_id?: number | null
   is_favorite?: boolean
   is_arrival?: boolean
+  sort?: number
 }
 
 /**
@@ -83,6 +84,7 @@ export interface LaravelProductResponse {
   crystal_id: number | null
   is_favorite: boolean
   is_arrival: boolean
+  sort?: number
 }
 
 /**

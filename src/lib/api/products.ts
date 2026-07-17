@@ -49,7 +49,20 @@ function transformLaravelProduct(laravelProduct: LaravelProductResponse): Produc
     crystal_id: laravelProduct.crystal_id,
     is_favorite: laravelProduct.is_favorite,
     is_arrival: laravelProduct.is_arrival,
+    sort: laravelProduct.sort,
   }
+}
+
+/**
+ * Order products by their CMS display sort (ascending). Products without a
+ * sort value go last; ties keep the API response order.
+ */
+export function sortProductsByDisplayOrder<T extends { sort?: number | null }>(products: T[]): T[] {
+  return [...products].sort((a, b) => {
+    const aSort = typeof a.sort === 'number' ? a.sort : Number.MAX_SAFE_INTEGER
+    const bSort = typeof b.sort === 'number' ? b.sort : Number.MAX_SAFE_INTEGER
+    return aSort - bSort
+  })
 }
 
 export interface ProductListResult {
@@ -89,7 +102,7 @@ export async function fetchProducts(options: FetchProductsOptions = {}): Promise
   }
 
   const apiResponse: LaravelProductsResponse = await response.json()
-  const products = apiResponse.data.map(transformLaravelProduct)
+  const products = sortProductsByDisplayOrder(apiResponse.data.map(transformLaravelProduct))
 
   return {
     products,
@@ -180,7 +193,7 @@ export async function getProductsByCrystalId(
         ? ((payload as { data: LaravelProductResponse[] }).data)
         : []
 
-    return items.map(transformLaravelProduct)
+    return sortProductsByDisplayOrder(items.map(transformLaravelProduct))
   } catch (error) {
     throw new Error(getErrorMessage(error, `Failed to fetch crystal products for ${crystalId}`))
   }
@@ -324,7 +337,7 @@ export async function getAllProducts(language: 'en' | 'th' = 'en'): Promise<Prod
 
     const apiResponse: LaravelProductsResponse = await response.json()
 
-    return apiResponse.data.map(transformLaravelProduct)
+    return sortProductsByDisplayOrder(apiResponse.data.map(transformLaravelProduct))
   } catch (error) {
     // Network errors or fetch failures
     if (error instanceof TypeError && error.message.includes('fetch')) {

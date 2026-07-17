@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getFetchConfig, getCacheHeaders } from '@/config/cache.config'
 import { buildLaravelApiUrl } from '@/config/api.config'
 import { getErrorMessage } from '@/lib/utils/error-handler'
+import { sortProductsByDisplayOrder } from '@/lib/api/products'
 
 export async function GET(request: NextRequest) {
   try {
@@ -28,7 +29,10 @@ export async function GET(request: NextRequest) {
     }
 
     const result = await response.json()
-    const products = result.data || result
+    const rawProducts = result.data || result
+    const products = Array.isArray(rawProducts)
+      ? sortProductsByDisplayOrder(rawProducts)
+      : rawProducts
 
     return NextResponse.json(products, {
       headers: getCacheHeaders(),
