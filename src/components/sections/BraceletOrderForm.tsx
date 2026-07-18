@@ -284,7 +284,7 @@ export default function BraceletOrderForm() {
       <section className="w-full bg-[#006039] pt-20 lg:pt-[260px]">
         <div className="py-12 lg:py-16">
           <div className="text-center">
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#D4AF37] mb-4 font-prompt">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#cb9e51] mb-4 font-prompt">
               &ldquo;
               {isThai ? 'สั่งออกแบบกำไลหินเฉพาะบุคคล' : 'Order Your Personalized Stone Bracelet'}
               &rdquo;
@@ -800,7 +800,7 @@ export default function BraceletOrderForm() {
                 <button
                   type="button"
                   onClick={handleReset}
-                  className="px-12 py-3 bg-[#D4AF37] text-white font-medium rounded-md hover:bg-[#c1a030] transition-colors"
+                  className="px-12 py-3 bg-[#cb9e51] text-white font-medium rounded-md hover:bg-[#c1a030] transition-colors"
                 >
                   {isThai ? 'รีเซ็ต' : 'Reset'}
                 </button>

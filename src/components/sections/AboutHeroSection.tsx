@@ -19,7 +19,7 @@ export default function AboutHeroSection({ backgroundImage, title }: AboutHeroSe
       <div className="flex w-full h-full items-center lg:items-start justify-center px-4">
         <div className="text-center max-w-4xl">
           <h1 className="text-white">
-            <span className="block text-[#D4AF37] text-3xl md:text-4xl lg:text-5xl font-light mb-2">
+            <span className="block text-[#cb9e51] text-3xl md:text-4xl lg:text-5xl font-light mb-2">
               .. {title.line1}
             </span>
             <span className="block text-white text-2xl md:text-3xl lg:text-4xl font-normal my-4">

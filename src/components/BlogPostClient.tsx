@@ -161,7 +161,7 @@ export default function BlogPostClient({ slug }: BlogPostClientProps) {
             <div className="max-w-4xl mx-auto">
               <Breadcrumb items={breadcrumbItems} className="mb-8" />
 
-              <div className="mb-8 p-6 bg-gray-50 border-l-4 border-[#D4AF37]">
+              <div className="mb-8 p-6 bg-gray-50 border-l-4 border-[#cb9e51]">
                 <Typography
                   variant="body"
                   className="text-gray-700 text-lg leading-8"

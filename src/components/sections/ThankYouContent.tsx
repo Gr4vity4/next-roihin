@@ -156,7 +156,7 @@ export default function ThankYouContent() {
             </Typography>
             <Link
               href="/checkout"
-              className="inline-block px-6 py-3 bg-green-600 text-white font-medium rounded-md hover:bg-green-700 transition-colors"
+              className="inline-block px-6 py-3 bg-green-600 text-white font-medium rounded-md hover:bg-[#244323] transition-colors"
             >
               {t('notFound.backToCart')}
             </Link>
@@ -286,7 +286,7 @@ export default function ThankYouContent() {
                 <div className="flex flex-col gap-3">
                   <Link
                     href="/"
-                    className="inline-block px-6 py-3 bg-green-600 text-white font-medium rounded-md hover:bg-green-700 transition-colors"
+                    className="inline-block px-6 py-3 bg-green-600 text-white font-medium rounded-md hover:bg-[#244323] transition-colors"
                   >
                     {t('actions.backToHome')}
                   </Link>

@@ -299,7 +299,7 @@ export function PersonalizedDesignModal({
                         <div
                           key={i}
                           className={`w-3 h-3 rounded-full ${
-                            i < prop.rating ? 'bg-green-700' : 'bg-gray-300'
+                            i < prop.rating ? 'bg-[#244323]' : 'bg-gray-300'
                           }`}
                         />
                       ))}
@@ -352,13 +352,13 @@ export function PersonalizedDesignModal({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <Link
                   href="/bracelet-order"
-                  className="px-6 py-3 bg-green-700 hover:bg-green-800 text-white rounded-md transition-colors text-center text-sm md:text-base"
+                  className="px-6 py-3 bg-[#244323] hover:bg-green-800 text-white rounded-md transition-colors text-center text-sm md:text-base"
                 >
                   {t('designByRoihinButton')}
                 </Link>
                 <Link
                   href="/custom"
-                  className="px-6 py-3 bg-[#D4AF37] hover:bg-[#B8941F] text-white rounded-md transition-colors text-center text-sm md:text-base"
+                  className="px-6 py-3 bg-[#cb9e51] hover:bg-[#B8941F] text-white rounded-md transition-colors text-center text-sm md:text-base"
                 >
                   {t('designYourselfButton')}
                 </Link>

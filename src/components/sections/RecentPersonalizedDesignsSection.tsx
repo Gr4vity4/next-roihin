@@ -154,14 +154,14 @@ export default function RecentPersonalizedDesignsSection({
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Link
                 href="/bracelet-order"
-                className="w-full sm:w-auto px-8 py-3 bg-green-700 hover:bg-green-800 text-white rounded-md transition-colors text-center"
+                className="w-full sm:w-auto px-8 py-3 bg-[#244323] hover:bg-green-800 text-white rounded-md transition-colors text-center"
               >
                 {t('orderButton')}
               </Link>
               {showViewMoreButton ? (
                 <Link
                   href={viewMoreHref}
-                  className="w-full sm:w-auto px-8 py-3 bg-[#D4AF37] hover:bg-[#B8941F] text-white rounded-md transition-colors text-center"
+                  className="w-full sm:w-auto px-8 py-3 bg-[#cb9e51] hover:bg-[#B8941F] text-white rounded-md transition-colors text-center"
                 >
                   {t('viewMoreButton')}
                 </Link>

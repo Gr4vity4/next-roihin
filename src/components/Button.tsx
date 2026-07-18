@@ -12,7 +12,7 @@ const buttonVariants = cva(
           'bg-[#005635] text-white border-2 border-[#005635] hover:bg-white hover:text-[#005635] hover:border-[#005635] focus:ring-[#005635] focus:ring-offset-white shadow-lg hover:shadow-xl active:bg-gray-100 active:text-[#005635]',
         gold: 'bg-gold-400 text-white hover:bg-gold-500 focus:ring-gold-400 focus:ring-offset-white shadow-lg hover:shadow-xl active:bg-gold-600',
         green:
-          'bg-green-600 text-white hover:bg-green-700 focus:ring-green-600 focus:ring-offset-white shadow-lg hover:shadow-xl active:bg-green-800',
+          'bg-green-600 text-white hover:bg-[#244323] focus:ring-green-600 focus:ring-offset-white shadow-lg hover:shadow-xl active:bg-green-800',
         outline:
           'border-2 border-[#005635] text-[#005635] hover:bg-[#005635] hover:text-white focus:ring-[#005635] focus:ring-offset-white transition-colors',
         ghost:

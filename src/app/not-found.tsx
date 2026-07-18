@@ -14,8 +14,8 @@ export default function GlobalNotFound() {
       <body className="antialiased">
         <div className="min-h-screen bg-white flex items-center justify-center px-4">
           <div className="text-center max-w-2xl mx-auto">
-            <div className="w-24 h-24 bg-[#D4AF37]/10 rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="text-[#D4AF37] text-4xl font-bold">404</span>
+            <div className="w-24 h-24 bg-[#cb9e51]/10 rounded-full flex items-center justify-center mx-auto mb-6">
+              <span className="text-[#cb9e51] text-4xl font-bold">404</span>
             </div>
 
             <h1 className="text-[#006039] mb-4 text-2xl lg:text-3xl font-semibold">

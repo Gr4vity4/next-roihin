@@ -23,7 +23,7 @@ export default async function AboutTestimonialSection({ locale }: AboutTestimoni
         <div className="text-center">
           {/* Profile Image */}
           <div className="relative w-48 h-48 mx-auto mb-8">
-            <div className="absolute inset-0 rounded-full border-4 border-[#D4AF37]/20" />
+            <div className="absolute inset-0 rounded-full border-4 border-[#cb9e51]/20" />
             <Image
               src={profileImage}
               alt={testimonial.author}

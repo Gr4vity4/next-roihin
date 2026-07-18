@@ -19,8 +19,8 @@ export default function PersonalizedCTASection({ buttons }: PersonalizedCTASecti
       case 'gold':
         return `${baseStyles} ${
           highlight
-            ? 'bg-[#D4AF37] text-black hover:bg-[#c1a030] border-[#D4AF37] hover:border-[#c1a030] shadow-lg transform hover:scale-105'
-            : 'bg-[#D4AF37] text-black hover:bg-[#c1a030] border-[#D4AF37] hover:border-[#c1a030]'
+            ? 'bg-[#cb9e51] text-black hover:bg-[#c1a030] border-[#cb9e51] hover:border-[#c1a030] shadow-lg transform hover:scale-105'
+            : 'bg-[#cb9e51] text-black hover:bg-[#c1a030] border-[#cb9e51] hover:border-[#c1a030]'
         }`
       case 'primary':
         return `${baseStyles} bg-[#006039] text-white hover:bg-[#004d2e] border-[#006039] hover:border-[#004d2e]`

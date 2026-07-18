@@ -136,7 +136,7 @@ export default function OrderSuccessModal({
         <div className="flex flex-col sm:flex-row gap-3">
           <button
             type="button"
-            className="flex-1 px-6 py-3 bg-green-600 text-white font-medium rounded-md hover:bg-green-700 transition-colors"
+            className="flex-1 px-6 py-3 bg-green-600 text-white font-medium rounded-md hover:bg-[#244323] transition-colors"
             onClick={handleGoToMember}
           >
             {isThai ? 'ไปยังหน้าสมาชิก' : 'Go to member page'}

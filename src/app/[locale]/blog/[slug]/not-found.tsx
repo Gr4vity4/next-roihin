@@ -12,7 +12,7 @@ export default async function NotFound() {
       <Container>
         <div className="text-center max-w-2xl mx-auto">
           {/* 404 Title */}
-          <Typography variant="h1" className="text-[#D4AF37] mb-4">
+          <Typography variant="h1" className="text-[#cb9e51] mb-4">
             404
           </Typography>
           

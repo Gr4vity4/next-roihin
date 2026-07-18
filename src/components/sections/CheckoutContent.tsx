@@ -70,7 +70,7 @@ export default function CheckoutContent() {
               </p>
               <Link
                 href="/charmspacer"
-                className="inline-flex items-center justify-center px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-md transition-colors shadow-lg"
+                className="inline-flex items-center justify-center px-8 py-3 bg-green-600 hover:bg-[#244323] text-white font-medium rounded-md transition-colors shadow-lg"
               >
                 {t('emptyCart.shopNow')}
               </Link>
@@ -226,7 +226,7 @@ export default function CheckoutContent() {
                   className={`w-full px-6 py-4 font-medium rounded-md transition-all transform hover:scale-105 shadow-lg ${
                     isProcessing
                       ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                      : 'bg-green-600 hover:bg-green-700 text-white'
+                      : 'bg-green-600 hover:bg-[#244323] text-white'
                   }`}
                 >
                   {isProcessing ? t('actions.processing') : t('actions.proceedToCheckout')}

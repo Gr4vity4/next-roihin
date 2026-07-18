@@ -6,13 +6,13 @@
   --color-gold-100: #F3EAD0;
   --color-gold-200: #E7D5A1;
   --color-gold-300: #DBC072;
-  --color-gold-400: #D4AF37;
+  --color-gold-400: #cb9e51;
   --color-gold-500: #B8941F;
   --color-gold-600: #9B7A1A;
   --color-gold-700: #7E6015;
   --color-gold-800: #614610;
   --color-gold-900: #442C0B;
-  --color-gold: #D4AF37;
+  --color-gold: #cb9e51;
 
   --color-green-50: #E6F4EE;
   --color-green-100: #CCE9DD;
@@ -37,7 +37,7 @@
 :root {
   --background: #ffffff;
   --foreground: #000000;
-  --gold: #d4af37;
+  --gold: #cb9e51;
   --green: #006039;
   --light-gray: #f5f5f5;
   --font-inter: 'Inter', sans-serif;

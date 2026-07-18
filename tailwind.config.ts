@@ -10,12 +10,12 @@ const config: Config = {
     extend: {
       colors: {
         gold: {
-          DEFAULT: '#D4AF37',
+          DEFAULT: '#cb9e51',
           50: '#F9F5E7',
           100: '#F3EAD0',
           200: '#E7D5A1',
           300: '#DBC072',
-          400: '#D4AF37',
+          400: '#cb9e51',
           500: '#B8941F',
           600: '#9B7A1A',
           700: '#7E6015',

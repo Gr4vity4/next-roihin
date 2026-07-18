@@ -20,8 +20,8 @@ export default async function NotFound() {
       <Container>
         <div className="text-center max-w-2xl mx-auto">
           {/* Decorative Element */}
-          <div className="w-24 h-24 bg-[#D4AF37]/10 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Typography variant="h1" className="text-[#D4AF37] text-4xl font-bold">
+          <div className="w-24 h-24 bg-[#cb9e51]/10 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Typography variant="h1" className="text-[#cb9e51] text-4xl font-bold">
               404
             </Typography>
           </div>
