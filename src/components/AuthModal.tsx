@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import PhoneInput from '@/components/ui/PhoneInput'
 import { useAuth } from '@/contexts/AuthContext'
+import { useCart } from '@/contexts/CartContext'
 import { combinePhone } from '@/lib/data/countries'
 import { X } from 'lucide-react'
 import { useRouter } from '@/i18n/navigation'
@@ -23,6 +24,7 @@ interface AuthModalProps {
 export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthModalProps) {
   const router = useRouter()
   const { login, register } = useAuth()
+  const { itemCount } = useCart()
   const t = useTranslations('auth')
   const locale = useLocale()
   const [isLoading, setIsLoading] = useState(false)
@@ -98,7 +100,7 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
         acceptTerms: signUpData.acceptTerms,
       })
       onClose()
-      router.push('/member')
+      router.push(itemCount > 0 ? '/checkout' : '/shop')
     } catch (err) {
       setError(err instanceof Error ? err.message : t('errors.signUpFailed'))
     } finally {
