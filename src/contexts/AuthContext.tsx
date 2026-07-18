@@ -56,7 +56,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       if (!response.ok) {
-        console.error('Session heartbeat failed:', response.statusText)
+        const body = await response.json().catch(() => null)
+        console.error('Session heartbeat failed:', response.status, body?.error ?? response.statusText)
         return
       }
 

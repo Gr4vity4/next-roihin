@@ -5,19 +5,9 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 export function useLocalStorage<T>(key: string, initialValue: T) {
   const initialRef = useRef(initialValue)
 
-  const [storedValue, setStoredValue] = useState<T>(() => {
-    if (typeof window === 'undefined') {
-      return initialRef.current
-    }
-
-    try {
-      const item = window.localStorage.getItem(key)
-      return item ? (JSON.parse(item) as T) : initialRef.current
-    } catch (error) {
-      console.error(`Error reading localStorage key "${key}":`, error)
-      return initialRef.current
-    }
-  })
+  // Start from initialValue on both server and first client render so SSR
+  // markup matches hydration; the effect below loads the stored value after mount.
+  const [storedValue, setStoredValue] = useState<T>(initialValue)
 
   const setValue = useCallback(
     (value: T | ((val: T) => T)) => {

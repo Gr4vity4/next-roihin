@@ -106,6 +106,7 @@ export default async function LocaleLayout({
       </head>
       <body
         className={`${inter.variable} ${bodoniModa.variable} ${prompt.variable} antialiased`}
+        suppressHydrationWarning
       >
         <GoogleTagManagerNoScript />
         <NextIntlClientProvider messages={messages}>
