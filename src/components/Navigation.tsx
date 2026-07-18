@@ -366,7 +366,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                         onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                         className="flex items-center space-x-2 font-medium text-sm text-white transition-colors hover:text-gold"
                       >
-                        <div className="w-8 h-8 bg-[#005635] rounded-full flex items-center justify-center text-white text-xs font-semibold">
+                        <div className="w-8 h-8 bg-[#244323] rounded-full flex items-center justify-center text-white text-xs font-semibold">
                           {user?.name
                             ?.split(' ')
                             .map((n) => n[0])
@@ -498,7 +498,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                         onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                         className="flex items-center space-x-2 font-medium text-sm text-white transition-colors hover:text-gold"
                       >
-                        <div className="w-8 h-8 bg-[#005635] rounded-full flex items-center justify-center text-white text-xs font-semibold">
+                        <div className="w-8 h-8 bg-[#244323] rounded-full flex items-center justify-center text-white text-xs font-semibold">
                           {user?.name
                             ?.split(' ')
                             .map((n) => n[0])
@@ -743,7 +743,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                 {isLoggedIn ? (
                   <>
                     <div className="flex items-center space-x-3 py-3 mb-2">
-                      <div className="w-10 h-10 bg-[#005635] rounded-full flex items-center justify-center text-white font-semibold">
+                      <div className="w-10 h-10 bg-[#244323] rounded-full flex items-center justify-center text-white font-semibold">
                         {user?.name
                           ?.split(' ')
                           .map((n) => n[0])

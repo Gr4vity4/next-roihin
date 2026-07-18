@@ -12,7 +12,7 @@ export const content = {
     cta: {
       text: 'สั่งออกแบบ',
       variant: 'outline' as const,
-      // Hero-only: black fill + green (#489B53) overriding the outline variant's default #005635
+      // Hero-only: black fill + green (#489B53) overriding the outline variant's default #244323
       className:
         'bg-black border-[#489B53] text-[#489B53] hover:bg-[#489B53] hover:text-white focus:ring-[#489B53]',
       href: '/bracelet-order',

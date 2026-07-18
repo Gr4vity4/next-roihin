@@ -278,7 +278,7 @@ function ResetPasswordForm() {
           <div className="mt-6 text-center">
             <Link 
               href="/"
-              className="text-sm text-gray-600 hover:text-[#005635] transition-colors"
+              className="text-sm text-gray-600 hover:text-[#244323] transition-colors"
             >
               {isThai ? 'กลับไปหน้าหลัก' : 'Back to homepage'}
             </Link>
@@ -298,7 +298,7 @@ export default function ResetPasswordPage() {
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#005635]"></div>
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#244323]"></div>
         </div>
       </div>
     }>

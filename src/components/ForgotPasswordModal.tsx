@@ -102,7 +102,7 @@ export default function ForgotPasswordModal({ isOpen, onClose, onBackToSignIn }:
                   <input
                     id="remember-reset"
                     type="checkbox"
-                    className="h-4 w-4 text-[#005635] focus:ring-[#005635] border-gray-300 rounded"
+                    className="h-4 w-4 text-[#244323] focus:ring-[#244323] border-gray-300 rounded"
                   />
                   <Label htmlFor="remember-reset" className="ml-2 text-sm text-gray-600">
                     {t('rememberMe')}
@@ -124,7 +124,7 @@ export default function ForgotPasswordModal({ isOpen, onClose, onBackToSignIn }:
                   {t('noAccount')}{' '}
                   <button
                     onClick={onBackToSignIn}
-                    className="font-semibold text-[#005635] hover:underline"
+                    className="font-semibold text-[#244323] hover:underline"
                   >
                     {t('signUpLink')}
                   </button>

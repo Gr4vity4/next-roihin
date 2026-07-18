@@ -149,7 +149,7 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
                   <button
                     type="button"
                     onClick={() => setShowForgotPassword(true)}
-                    className="text-sm text-[#005635] hover:underline"
+                    className="text-sm text-[#244323] hover:underline"
                   >
                     {t('signIn.forgotPassword')}
                   </button>
@@ -175,7 +175,7 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
                 <input
                   id="remember"
                   type="checkbox"
-                  className="h-4 w-4 text-[#005635] focus:ring-[#005635] border-gray-300 rounded"
+                  className="h-4 w-4 text-[#244323] focus:ring-[#244323] border-gray-300 rounded"
                 />
                 <Label htmlFor="remember" className="ml-2 text-sm text-gray-600">
                   {t('signIn.rememberMe')}
@@ -192,7 +192,7 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
                 {t('signIn.noAccount')}{' '}
                 <button
                   onClick={() => onModeChange('sign-up')}
-                  className="font-semibold text-[#005635] hover:underline"
+                  className="font-semibold text-[#244323] hover:underline"
                 >
                   {t('signIn.signUpLink')}
                 </button>
@@ -294,15 +294,15 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
                   checked={signUpData.acceptTerms}
                   onChange={(e) => setSignUpData({ ...signUpData, acceptTerms: e.target.checked })}
                   required
-                  className="h-4 w-4 text-[#005635] focus:ring-[#005635] border-gray-300 rounded mt-0.5"
+                  className="h-4 w-4 text-[#244323] focus:ring-[#244323] border-gray-300 rounded mt-0.5"
                 />
                 <Label htmlFor="terms" className="ml-2 text-sm text-gray-600">
                   {t('signUp.acceptTerms')}{' '}
-                  <Link href="/terms" className="text-[#005635] hover:underline">
+                  <Link href="/terms" className="text-[#244323] hover:underline">
                     {t('signUp.termsOfService')}
                   </Link>{' '}
                   {t('signUp.and')}{' '}
-                  <Link href="/privacy" className="text-[#005635] hover:underline">
+                  <Link href="/privacy" className="text-[#244323] hover:underline">
                     {t('signUp.privacyPolicy')}
                   </Link>
                 </Label>
@@ -324,7 +324,7 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
                 {t('signUp.haveAccount')}{' '}
                 <button
                   onClick={() => onModeChange('sign-in')}
-                  className="font-semibold text-[#005635] hover:underline"
+                  className="font-semibold text-[#244323] hover:underline"
                 >
                   {t('signUp.signInLink')}
                 </button>

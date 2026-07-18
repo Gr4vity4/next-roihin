@@ -289,14 +289,14 @@ export default function WishlistPage() {
                 </Link>
                 <div className="p-4">
                   <Link href={`/charmspacer/product/${productSlug}`}>
-                    <h3 className="font-semibold text-gray-900 mb-1 hover:text-[#005635] transition-colors">
+                    <h3 className="font-semibold text-gray-900 mb-1 hover:text-[#244323] transition-colors">
                       {productName}
                     </h3>
                   </Link>
                   {colorText && (
                     <p className="text-sm text-gray-600 mb-2">{colorText}</p>
                   )}
-                  <p className="text-xl font-bold text-[#005635] mb-3">
+                  <p className="text-xl font-bold text-[#244323] mb-3">
                     {formatPrice(displayPrice)}
                   </p>
                   <div className="space-y-2">

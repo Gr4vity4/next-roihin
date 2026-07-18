@@ -109,7 +109,7 @@ export default function MemberSidebar() {
           {/* User Info */}
           <div className="p-6 border-b border-gray-200">
             <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-[#005635] rounded-full flex items-center justify-center text-white font-semibold">
+              <div className="w-12 h-12 bg-[#244323] rounded-full flex items-center justify-center text-white font-semibold">
                 {(user?.name || 'U')
                   .split(' ')
                   .map((part) => part[0])
@@ -136,7 +136,7 @@ export default function MemberSidebar() {
                     className={cn(
                       'flex items-center space-x-3 px-4 py-3 rounded-md transition-colors',
                       pathname === item.href
-                        ? 'bg-[#005635] text-white'
+                        ? 'bg-[#244323] text-white'
                         : 'text-gray-700 hover:bg-gray-100'
                     )}
                     onClick={() => setIsMobileMenuOpen(false)}

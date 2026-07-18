@@ -216,7 +216,7 @@ export default function MemberDashboard() {
       <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mt-8">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-semibold text-gray-900">{t('recentOrders.title')}</h2>
-          <Link href="/member/orders" className="text-[#005635] hover:underline text-sm">
+          <Link href="/member/orders" className="text-[#244323] hover:underline text-sm">
             {t('recentOrders.viewAll')}
           </Link>
         </div>

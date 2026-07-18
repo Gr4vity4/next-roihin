@@ -9,12 +9,12 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          'bg-[#005635] text-white border-2 border-[#005635] hover:bg-white hover:text-[#005635] hover:border-[#005635] focus:ring-[#005635] focus:ring-offset-white shadow-lg hover:shadow-xl active:bg-gray-100 active:text-[#005635]',
+          'bg-[#244323] text-white border-2 border-[#244323] hover:bg-white hover:text-[#244323] hover:border-[#244323] focus:ring-[#244323] focus:ring-offset-white shadow-lg hover:shadow-xl active:bg-gray-100 active:text-[#244323]',
         gold: 'bg-gold-400 text-white hover:bg-gold-500 focus:ring-gold-400 focus:ring-offset-white shadow-lg hover:shadow-xl active:bg-gold-600',
         green:
           'bg-green-600 text-white hover:bg-[#244323] focus:ring-green-600 focus:ring-offset-white shadow-lg hover:shadow-xl active:bg-green-800',
         outline:
-          'border-2 border-[#005635] text-[#005635] hover:bg-[#005635] hover:text-white focus:ring-[#005635] focus:ring-offset-white transition-colors',
+          'border-2 border-[#244323] text-[#244323] hover:bg-[#244323] hover:text-white focus:ring-[#244323] focus:ring-offset-white transition-colors',
         ghost:
           'hover:bg-gray-100 text-gray-700 hover:text-gray-900 focus:ring-gray-500 focus:ring-offset-white',
       },
