@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/utils'
 import { containsNumbers } from '@/lib/utils/text'
-import { HTMLAttributes, ReactNode, cloneElement, createElement, isValidElement } from 'react'
+import { Children, HTMLAttributes, ReactNode, cloneElement, createElement, isValidElement } from 'react'
 import { useFontContext } from '@/components/providers/FontProvider'
 
 interface TypographyProps extends HTMLAttributes<HTMLElement> {
@@ -66,7 +66,8 @@ const wrapAmpersandsWithBodoniFont = (node: ReactNode): ReactNode => {
   }
 
   if (Array.isArray(node)) {
-    return node.map((child) => wrapAmpersandsWithBodoniFont(child))
+    // Children.map auto-assigns keys, which a plain node.map() would not
+    return Children.map(node, (child) => wrapAmpersandsWithBodoniFont(child))
   }
 
   if (isValidElement(node)) {
