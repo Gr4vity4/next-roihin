@@ -467,7 +467,7 @@ export default function CustomerServicePage() {
             {/* Left Column - Full Image */}
             <div className="relative h-[350px] sm:h-[420px] lg:h-auto lg:min-h-[560px]">
               <Image
-                src="/images/customer-service/warranty.avif"
+                src="/images/customer-service/wearing-tips.avif"
                 alt={content.tipsImageAlt}
                 fill
                 className="object-cover"
@@ -514,7 +514,7 @@ export default function CustomerServicePage() {
             {/* Left Column - Full Image */}
             <div className="relative h-[350px] sm:h-[420px] lg:h-auto lg:min-h-[560px]">
               <Image
-                src="/images/customer-service/wearing-tips.avif"
+                src="/images/customer-service/warranty.avif"
                 alt={content.tipsImageAlt}
                 fill
                 className="object-cover"
