@@ -273,7 +273,13 @@ export default function AddressesPage() {
                     {address.apartment}<br />
                   </>
                 )}
-                {address.city}, {resolveProvince(address.province)} {address.postal_code}
+                {[
+                  address.city,
+                  address.province === '-' ? '' : resolveProvince(address.province),
+                ]
+                  .filter(Boolean)
+                  .join(', ')}{' '}
+                {address.postal_code}
               </p>
             </div>
 

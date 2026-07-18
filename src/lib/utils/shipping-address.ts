@@ -43,7 +43,9 @@ export function getShippingAddressLines(
   }
 
   const city = address.city || address.district || ''
-  const province = address.province ? resolveProvince(address.province) : ''
+  // '-' is the placeholder for international addresses with no Thai province.
+  const province =
+    address.province && address.province !== '-' ? resolveProvince(address.province) : ''
   const cityProvince = [city, province].filter(Boolean).join(', ')
   const regionLine = [cityProvince, address.postal_code].filter(Boolean).join(' ').trim()
   if (regionLine) {

@@ -14,6 +14,13 @@ import ProvinceSelect from '@/components/ui/ProvinceSelect'
  * Laid out to mirror the reference form (First/Last, Address, Apartment,
  * Postal code/City, Province/Phone) and shared by the member address modal
  * and the checkout confirmation form.
+ *
+ * The Province dropdown only applies to Thai addresses. The phone country
+ * selector doubles as the address-country signal: while a non-Thai dial code
+ * is selected the Province field is hidden and the value is pinned to the
+ * backend's '-' placeholder (accepted by validation for international
+ * addresses); switching back to +66 clears it so a real province must be
+ * picked. Thai postal-code constraints (5 digits) are relaxed likewise.
  */
 export interface AddressFieldValues {
   first_name: string
@@ -67,6 +74,18 @@ export default function AddressFields({
   idPrefix = '',
 }: AddressFieldsProps) {
   const fieldId = (name: string) => `${idPrefix}${name}`
+  const isThaiPhone = phoneCountry === 'th'
+
+  // Keep province consistent with the selected phone country: non-Thai numbers
+  // hide the dropdown and submit the '-' placeholder; switching back to Thai
+  // clears the placeholder so the user must pick a real province.
+  React.useEffect(() => {
+    if (!isThaiPhone && values.province !== '-') {
+      onFieldChange('province', '-')
+    } else if (isThaiPhone && values.province === '-') {
+      onFieldChange('province', '')
+    }
+  }, [isThaiPhone, values.province, onFieldChange])
 
   return (
     <div className="space-y-4">
@@ -134,9 +153,9 @@ export default function AddressFields({
           <Input
             id={fieldId('postal_code')}
             type="text"
-            inputMode="numeric"
-            maxLength={5}
-            pattern="[0-9]{5}"
+            inputMode={isThaiPhone ? 'numeric' : undefined}
+            maxLength={isThaiPhone ? 5 : 20}
+            pattern={isThaiPhone ? '[0-9]{5}' : undefined}
             value={values.postal_code}
             onChange={(event) => onFieldChange('postal_code', event.target.value)}
             disabled={disabled}
@@ -159,20 +178,22 @@ export default function AddressFields({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor={fieldId('province')}>
-            {labels.province} {requiredMarker}
-          </Label>
-          <ProvinceSelect
-            id={fieldId('province')}
-            value={values.province}
-            onChange={(value) => onFieldChange('province', value)}
-            locale={locale}
-            placeholder={labels.provincePlaceholder}
-            disabled={disabled}
-            required
-          />
-        </div>
+        {isThaiPhone && (
+          <div className="space-y-2">
+            <Label htmlFor={fieldId('province')}>
+              {labels.province} {requiredMarker}
+            </Label>
+            <ProvinceSelect
+              id={fieldId('province')}
+              value={values.province}
+              onChange={(value) => onFieldChange('province', value)}
+              locale={locale}
+              placeholder={labels.provincePlaceholder}
+              disabled={disabled}
+              required
+            />
+          </div>
+        )}
         <div className="space-y-2">
           <Label htmlFor={fieldId('phone')}>
             {labels.phone} {requiredMarker}
