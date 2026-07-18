@@ -365,6 +365,9 @@
       "subtotal": "Subtotal",
       "shipping": "Shipping",
       "shippingFree": "Free",
+      "shippingAtCheckout": "Calculated at checkout",
+      "shippingCalculating": "Calculating…",
+      "shippingUnavailable": "Unable to calculate shipping",
       "total": "Total"
     }
   },

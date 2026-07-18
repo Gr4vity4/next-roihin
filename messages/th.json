@@ -365,6 +365,9 @@
       "subtotal": "ราคาสินค้า",
       "shipping": "ค่าจัดส่ง",
       "shippingFree": "ฟรี",
+      "shippingAtCheckout": "คำนวณในขั้นตอนชำระเงิน",
+      "shippingCalculating": "กำลังคำนวณ…",
+      "shippingUnavailable": "ไม่สามารถคำนวณค่าจัดส่งได้",
       "total": "รวมทั้งหมด"
     }
   },

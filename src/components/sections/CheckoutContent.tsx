@@ -207,7 +207,7 @@ export default function CheckoutContent() {
                   </div>
                   <div className="flex justify-between text-gray-600">
                     <span>{t('orderSummary.shipping')}</span>
-                    <span className="text-green-600 font-medium">{t('orderSummary.shippingFree')}</span>
+                    <span className="text-gray-500">{t('orderSummary.shippingAtCheckout')}</span>
                   </div>
                 </div>
 

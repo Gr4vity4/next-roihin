@@ -11,6 +11,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useCart } from '@/contexts/CartContext'
 import { Link, useRouter } from '@/i18n/navigation'
 import { getDefaultAddress } from '@/lib/api/addresses.client'
+import { fetchShippingZoneMatch, type ShippingZone } from '@/lib/api/shipping-zones'
 import { getStripe } from '@/lib/stripe-client'
 import type { CreateOrderPayload } from '@/lib/api/orders'
 import { ArrowLeft } from 'lucide-react'
@@ -47,6 +48,10 @@ export default function CheckoutConfirmContent() {
   const [defaultAddressId, setDefaultAddressId] = useState<string | null>(null)
   const [phoneCountry, setPhoneCountry] = useState('th')
   const [shippingAddress, setShippingAddress] = useState<ShippingFormState>(EMPTY_SHIPPING)
+  const [shippingZone, setShippingZone] = useState<ShippingZone | null>(null)
+  const [shippingFeeStatus, setShippingFeeStatus] = useState<'loading' | 'ready' | 'error'>(
+    'loading'
+  )
   const hasPrefilledRef = useRef(false)
 
   const addressLabels = useMemo(
@@ -120,6 +125,38 @@ export default function CheckoutConfirmContent() {
     fetchDefaultAddress()
   }, [isLoggedIn, user])
 
+  // Re-price shipping whenever the dial-code country changes. The country is
+  // the only address signal at checkout (there is no dedicated country field);
+  // the cancelled flag stops a slow response for a previous country from
+  // overwriting the fee of the current one.
+  useEffect(() => {
+    let cancelled = false
+
+    const matchZone = async () => {
+      setShippingFeeStatus('loading')
+      try {
+        const zone = await fetchShippingZoneMatch(phoneCountry.toUpperCase())
+        if (cancelled) return
+        setShippingZone(zone)
+        setShippingFeeStatus('ready')
+      } catch (error) {
+        if (cancelled) return
+        console.error('Failed to match shipping zone:', error)
+        setShippingZone(null)
+        setShippingFeeStatus('error')
+      }
+    }
+
+    matchZone()
+
+    return () => {
+      cancelled = true
+    }
+  }, [phoneCountry])
+
+  const shippingFee = shippingZone ? shippingZone.fee_minor / 100 : 0
+  const orderTotal = totalAmount + shippingFee
+
   // Any edit to the prefilled address (field or dial code) invalidates the
   // saved-address reference: the backend ships to the shipping_address_id
   // record when one is present, which would silently discard the edits.
@@ -138,6 +175,14 @@ export default function CheckoutConfirmContent() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
+
+    // The submit button is disabled until the fee resolves, but guard against
+    // implicit form submission (Enter key) racing the zone fetch — charging
+    // ฿0 shipping on an international order is worse than a blocked click.
+    if (!shippingZone || shippingFeeStatus !== 'ready') {
+      return
+    }
+
     setIsProcessing(true)
     setOrderError('')
 
@@ -175,11 +220,13 @@ export default function CheckoutConfirmContent() {
           email: shippingAddress.email,
         },
         currency: 'THB',
-        shipping_amount_minor: 0,
+        shipping_amount_minor: shippingZone.fee_minor,
         discount_amount_minor: 0,
         metadata: {
           cart_source: 'web',
           cart_total_items: itemCount,
+          shipping_zone: shippingZone.code,
+          shipping_country: phoneCountry.toUpperCase(),
         },
         locale,
       }
@@ -412,9 +459,23 @@ export default function CheckoutConfirmContent() {
                     </div>
                     <div className="flex justify-between text-gray-600">
                       <span>{tCheckout('orderSummary.shipping')}</span>
-                      <span className="text-green-600 font-medium">
-                        {tCheckout('orderSummary.shippingFree')}
-                      </span>
+                      {shippingFeeStatus === 'loading' ? (
+                        <span className="text-gray-400">
+                          {tCheckout('orderSummary.shippingCalculating')}
+                        </span>
+                      ) : shippingFeeStatus === 'error' ? (
+                        <span className="text-sm text-red-500">
+                          {tCheckout('orderSummary.shippingUnavailable')}
+                        </span>
+                      ) : shippingFee === 0 ? (
+                        <span className="text-green-600 font-medium">
+                          {tCheckout('orderSummary.shippingFree')}
+                        </span>
+                      ) : (
+                        <span className="font-medium text-gray-900">
+                          ฿{shippingFee.toLocaleString('th-TH')}
+                        </span>
+                      )}
                     </div>
                   </div>
 
@@ -424,16 +485,16 @@ export default function CheckoutConfirmContent() {
                         {tCheckout('orderSummary.total')}
                       </span>
                       <span className="text-2xl font-bold text-gray-900">
-                        ฿{totalAmount.toLocaleString('th-TH')}
+                        ฿{orderTotal.toLocaleString('th-TH')}
                       </span>
                     </div>
                   </div>
 
                   <button
                     type="submit"
-                    disabled={isProcessing || !isFormValid()}
+                    disabled={isProcessing || !isFormValid() || shippingFeeStatus !== 'ready'}
                     className={`w-full px-6 py-4 font-medium rounded-md transition-all transform hover:scale-105 shadow-lg ${
-                      isProcessing || !isFormValid()
+                      isProcessing || !isFormValid() || shippingFeeStatus !== 'ready'
                         ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                         : 'bg-blue-600 hover:bg-blue-700 text-white'
                     }`}
