@@ -3,6 +3,7 @@
 import Container from '@/components/ui/Container'
 import Typography from '@/components/ui/Typography'
 import AuthModal from '@/components/AuthModal'
+import BraceletPreview from '@/components/BraceletPreview'
 import { useCart } from '@/contexts/CartContext'
 import { useAuth } from '@/contexts/AuthContext'
 import { Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react'
@@ -99,7 +100,15 @@ export default function CheckoutContent() {
                   <div className="flex gap-4">
                     {/* Product Image */}
                     <div className="relative w-28 h-28 md:w-36 md:h-36 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden">
-                      <Image src={item.image} alt={item.title} fill className="object-cover" />
+                      {item.isCustomBracelet && item.braceletDesign ? (
+                        <BraceletPreview
+                          beads={item.braceletDesign.beads}
+                          wristLength={item.braceletDesign.wristLength}
+                          className="w-full h-full bg-white p-1"
+                        />
+                      ) : (
+                        <Image src={item.image} alt={item.title} fill className="object-cover" />
+                      )}
                     </div>
 
                     {/* Product Details */}

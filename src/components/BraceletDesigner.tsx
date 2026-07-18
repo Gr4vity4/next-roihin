@@ -25,6 +25,7 @@ import {
   generateBraceletTitle,
 } from '@/lib/utils/braceletImageGenerator'
 import { getLaravelApiEndpoint } from '@/config/api.config'
+import { BEAD_PX_PER_MM, CIRCLE_SIZE_MAP, START_ANGLE } from '@/lib/utils/braceletGeometry'
 import {
   ArrowLeft,
   Check,
@@ -43,17 +44,6 @@ const STONE_CATEGORIES = {
   Charm: 'Charm',
   Pendant: 'Pendant',
 } as const
-
-// Circle size mapping based on wrist length (px)
-const CIRCLE_SIZE_MAP: Record<string, number> = {
-  '14': 213,
-  '15': 226,
-  '16': 238,
-  '17': 251,
-  '18': 264,
-  '19': 276,
-  '20': 289,
-}
 
 // Bead action popover dimensions (px) — 3 x 44px buttons + gaps + padding + border
 const BEAD_POPOVER_WIDTH = 154
@@ -337,8 +327,8 @@ export default function BraceletDesigner() {
     return basePrice + beads.reduce((total, bead) => total + bead.price, 0)
   }
 
-  const mmToPx = (mm: number) => mm * 4 // Updated to match gallery size from HTML
-  const START = Math.PI / 2 // Start at bottom (6 o'clock)
+  const mmToPx = (mm: number) => mm * BEAD_PX_PER_MM
+  const START = START_ANGLE // Start at bottom (6 o'clock)
 
   const computeGeometry = useCallback(() => {
     if (!stageRef.current) return
@@ -800,7 +790,9 @@ export default function BraceletDesigner() {
       const braceletBeads = beads.map((bead) => ({
         id: bead.id,
         stoneName: bead.stoneSetting?.title || 'Unknown',
-        stoneImage: bead.stoneSetting?.stone_image,
+        // The validated URL actually shown on the stage, so cart previews
+        // reproduce the design exactly
+        stoneImage: bead.imageUrl || bead.stoneSetting?.stone_image,
         size: bead.size,
         price: bead.price,
       }))

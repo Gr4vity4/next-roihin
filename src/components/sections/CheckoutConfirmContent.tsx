@@ -1,5 +1,6 @@
 'use client'
 
+import BraceletPreview from '@/components/BraceletPreview'
 import Container from '@/components/ui/Container'
 import PhoneInput from '@/components/ui/PhoneInput'
 import Typography from '@/components/ui/Typography'
@@ -418,7 +419,15 @@ export default function CheckoutConfirmContent() {
                     {items.map((item) => (
                       <div key={item.id} className="flex gap-3">
                         <div className="relative w-16 h-16 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden">
-                          <Image src={item.image} alt={item.title} fill className="object-cover" />
+                          {item.isCustomBracelet && item.braceletDesign ? (
+                            <BraceletPreview
+                              beads={item.braceletDesign.beads}
+                              wristLength={item.braceletDesign.wristLength}
+                              className="w-full h-full bg-white p-0.5"
+                            />
+                          ) : (
+                            <Image src={item.image} alt={item.title} fill className="object-cover" />
+                          )}
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-gray-900 truncate">{item.title}</p>
