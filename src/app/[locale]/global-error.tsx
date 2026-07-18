@@ -61,14 +61,14 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
               <div className="space-y-4">
                 <button
                   onClick={reset}
-                  className="w-full bg-[#006039] text-white px-6 py-3 hover:bg-[#006039]/90 transition-colors font-medium"
+                  className="w-full bg-[#006039] text-white px-6 py-3 rounded-md hover:bg-[#006039]/90 transition-colors font-medium"
                 >
                   {isThai ? 'ลองใหม่อีกครั้ง' : 'Try Again'}
                 </button>
                 
                 <button
                   onClick={() => window.location.href = "/"}
-                  className="block w-full bg-gray-200 text-gray-700 px-6 py-3 hover:bg-gray-300 transition-colors font-medium"
+                  className="block w-full bg-gray-200 text-gray-700 px-6 py-3 rounded-md hover:bg-gray-300 transition-colors font-medium"
                 >
                   {isThai ? 'กลับหน้าแรก' : 'Back to Home'}
                 </button>

@@ -59,7 +59,7 @@ export default function LatestDIYCreations() {
         <div className="text-center mt-12">
           <Link
             href="/custom/creations"
-            className="inline-flex items-center gap-2 px-6 py-3 border hover:bg-gray-50"
+            className="inline-flex items-center gap-2 px-6 py-3 border rounded-md hover:bg-gray-50"
           >
             {t('latest.cta')}
             <svg

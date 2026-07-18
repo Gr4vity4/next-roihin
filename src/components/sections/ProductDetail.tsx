@@ -355,7 +355,7 @@ export default function ProductDetail({ product, category, language = 'en', brea
                           setSelectedColorImageIndex(0)
                         }}
                         disabled={!colorPrice.available}
-                        className={`px-4 py-2 border rounded-lg transition-all ${
+                        className={`px-4 py-2 border rounded-full transition-all ${
                           selectedColor === index
                             ? 'border-white bg-white/10 text-white'
                             : colorPrice.available
@@ -565,7 +565,7 @@ export default function ProductDetail({ product, category, language = 'en', brea
                   }
                 }}
                 disabled={!selectedPrice || !selectedColorData?.available}
-                className={`inline-flex items-center justify-center w-full px-6 py-3 font-medium rounded-lg transition-colors ${
+                className={`inline-flex items-center justify-center w-full px-6 py-3 font-medium rounded-md transition-colors ${
                   !selectedPrice || !selectedColorData?.available
                     ? 'bg-gray-800 text-gray-500 cursor-not-allowed border border-gray-700'
                     : 'bg-transparent border border-gold text-gold hover:bg-gold hover:text-black'

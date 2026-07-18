@@ -106,7 +106,7 @@ export default function CrystalProductDetail({ product, locale }: CrystalProduct
                   {sizeEntries.map(({ label, value }) => (
                     <div
                       key={label}
-                      className="flex items-center justify-between rounded border border-gray-200 px-3 py-2"
+                      className="flex items-center justify-between rounded-full border border-gray-200 px-4 py-2"
                     >
                       <span className="text-sm text-gray-600">{label}</span>
                       <span className="text-sm text-gray-900">{value}</span>

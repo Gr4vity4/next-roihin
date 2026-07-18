@@ -13,7 +13,7 @@ interface PersonalizedCTASectionProps {
 export default function PersonalizedCTASection({ buttons }: PersonalizedCTASectionProps) {
   const getButtonStyles = (variant: string, highlight?: boolean) => {
     const baseStyles =
-      'px-8 py-4  font-medium text-lg transition-all duration-300 rounded-sm border-2 min-w-[200px]'
+      'px-8 py-4  font-medium text-lg transition-all duration-300 rounded-md border-2 min-w-[200px]'
 
     switch (variant) {
       case 'gold':

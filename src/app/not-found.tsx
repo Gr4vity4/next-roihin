@@ -30,7 +30,7 @@ export default function GlobalNotFound() {
 
             <Link
               href={`/${routing.defaultLocale}`}
-              className="inline-flex items-center px-8 py-3 bg-[#006039] text-white hover:bg-[#004D2E] transition-colors duration-200 font-medium shadow-md hover:shadow-lg"
+              className="inline-flex items-center px-8 py-3 bg-[#006039] text-white rounded-md hover:bg-[#004D2E] transition-colors duration-200 font-medium shadow-md hover:shadow-lg"
             >
               {isThai ? 'กลับหน้าแรก' : 'Go Home'}
             </Link>

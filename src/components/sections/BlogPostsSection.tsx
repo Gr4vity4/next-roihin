@@ -226,7 +226,7 @@ export default function BlogPostsSection({
               key={category.id}
               onClick={() => handleCategoryChange(category.id)}
               disabled={loading}
-              className={`px-4 py-2 text-sm font-medium transition-all duration-300 shadow-sm border ${
+              className={`px-4 py-2 text-sm font-medium rounded-full transition-all duration-300 shadow-sm border ${
                 selectedCategory === category.id
                   ? 'bg-[#006039] text-white border-[#006039] shadow-md hover:bg-[#004D2E]'
                   : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700'

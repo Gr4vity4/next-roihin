@@ -108,7 +108,7 @@ export default function WishlistButton({
           relative group transition-all duration-200
           ${
             showText
-              ? 'inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-600 hover:border-white'
+              ? 'inline-flex items-center gap-2 px-4 py-2 rounded-md border border-gray-600 hover:border-white'
               : `${sizeClasses[size]} rounded-full border-2 border-gray-600 hover:border-white flex items-center justify-center`
           }
           ${

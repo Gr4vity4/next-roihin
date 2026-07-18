@@ -69,7 +69,7 @@ export default function CheckoutContent() {
               </p>
               <Link
                 href="/charmspacer"
-                className="inline-flex items-center justify-center px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors shadow-lg"
+                className="inline-flex items-center justify-center px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-md transition-colors shadow-lg"
               >
                 {t('emptyCart.shopNow')}
               </Link>
@@ -136,7 +136,7 @@ export default function CheckoutContent() {
                         <div className="flex items-center gap-3">
                           <button
                             onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                            className="w-9 h-9 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center justify-center transition-colors"
+                            className="w-9 h-9 rounded-md bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center justify-center transition-colors"
                             aria-label={t('product.decreaseQuantity')}
                           >
                             <Minus className="w-4 h-4" />
@@ -146,7 +146,7 @@ export default function CheckoutContent() {
                           </span>
                           <button
                             onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                            className="w-9 h-9 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center justify-center transition-colors"
+                            className="w-9 h-9 rounded-md bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center justify-center transition-colors"
                             aria-label={t('product.increaseQuantity')}
                           >
                             <Plus className="w-4 h-4" />
@@ -214,7 +214,7 @@ export default function CheckoutContent() {
                 <button
                   onClick={handleCheckout}
                   disabled={isProcessing}
-                  className={`w-full px-6 py-4 font-medium rounded-lg transition-all transform hover:scale-105 shadow-lg ${
+                  className={`w-full px-6 py-4 font-medium rounded-md transition-all transform hover:scale-105 shadow-lg ${
                     isProcessing
                       ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                       : 'bg-green-600 hover:bg-green-700 text-white'

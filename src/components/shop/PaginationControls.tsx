@@ -29,26 +29,26 @@ export default function PaginationControls({
       </div>
       <div className="flex items-center gap-3">
         {isFirstPage ? (
-          <span className="rounded-full border border-white/10 px-5 py-2 text-sm text-white/30">
+          <span className="rounded-md border border-white/10 px-5 py-2 text-sm text-white/30">
             {previousLabel}
           </span>
         ) : (
           <Link
             href={buildHref(currentPage - 1)}
-            className="rounded-full border border-white/30 px-5 py-2 text-sm text-white hover:border-gold hover:text-gold transition-colors"
+            className="rounded-md border border-white/30 px-5 py-2 text-sm text-white hover:border-gold hover:text-gold transition-colors"
           >
             {previousLabel}
           </Link>
         )}
 
         {isLastPage ? (
-          <span className="rounded-full border border-white/10 px-5 py-2 text-sm text-white/30">
+          <span className="rounded-md border border-white/10 px-5 py-2 text-sm text-white/30">
             {nextLabel}
           </span>
         ) : (
           <Link
             href={buildHref(currentPage + 1)}
-            className="rounded-full border border-white/30 px-5 py-2 text-sm text-white hover:border-gold hover:text-gold transition-colors"
+            className="rounded-md border border-white/30 px-5 py-2 text-sm text-white hover:border-gold hover:text-gold transition-colors"
           >
             {nextLabel}
           </Link>

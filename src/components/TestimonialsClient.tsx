@@ -94,7 +94,7 @@ function TestimonialsPaginationControls({
   }
 
   const buttonBase =
-    'min-w-[2.5rem] h-10 px-3 rounded-full text-sm transition-colors duration-200'
+    'min-w-[2.5rem] h-10 px-3 rounded-md text-sm transition-colors duration-200'
 
   return (
     <nav

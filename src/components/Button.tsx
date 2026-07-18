@@ -4,7 +4,7 @@ import { useLocale } from 'next-intl'
 import { ButtonHTMLAttributes, forwardRef } from 'react'
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center font-medium  transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none transform active:scale-95 cursor-pointer disabled:cursor-not-allowed',
+  'inline-flex items-center justify-center font-medium rounded-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none transform active:scale-95 cursor-pointer disabled:cursor-not-allowed',
   {
     variants: {
       variant: {

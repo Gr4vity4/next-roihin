@@ -101,7 +101,7 @@ export default function ParallaxContentSection({
                         ? t(`common.${button.translationKey}`)
                         : button.text
                       const buttonClassName =
-                        'px-8 py-3 text-lg font-semibold text-white border-2 border-transparent hover:border-white transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent'
+                        'px-8 py-3 text-lg font-semibold text-white rounded-md border-2 border-transparent hover:border-white transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-transparent'
                       return button.href ? (
                         <Link key={index} href={button.href} className={buttonClassName}>
                           {buttonText}

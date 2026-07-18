@@ -61,7 +61,7 @@ export default async function ShopPage({ params }: ShopPageProps) {
             <div className="mt-12 flex justify-center">
               <Link
                 href="/shop/new-arrivals"
-                className="rounded-full border border-white/40 px-8 py-3 text-xs uppercase tracking-[0.25em] text-white hover:border-gold hover:text-gold transition-colors"
+                className="rounded-md border border-white/40 px-8 py-3 text-xs uppercase tracking-[0.25em] text-white hover:border-gold hover:text-gold transition-colors"
               >
                 {t('hero.cta')}
               </Link>

@@ -58,7 +58,7 @@ export default function Modal({
                 <Dialog.Close asChild>
                   <button
                     type="button"
-                    className="ml-auto inline-flex items-center justify-center rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                    className="ml-auto inline-flex items-center justify-center rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
                   >
                     <span className="sr-only">{locale === 'th' ? 'ปิด' : 'Close'}</span>
                     <X className="h-6 w-6" aria-hidden="true" />

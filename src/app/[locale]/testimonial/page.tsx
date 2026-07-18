@@ -61,7 +61,7 @@ export default async function TestimonialPage() {
               </Typography>
               <Link
                 href="/custom"
-                className="inline-block bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-8 py-3 rounded-full font-semibold hover:from-yellow-500 hover:to-yellow-700 transition-all duration-300 "
+                className="inline-block bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-8 py-3 rounded-md font-semibold hover:from-yellow-500 hover:to-yellow-700 transition-all duration-300 "
               >
                 {tCommon('orderDesign')}
               </Link>

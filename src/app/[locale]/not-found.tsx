@@ -47,7 +47,7 @@ export default async function NotFound() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link
               href="/"
-              className="inline-flex items-center px-8 py-3 bg-[#006039] text-white hover:bg-[#004D2E] transition-colors duration-200 font-medium shadow-md hover:shadow-lg"
+              className="inline-flex items-center px-8 py-3 bg-[#006039] text-white rounded-md hover:bg-[#004D2E] transition-colors duration-200 font-medium shadow-md hover:shadow-lg"
             >
               <HomeIcon className="h-5 w-5 mr-2" />
               <Typography
@@ -59,7 +59,7 @@ export default async function NotFound() {
             
             <Link
               href="/blog"
-              className="inline-flex items-center px-8 py-3 border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors duration-200 font-medium"
+              className="inline-flex items-center px-8 py-3 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors duration-200 font-medium"
             >
               <Typography
                 variant="body"

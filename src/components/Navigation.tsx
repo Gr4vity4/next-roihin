@@ -716,7 +716,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                     <button
                       onClick={() => handleLanguageSwitch('th')}
                       className={cn(
-                        'px-3 py-1 rounded text-sm',
+                        'px-3 py-1 rounded-md text-sm',
                         locale === 'th'
                           ? 'bg-gold text-black font-semibold'
                           : 'bg-gray-800 text-white',
@@ -727,7 +727,7 @@ export default function Navigation({ position = 'fixed' }: NavigationProps = {})
                     <button
                       onClick={() => handleLanguageSwitch('en')}
                       className={cn(
-                        'px-3 py-1 rounded text-sm',
+                        'px-3 py-1 rounded-md text-sm',
                         locale === 'en'
                           ? 'bg-gold text-black font-semibold'
                           : 'bg-gray-800 text-white',

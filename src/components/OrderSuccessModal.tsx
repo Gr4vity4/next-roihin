@@ -136,14 +136,14 @@ export default function OrderSuccessModal({
         <div className="flex flex-col sm:flex-row gap-3">
           <button
             type="button"
-            className="flex-1 px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors"
+            className="flex-1 px-6 py-3 bg-green-600 text-white font-medium rounded-md hover:bg-green-700 transition-colors"
             onClick={handleGoToMember}
           >
             {isThai ? 'ไปยังหน้าสมาชิก' : 'Go to member page'}
           </button>
           <button
             type="button"
-            className="flex-1 px-6 py-3 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors"
+            className="flex-1 px-6 py-3 bg-gray-100 text-gray-700 font-medium rounded-md hover:bg-gray-200 transition-colors"
             onClick={handleViewOrder}
           >
             {isThai ? 'ดูรายละเอียดคำสั่งซื้อ' : 'View order details'}

@@ -141,13 +141,13 @@ export default async function ShopListingPage({ params, searchParams }: ShopList
               <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
                 <Link
                   href="/shop"
-                  className="rounded-full border border-white/40 px-6 py-2 text-xs uppercase tracking-[0.18em] text-white hover:border-gold hover:text-gold transition-colors"
+                  className="rounded-md border border-white/40 px-6 py-2 text-xs uppercase tracking-[0.18em] text-white hover:border-gold hover:text-gold transition-colors"
                 >
                   {t('listing.emptyState.primaryCta')}
                 </Link>
                 <Link
                   href="/personalized"
-                  className="rounded-full border border-transparent bg-white text-xs uppercase tracking-[0.18em] text-black px-6 py-2 hover:bg-gold transition-colors"
+                  className="rounded-md border border-transparent bg-white text-xs uppercase tracking-[0.18em] text-black px-6 py-2 hover:bg-gold transition-colors"
                 >
                   {t('listing.emptyState.secondaryCta')}
                 </Link>

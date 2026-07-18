@@ -280,7 +280,7 @@ export default function WishlistPage() {
                     />
                     {!isAvailable && (
                       <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                        <span className="text-white font-semibold bg-black/70 px-4 py-2 rounded">
+                        <span className="text-white font-semibold bg-black/70 px-4 py-2 rounded-full">
                           {t('item.outOfStock')}
                         </span>
                       </div>

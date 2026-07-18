@@ -20,7 +20,7 @@ export default function CrystalFAQ({ crystalName, product, locale }: CrystalFAQP
           {/* View All Products Link */}
           <Link
             href={`/${locale}/products/crystal/${product.slug}`}
-            className="px-6 py-3 text-sm md:text-base text-gray-900 border border-gray-300 hover:border-gray-900 hover:bg-gray-50 transition-all"
+            className="px-6 py-3 text-sm md:text-base text-gray-900 border border-gray-300 rounded-md hover:border-gray-900 hover:bg-gray-50 transition-all"
           >
             {t('viewAllProducts', { crystalName })}
           </Link>
@@ -28,7 +28,7 @@ export default function CrystalFAQ({ crystalName, product, locale }: CrystalFAQP
           {/* Back to Catalog Link */}
           <Link
             href={`/${locale}/crystal`}
-            className="px-6 py-3 text-sm md:text-base text-gray-900 border border-gray-300 hover:border-gray-900 hover:bg-gray-50 transition-all"
+            className="px-6 py-3 text-sm md:text-base text-gray-900 border border-gray-300 rounded-md hover:border-gray-900 hover:bg-gray-50 transition-all"
           >
             {t('backToCatalog')}
           </Link>

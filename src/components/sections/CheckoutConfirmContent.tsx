@@ -220,7 +220,7 @@ export default function CheckoutConfirmContent() {
           <div className="flex items-center gap-4 mb-8">
             <Link
               href="/checkout"
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
               aria-label={t('backToCart')}
             >
               <ArrowLeft className="w-5 h-5 text-gray-600" />
@@ -486,7 +486,7 @@ export default function CheckoutConfirmContent() {
                   <button
                     type="submit"
                     disabled={isProcessing || !isFormValid()}
-                    className={`w-full px-6 py-4 font-medium rounded-lg transition-all transform hover:scale-105 shadow-lg ${
+                    className={`w-full px-6 py-4 font-medium rounded-md transition-all transform hover:scale-105 shadow-lg ${
                       isProcessing || !isFormValid()
                         ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                         : 'bg-blue-600 hover:bg-blue-700 text-white'
