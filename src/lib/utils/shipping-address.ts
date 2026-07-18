@@ -22,8 +22,15 @@ export function formatRecipientName(address: ShippingAddress): string {
  * The address body lines, in display order, skipping any that are empty.
  * Falls back to legacy fields (subdistrict → apartment slot, district → city,
  * and the legacy country line) for pre-migration order snapshots.
+ *
+ * `resolveProvince` maps the stored canonical province value to a localized
+ * label (Thai/English). It falls back to the raw value for unknown/legacy
+ * free-text provinces; the default is the identity function.
  */
-export function getShippingAddressLines(address: ShippingAddress): string[] {
+export function getShippingAddressLines(
+  address: ShippingAddress,
+  resolveProvince: (value: string) => string = (value) => value
+): string[] {
   const lines: string[] = []
 
   if (address.address) {
@@ -36,7 +43,8 @@ export function getShippingAddressLines(address: ShippingAddress): string[] {
   }
 
   const city = address.city || address.district || ''
-  const cityProvince = [city, address.province].filter(Boolean).join(', ')
+  const province = address.province ? resolveProvince(address.province) : ''
+  const cityProvince = [city, province].filter(Boolean).join(', ')
   const regionLine = [cityProvince, address.postal_code].filter(Boolean).join(' ').trim()
   if (regionLine) {
     lines.push(regionLine)

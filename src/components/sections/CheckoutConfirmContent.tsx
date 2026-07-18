@@ -16,7 +16,7 @@ import type { CreateOrderPayload } from '@/lib/api/orders'
 import { ArrowLeft } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import Image from 'next/image'
-import { FormEvent, useEffect, useMemo, useState } from 'react'
+import { FormEvent, useEffect, useMemo, useRef, useState } from 'react'
 
 interface ShippingFormState extends AddressFieldValues {
   email: string
@@ -47,6 +47,7 @@ export default function CheckoutConfirmContent() {
   const [defaultAddressId, setDefaultAddressId] = useState<string | null>(null)
   const [phoneCountry, setPhoneCountry] = useState('th')
   const [shippingAddress, setShippingAddress] = useState<ShippingFormState>(EMPTY_SHIPPING)
+  const hasPrefilledRef = useRef(false)
 
   const addressLabels = useMemo(
     () => ({
@@ -74,9 +75,19 @@ export default function CheckoutConfirmContent() {
   }, [itemCount, router])
 
   useEffect(() => {
-    const fetchDefaultAddress = async () => {
-      if (!isLoggedIn) return
+    if (!isLoggedIn) {
+      hasPrefilledRef.current = false
+      return
+    }
 
+    // Prefill the saved default address only once per login. The `user`
+    // reference changes on every auth heartbeat (mount, 60s interval, window
+    // focus, visibilitychange); without this guard each change would re-fetch
+    // and silently overwrite the shopper's in-progress edits.
+    if (hasPrefilledRef.current) return
+    hasPrefilledRef.current = true
+
+    const fetchDefaultAddress = async () => {
       setAddressLoading(true)
       try {
         const { hasDefault, id, item } = await getDefaultAddress()

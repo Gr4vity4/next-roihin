@@ -10,6 +10,7 @@ import { CircleCheck, Loader2 } from 'lucide-react'
 import { useCart } from '@/contexts/CartContext'
 import type { OrderResource } from '@/lib/types/order'
 import { formatRecipientName, getShippingAddressLines } from '@/lib/utils/shipping-address'
+import { useProvinceLabel } from '@/hooks/useProvinces'
 
 function formatCurrency(amountMinor: number, locale: string, currency: string): string {
   try {
@@ -48,6 +49,7 @@ export default function ThankYouContent() {
   const activeLocale = useLocale()
   const orderId = searchParams.get('order_id')
   const { clearCart } = useCart()
+  const resolveProvince = useProvinceLabel(activeLocale)
   const hasCleared = useRef(false)
 
   const [loading, setLoading] = useState(true)
@@ -244,9 +246,11 @@ export default function ThankYouContent() {
                     <p className="font-medium text-gray-900">
                       {formatRecipientName(order.shipping_address)}
                     </p>
-                    {getShippingAddressLines(order.shipping_address).map((line, index) => (
-                      <p key={`${index}-${line}`}>{line}</p>
-                    ))}
+                    {getShippingAddressLines(order.shipping_address, resolveProvince).map(
+                      (line, index) => (
+                        <p key={`${index}-${line}`}>{line}</p>
+                      )
+                    )}
                     <p className="text-gray-500">
                       {t('orderDetails.phone', { defaultValue: 'Phone' })}: {order.shipping_address.phone}
                     </p>

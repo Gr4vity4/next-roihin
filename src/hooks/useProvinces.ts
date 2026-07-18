@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { fetchProvinces, type Province } from '@/lib/api/provinces'
 
 // Module-level cache keyed by locale so the province list is fetched at most
@@ -38,6 +38,15 @@ export function useProvinces(locale: string) {
   const [provinces, setProvinces] = useState<Province[]>(() => cache.get(locale) ?? [])
   const [isLoading, setIsLoading] = useState(() => !cache.has(locale))
   const [error, setError] = useState<string | null>(null)
+  const [reloadCount, setReloadCount] = useState(0)
+
+  // Drop any cached/failed entry for this locale and re-trigger the effect so a
+  // transient fetch failure can be retried without remounting.
+  const reload = useCallback(() => {
+    cache.delete(locale)
+    inflight.delete(locale)
+    setReloadCount((count) => count + 1)
+  }, [locale])
 
   useEffect(() => {
     let isMounted = true
@@ -69,7 +78,22 @@ export function useProvinces(locale: string) {
     return () => {
       isMounted = false
     }
-  }, [locale])
+  }, [locale, reloadCount])
 
-  return { provinces, isLoading, error }
+  return { provinces, isLoading, error, reload }
+}
+
+/**
+ * Returns a resolver that maps a stored canonical province value to its
+ * localized label, falling back to the raw value for unknown/legacy entries.
+ * Used by read-only surfaces so a saved "Bangkok" renders as "กรุงเทพมหานคร"
+ * in the Thai UI, matching what the edit dropdown shows.
+ */
+export function useProvinceLabel(locale: string): (value: string) => string {
+  const { provinces } = useProvinces(locale)
+
+  return useMemo(() => {
+    const labels = new Map(provinces.map((province) => [province.value, province.label]))
+    return (value: string) => labels.get(value) ?? value
+  }, [provinces])
 }

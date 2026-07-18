@@ -4,6 +4,7 @@ import Button from '@/components/Button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 import AddressFields, { type AddressFieldValues } from '@/components/ui/AddressFields'
+import { useProvinceLabel } from '@/hooks/useProvinces'
 import { combinePhone, splitPhone } from '@/lib/data/countries'
 import { useLocale, useTranslations } from 'next-intl'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -37,6 +38,7 @@ const EMPTY_ADDRESS: AddressFieldValues = {
 export default function AddressesPage() {
   const t = useTranslations('member.addresses')
   const locale = useLocale()
+  const resolveProvince = useProvinceLabel(locale)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [editingAddress, setEditingAddress] = useState<Address | null>(null)
   const [addresses, setAddresses] = useState<Address[]>([])
@@ -271,7 +273,7 @@ export default function AddressesPage() {
                     {address.apartment}<br />
                   </>
                 )}
-                {address.city}, {address.province} {address.postal_code}
+                {address.city}, {resolveProvince(address.province)} {address.postal_code}
               </p>
             </div>
 
@@ -325,7 +327,7 @@ export default function AddressesPage() {
 
       {/* Add/Edit Address Modal */}
       <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
               {editingAddress ? t('form.editTitle') : t('form.addTitle')}
