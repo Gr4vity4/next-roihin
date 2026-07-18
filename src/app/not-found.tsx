@@ -1,6 +1,22 @@
 import Link from 'next/link'
+import { Bodoni_Moda, Prompt } from 'next/font/google'
 import { routing } from '@/i18n/routing'
 import './globals.css'
+
+// This page renders its own <html>/<body> outside the `[locale]` layout, so
+// the site fonts must be loaded here too or text falls back to system fonts
+const bodoniModa = Bodoni_Moda({
+  subsets: ['latin'],
+  variable: '--font-bodoni',
+  display: 'swap',
+})
+
+const prompt = Prompt({
+  subsets: ['thai', 'latin'],
+  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+  variable: '--font-prompt',
+  display: 'swap',
+})
 
 // Global fallback for requests that don't match the `[locale]` segment
 // (e.g. `/some-file.txt`). Locale can't be resolved here, so we fall back to
@@ -11,7 +27,7 @@ export default function GlobalNotFound() {
 
   return (
     <html lang={routing.defaultLocale}>
-      <body className="antialiased">
+      <body className={`${bodoniModa.variable} ${prompt.variable} antialiased`}>
         <div className="min-h-screen bg-white flex items-center justify-center px-4">
           <div className="text-center max-w-2xl mx-auto">
             <div className="w-24 h-24 bg-[#cb9e51]/10 rounded-full flex items-center justify-center mx-auto mb-6">

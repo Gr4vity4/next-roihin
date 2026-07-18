@@ -3,6 +3,7 @@
 import { cn } from '@/lib/utils'
 import { containsNumbers } from '@/lib/utils/text'
 import { Children, HTMLAttributes, ReactNode, cloneElement, createElement, isValidElement } from 'react'
+import { useLocale } from 'next-intl'
 import { useFontContext } from '@/components/providers/FontProvider'
 
 interface TypographyProps extends HTMLAttributes<HTMLElement> {
@@ -92,6 +93,7 @@ export default function Typography({
 }: TypographyProps) {
   const Component = component || variantComponents[variant]
   const fontContext = useFontContext()
+  const locale = useLocale()
 
   // Handle color: use predefined colors if they match, otherwise treat as Tailwind class
   const getColorClass = (color?: string) => {
@@ -136,9 +138,13 @@ export default function Typography({
       return fontContext.fontClass
     }
 
-    // 3. Otherwise, use default logic
-    const hasNumbers = checkChildrenForNumbers(children)
-    return hasNumbers ? 'font-prompt' : 'font-mixed-lang'
+    // 3. Otherwise, use default logic. The digit check only applies to Thai —
+    //    English text must always use the mixed stack (Bodoni Moda for Latin),
+    //    even when it contains numbers (e.g. phone numbers, LINE IDs)
+    if (locale === 'th' && checkChildrenForNumbers(children)) {
+      return 'font-prompt'
+    }
+    return 'font-mixed-lang'
   }
 
   return createElement(
