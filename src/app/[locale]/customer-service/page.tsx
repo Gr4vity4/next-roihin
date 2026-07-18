@@ -30,6 +30,12 @@ export default function CustomerServicePage() {
         lifetimeTitle: 'ยินดีดูแลสินค้า ตลอดอายุการใช้งาน',
         lifetimeDescription:
           'เมื่อไหมยืดร้อยหินหมดอายุการใช้งาน ทางร้อยหินยินดีให้บริการดูแล ทำความสะอาดหิน และเปลี่ยนไหมร้อยให้โดยไม่มีค่าใช้จ่าย (ยกเว้นค่าจัดส่งคืนสินค้า)',
+        ctaTitle: 'ปรึกษาและออกแบบให้ฟรี',
+        ctaDescription:
+          'ปรึกษาทีมงานผู้เชี่ยวชาญเพื่อออกแบบกำไลหินหรือสอบถามหินมาใหม่เพิ่มเติมได้ที่ (LINE OA : @roihin4289) ติดต่อ Call Center โทร ',
+        ctaPhone: '083-159-1926',
+        ctaLineButton: 'LINE OA @roihin4289',
+        ctaWhatsAppButton: 'WhatsApp',
       }
     : {
         heroAlt: 'Customer Service',
@@ -49,6 +55,12 @@ export default function CustomerServicePage() {
         lifetimeTitle: 'Lifetime Care Service',
         lifetimeDescription:
           'When the bracelet string reaches end-of-life, we provide cleaning and restringing services at no additional charge (excluding return shipping fees).',
+        ctaTitle: 'Free Consultation & Design',
+        ctaDescription:
+          'Consult our expert team to design your stone bracelet or ask about new arrivals via LINE OA : @roihin4289, or contact our Call Center at ',
+        ctaPhone: '083-159-1926',
+        ctaLineButton: 'LINE OA @roihin4289',
+        ctaWhatsAppButton: 'WhatsApp',
       }
 
   return (
@@ -189,6 +201,41 @@ export default function CustomerServicePage() {
               </div>
             </Container>
           </div>
+        </section>
+
+        {/* CTA Section */}
+        <section className="bg-white py-20 lg:py-28">
+          <Container>
+            <div className="max-w-3xl mx-auto text-center space-y-6">
+              <Typography variant="h3" align="center" className="text-gray-900">
+                {content.ctaTitle}
+              </Typography>
+
+              <Typography variant="body" align="center" className="text-gray-900">
+                {content.ctaDescription}
+                <strong>{content.ctaPhone}</strong>
+              </Typography>
+
+              <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+                <a
+                  href="https://lin.ee/r94Dnio"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center rounded-full bg-black px-8 py-3 text-sm font-medium text-white transition-colors hover:bg-gray-800"
+                >
+                  {content.ctaLineButton}
+                </a>
+                <a
+                  href="https://wa.me/66831591926"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center rounded-full bg-black px-8 py-3 text-sm font-medium text-white transition-colors hover:bg-gray-800"
+                >
+                  {content.ctaWhatsAppButton}
+                </a>
+              </div>
+            </div>
+          </Container>
         </section>
       </main>
 
