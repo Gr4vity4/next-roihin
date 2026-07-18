@@ -56,11 +56,11 @@ export default function Footer({
       : '101/54 Passorn 70 Village (Ko Kaew), Village No. 4, Ko Kaew, Mueang Phuket, Phuket 83000',
     socialLinks: [
       { platform: 'facebook' as const, href: 'https://www.facebook.com/roihin42896395' },
-      { platform: 'instagram' as const, href: 'http://instagram.com/roihinstone2489_6395' },
-      { platform: 'youtube' as const, href: 'http://instagram.com/roihinstone2489_6395' },
-      { platform: 'tiktok' as const, href: 'https://vt.tiktok.com/ZSegokjLL/' },
-      { platform: 'pinterest' as const, href: 'https://www.pinterest.com/roihinth/' },
-      { platform: 'line' as const, href: 'https://lin.ee/palYKiG' },
+      { platform: 'instagram' as const, href: 'https://www.instagram.com/roihinth/' },
+      { platform: 'youtube' as const, href: 'https://www.youtube.com/@roihinTH' },
+      { platform: 'tiktok' as const, href: 'https://www.tiktok.com/@ceo_roihin' },
+      { platform: 'pinterest' as const, href: 'https://www.pinterest.com/Roihin_th/' },
+      { platform: 'line' as const, href: 'https://lin.ee/r94Dnio' },
       { platform: 'whatsapp' as const, href: 'tel:+66838265195' },
     ] as SocialLink[],
   }

@@ -31,8 +31,8 @@ export async function getSiteTranslations(language: 'th' | 'en' = 'th'): Promise
         home_p7: 'เสียงตอบรับจากผู้ใช้จริง',
         home_p8: '"เป็นลูกค้าร้านหินของน้องซันมารุ่นแรกๆเลยค่ะ ขอชมจากใจเลยว่างานหินที่น้องเค้าทำออกมาทุกเส้นเป็นงานที่ทำด้วยความตั้งใจ ความเอาใจใส่ ทำให้หินทุกเม็ดที่ร้อยมีคุณค่า สัมผัสได้ถึงพลังงานของความรัก ความอ่อนโยน และไปจนถึงความปรารถนาดีจากผู้ทำที่ส่งต่อผ่านหินมายังผู้ที่เป็นเจ้าของ หินทุกเม็ดที่สมบูรณ์แบบอยู่ที่นี่ มาหาได้ที่ร้อยหินค่ะ" - Ariya Nrd',
         home_p9: 'INSPIRED ROIHIN',
-        instagram: 'http://instagram.com/roihinstone2489_6395',
-        line: 'https://lin.ee/palYKiG',
+        instagram: 'https://www.instagram.com/roihinth/',
+        line: 'https://lin.ee/r94Dnio',
         menu_about_us: 'เกี่ยวกับร้อยหิน',
         menu_blogs: 'บทความ',
         menu_charm_spacer: 'ชาร์ม/สเปเซอร์',
@@ -44,8 +44,8 @@ export async function getSiteTranslations(language: 'th' | 'en' = 'th'): Promise
         menu_shop: 'ร้านค้า',
         menu_testimonial: 'รีวิวจริง',
         phone: '+6683 826 5195',
-        pinterest: 'https://vt.tiktok.com/ZSegokjLL/',
-        tiktok: 'https://vt.tiktok.com/ZSegokjLL/',
+        pinterest: 'https://www.pinterest.com/Roihin_th/',
+        tiktok: 'https://www.tiktok.com/@ceo_roihin',
       },
     }
 

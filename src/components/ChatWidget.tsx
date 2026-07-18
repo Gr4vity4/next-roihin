@@ -5,7 +5,7 @@ import { useLocale } from 'next-intl'
 import Button from './Button'
 
 // Same Line link used in the footer social links (Footer.tsx)
-const LINE_URL = 'https://lin.ee/palYKiG'
+const LINE_URL = 'https://lin.ee/r94Dnio'
 
 export default function ChatWidget() {
   const locale = useLocale()

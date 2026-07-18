@@ -33,11 +33,11 @@ export async function getSiteSettings(): Promise<SiteSettings | null> {
       },
       socialLinks: {
         facebook: 'https://www.facebook.com/roihin42896395',
-        instagram: 'http://instagram.com/roihinstone2489_6395',
-        youtube: 'https://www.youtube.com/@roihinth',
-        tiktok: 'https://vt.tiktok.com/ZSegokjLL/',
-        pinterest: 'https://www.pinterest.com/roihinth/',
-        line: 'https://lin.ee/palYKiG',
+        instagram: 'https://www.instagram.com/roihinth/',
+        youtube: 'https://www.youtube.com/@roihinTH',
+        tiktok: 'https://www.tiktok.com/@ceo_roihin',
+        pinterest: 'https://www.pinterest.com/Roihin_th/',
+        line: 'https://lin.ee/r94Dnio',
       },
     }
   }
