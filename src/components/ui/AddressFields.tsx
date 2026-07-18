@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import PhoneInput from '@/components/ui/PhoneInput'
 import ProvinceSelect from '@/components/ui/ProvinceSelect'
+import { splitPhone } from '@/lib/data/countries'
 
 /**
  * Shipping-address field set matching the new backend contract:
@@ -16,11 +17,15 @@ import ProvinceSelect from '@/components/ui/ProvinceSelect'
  * and the checkout confirmation form.
  *
  * The Province dropdown only applies to Thai addresses. The phone country
- * selector doubles as the address-country signal: while a non-Thai dial code
- * is selected the Province field is hidden and the value is pinned to the
- * backend's '-' placeholder (accepted by validation for international
- * addresses); switching back to +66 clears it so a real province must be
- * picked. Thai postal-code constraints (5 digits) are relaxed likewise.
+ * selector doubles as the address-country signal: when the USER switches to a
+ * non-Thai dial code the Province value is pinned to the backend's '-'
+ * placeholder (accepted by validation for international addresses) and the
+ * field is hidden; switching back to +66 restores their previous pick (or
+ * empties it so one must be chosen). Pinning happens only on explicit dial
+ * code changes — never on mount — so stored records that mix a foreign phone
+ * with a real Thai province (or a Thai-parsing phone with '-') pass through
+ * untouched instead of being silently rewritten. Thai postal-code constraints
+ * (5 digits) are relaxed for non-Thai addresses likewise.
  */
 export interface AddressFieldValues {
   first_name: string
@@ -74,18 +79,44 @@ export default function AddressFields({
   idPrefix = '',
 }: AddressFieldsProps) {
   const fieldId = (name: string) => `${idPrefix}${name}`
-  const isThaiPhone = phoneCountry === 'th'
+  // Thai address = Thai dial code AND not already the international '-'
+  // placeholder. Records whose stored phone parses to a foreign country keep
+  // their real province (hidden but preserved); records stored as '-' with an
+  // unparseable/Thai phone stay international instead of demanding a province.
+  const isThaiAddress = phoneCountry === 'th' && values.province !== '-'
 
-  // Keep province consistent with the selected phone country: non-Thai numbers
-  // hide the dropdown and submit the '-' placeholder; switching back to Thai
-  // clears the placeholder so the user must pick a real province.
-  React.useEffect(() => {
-    if (!isThaiPhone && values.province !== '-') {
+  // Last real Thai province, so a th → intl → th round trip restores the
+  // user's pick instead of forcing a re-select.
+  const lastThaiProvinceRef = React.useRef('')
+
+  const handlePhoneCountryChange = (code: string) => {
+    if (code !== 'th' && values.province !== '-') {
+      if (values.province) {
+        lastThaiProvinceRef.current = values.province
+      }
       onFieldChange('province', '-')
-    } else if (isThaiPhone && values.province === '-') {
-      onFieldChange('province', '')
+    } else if (code === 'th' && values.province === '-') {
+      onFieldChange('province', lastThaiProvinceRef.current)
     }
-  }, [isThaiPhone, values.province, onFieldChange])
+    onPhoneCountryChange(code)
+  }
+
+  // A pasted "+CC…" number overrides the dial selector when persisted
+  // (combinePhone stores it verbatim), so re-split it here to keep the
+  // selector — and the province rules that hang off it — in sync.
+  const handlePhoneChange = (phone: string) => {
+    if (phone.trim().startsWith('+')) {
+      const parsed = splitPhone(phone, '')
+      if (parsed.country) {
+        onFieldChange('phone', parsed.phone)
+        if (parsed.country !== phoneCountry) {
+          handlePhoneCountryChange(parsed.country)
+        }
+        return
+      }
+    }
+    onFieldChange('phone', phone)
+  }
 
   return (
     <div className="space-y-4">
@@ -153,9 +184,9 @@ export default function AddressFields({
           <Input
             id={fieldId('postal_code')}
             type="text"
-            inputMode={isThaiPhone ? 'numeric' : undefined}
-            maxLength={isThaiPhone ? 5 : 20}
-            pattern={isThaiPhone ? '[0-9]{5}' : undefined}
+            inputMode={isThaiAddress ? 'numeric' : undefined}
+            maxLength={isThaiAddress ? 5 : 20}
+            pattern={isThaiAddress ? '[0-9]{5}' : undefined}
             value={values.postal_code}
             onChange={(event) => onFieldChange('postal_code', event.target.value)}
             disabled={disabled}
@@ -178,7 +209,7 @@ export default function AddressFields({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {isThaiPhone && (
+        {isThaiAddress && (
           <div className="space-y-2">
             <Label htmlFor={fieldId('province')}>
               {labels.province} {requiredMarker}
@@ -203,8 +234,8 @@ export default function AddressFields({
             lang={locale}
             country={phoneCountry}
             phone={values.phone}
-            onCountryChange={onPhoneCountryChange}
-            onPhoneChange={(phone) => onFieldChange('phone', phone)}
+            onCountryChange={handlePhoneCountryChange}
+            onPhoneChange={handlePhoneChange}
             placeholder={labels.phonePlaceholder}
             disabled={disabled}
             required

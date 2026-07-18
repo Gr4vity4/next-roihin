@@ -120,11 +120,20 @@ export default function CheckoutConfirmContent() {
     fetchDefaultAddress()
   }, [isLoggedIn, user])
 
+  // Any edit to the prefilled address (field or dial code) invalidates the
+  // saved-address reference: the backend ships to the shipping_address_id
+  // record when one is present, which would silently discard the edits.
   const handleFieldChange = (field: keyof AddressFieldValues, value: string) => {
+    setDefaultAddressId(null)
     setShippingAddress((prev) => ({
       ...prev,
       [field]: value,
     }))
+  }
+
+  const handlePhoneCountryChange = (code: string) => {
+    setDefaultAddressId(null)
+    setPhoneCountry(code)
   }
 
   const handleSubmit = async (e: FormEvent) => {
@@ -299,7 +308,7 @@ export default function CheckoutConfirmContent() {
                       labels={addressLabels}
                       locale={locale}
                       phoneCountry={phoneCountry}
-                      onPhoneCountryChange={setPhoneCountry}
+                      onPhoneCountryChange={handlePhoneCountryChange}
                       requiredMarker={t('payment.required')}
                       idPrefix="ship_"
                     />
