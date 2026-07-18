@@ -177,7 +177,7 @@ export default function PhoneInput({
   return (
     <div
       ref={containerRef}
-      className="relative"
+      className={`relative ${isThai ? 'font-prompt' : ''}`}
       onBlur={(e) => {
         if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
           setIsOpen(false)
