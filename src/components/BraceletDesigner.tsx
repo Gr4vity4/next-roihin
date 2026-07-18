@@ -846,7 +846,7 @@ export default function BraceletDesigner() {
     <>
       <div className="container mx-auto min-h-24 grid grid-cols-12 gap-4 md:gap-0">
         <div className="col-span-6 md:col-span-4 flex justify-center flex-col">
-          <span className="text-[#006039] text-lg">
+          <span className="text-[#244323] text-lg">
             {locale === 'th' ? 'ความยาวรอบข้อมือ' : 'Wrist Length'}
           </span>
           <Select
@@ -871,7 +871,7 @@ export default function BraceletDesigner() {
         </div>
         {/* Bead Size */}
         <div className="col-span-6 md:col-span-4 flex justify-center flex-col">
-          <span className="text-[#006039] text-lg">
+          <span className="text-[#244323] text-lg">
             {locale === 'th' ? 'ขนาดหิน' : 'Bead Size'}
           </span>
           <Select
@@ -893,7 +893,7 @@ export default function BraceletDesigner() {
         </div>
         {/* Summary Price and Bead Count */}
         <div className="col-span-12 md:col-span-4 flex justify-center flex-col">
-          <span className="text-[#006039] text-lg">
+          <span className="text-[#244323] text-lg">
             {locale === 'th' ? 'ราคารวม' : 'Total Price'}
           </span>
           <span className="font-prompt text-2xl font-bold">฿{calculateTotalPrice()}</span>
@@ -920,7 +920,7 @@ export default function BraceletDesigner() {
         }
         .bead.selected {
           border-radius: 50%;
-          box-shadow: 0 0 0 3px #fff, 0 0 0 5px #006039;
+          box-shadow: 0 0 0 3px #fff, 0 0 0 5px #244323;
           z-index: 15;
         }
         .bead-popover {

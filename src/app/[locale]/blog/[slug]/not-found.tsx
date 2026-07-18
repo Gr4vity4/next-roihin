@@ -19,7 +19,7 @@ export default async function NotFound() {
           {/* Error Message */}
           <Typography
             variant="h2"
-                        className="text-[#006039] mb-4"
+                        className="text-[#244323] mb-4"
           >
             {isThai ? 'ไม่พบบทความที่คุณค้นหา' : 'Article not found'}
           </Typography>
@@ -37,7 +37,7 @@ export default async function NotFound() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link
               href="/blog"
-              className="inline-flex items-center px-6 py-3 bg-[#006039] text-white rounded-md hover:bg-[#004D2E] transition-colors duration-200 font-medium"
+              className="inline-flex items-center px-6 py-3 bg-[#244323] text-white rounded-md hover:bg-[#004D2E] transition-colors duration-200 font-medium"
             >
               <ArrowLeft className="h-5 w-5 mr-2" />
               <Typography

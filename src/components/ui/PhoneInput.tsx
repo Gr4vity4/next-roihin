@@ -186,7 +186,7 @@ export default function PhoneInput({
       }}
     >
       <div
-        className={`flex w-full items-center rounded-md border bg-white focus-within:ring-2 focus-within:ring-[#006039] focus-within:border-transparent ${
+        className={`flex w-full items-center rounded-md border bg-white focus-within:ring-2 focus-within:ring-[#244323] focus-within:border-transparent ${
           hasError ? 'border-red-500' : 'border-gray-300'
         } ${disabled ? 'opacity-50' : ''}`}
       >
@@ -280,7 +280,7 @@ export default function PhoneInput({
                     onMouseEnter={() => setActiveIndex(index)}
                     onClick={() => selectCountry(c.code)}
                     className={`flex w-full cursor-pointer items-center gap-3 px-4 py-2 text-sm ${
-                      isActive ? 'bg-gray-100' : isSelected ? 'bg-[#006039]/10' : ''
+                      isActive ? 'bg-gray-100' : isSelected ? 'bg-[#244323]/10' : ''
                     }`}
                   >
                     <Flag country={c} />

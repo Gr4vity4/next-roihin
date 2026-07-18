@@ -281,7 +281,7 @@ export default function BraceletOrderForm() {
   return (
     <>
       {/* Full Width Green Header Section */}
-      <section className="w-full bg-[#006039] pt-20 lg:pt-[260px]">
+      <section className="w-full bg-[#244323] pt-20 lg:pt-[260px]">
         <div className="py-12 lg:py-16">
           <div className="text-center">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#cb9e51] mb-4 font-prompt">
@@ -306,7 +306,7 @@ export default function BraceletOrderForm() {
               {steps.map((step) => (
                 <div key={step.number} className="text-center h-full">
                   <div className="bg-[#FCEFDE] rounded-lg p-4 mb-2 h-full flex flex-col">
-                    <div className="text-3xl font-bold text-[#006039] mb-2">{step.number}</div>
+                    <div className="text-3xl font-bold text-[#244323] mb-2">{step.number}</div>
                     <h3 className="text-sm font-semibold mb-1">{step.title}</h3>
                     <p className="text-xs text-gray-600 leading-tight flex-grow">{step.subtitle}</p>
                   </div>
@@ -344,7 +344,7 @@ export default function BraceletOrderForm() {
                         setFieldErrors({ ...fieldErrors, firstName: false })
                       }
                     }}
-                    className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#006039] focus:border-transparent ${
+                    className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#244323] focus:border-transparent ${
                       fieldErrors.firstName ? 'border-red-500' : 'border-gray-300'
                     }`}
                     placeholder={isThai ? 'ชื่อ' : 'First Name'}
@@ -364,7 +364,7 @@ export default function BraceletOrderForm() {
                         setFieldErrors({ ...fieldErrors, lastName: false })
                       }
                     }}
-                    className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#006039] focus:border-transparent ${
+                    className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#244323] focus:border-transparent ${
                       fieldErrors.lastName ? 'border-red-500' : 'border-gray-300'
                     }`}
                     placeholder={isThai ? 'นามสกุล' : 'Last Name'}
@@ -390,7 +390,7 @@ export default function BraceletOrderForm() {
                         setFieldErrors({ ...fieldErrors, birthDate: false })
                       }
                     }}
-                    className={`px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#006039] focus:border-transparent ${
+                    className={`px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#244323] focus:border-transparent ${
                       fieldErrors.birthDate ? 'border-red-500' : 'border-gray-300'
                     }`}
                   >
@@ -412,7 +412,7 @@ export default function BraceletOrderForm() {
                         setFieldErrors({ ...fieldErrors, birthDate: false })
                       }
                     }}
-                    className={`px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#006039] focus:border-transparent ${
+                    className={`px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#244323] focus:border-transparent ${
                       fieldErrors.birthDate ? 'border-red-500' : 'border-gray-300'
                     }`}
                   >
@@ -434,7 +434,7 @@ export default function BraceletOrderForm() {
                         setFieldErrors({ ...fieldErrors, birthDate: false })
                       }
                     }}
-                    className={`px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#006039] focus:border-transparent ${
+                    className={`px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#244323] focus:border-transparent ${
                       fieldErrors.birthDate ? 'border-red-500' : 'border-gray-300'
                     }`}
                   >
@@ -470,7 +470,7 @@ export default function BraceletOrderForm() {
                       setFieldErrors({ ...fieldErrors, email: false })
                     }
                   }}
-                  className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#006039] focus:border-transparent ${
+                  className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#244323] focus:border-transparent ${
                     fieldErrors.email ? 'border-red-500' : 'border-gray-300'
                   }`}
                   placeholder={isThai ? 'อีเมล' : 'Email Address'}
@@ -517,7 +517,7 @@ export default function BraceletOrderForm() {
                         setFieldErrors({ ...fieldErrors, wristSize: false })
                       }
                     }}
-                    className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#006039] focus:border-transparent ${
+                    className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#244323] focus:border-transparent ${
                       fieldErrors.wristSize ? 'border-red-500' : 'border-gray-300'
                     }`}
                   >
@@ -544,7 +544,7 @@ export default function BraceletOrderForm() {
                         setFieldErrors({ ...fieldErrors, beadSize: false })
                       }
                     }}
-                    className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#006039] focus:border-transparent ${
+                    className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#244323] focus:border-transparent ${
                       fieldErrors.beadSize ? 'border-red-500' : 'border-gray-300'
                     }`}
                   >
@@ -571,7 +571,7 @@ export default function BraceletOrderForm() {
                         setFieldErrors({ ...fieldErrors, budget: false })
                       }
                     }}
-                    className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#006039] focus:border-transparent ${
+                    className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#244323] focus:border-transparent ${
                       fieldErrors.budget ? 'border-red-500' : 'border-gray-300'
                     }`}
                   >
@@ -606,7 +606,7 @@ export default function BraceletOrderForm() {
                           setFieldErrors({ ...fieldErrors, stoneOptions: false })
                         }
                       }}
-                      className="mr-3 text-[#006039] focus:ring-[#006039]"
+                      className="mr-3 text-[#244323] focus:ring-[#244323]"
                     />
                     <span>{isThai ? 'การเงิน โชคลาภ' : 'Wealth & Fortune'}</span>
                   </label>
@@ -623,7 +623,7 @@ export default function BraceletOrderForm() {
                           setFieldErrors({ ...fieldErrors, stoneOptions: false })
                         }
                       }}
-                      className="mr-3 text-[#006039] focus:ring-[#006039]"
+                      className="mr-3 text-[#244323] focus:ring-[#244323]"
                     />
                     <span>{isThai ? 'การงาน ความก้าวหน้า' : 'Career & Progress'}</span>
                   </label>
@@ -640,7 +640,7 @@ export default function BraceletOrderForm() {
                           setFieldErrors({ ...fieldErrors, stoneOptions: false })
                         }
                       }}
-                      className="mr-3 text-[#006039] focus:ring-[#006039]"
+                      className="mr-3 text-[#244323] focus:ring-[#244323]"
                     />
                     <span>{isThai ? 'ความรัก เมตตามหานิยม' : 'Love & Charm'}</span>
                   </label>
@@ -657,7 +657,7 @@ export default function BraceletOrderForm() {
                           setFieldErrors({ ...fieldErrors, stoneOptions: false })
                         }
                       }}
-                      className="mr-3 text-[#006039] focus:ring-[#006039]"
+                      className="mr-3 text-[#244323] focus:ring-[#244323]"
                     />
                     <span>{isThai ? 'สุขภาพ กายใจ' : 'Physical & Mental Health'}</span>
                   </label>
@@ -674,7 +674,7 @@ export default function BraceletOrderForm() {
                           setFieldErrors({ ...fieldErrors, stoneOptions: false })
                         }
                       }}
-                      className="mr-3 text-[#006039] focus:ring-[#006039]"
+                      className="mr-3 text-[#244323] focus:ring-[#244323]"
                     />
                     <span>{isThai ? 'สมาธิ จิตวิญญาณ' : 'Meditation & Spirituality'}</span>
                   </label>
@@ -691,7 +691,7 @@ export default function BraceletOrderForm() {
                 <textarea
                   value={formData.specialRequests}
                   onChange={(e) => setFormData({ ...formData, specialRequests: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#006039] focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#244323] focus:border-transparent"
                   rows={4}
                 />
               </div>
@@ -706,7 +706,7 @@ export default function BraceletOrderForm() {
                 <textarea
                   value={formData.notes}
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#006039] focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#244323] focus:border-transparent"
                   rows={4}
                 />
               </div>
@@ -757,7 +757,7 @@ export default function BraceletOrderForm() {
                         setFieldErrors({ ...fieldErrors, consent: false })
                       }
                     }}
-                    className="mr-3 mt-1 text-[#006039] focus:ring-[#006039]"
+                    className="mr-3 mt-1 text-[#244323] focus:ring-[#244323]"
                   />
                   <span className="text-sm text-gray-600">
                     {isThai
@@ -779,7 +779,7 @@ export default function BraceletOrderForm() {
                         setFieldErrors({ ...fieldErrors, consent2: false })
                       }
                     }}
-                    className="mr-3 mt-1 text-[#006039] focus:ring-[#006039]"
+                    className="mr-3 mt-1 text-[#244323] focus:ring-[#244323]"
                   />
                   <span className="text-sm text-gray-600">
                     {isThai
@@ -793,7 +793,7 @@ export default function BraceletOrderForm() {
               <div className="flex gap-4 justify-center">
                 <button
                   type="submit"
-                  className="px-12 py-3 bg-[#006039] text-white font-medium rounded-md hover:bg-[#004d2e] transition-colors"
+                  className="px-12 py-3 bg-[#244323] text-white font-medium rounded-md hover:bg-[#004d2e] transition-colors"
                 >
                   {isThai ? 'ส่งข้อมูล' : 'Submit'}
                 </button>
@@ -810,7 +810,7 @@ export default function BraceletOrderForm() {
               <div className="mt-8 text-center">
                 <p className="text-sm text-gray-500">
                   {isThai ? 'โปรดเพิ่มเพื่อนใน LINE Official' : 'Please add our LINE Official account'}{' '}
-                  <a href="#" className="text-[#006039] font-semibold">
+                  <a href="#" className="text-[#244323] font-semibold">
                     @roihin4289
                   </a>{' '}
                   {isThai
@@ -900,7 +900,7 @@ export default function BraceletOrderForm() {
           <div className="mt-6 flex justify-center">
             <button
               onClick={() => setShowValidationModal(false)}
-              className="px-6 py-2 bg-[#006039] text-white font-medium rounded-md hover:bg-[#004d2e] transition-colors"
+              className="px-6 py-2 bg-[#244323] text-white font-medium rounded-md hover:bg-[#004d2e] transition-colors"
             >
               {isThai ? 'ตกลง' : 'OK'}
             </button>

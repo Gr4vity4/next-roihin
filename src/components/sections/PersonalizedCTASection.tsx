@@ -23,9 +23,9 @@ export default function PersonalizedCTASection({ buttons }: PersonalizedCTASecti
             : 'bg-[#cb9e51] text-black hover:bg-[#c1a030] border-[#cb9e51] hover:border-[#c1a030]'
         }`
       case 'primary':
-        return `${baseStyles} bg-[#006039] text-white hover:bg-[#004d2e] border-[#006039] hover:border-[#004d2e]`
+        return `${baseStyles} bg-[#244323] text-white hover:bg-[#004d2e] border-[#244323] hover:border-[#004d2e]`
       case 'secondary':
-        return `${baseStyles} bg-transparent text-[#006039] border-[#006039] hover:bg-[#006039] hover:text-white`
+        return `${baseStyles} bg-transparent text-[#244323] border-[#244323] hover:bg-[#244323] hover:text-white`
       default:
         return `${baseStyles} bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200`
     }

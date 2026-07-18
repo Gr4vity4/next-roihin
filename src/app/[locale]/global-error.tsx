@@ -61,7 +61,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
               <div className="space-y-4">
                 <button
                   onClick={reset}
-                  className="w-full bg-[#006039] text-white px-6 py-3 rounded-md hover:bg-[#006039]/90 transition-colors font-medium"
+                  className="w-full bg-[#244323] text-white px-6 py-3 rounded-md hover:bg-[#244323]/90 transition-colors font-medium"
                 >
                   {isThai ? 'ลองใหม่อีกครั้ง' : 'Try Again'}
                 </button>

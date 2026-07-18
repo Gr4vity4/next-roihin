@@ -34,7 +34,7 @@ export default function GlobalNotFound() {
               <span className="text-[#cb9e51] text-4xl font-bold">404</span>
             </div>
 
-            <h1 className="text-[#006039] mb-4 text-2xl lg:text-3xl font-semibold">
+            <h1 className="text-[#244323] mb-4 text-2xl lg:text-3xl font-semibold">
               {isThai ? 'ไม่พบหน้าที่คุณค้นหา' : 'Page Not Found'}
             </h1>
 
@@ -46,7 +46,7 @@ export default function GlobalNotFound() {
 
             <Link
               href={`/${routing.defaultLocale}`}
-              className="inline-flex items-center px-8 py-3 bg-[#006039] text-white rounded-md hover:bg-[#004D2E] transition-colors duration-200 font-medium shadow-md hover:shadow-lg"
+              className="inline-flex items-center px-8 py-3 bg-[#244323] text-white rounded-md hover:bg-[#004D2E] transition-colors duration-200 font-medium shadow-md hover:shadow-lg"
             >
               {isThai ? 'กลับหน้าแรก' : 'Go Home'}
             </Link>

@@ -173,13 +173,13 @@ export default function BlogPostClient({ slug }: BlogPostClientProps) {
               <article className="prose prose-lg max-w-none">
                 <SafeHtml
                   html={article.content ?? ''}
-                  className=" text-gray-800 leading-8 [&_h3]:text-2xl [&_h3]:font-bold [&_h3]:text-[#006039] [&_h3]:mt-8 [&_h3]:mb-4 [&_h4]:text-xl [&_h4]:font-semibold [&_h4]:text-[#006039] [&_h4]:mt-6 [&_h4]:mb-3 [&_p]:mb-4 [&_p]:leading-8 [&_ul]:list-disc [&_ul]:list-inside [&_ul]:mb-4 [&_ul]:space-y-2 [&_li]:leading-7 [&_strong]:font-semibold [&_strong]:text-[#006039]"
+                  className=" text-gray-800 leading-8 [&_h3]:text-2xl [&_h3]:font-bold [&_h3]:text-[#244323] [&_h3]:mt-8 [&_h3]:mb-4 [&_h4]:text-xl [&_h4]:font-semibold [&_h4]:text-[#244323] [&_h4]:mt-6 [&_h4]:mb-3 [&_p]:mb-4 [&_p]:leading-8 [&_ul]:list-disc [&_ul]:list-inside [&_ul]:mb-4 [&_ul]:space-y-2 [&_li]:leading-7 [&_strong]:font-semibold [&_strong]:text-[#244323]"
                 />
               </article>
 
               {article.terms && article.terms.length > 0 && (
                 <div className="mt-12 pt-8 border-t border-gray-200">
-                  <Typography variant="h4" className="text-[#006039] mb-4">
+                  <Typography variant="h4" className="text-[#244323] mb-4">
                     {locale === 'th' ? 'หมวดหมู่' : 'Categories'}
                   </Typography>
                   <div className="flex flex-wrap gap-2">
@@ -200,7 +200,7 @@ export default function BlogPostClient({ slug }: BlogPostClientProps) {
               {article.author && (
                 <div className="mt-8 p-6 bg-gray-50">
                   <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-[#006039] flex items-center justify-center">
+                    <div className="w-12 h-12 bg-[#244323] flex items-center justify-center">
                       <span className="text-white font-bold text-lg">
                         {article.author.name.charAt(0)}
                       </span>

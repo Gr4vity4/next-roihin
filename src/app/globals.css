@@ -20,11 +20,11 @@
   --color-green-300: #66BD99;
   --color-green-400: #33A777;
   --color-green-500: #009155;
-  --color-green-600: #006039;
+  --color-green-600: #244323;
   --color-green-700: #004D2E;
   --color-green-800: #003A23;
   --color-green-900: #002718;
-  --color-green: #006039;
+  --color-green: #244323;
 
   --color-light-gray: #F5F5F5;
 }
@@ -38,7 +38,7 @@
   --background: #ffffff;
   --foreground: #000000;
   --gold: #cb9e51;
-  --green: #006039;
+  --green: #244323;
   --light-gray: #f5f5f5;
   --font-inter: 'Inter', sans-serif;
   --font-bodoni: 'Bodoni Moda', serif;

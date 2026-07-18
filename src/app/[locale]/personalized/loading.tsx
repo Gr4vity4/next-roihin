@@ -88,7 +88,7 @@ export default function PersonalizedLoading() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-[#006039] text-white">
+      <section className="py-16 bg-[#244323] text-white">
         <Container>
           <div className="max-w-4xl mx-auto text-center">
             <Skeleton className="w-64 h-10 bg-white bg-opacity-20 mx-auto mb-4" />

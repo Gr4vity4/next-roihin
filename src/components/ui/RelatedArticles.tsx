@@ -65,7 +65,7 @@ function RelatedArticleCard({ article, locale }: { article: RelatedArticle; loca
           <Typography
             variant="h4"
            
-            className="mb-2 text-gray-900 group-hover:text-[#006039] transition-colors line-clamp-2"
+            className="mb-2 text-gray-900 group-hover:text-[#244323] transition-colors line-clamp-2"
           >
             {title}
           </Typography>
@@ -109,7 +109,7 @@ export default function RelatedArticles({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-8">
-          <Typography variant="h3" className="text-[#006039] mb-2">
+          <Typography variant="h3" className="text-[#244323] mb-2">
             {locale === 'th' ? 'บทความที่เกี่ยวข้อง' : 'Related Articles'}
           </Typography>
           <Typography variant="body" className="text-gray-600">

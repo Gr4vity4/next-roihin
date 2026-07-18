@@ -43,12 +43,12 @@ export default function Breadcrumb({ items, className = '' }: BreadcrumbProps) {
             {item.href ? (
               <Link
                 href={item.href}
-                className="text-gray-600 hover:text-[#006039] transition-colors duration-200"
+                className="text-gray-600 hover:text-[#244323] transition-colors duration-200"
               >
                 <Typography
                   variant="caption"
                  
-                  className="text-sm hover:text-[#006039]"
+                  className="text-sm hover:text-[#244323]"
                 >
                   {item.label}
                 </Typography>

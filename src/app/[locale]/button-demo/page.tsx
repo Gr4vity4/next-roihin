@@ -14,7 +14,7 @@ export default function ButtonDemoPage() {
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-6">Typography Color Test</h2>
           <div className="space-y-4">
-            <Typography variant="h3" color="primary">Primary Color (Green) - This should be green #006039</Typography>
+            <Typography variant="h3" color="primary">Primary Color (Green) - This should be green #244323</Typography>
             <Typography variant="h3" color="highlight">Highlight Color (Gold) - This should be gold #cb9e51</Typography>
             <Typography variant="body">Normal text without color prop</Typography>
           </div>

@@ -53,7 +53,7 @@ function BlogPostCard({ post }: { post: BlogPost }) {
           <Typography
             variant="h4"
            
-            className="mb-2 text-gray-900 group-hover:text-[#006039] transition-colors line-clamp-2"
+            className="mb-2 text-gray-900 group-hover:text-[#244323] transition-colors line-clamp-2"
           >
             {post.title}
           </Typography>
@@ -211,7 +211,7 @@ export default function BlogPostsSection({
       <Container>
         {/* Section Header */}
         <div className="text-center mb-12">
-          <Typography variant="h2" className="text-[#006039] mb-4">
+          <Typography variant="h2" className="text-[#244323] mb-4">
             {title.thai}
           </Typography>
           <Typography variant="body" className="text-gray-600 max-w-2xl mx-auto">
@@ -228,7 +228,7 @@ export default function BlogPostsSection({
               disabled={loading}
               className={`px-4 py-2 text-sm font-medium rounded-full transition-all duration-300 shadow-sm border ${
                 selectedCategory === category.id
-                  ? 'bg-[#006039] text-white border-[#006039] shadow-md hover:bg-[#004D2E]'
+                  ? 'bg-[#244323] text-white border-[#244323] shadow-md hover:bg-[#004D2E]'
                   : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700'
               } ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
             >

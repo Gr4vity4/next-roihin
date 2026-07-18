@@ -64,7 +64,7 @@ export default function Error({ error, reset }: ErrorProps) {
           {/* Error Message */}
           <Typography
             variant="h2"
-            className="text-[#006039] mb-4 text-2xl lg:text-3xl"
+            className="text-[#244323] mb-4 text-2xl lg:text-3xl"
           >
             {isThai ? 'เกิดข้อผิดพลาด' : 'Something went wrong'}
           </Typography>
@@ -89,7 +89,7 @@ export default function Error({ error, reset }: ErrorProps) {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
             <button
               onClick={reset}
-              className="inline-flex items-center px-8 py-3 bg-[#006039] text-white rounded-md hover:bg-[#004D2E] transition-colors duration-200 font-medium shadow-md hover:shadow-lg"
+              className="inline-flex items-center px-8 py-3 bg-[#244323] text-white rounded-md hover:bg-[#004D2E] transition-colors duration-200 font-medium shadow-md hover:shadow-lg"
             >
               <RefreshIcon className="h-5 w-5 mr-2" />
               <Typography
@@ -133,7 +133,7 @@ export default function Error({ error, reset }: ErrorProps) {
             <div className="flex flex-col sm:flex-row gap-4 justify-center text-sm">
               <Link 
                 href="/customer-service" 
-                className="text-[#006039] hover:text-[#004D2E] transition-colors"
+                className="text-[#244323] hover:text-[#004D2E] transition-colors"
               >
                 {isThai ? 'ศูนย์ช่วยเหลือ' : 'Customer Service'}
               </Link>

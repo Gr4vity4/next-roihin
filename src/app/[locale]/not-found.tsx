@@ -29,7 +29,7 @@ export default async function NotFound() {
           {/* Error Message */}
           <Typography
             variant="h2"
-            className="text-[#006039] mb-6 text-2xl lg:text-3xl"
+            className="text-[#244323] mb-6 text-2xl lg:text-3xl"
           >
             {isThai ? 'ไม่พบหน้าที่คุณค้นหา' : 'Page Not Found'}
           </Typography>
@@ -47,7 +47,7 @@ export default async function NotFound() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link
               href="/"
-              className="inline-flex items-center px-8 py-3 bg-[#006039] text-white rounded-md hover:bg-[#004D2E] transition-colors duration-200 font-medium shadow-md hover:shadow-lg"
+              className="inline-flex items-center px-8 py-3 bg-[#244323] text-white rounded-md hover:bg-[#004D2E] transition-colors duration-200 font-medium shadow-md hover:shadow-lg"
             >
               <HomeIcon className="h-5 w-5 mr-2" />
               <Typography
@@ -80,19 +80,19 @@ export default async function NotFound() {
             </Typography>
             
             <div className="flex flex-wrap justify-center gap-4 text-sm">
-              <Link href="/about" className="text-[#006039] hover:text-[#004D2E] transition-colors">
+              <Link href="/about" className="text-[#244323] hover:text-[#004D2E] transition-colors">
                 {isThai ? 'เกี่ยวกับเรา' : 'About'}
               </Link>
               <span className="text-gray-300">•</span>
-              <Link href="/personalized" className="text-[#006039] hover:text-[#004D2E] transition-colors">
+              <Link href="/personalized" className="text-[#244323] hover:text-[#004D2E] transition-colors">
                 {isThai ? 'สร้างสร้อยส่วนตัว' : 'Personalized'}
               </Link>
               <span className="text-gray-300">•</span>
-              <Link href="/charmspacer" className="text-[#006039] hover:text-[#004D2E] transition-colors">
+              <Link href="/charmspacer" className="text-[#244323] hover:text-[#004D2E] transition-colors">
                 {isThai ? 'จี้และแต่ง' : 'Charms'}
               </Link>
               <span className="text-gray-300">•</span>
-              <Link href="/customer-service" className="text-[#006039] hover:text-[#004D2E] transition-colors">
+              <Link href="/customer-service" className="text-[#244323] hover:text-[#004D2E] transition-colors">
                 {isThai ? 'ติดต่อ' : 'Contact'}
               </Link>
             </div>

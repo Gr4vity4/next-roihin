@@ -43,7 +43,7 @@ const alignmentClasses = {
 }
 
 const colorClasses = {
-  primary: 'text-[#006039]', // Direct hex value for green
+  primary: 'text-[#244323]', // Direct hex value for green
   highlight: 'text-[#cb9e51]', // Direct hex value for gold
 } as const
 
