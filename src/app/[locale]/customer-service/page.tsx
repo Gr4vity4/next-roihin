@@ -527,7 +527,7 @@ export default function CustomerServicePage() {
         </section>
 
         {/* FAQ Section */}
-        <section className="bg-white py-20 lg:py-28 border border-gray-100">
+        <section className="bg-[#edf0ef] py-20 lg:py-28 border border-gray-100">
           <Container>
             <div className="max-w-6xl mx-auto space-y-10">
               <Typography variant="h3" align="center" className="text-gray-900">
