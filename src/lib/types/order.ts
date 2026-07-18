@@ -14,14 +14,21 @@ export interface OrderItem {
 
 export interface ShippingAddress {
   id?: number
-  full_name: string
+  first_name: string
+  last_name: string
   phone: string
   address: string
-  subdistrict?: string | null
-  district: string
+  apartment?: string | null
+  city: string
   province: string
   postal_code: string
-  country: string
+  email?: string | null
+  // Legacy fields — present only on order snapshots created before the address
+  // restructure. Kept optional so historical orders still render.
+  full_name?: string | null
+  subdistrict?: string | null
+  district?: string | null
+  country?: string | null
 }
 
 export interface OrderResource {

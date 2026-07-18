@@ -2,26 +2,36 @@
 
 import Button from '@/components/Button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import PhoneInput from '@/components/ui/PhoneInput'
+import AddressFields, { type AddressFieldValues } from '@/components/ui/AddressFields'
 import { combinePhone, splitPhone } from '@/lib/data/countries'
 import { useLocale, useTranslations } from 'next-intl'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 interface Address {
   id: string
-  full_name: string
+  first_name: string
+  last_name: string
   phone: string
   address: string
-  subdistrict: string
-  district: string
+  apartment: string | null
+  city: string
   province: string
   postal_code: string
-  country: string
   created_at: number
   updated_at: number
   is_default: boolean
+}
+
+const EMPTY_ADDRESS: AddressFieldValues = {
+  first_name: '',
+  last_name: '',
+  address: '',
+  apartment: '',
+  postal_code: '',
+  city: '',
+  province: '',
+  phone: '',
 }
 
 export default function AddressesPage() {
@@ -36,15 +46,28 @@ export default function AddressesPage() {
   const [setAsDefault, setSetAsDefault] = useState(false)
   const [phoneCountry, setPhoneCountry] = useState('th')
 
-  const [formData, setFormData] = useState({
-    full_name: '',
-    phone: '',
-    address: '',
-    subdistrict: '',
-    district: '',
-    province: '',
-    postal_code: '',
-  })
+  const [formData, setFormData] = useState<AddressFieldValues>(EMPTY_ADDRESS)
+
+  const addressLabels = useMemo(
+    () => ({
+      firstName: t('form.firstName'),
+      lastName: t('form.lastName'),
+      address: t('form.address'),
+      addressPlaceholder: t('form.addressPlaceholder'),
+      apartment: t('form.apartment'),
+      apartmentPlaceholder: t('form.apartmentPlaceholder'),
+      postalCode: t('form.postalCode'),
+      city: t('form.city'),
+      province: t('form.province'),
+      provincePlaceholder: t('form.provincePlaceholder'),
+      phone: t('form.phone'),
+    }),
+    [t]
+  )
+
+  const handleFieldChange = useCallback((field: keyof AddressFieldValues, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }))
+  }, [])
 
   const fetchAddresses = useCallback(async () => {
     try {
@@ -74,15 +97,7 @@ export default function AddressesPage() {
 
   const handleAddAddress = () => {
     setPhoneCountry('th')
-    setFormData({
-      full_name: '',
-      phone: '',
-      address: '',
-      subdistrict: '',
-      district: '',
-      province: '',
-      postal_code: '',
-    })
+    setFormData(EMPTY_ADDRESS)
     setSetAsDefault(false)
     setEditingAddress(null)
     setIsAddModalOpen(true)
@@ -92,13 +107,14 @@ export default function AddressesPage() {
     const parsedPhone = splitPhone(address.phone)
     setPhoneCountry(parsedPhone.country)
     setFormData({
-      full_name: address.full_name,
-      phone: parsedPhone.phone,
+      first_name: address.first_name,
+      last_name: address.last_name,
       address: address.address,
-      subdistrict: address.subdistrict,
-      district: address.district,
-      province: address.province,
+      apartment: address.apartment ?? '',
       postal_code: address.postal_code,
+      city: address.city,
+      province: address.province,
+      phone: parsedPhone.phone,
     })
     setEditingAddress(address)
     setIsAddModalOpen(true)
@@ -109,6 +125,17 @@ export default function AddressesPage() {
     setIsLoading(true)
     setError(null)
 
+    const addressPayload = {
+      first_name: formData.first_name,
+      last_name: formData.last_name,
+      address: formData.address,
+      apartment: formData.apartment.trim() ? formData.apartment : null,
+      postal_code: formData.postal_code,
+      city: formData.city,
+      province: formData.province,
+      phone: combinePhone(phoneCountry, formData.phone),
+    }
+
     try {
       if (editingAddress) {
         const response = await fetch(`/api/addresses/${editingAddress.id}`, {
@@ -116,10 +143,7 @@ export default function AddressesPage() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            ...formData,
-            phone: combinePhone(phoneCountry, formData.phone),
-          }),
+          body: JSON.stringify(addressPayload),
         })
 
         if (!response.ok) {
@@ -135,9 +159,7 @@ export default function AddressesPage() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            ...formData,
-            phone: combinePhone(phoneCountry, formData.phone),
-            country: 'TH',
+            ...addressPayload,
             set_default: setAsDefault,
           }),
         })
@@ -238,12 +260,18 @@ export default function AddressesPage() {
             )}
 
             <div className="space-y-2 mb-4">
-              <p className="font-semibold text-gray-900">{address.full_name}</p>
+              <p className="font-semibold text-gray-900">
+                {address.first_name} {address.last_name}
+              </p>
               <p className="text-gray-600">{address.phone}</p>
               <p className="text-gray-600">
                 {address.address}<br />
-                {address.subdistrict}, {address.district}<br />
-                {address.province} {address.postal_code}
+                {address.apartment && (
+                  <>
+                    {address.apartment}<br />
+                  </>
+                )}
+                {address.city}, {address.province} {address.postal_code}
               </p>
             </div>
 
@@ -297,7 +325,7 @@ export default function AddressesPage() {
 
       {/* Add/Edit Address Modal */}
       <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>
               {editingAddress ? t('form.editTitle') : t('form.addTitle')}
@@ -305,87 +333,14 @@ export default function AddressesPage() {
           </DialogHeader>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="full_name">{t('form.fullName')}</Label>
-              <Input
-                id="full_name"
-                type="text"
-                value={formData.full_name}
-                onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="phone">{t('form.phone')}</Label>
-              <PhoneInput
-                id="phone"
-                lang={locale}
-                country={phoneCountry}
-                phone={formData.phone}
-                onCountryChange={setPhoneCountry}
-                onPhoneChange={(phone) => setFormData({ ...formData, phone })}
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="address">{t('form.address')}</Label>
-              <Input
-                id="address"
-                type="text"
-                placeholder={t('form.addressPlaceholder')}
-                value={formData.address}
-                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                required
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="subdistrict">{t('form.subdistrict')}</Label>
-                <Input
-                  id="subdistrict"
-                  type="text"
-                  value={formData.subdistrict}
-                  onChange={(e) => setFormData({ ...formData, subdistrict: e.target.value })}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="district">{t('form.district')}</Label>
-                <Input
-                  id="district"
-                  type="text"
-                  value={formData.district}
-                  onChange={(e) => setFormData({ ...formData, district: e.target.value })}
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="province">{t('form.province')}</Label>
-                <Input
-                  id="province"
-                  type="text"
-                  value={formData.province}
-                  onChange={(e) => setFormData({ ...formData, province: e.target.value })}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="postal_code">{t('form.postalCode')}</Label>
-                <Input
-                  id="postal_code"
-                  type="text"
-                  value={formData.postal_code}
-                  onChange={(e) => setFormData({ ...formData, postal_code: e.target.value })}
-                  required
-                />
-              </div>
-            </div>
+            <AddressFields
+              values={formData}
+              onFieldChange={handleFieldChange}
+              labels={addressLabels}
+              locale={locale}
+              phoneCountry={phoneCountry}
+              onPhoneCountryChange={setPhoneCountry}
+            />
 
             {!editingAddress && (
               <div className="flex items-center space-x-2">

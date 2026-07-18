@@ -50,12 +50,16 @@ export const UserSchema = z.object({
   email: z.string().email(),
   phone: z.string().nullable(),
   roles: z.array(z.string()),
-  shipping_phone: z.string().nullable(),
-  shipping_address: z.string().nullable(),
-  shipping_district: z.string().nullable(),
-  shipping_amphoe: z.string().nullable(),
-  shipping_province: z.string().nullable(),
-  shipping_zipcode: z.string().nullable(),
+  // Shipping mirror fields (new backend contract). Optional + nullable so the
+  // auth response still validates regardless of which fields the API includes.
+  shipping_phone: z.string().nullable().optional(),
+  shipping_first_name: z.string().nullable().optional(),
+  shipping_last_name: z.string().nullable().optional(),
+  shipping_address: z.string().nullable().optional(),
+  shipping_apartment: z.string().nullable().optional(),
+  shipping_city: z.string().nullable().optional(),
+  shipping_province: z.string().nullable().optional(),
+  shipping_postal_code: z.string().nullable().optional(),
   created_at: z.string().nullable(),
   updated_at: z.string().nullable(),
 })

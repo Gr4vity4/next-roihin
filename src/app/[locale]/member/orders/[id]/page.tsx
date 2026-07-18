@@ -3,6 +3,7 @@
 import Button from '@/components/Button'
 import { Link } from '@/i18n/navigation'
 import type { OrderResource } from '@/lib/types/order'
+import { formatRecipientName, getShippingAddressLines } from '@/lib/utils/shipping-address'
 import { ArrowLeft, Clock, CreditCard, MapPin, Package } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import { useParams } from 'next/navigation'
@@ -331,13 +332,12 @@ export default function OrderDetailPage() {
             </div>
             {order.shipping_address ? (
               <div className="text-sm text-gray-700 space-y-1">
-                <p className="font-medium text-gray-900">{order.shipping_address.full_name}</p>
-                <p>{order.shipping_address.address}</p>
-                {order.shipping_address.subdistrict && <p>{order.shipping_address.subdistrict}</p>}
-                <p>
-                  {order.shipping_address.district}, {order.shipping_address.province} {order.shipping_address.postal_code}
+                <p className="font-medium text-gray-900">
+                  {formatRecipientName(order.shipping_address)}
                 </p>
-                <p>{order.shipping_address.country}</p>
+                {getShippingAddressLines(order.shipping_address).map((line, index) => (
+                  <p key={`${index}-${line}`}>{line}</p>
+                ))}
                 <p className="text-gray-500 mt-2">
                   {tThankYou('orderDetails.phone', { defaultValue: 'Phone' })}: {order.shipping_address.phone}
                 </p>

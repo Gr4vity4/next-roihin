@@ -2,7 +2,9 @@
 
 import BraceletPreview from '@/components/BraceletPreview'
 import Container from '@/components/ui/Container'
-import PhoneInput from '@/components/ui/PhoneInput'
+import AddressFields, { type AddressFieldValues } from '@/components/ui/AddressFields'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import Typography from '@/components/ui/Typography'
 import { combinePhone, splitPhone } from '@/lib/data/countries'
 import { useAuth } from '@/contexts/AuthContext'
@@ -14,16 +16,22 @@ import type { CreateOrderPayload } from '@/lib/api/orders'
 import { ArrowLeft } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import Image from 'next/image'
-import { ChangeEvent, FormEvent, useEffect, useState } from 'react'
+import { FormEvent, useEffect, useMemo, useState } from 'react'
 
-interface ShippingAddress {
-  fullName: string
+interface ShippingFormState extends AddressFieldValues {
   email: string
-  phone: string
-  address: string
-  district: string
-  province: string
-  postalCode: string
+}
+
+const EMPTY_SHIPPING: ShippingFormState = {
+  first_name: '',
+  last_name: '',
+  email: '',
+  phone: '',
+  address: '',
+  apartment: '',
+  postal_code: '',
+  city: '',
+  province: '',
 }
 
 export default function CheckoutConfirmContent() {
@@ -38,15 +46,25 @@ export default function CheckoutConfirmContent() {
   const [addressLoading, setAddressLoading] = useState(false)
   const [defaultAddressId, setDefaultAddressId] = useState<string | null>(null)
   const [phoneCountry, setPhoneCountry] = useState('th')
-  const [shippingAddress, setShippingAddress] = useState<ShippingAddress>({
-    fullName: '',
-    email: '',
-    phone: '',
-    address: '',
-    district: '',
-    province: '',
-    postalCode: '',
-  })
+  const [shippingAddress, setShippingAddress] = useState<ShippingFormState>(EMPTY_SHIPPING)
+
+  const addressLabels = useMemo(
+    () => ({
+      firstName: t('shippingAddress.firstName'),
+      lastName: t('shippingAddress.lastName'),
+      address: t('shippingAddress.address'),
+      addressPlaceholder: t('shippingAddress.addressPlaceholder'),
+      apartment: t('shippingAddress.apartment'),
+      apartmentPlaceholder: t('shippingAddress.apartmentPlaceholder'),
+      postalCode: t('shippingAddress.postalCode'),
+      city: t('shippingAddress.city'),
+      province: t('shippingAddress.province'),
+      provincePlaceholder: t('shippingAddress.provincePlaceholder'),
+      phone: t('shippingAddress.phone'),
+      phonePlaceholder: t('shippingAddress.phonePlaceholder'),
+    }),
+    [t]
+  )
 
   useEffect(() => {
     // Redirect if cart is empty
@@ -68,13 +86,15 @@ export default function CheckoutConfirmContent() {
           const parsedPhone = splitPhone(item.phone)
           setPhoneCountry(parsedPhone.country)
           setShippingAddress({
-            fullName: item.full_name,
+            first_name: item.first_name,
+            last_name: item.last_name,
             email: user?.email || '',
             phone: parsedPhone.phone,
-            address: `${item.address}${item.subdistrict ? `, ${item.subdistrict}` : ''}`,
-            district: item.district,
+            address: item.address,
+            apartment: item.apartment ?? '',
+            postal_code: item.postal_code,
+            city: item.city,
             province: item.province,
-            postalCode: item.postal_code,
           })
         } else {
           setDefaultAddressId(null)
@@ -89,11 +109,10 @@ export default function CheckoutConfirmContent() {
     fetchDefaultAddress()
   }, [isLoggedIn, user])
 
-  const handleAddressChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
+  const handleFieldChange = (field: keyof AddressFieldValues, value: string) => {
     setShippingAddress((prev) => ({
       ...prev,
-      [name]: value,
+      [field]: value,
     }))
   }
 
@@ -125,14 +144,14 @@ export default function CheckoutConfirmContent() {
           }
         }),
         shipping_address: {
-          full_name: shippingAddress.fullName,
+          first_name: shippingAddress.first_name,
+          last_name: shippingAddress.last_name,
           phone: combinePhone(phoneCountry, shippingAddress.phone),
           address: shippingAddress.address,
-          subdistrict: '',
-          district: shippingAddress.district,
+          apartment: shippingAddress.apartment.trim() ? shippingAddress.apartment : null,
+          city: shippingAddress.city,
           province: shippingAddress.province,
-          postal_code: shippingAddress.postalCode,
-          country: 'TH',
+          postal_code: shippingAddress.postal_code,
           email: shippingAddress.email,
         },
         currency: 'THB',
@@ -200,13 +219,14 @@ export default function CheckoutConfirmContent() {
 
   const isFormValid = () => {
     return (
-      shippingAddress.fullName &&
+      shippingAddress.first_name &&
+      shippingAddress.last_name &&
       shippingAddress.email &&
       shippingAddress.phone &&
       shippingAddress.address &&
-      shippingAddress.district &&
+      shippingAddress.city &&
       shippingAddress.province &&
-      shippingAddress.postalCode
+      shippingAddress.postal_code
     )
   }
 
@@ -245,136 +265,33 @@ export default function CheckoutConfirmContent() {
                     )}
                   </div>
 
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div className="md:col-span-2">
-                      <label
-                        htmlFor="fullName"
-                        className="block text-sm font-medium text-gray-700 mb-2"
-                      >
-                        {t('shippingAddress.fullName')} {t('payment.required')}
-                      </label>
-                      <input
-                        type="text"
-                        id="fullName"
-                        name="fullName"
-                        value={shippingAddress.fullName}
-                        onChange={handleAddressChange}
-                        required
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      />
-                    </div>
-
-                    <div className="md:col-span-2">
-                      <label
-                        htmlFor="email"
-                        className="block text-sm font-medium text-gray-700 mb-2"
-                      >
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="email">
                         {t('shippingAddress.email')} {t('payment.required')}
-                      </label>
-                      <input
+                      </Label>
+                      <Input
                         type="email"
                         id="email"
                         name="email"
                         value={shippingAddress.email}
-                        onChange={handleAddressChange}
-                        required
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      />
-                    </div>
-
-                    <div className="md:col-span-2">
-                      <label
-                        htmlFor="phone"
-                        className="block text-sm font-medium text-gray-700 mb-2"
-                      >
-                        {t('shippingAddress.phone')} {t('payment.required')}
-                      </label>
-                      <PhoneInput
-                        id="phone"
-                        lang={locale}
-                        country={phoneCountry}
-                        phone={shippingAddress.phone}
-                        onCountryChange={setPhoneCountry}
-                        onPhoneChange={(phone) =>
-                          setShippingAddress((prev) => ({ ...prev, phone }))
+                        onChange={(e) =>
+                          setShippingAddress((prev) => ({ ...prev, email: e.target.value }))
                         }
                         required
                       />
                     </div>
 
-                    <div className="md:col-span-2">
-                      <label
-                        htmlFor="address"
-                        className="block text-sm font-medium text-gray-700 mb-2"
-                      >
-                        {t('shippingAddress.address')} {t('payment.required')}
-                      </label>
-                      <textarea
-                        id="address"
-                        name="address"
-                        value={shippingAddress.address}
-                        onChange={handleAddressChange}
-                        required
-                        rows={3}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      />
-                    </div>
-
-                    <div>
-                      <label
-                        htmlFor="district"
-                        className="block text-sm font-medium text-gray-700 mb-2"
-                      >
-                        {t('shippingAddress.district')} {t('payment.required')}
-                      </label>
-                      <input
-                        type="text"
-                        id="district"
-                        name="district"
-                        value={shippingAddress.district}
-                        onChange={handleAddressChange}
-                        required
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      />
-                    </div>
-
-                    <div>
-                      <label
-                        htmlFor="province"
-                        className="block text-sm font-medium text-gray-700 mb-2"
-                      >
-                        {t('shippingAddress.province')} {t('payment.required')}
-                      </label>
-                      <input
-                        type="text"
-                        id="province"
-                        name="province"
-                        value={shippingAddress.province}
-                        onChange={handleAddressChange}
-                        required
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      />
-                    </div>
-
-                    <div>
-                      <label
-                        htmlFor="postalCode"
-                        className="block text-sm font-medium text-gray-700 mb-2"
-                      >
-                        {t('shippingAddress.postalCode')} {t('payment.required')}
-                      </label>
-                      <input
-                        type="text"
-                        id="postalCode"
-                        name="postalCode"
-                        value={shippingAddress.postalCode}
-                        onChange={handleAddressChange}
-                        required
-                        maxLength={5}
-                        pattern="[0-9]{5}"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                      />
-                    </div>
+                    <AddressFields
+                      values={shippingAddress}
+                      onFieldChange={handleFieldChange}
+                      labels={addressLabels}
+                      locale={locale}
+                      phoneCountry={phoneCountry}
+                      onPhoneCountryChange={setPhoneCountry}
+                      requiredMarker={t('payment.required')}
+                      idPrefix="ship_"
+                    />
                   </div>
                 </div>
 

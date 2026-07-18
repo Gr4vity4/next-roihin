@@ -9,6 +9,7 @@ import Typography from '@/components/ui/Typography'
 import { CircleCheck, Loader2 } from 'lucide-react'
 import { useCart } from '@/contexts/CartContext'
 import type { OrderResource } from '@/lib/types/order'
+import { formatRecipientName, getShippingAddressLines } from '@/lib/utils/shipping-address'
 
 function formatCurrency(amountMinor: number, locale: string, currency: string): string {
   try {
@@ -240,15 +241,12 @@ export default function ThankYouContent() {
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('shippingAddress.title')}</h3>
                 {order.shipping_address ? (
                   <div className="text-sm text-gray-700 space-y-1">
-                    <p className="font-medium text-gray-900">{order.shipping_address.full_name}</p>
-                    <p>{order.shipping_address.address}</p>
-                    {order.shipping_address.subdistrict && (
-                      <p>{order.shipping_address.subdistrict}</p>
-                    )}
-                    <p>
-                      {order.shipping_address.district}, {order.shipping_address.province} {order.shipping_address.postal_code}
+                    <p className="font-medium text-gray-900">
+                      {formatRecipientName(order.shipping_address)}
                     </p>
-                    <p>{order.shipping_address.country}</p>
+                    {getShippingAddressLines(order.shipping_address).map((line, index) => (
+                      <p key={`${index}-${line}`}>{line}</p>
+                    ))}
                     <p className="text-gray-500">
                       {t('orderDetails.phone', { defaultValue: 'Phone' })}: {order.shipping_address.phone}
                     </p>

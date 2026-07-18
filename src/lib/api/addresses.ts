@@ -1,26 +1,26 @@
 import { getLaravelApiEndpoint } from '@/config/api.config'
 
 export interface ShippingAddressPayload {
-  full_name: string
+  first_name: string
+  last_name: string
   phone: string
   address: string
-  subdistrict: string
-  district: string
+  apartment?: string | null
+  city: string
   province: string
   postal_code: string
-  country?: string | null
 }
 
 export interface ShippingAddressResponseItem {
   id: string
-  full_name: string
+  first_name: string
+  last_name: string
   phone: string
   address: string
-  subdistrict: string
-  district: string
+  apartment: string | null
+  city: string
   province: string
   postal_code: string
-  country: string
   is_default: boolean
   created_at: number | null
   updated_at: number | null
