@@ -78,6 +78,11 @@ export default function ProductDetail({ product, category, language = 'en', brea
     return language === 'th' ? thai || english : english || thai
   }
 
+  const description = pickLocalized(
+    product.acf.description_th,
+    product.acf.description_en,
+  )
+
   const detailSections = [
     {
       id: 'materials',
@@ -475,22 +480,14 @@ export default function ProductDetail({ product, category, language = 'en', brea
             </div>
 
             {/* Description */}
-            {(product.acf.description_th || product.acf.description_en) && (
+            {description !== '' && (
               <div className="space-y-4 border-t border-gray-800 pt-6">
                 <h3 className="text-lg text-white font-medium">
                   {language === 'th' ? 'รายละเอียดสินค้า' : 'Product Details'}
                 </h3>
-                <div className="text-gray-300 leading-relaxed">
-                  <div
-                    dangerouslySetInnerHTML={{
-                      __html:
-                        language === 'th'
-                          ? product.acf.description_th || product.acf.description_en || ''
-                          : product.acf.description_en || product.acf.description_th || '',
-                    }}
-                    className="prose prose-invert prose-sm max-w-none"
-                  />
-                </div>
+                <p className="text-gray-300 leading-relaxed whitespace-pre-line">
+                  {description}
+                </p>
               </div>
             )}
 
