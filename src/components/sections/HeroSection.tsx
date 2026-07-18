@@ -8,6 +8,7 @@ import { useTranslations } from 'next-intl'
 
 interface HeroSectionProps {
   backgroundImage: string
+  backgroundImageMobile?: string
   backgroundAlt: string
   overlayOpacity?: number
   parallaxSpeed?: number
@@ -19,6 +20,7 @@ interface HeroSectionProps {
     href?: string
     size?: 'sm' | 'md' | 'lg'
     highlight?: boolean
+    className?: string
   }
   className?: string
   minHeight?: string
@@ -26,6 +28,7 @@ interface HeroSectionProps {
 
 export default function HeroSection({
   backgroundImage,
+  backgroundImageMobile,
   backgroundAlt,
   overlayOpacity = 0.4,
   parallaxSpeed = 0.5,
@@ -40,13 +43,14 @@ export default function HeroSection({
   return (
     <ParallaxSection
       imageUrl={backgroundImage}
+      mobileImageUrl={backgroundImageMobile}
       imageAlt={backgroundAlt}
       overlayOpacity={overlayOpacity}
       parallaxSpeed={parallaxSpeed}
-      className={`${minHeight} flex items-center justify-center ${className}`}
+      className={`${minHeight} flex items-end justify-center ${className}`}
     >
       <Container className="text-center text-white">
-        <Typography variant="h2" textShadow className="mb-10">
+        <Typography variant="h2" textShadow className="mb-10 font-normal">
           {t('homePage.hero.title')}
           <br />
           <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl">
@@ -59,6 +63,7 @@ export default function HeroSection({
               variant={ctaButton.variant}
               size={ctaButton.size || 'lg'}
               highlight={ctaButton.highlight}
+              className={ctaButton.className}
             >
               {buttonText}
             </Button>
@@ -68,6 +73,7 @@ export default function HeroSection({
             variant={ctaButton.variant}
             size={ctaButton.size || 'lg'}
             highlight={ctaButton.highlight}
+            className={ctaButton.className}
             onClick={ctaButton.onClick}
           >
             {buttonText}

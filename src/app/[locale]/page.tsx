@@ -17,6 +17,10 @@ import { getGalleryImagesBySlug } from '@/lib/api/gallery'
 export const revalidate = 0
 
 export default async function Home() {
+  // Pick a random hero background per request; desktop/mobile files share the same number
+  const { basePath, imageCount } = content.hero.background
+  const heroImageNumber = String(Math.floor(Math.random() * imageCount) + 1).padStart(2, '0')
+
   // Fetch Inspired gallery images from Laravel admin REST endpoint
   const inspiredGalleryImages = await getGalleryImagesBySlug('inspired')
   const galleryImages = inspiredGalleryImages
@@ -32,10 +36,11 @@ export default async function Home() {
       <main className="overflow-x-hidden w-full">
         {/* Hero Section - starts at top of page, content positioned to account for nav */}
         <HeroSection
-          backgroundImage={content.hero.background.image}
+          backgroundImage={`${basePath}/${heroImageNumber}-desktop.avif`}
+          backgroundImageMobile={`${basePath}/${heroImageNumber}-mobile.avif`}
           backgroundAlt={content.hero.background.alt}
           ctaButton={{ ...content.hero.cta, translationKey: 'orderNow' }}
-          className="pt-20 lg:pt-[230px]"
+          className="pt-20 lg:pt-[230px] pb-16 lg:pb-28"
         />
 
         {/* About Section */}

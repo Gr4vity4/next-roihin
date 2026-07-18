@@ -11,12 +11,16 @@ export const content = {
     },
     cta: {
       text: 'สั่งออกแบบ',
-      variant: 'gold' as const,
-      highlight: true,
+      variant: 'outline' as const,
+      // Hero-only: black fill + green (#489B53) overriding the outline variant's default #005635
+      className:
+        'bg-black border-[#489B53] text-[#489B53] hover:bg-[#489B53] hover:text-white focus:ring-[#489B53]',
       href: '/bracelet-order',
     },
     background: {
-      image: '/images/background/357c3a_d5bbbe07a2cb43579ad4d33c6279ff5a~mv2.avif',
+      // Images live in public/images/home-page/hero as NN-desktop.avif / NN-mobile.avif pairs
+      basePath: '/images/home-page/hero',
+      imageCount: 6,
       alt: 'Stone bracelets background',
     },
   },

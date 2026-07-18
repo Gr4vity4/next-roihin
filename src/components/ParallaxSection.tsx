@@ -1,10 +1,12 @@
 'use client'
 
-import Image from 'next/image'
+import Image, { getImageProps } from 'next/image'
 import { ReactNode, useEffect, useRef, useState } from 'react'
 
 interface ParallaxSectionProps {
   imageUrl: string
+  /** Art-direction variant served below the md breakpoint instead of imageUrl */
+  mobileImageUrl?: string
   imageAlt: string
   children: ReactNode
   overlayOpacity?: number
@@ -15,6 +17,7 @@ interface ParallaxSectionProps {
 
 export default function ParallaxSection({
   imageUrl,
+  mobileImageUrl,
   imageAlt,
   children,
   overlayOpacity = 0.4,
@@ -76,10 +79,35 @@ export default function ParallaxSection({
     }
   }, [parallaxSpeed])
 
+  const hasImage = Boolean(imageUrl && imageUrl.trim() !== '')
+
+  let artDirected: {
+    desktopSrcSet?: string
+    desktopSizes?: string
+    mobileProps?: ReturnType<typeof getImageProps>['props']
+  } = {}
+  if (hasImage && mobileImageUrl) {
+    const shared = {
+      alt: imageAlt,
+      fill: true as const,
+      quality: 90,
+      sizes: '100vw',
+      priority: isInView,
+    }
+    const { props: desktopProps } = getImageProps({ ...shared, src: imageUrl })
+    const { props: mobileProps } = getImageProps({ ...shared, src: mobileImageUrl })
+    artDirected = {
+      // With images.unoptimized there is no srcSet, only a plain src
+      desktopSrcSet: desktopProps.srcSet ?? desktopProps.src,
+      desktopSizes: desktopProps.srcSet ? desktopProps.sizes : undefined,
+      mobileProps,
+    }
+  }
+
   return (
     <section ref={parallaxRef} className={`relative overflow-hidden w-full ${className}`}>
       {/* Parallax Background Image or Black Background */}
-      {imageUrl && imageUrl.trim() !== '' ? (
+      {hasImage ? (
         <div
           ref={imageRef}
           className="absolute z-0 will-change-transform"
@@ -90,16 +118,32 @@ export default function ParallaxSection({
             height: `${100 + parallaxSpeed * 100}%`,
           }}
         >
-          <Image
-            src={imageUrl}
-            alt={imageAlt}
-            fill
-            className="object-cover"
-            style={{ objectPosition: backgroundPosition }}
-            priority={isInView}
-            quality={90}
-            sizes="100vw"
-          />
+          {artDirected.mobileProps ? (
+            <picture>
+              <source
+                media="(min-width: 768px)"
+                srcSet={artDirected.desktopSrcSet}
+                sizes={artDirected.desktopSizes}
+              />
+              <img
+                {...artDirected.mobileProps}
+                alt={imageAlt}
+                className="object-cover"
+                style={{ ...artDirected.mobileProps.style, objectPosition: backgroundPosition }}
+              />
+            </picture>
+          ) : (
+            <Image
+              src={imageUrl}
+              alt={imageAlt}
+              fill
+              className="object-cover"
+              style={{ objectPosition: backgroundPosition }}
+              priority={isInView}
+              quality={90}
+              sizes="100vw"
+            />
+          )}
           <div
             className="absolute inset-0"
             style={{ backgroundColor: `rgba(0, 0, 0, ${overlayOpacity})` }}
