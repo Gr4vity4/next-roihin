@@ -85,6 +85,7 @@ const nextConfig: NextConfig = {
               "img-src 'self' data: https: blob:",
               "font-src 'self' https://fonts.gstatic.com",
               connectSrcDirective,
+              "frame-src 'self' https://www.google.com https://maps.google.com",
               "media-src 'self'",
               "object-src 'none'",
               "base-uri 'self'",

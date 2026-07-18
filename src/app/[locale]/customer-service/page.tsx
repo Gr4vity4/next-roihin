@@ -22,14 +22,7 @@ export default function CustomerServicePage() {
         phone: '+6683 826 5195',
         emailLabel: 'อีเมล์:',
         email: 'info.roihin@gmail.com',
-        afterSalesTitle: 'บริการหลังการขาย',
-        warrantyTitle: 'รับประกันภายใน 7 วัน',
-        warrantySubtitle: '(นับตั้งแต่ลูกค้าได้รับสินค้า)',
-        warrantyDescription:
-          'กำไลหินมงคลได้รับการออกแบบอย่างปราณีตและตรวจสอบสินค้าก่อนนำส่งลูกค้าทุกครั้ง หากสินค้าเกิดข้อผิดพลาดจากตัวสินค้าเอง เช่น หินบิ่น ชำรุด หรือไหมยืดเกิดการขาด ย้วย หรือเสียหายโดยมิได้เกิดจากการใช้งานของลูกค้า ทางร้านยินดีดูแล เปลี่ยนสินค้า หรือคืนเงินเต็มจำนวนตามเงื่อนไขที่กำหนด',
-        lifetimeTitle: 'ยินดีดูแลสินค้า ตลอดอายุการใช้งาน',
-        lifetimeDescription:
-          'เมื่อไหมยืดร้อยหินหมดอายุการใช้งาน ทางร้อยหินยินดีให้บริการดูแล ทำความสะอาดหิน และเปลี่ยนไหมร้อยให้โดยไม่มีค่าใช้จ่าย (ยกเว้นค่าจัดส่งคืนสินค้า)',
+        mapTitle: 'แผนที่ร้านร้อยหิน Stone & Bracelet',
         ctaTitle: 'ปรึกษาและออกแบบให้ฟรี',
         ctaDescription:
           'ปรึกษาทีมงานผู้เชี่ยวชาญเพื่อออกแบบกำไลหินหรือสอบถามหินมาใหม่เพิ่มเติมได้ที่ (LINE OA : @roihin4289) ติดต่อ Call Center โทร ',
@@ -47,14 +40,7 @@ export default function CustomerServicePage() {
         phone: '+6683 826 5195',
         emailLabel: 'Email:',
         email: 'info.roihin@gmail.com',
-        afterSalesTitle: 'After-Sales Service',
-        warrantyTitle: '7-Day Warranty',
-        warrantySubtitle: '(from the date customer receives the product)',
-        warrantyDescription:
-          'Every bracelet is carefully crafted and inspected before delivery. If a defect occurs due to product issues, such as chipped stones or damaged elastic not caused by misuse, we are happy to assist with replacement or refund based on our service policy.',
-        lifetimeTitle: 'Lifetime Care Service',
-        lifetimeDescription:
-          'When the bracelet string reaches end-of-life, we provide cleaning and restringing services at no additional charge (excluding return shipping fees).',
+        mapTitle: 'Roihin Stone & Bracelet location map',
         ctaTitle: 'Free Consultation & Design',
         ctaDescription:
           'Consult our expert team to design your stone bracelet or ask about new arrivals via LINE OA : @roihin4289, or contact our Call Center at ',
@@ -78,129 +64,8 @@ export default function CustomerServicePage() {
             className="object-cover"
             priority
           />
-        </section>
-
-        {/* Content Section with Video Background */}
-        <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-          {/* Video Background */}
-          <div className="absolute inset-0 w-full h-full">
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="absolute top-0 left-0 w-full h-full object-cover"
-              ref={(el) => {
-                if (el) el.playbackRate = 0.5
-              }}
-            >
-              <source src="/videos/main.mp4" type="video/mp4" />
-            </video>
-            {/* Dark overlay with blur for better text visibility */}
-            <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
-          </div>
-
-          {/* Content */}
-          <div className="relative z-10 w-full">
-            <Container className="py-16 lg:py-24">
-              <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 text-white">
-                {/* Left Column - Contact Information */}
-                <div className="space-y-8">
-                  <Typography
-                    variant="h2"
-                    className="text-4xl lg:text-5xl font-bold text-white mb-8"
-                    textShadow
-                  >
-                    {content.contactTitle}
-                  </Typography>
-
-                  <div className="space-y-6">
-                    <Typography
-                      variant="body"
-                      className="text-lg text-white leading-relaxed"
-                      textShadow
-                    >
-                      <strong className="text-xl">{content.addressLabel}</strong>
-                      <br />
-                      {content.address.split('\n').map((line) => (
-                        <span key={line}>
-                          {line}
-                          <br />
-                        </span>
-                      ))}
-                    </Typography>
-
-                    <Typography
-                      variant="body"
-                      className="text-lg text-white leading-relaxed"
-                      textShadow
-                    >
-                      <strong className="text-xl">{content.phoneLabel}</strong>
-                      <br />
-                      {content.phone}
-                    </Typography>
-
-                    <Typography
-                      variant="body"
-                      className="text-lg text-white leading-relaxed"
-                      textShadow
-                    >
-                      <strong className="text-xl">{content.emailLabel}</strong>
-                      <br />
-                      {content.email}
-                    </Typography>
-                  </div>
-                </div>
-
-                {/* Right Column - After-Sales Service */}
-                <div className="space-y-8">
-                  <Typography
-                    variant="h3"
-                    className="text-3xl lg:text-4xl font-bold text-white mb-8"
-                    textShadow
-                  >
-                    {content.afterSalesTitle}
-                  </Typography>
-
-                  <div className="space-y-6">
-                    <Typography
-                      variant="body"
-                      className="text-lg text-white leading-relaxed"
-                      textShadow
-                    >
-                      <strong className="text-xl">{content.warrantyTitle}</strong>
-                      <br />
-                      {content.warrantySubtitle}
-                    </Typography>
-
-                    <Typography
-                      variant="body"
-                      className="text-lg text-white leading-relaxed"
-                      textShadow
-                    >
-                      {content.warrantyDescription}
-                    </Typography>
-
-                    <Typography
-                      variant="body"
-                      className="text-lg text-white leading-relaxed"
-                      textShadow
-                    >
-                      <strong className="text-xl">{content.lifetimeTitle}</strong>
-                    </Typography>
-
-                    <Typography
-                      variant="body"
-                      className="text-lg text-white leading-relaxed"
-                      textShadow
-                    >
-                      {content.lifetimeDescription}
-                    </Typography>
-                  </div>
-                </div>
-              </div>
-            </Container>
-          </div>
+          {/* Dark backdrop matching the home hero overlay */}
+          <div className="absolute inset-0 bg-black/40" />
         </section>
 
         {/* CTA Section */}
@@ -221,7 +86,7 @@ export default function CustomerServicePage() {
                   href="https://lin.ee/r94Dnio"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center rounded-full bg-black px-8 py-3 text-sm font-medium text-white transition-colors hover:bg-gray-800"
+                  className="inline-flex items-center justify-center rounded-full bg-black px-8 py-3 text-sm font-medium text-white transition-colors hover:bg-[#244323]"
                 >
                   {content.ctaLineButton}
                 </a>
@@ -229,7 +94,7 @@ export default function CustomerServicePage() {
                   href="https://wa.me/66831591926"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center rounded-full bg-black px-8 py-3 text-sm font-medium text-white transition-colors hover:bg-gray-800"
+                  className="inline-flex items-center justify-center rounded-full bg-black px-8 py-3 text-sm font-medium text-white transition-colors hover:bg-[#244323]"
                 >
                   {content.ctaWhatsAppButton}
                 </a>
@@ -237,6 +102,94 @@ export default function CustomerServicePage() {
             </div>
           </Container>
         </section>
+
+        {/* Content Section with Video Background */}
+        <section className="relative overflow-hidden">
+          {/* Video Background */}
+          <div className="absolute inset-0 w-full h-full">
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="absolute top-0 left-0 w-full h-full object-cover"
+              ref={(el) => {
+                if (el) el.playbackRate = 0.5
+              }}
+            >
+              <source src="/videos/main.mp4" type="video/mp4" />
+            </video>
+            {/* Dark overlay with blur for better text visibility */}
+            <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+          </div>
+
+          {/* Content */}
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 lg:min-h-[560px]">
+            {/* Left Column - Contact Information */}
+            <div className="flex items-center px-4 py-16 sm:px-6 md:px-8 lg:px-12 lg:py-20">
+              <div className="w-full max-w-xl mx-auto space-y-8 text-white">
+                <Typography
+                  variant="h2"
+                  className="text-4xl lg:text-5xl font-bold text-white mb-8"
+                  textShadow
+                >
+                  {content.contactTitle}
+                </Typography>
+
+                <div className="space-y-6">
+                  <Typography
+                    variant="body"
+                    className="text-lg text-white leading-relaxed"
+                    textShadow
+                  >
+                    <strong className="text-xl">{content.addressLabel}</strong>
+                    <br />
+                    {content.address.split('\n').map((line) => (
+                      <span key={line}>
+                        {line}
+                        <br />
+                      </span>
+                    ))}
+                  </Typography>
+
+                  <Typography
+                    variant="body"
+                    className="text-lg text-white leading-relaxed"
+                    textShadow
+                  >
+                    <strong className="text-xl">{content.phoneLabel}</strong>
+                    <br />
+                    {content.phone}
+                  </Typography>
+
+                  <Typography
+                    variant="body"
+                    className="text-lg text-white leading-relaxed"
+                    textShadow
+                  >
+                    <strong className="text-xl">{content.emailLabel}</strong>
+                    <br />
+                    {content.email}
+                  </Typography>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column - Google Map (full bleed) */}
+            <div className="h-[350px] sm:h-[420px] lg:h-auto">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3951.3748572961017!2d98.36954087681498!3d7.960157404799574!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3050319897c16891%3A0xa4645b8f928c3fec!2z4Lij4LmJ4Lit4Lii4Lir4Li04LiZIFN0b25lICYgQnJhY2VsZXQgOiBSb2loaW4gU3RvbmUgJiBCcmFjZWxldCA6INCa0YDQuNGB0YLQsNC70Lsg0Lgg0Y7QstC10LvQuNGA0L3Ri9C1INC40LfQtNC10LvQuNGP!5e0!3m2!1sen!2sth!4v1784364959271!5m2!1sen!2sth"
+                title={content.mapTitle}
+                className="block w-full h-full border-0"
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="strict-origin-when-cross-origin"
+              />
+            </div>
+          </div>
+        </section>
+
+        
       </main>
 
       {/* Footer */}
