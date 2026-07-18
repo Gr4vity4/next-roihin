@@ -457,25 +457,30 @@ export default function CheckoutConfirmContent() {
                         ฿{totalAmount.toLocaleString('th-TH')}
                       </span>
                     </div>
-                    <div className="flex justify-between text-gray-600">
-                      <span>{tCheckout('orderSummary.shipping')}</span>
-                      {shippingFeeStatus === 'loading' ? (
-                        <span className="text-gray-400">
-                          {tCheckout('orderSummary.shippingCalculating')}
-                        </span>
-                      ) : shippingFeeStatus === 'error' ? (
-                        <span className="text-sm text-red-500">
-                          {tCheckout('orderSummary.shippingUnavailable')}
-                        </span>
-                      ) : shippingFee === 0 ? (
-                        <span className="text-green-600 font-medium">
-                          {tCheckout('orderSummary.shippingFree')}
-                        </span>
-                      ) : (
-                        <span className="font-medium text-gray-900">
-                          ฿{shippingFee.toLocaleString('th-TH')}
-                        </span>
-                      )}
+                    <div className="text-gray-600">
+                      <div className="flex justify-between">
+                        <span>{tCheckout('orderSummary.shipping')}</span>
+                        {shippingFeeStatus === 'loading' ? (
+                          <span className="text-gray-400">
+                            {tCheckout('orderSummary.shippingCalculating')}
+                          </span>
+                        ) : shippingFeeStatus === 'error' ? (
+                          <span className="text-sm text-red-500">
+                            {tCheckout('orderSummary.shippingUnavailable')}
+                          </span>
+                        ) : shippingFee === 0 ? (
+                          <span className="text-green-600 font-medium">
+                            {tCheckout('orderSummary.shippingFree')}
+                          </span>
+                        ) : (
+                          <span className="font-medium text-gray-900">
+                            ฿{shippingFee.toLocaleString('th-TH')}
+                          </span>
+                        )}
+                      </div>
+                      <p className="mt-1 text-xs text-gray-400">
+                        {tCheckout('orderSummary.shippingNote')}
+                      </p>
                     </div>
                   </div>
 

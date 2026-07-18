@@ -368,6 +368,7 @@
       "shippingAtCheckout": "Calculated at checkout",
       "shippingCalculating": "Calculating…",
       "shippingUnavailable": "Unable to calculate shipping",
+      "shippingNote": "Shipping fee may vary depending on the delivery country.",
       "total": "Total"
     }
   },

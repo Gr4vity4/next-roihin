@@ -368,6 +368,7 @@
       "shippingAtCheckout": "คำนวณในขั้นตอนชำระเงิน",
       "shippingCalculating": "กำลังคำนวณ…",
       "shippingUnavailable": "ไม่สามารถคำนวณค่าจัดส่งได้",
+      "shippingNote": "ค่าจัดส่งขึ้นอยู่กับประเทศปลายทาง",
       "total": "รวมทั้งหมด"
     }
   },
