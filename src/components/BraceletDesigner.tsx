@@ -1107,7 +1107,7 @@ export default function BraceletDesigner() {
                                 </div>
                               </button>
                               {/* Price tooltip */}
-                              <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-1 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                              <div className="pointer-events-none absolute -bottom-6 left-1/2 z-20 transform -translate-x-1/2 bg-black text-white text-xs px-1 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                                 ฿{price}
                               </div>
                             </div>
