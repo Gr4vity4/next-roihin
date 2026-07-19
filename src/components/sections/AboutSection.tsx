@@ -58,7 +58,7 @@ export default function AboutSection({
             {t('homePage.about.subtitle')}
           </Typography>
 
-          <Typography variant="body" className="text-gray-600 whitespace-pre-line">
+          <Typography variant="body" className="text-gray-600 whitespace-pre-line pt-4">
             {t('homePage.about.content')}
           </Typography>
 
