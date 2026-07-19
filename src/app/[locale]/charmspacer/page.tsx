@@ -4,6 +4,7 @@ import ChatWidget from '@/components/ChatWidget'
 import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import { Footer } from '@/components/sections'
 import PersonalizedHeroSection from '@/components/sections/PersonalizedHeroSection'
+import { content } from '@/config/content.config'
 import { getAllProducts } from '@/lib/api/products'
 import { Product } from '@/lib/types/products'
 import { Metadata } from 'next'
@@ -89,9 +90,11 @@ export default async function CharmspacerPage({ params }: CharmspacerPageProps) 
 
       <main className="min-h-screen">
         <PersonalizedHeroSection
-          backgroundImage="/images/banner/charmspacer-banner.avif"
+          backgroundImage={content.charmspacerPage.hero.backgroundImage}
+          backgroundImageMobile={content.charmspacerPage.hero.backgroundImageMobile}
           title={t('hero.title')}
           subtitle={t('hero.subtitle')}
+          centered
         />
 
         <CategoryNavigation categories={categories} />

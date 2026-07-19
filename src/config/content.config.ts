@@ -670,7 +670,8 @@ export const content = {
   // Charmspacer Page Content
   charmspacerPage: {
     hero: {
-      backgroundImage: '/images/banner/charmspacer-banner.avif',
+      backgroundImage: '/images/charm-spacer/desktop.avif',
+      backgroundImageMobile: '/images/charm-spacer/mobile.avif',
       title: {
         thai: 'ชาร์มและสเปเซอร์',
         english: 'CHARM / SPACER',
