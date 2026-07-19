@@ -18,8 +18,8 @@
         "earring": "Earring",
         "pandents": "Pandents",
         "nacklace": "Nacklace",
-        "rough-crystal": "Rough Crystal",
-        "perfume": "Perfume",
+        "rough-crystal": "Rough Stone",
+        "perfume": "Scent",
         "gifts": "Gifts"
       }
     }
@@ -48,7 +48,7 @@
     "categories": {
       "bracelet": {
         "title": "Bracelet Collection",
-        "description": "Layered beadwork, signature charms, and custom tuning designed for daily rituals.",
+        "description": "Beadwork, signature charms, and custom tuning designed for daily rituals.",
         "cta": "Shop bracelets"
       },
       "ring": {
