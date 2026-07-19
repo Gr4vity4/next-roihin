@@ -423,7 +423,7 @@ export default function CustomerServicePage() {
       {/* Main content wrapper with top padding to account for navigation */}
       <main className="pt-20 min-[1408px]:pt-[230px]">
         {/* Full Width Image Section */}
-        <section className="relative w-full h-[420px] overflow-hidden">
+        <section className="relative w-full h-[420px] md:h-[1024px] overflow-hidden">
           <picture>
             <source
               media="(min-width: 768px)"
