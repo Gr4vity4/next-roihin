@@ -43,7 +43,7 @@ export default async function AboutPage({ params }: AboutPageProps) {
 
   // Pick a random banner background per request; desktop/mobile files share the same number.
   // Desktop lives at banner/desktop/NN-1.avif; mobile lives at banner/mobile/NN-2.avif.
-  const bannerCount = 5
+  const bannerCount = 3
   const bannerNumber = String(Math.floor(Math.random() * bannerCount) + 1).padStart(2, '0')
 
   return (
