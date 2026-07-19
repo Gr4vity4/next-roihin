@@ -46,7 +46,7 @@ export default async function TestimonialPage() {
           <div className="container mx-auto px-4">
             {/* Section title */}
             <div className="text-center mb-12">
-              <Typography variant="h2" className="text-white mb-4">
+              <Typography variant="h2" className="text-white mb-4 font-normal">
                 {isThai ? 'รีวิวจากลูกค้า' : 'TESTIMONIALS'}
               </Typography>
               <Typography variant="body" className="text-gray-300">

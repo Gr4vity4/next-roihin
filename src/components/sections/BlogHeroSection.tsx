@@ -63,7 +63,7 @@ export default function BlogHeroSection({
             <Typography variant="h2" className="mb-2">
               {title}
             </Typography>
-            <div className="mt-6 max-w-2xl mx-auto">
+            <div className="mt-0 max-w-2xl mx-auto">
               <Typography variant="body" className="text-gray-200">
                 {subtitle}
               </Typography>
