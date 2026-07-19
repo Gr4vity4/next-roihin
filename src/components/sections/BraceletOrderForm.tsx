@@ -1,6 +1,7 @@
 'use client'
 
 import { Calendar } from 'lucide-react'
+import Image from 'next/image'
 import { useState } from 'react'
 import { useLocale } from 'next-intl'
 import { Container } from '../ui'
@@ -852,20 +853,20 @@ export default function BraceletOrderForm() {
               ) : (
                 <>
                   <p>
-                    Starting budget 1,500 - 3,000 THB
+                    Starting budget
                     <br />
                     Quality stones that are relatively easy to source, with simple, clear energy
                     that works directly on the wearer. Uses 2 - 3 stone types in the arrangement.
                   </p>
                   <p>
-                    Mid-range budget 4,000 - 6,000 THB
+                    Mid-range budget
                     <br />
                     Quality stones of medium rarity, with more complex energy that works directly
                     and quickly on the wearer, bringing noticeable change. Uses 2 - 4 stone types
                     in the arrangement.
                   </p>
                   <p>
-                    Premium budget 8,000 - 12,000 THB
+                    Premium budget
                     <br />
                     High-quality stones with a unique character, of high rarity or one-of-a-kind.
                     Complex, intense energy patterns delivering clear, rapid change, with
@@ -874,6 +875,26 @@ export default function BraceletOrderForm() {
                   </p>
                 </>
               )}
+            </div>
+
+            {/* Bottom Images — columns sized to each image's aspect ratio so both render equal height */}
+            <div className="mt-12 grid grid-cols-1 md:grid-cols-[1.297fr_0.852fr] gap-4 items-center">
+              <Image
+                src="/images/bracelet-order/773F64F6-685B-42B2-9B8B-364DDDE7A17B.avif"
+                alt={isThai ? 'วิธีวัดขนาดข้อมือ' : 'How to measure your wrist size'}
+                width={2048}
+                height={1579}
+                className="w-full h-auto rounded-lg"
+                sizes="(max-width: 768px) 100vw, 60vw"
+              />
+              <Image
+                src="/images/bracelet-order/C25D5F1B-1CC6-44F9-864E-BBB865515F51.avif"
+                alt={isThai ? 'ขนาดเม็ดหิน' : 'Bead size comparison'}
+                width={1744}
+                height={2048}
+                className="w-full h-auto rounded-lg"
+                sizes="(max-width: 768px) 100vw, 40vw"
+              />
             </div>
           </div>
         </Container>
