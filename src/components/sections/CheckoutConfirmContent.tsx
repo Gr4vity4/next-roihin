@@ -35,6 +35,38 @@ const EMPTY_SHIPPING: ShippingFormState = {
   province: '',
 }
 
+// Shipping details from the shopper's most recent successful checkout, saved
+// so repeat customers get a filled form even without a saved default address.
+// Scoped to the user id so another account on a shared browser never sees them.
+const LAST_SHIPPING_STORAGE_KEY = 'checkout_last_shipping'
+
+interface StoredLastShipping {
+  userId: number
+  phoneCountry: string
+  shipping: ShippingFormState
+}
+
+function readLastShipping(userId: number): StoredLastShipping | null {
+  try {
+    const raw = window.localStorage.getItem(LAST_SHIPPING_STORAGE_KEY)
+    if (!raw) return null
+    const parsed = JSON.parse(raw) as StoredLastShipping | null
+    if (!parsed || parsed.userId !== userId || !parsed.shipping) return null
+    return parsed
+  } catch (error) {
+    console.error(`Error reading localStorage key "${LAST_SHIPPING_STORAGE_KEY}":`, error)
+    return null
+  }
+}
+
+function saveLastShipping(entry: StoredLastShipping) {
+  try {
+    window.localStorage.setItem(LAST_SHIPPING_STORAGE_KEY, JSON.stringify(entry))
+  } catch (error) {
+    console.error(`Error setting localStorage key "${LAST_SHIPPING_STORAGE_KEY}":`, error)
+  }
+}
+
 export default function CheckoutConfirmContent() {
   const router = useRouter()
   const t = useTranslations('checkoutConfirm')
@@ -111,6 +143,27 @@ export default function CheckoutConfirmContent() {
     if (hasPrefilledRef.current) return
     hasPrefilledRef.current = true
 
+    const accountEmail = user?.email || ''
+
+    // No saved default address (or it failed to load): fall back to the
+    // details from the shopper's previous checkout, then to just their
+    // account email, so repeat customers never start from a blank form.
+    const applyFallbackPrefill = () => {
+      const stored = user ? readLastShipping(user.id) : null
+      if (stored) {
+        setPhoneCountry(stored.phoneCountry || 'th')
+        setShippingAddress({
+          ...EMPTY_SHIPPING,
+          ...stored.shipping,
+          email: stored.shipping.email || accountEmail,
+        })
+        return
+      }
+      if (accountEmail) {
+        setShippingAddress((prev) => (prev.email ? prev : { ...prev, email: accountEmail }))
+      }
+    }
+
     const fetchDefaultAddress = async () => {
       setAddressLoading(true)
       try {
@@ -123,7 +176,7 @@ export default function CheckoutConfirmContent() {
           setShippingAddress({
             first_name: item.first_name,
             last_name: item.last_name,
-            email: user?.email || '',
+            email: accountEmail,
             phone: parsedPhone.phone,
             address: item.address,
             apartment: item.apartment ?? '',
@@ -133,9 +186,11 @@ export default function CheckoutConfirmContent() {
           })
         } else {
           setDefaultAddressId(null)
+          applyFallbackPrefill()
         }
       } catch (error) {
         console.error('Failed to fetch default address:', error)
+        applyFallbackPrefill()
       } finally {
         setAddressLoading(false)
       }
@@ -314,6 +369,12 @@ export default function CheckoutConfirmContent() {
       // The order now exists in the backend. Remember its hand-off so a retry
       // after a Stripe failure doesn't create a duplicate order.
       createdCheckoutRef.current = { url: checkoutUrl, sessionId }
+
+      // Remember what the shopper used so their next checkout is prefilled
+      // even without a saved default address.
+      if (user) {
+        saveLastShipping({ userId: user.id, phoneCountry, shipping: shippingAddress })
+      }
 
       if (checkoutUrl) {
         window.location.href = checkoutUrl
