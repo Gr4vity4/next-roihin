@@ -8,6 +8,28 @@ import { Container } from '../ui'
 import Modal from '../ui/Modal'
 import PhoneInput from '../ui/PhoneInput'
 
+// Budget tiers per bead size, matching the "หินเฉพาะบุคคล" price guide graphic
+const BUDGET_TIERS_6MM = [
+  { value: '900-1500', th: 'เริ่มต้น 900 - 1,500 บาท', en: 'Beginning 900 - 1,500 THB' },
+  { value: '2000-5000', th: 'กลาง 2,000 - 5,000 บาท', en: 'Mid Range 2,000 - 5,000 THB' },
+  { value: '6000-8000', th: 'สูง 6,000 - 8,000 บาท', en: 'High 6,000 - 8,000 THB' },
+  { value: '10000+', th: 'กำหนดเอง 10,000 บาทขึ้นไป', en: 'Custom 10,000+ THB' },
+]
+
+const BUDGET_TIERS_LARGE = [
+  { value: '1500-3000', th: 'เริ่มต้น 1,500 - 3,000 บาท', en: 'Beginning 1,500 - 3,000 THB' },
+  { value: '4000-6000', th: 'กลาง 4,000 - 6,000 บาท', en: 'Mid Range 4,000 - 6,000 THB' },
+  { value: '8000-12000', th: 'สูง 8,000 - 12,000 บาท', en: 'High 8,000 - 12,000 THB' },
+  { value: '15000+', th: 'กำหนดเอง 15,000 บาทขึ้นไป', en: 'Custom 15,000+ THB' },
+]
+
+const BUDGET_OPTIONS_BY_BEAD_SIZE: Record<string, typeof BUDGET_TIERS_6MM> = {
+  '6': BUDGET_TIERS_6MM,
+  '8': BUDGET_TIERS_LARGE,
+  '10': BUDGET_TIERS_LARGE,
+  '12': BUDGET_TIERS_LARGE,
+}
+
 export default function BraceletOrderForm() {
   const locale = useLocale()
   const isThai = locale === 'th'
@@ -540,7 +562,15 @@ export default function BraceletOrderForm() {
                   <select
                     value={formData.beadSize}
                     onChange={(e) => {
-                      setFormData({ ...formData, beadSize: e.target.value })
+                      const beadSize = e.target.value
+                      const options = BUDGET_OPTIONS_BY_BEAD_SIZE[beadSize] ?? []
+                      setFormData({
+                        ...formData,
+                        beadSize,
+                        budget: options.some((o) => o.value === formData.budget)
+                          ? formData.budget
+                          : '',
+                      })
                       if (fieldErrors.beadSize) {
                         setFieldErrors({ ...fieldErrors, beadSize: false })
                       }
@@ -566,21 +596,31 @@ export default function BraceletOrderForm() {
                   </label>
                   <select
                     value={formData.budget}
+                    disabled={!formData.beadSize}
                     onChange={(e) => {
                       setFormData({ ...formData, budget: e.target.value })
                       if (fieldErrors.budget) {
                         setFieldErrors({ ...fieldErrors, budget: false })
                       }
                     }}
-                    className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#244323] focus:border-transparent ${
+                    className={`w-full px-4 py-2 border rounded-md focus:ring-2 focus:ring-[#244323] focus:border-transparent disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed ${
                       fieldErrors.budget ? 'border-red-500' : 'border-gray-300'
                     }`}
                   >
-                    <option value="">{isThai ? 'งบประมาณ' : 'Budget'}</option>
-                    <option value="1000-3000">1,000-3,000 {isThai ? 'บาท' : 'THB'}</option>
-                    <option value="3000-5000">3,000-5,000 {isThai ? 'บาท' : 'THB'}</option>
-                    <option value="5000-10000">5,000-10,000 {isThai ? 'บาท' : 'THB'}</option>
-                    <option value="10000+">10,000+ {isThai ? 'บาท' : 'THB'}</option>
+                    <option value="">
+                      {formData.beadSize
+                        ? isThai
+                          ? 'งบประมาณ'
+                          : 'Budget'
+                        : isThai
+                          ? 'เลือกขนาดเม็ดหินก่อน'
+                          : 'Select bead size first'}
+                    </option>
+                    {(BUDGET_OPTIONS_BY_BEAD_SIZE[formData.beadSize] ?? []).map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {isThai ? option.th : option.en}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
