@@ -608,7 +608,8 @@ export const content = {
   // Personalized Page Content
   personalizedPage: {
     hero: {
-      backgroundImage: '/images/banner/personalized-banner.avif',
+      backgroundImage: '/images/personalize/desktop.avif',
+      backgroundImageMobile: '/images/personalize/mobile.avif',
     },
     aboutSection: {
       title: {
