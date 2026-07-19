@@ -27,8 +27,8 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/a
  *   page: 1,
  *   per_page: 20,
  *   search: 'apatite',
- *   color_filter: 'blue,green',
- *   energy_properties: 'health_balance',
+ *   color_filter: ['blue', 'green'],
+ *   energy_properties: ['Health & Balance'],
  * })
  * ```
  */
@@ -39,14 +39,26 @@ export async function getCrystals(
     // Build query string from filter parameters
     const queryParams = new URLSearchParams()
 
+    // Arrays go as repeated `key[]` params so values containing commas
+    // (e.g. "Love, Happiness & Luck") survive; plain strings keep the
+    // legacy comma-separated form.
+    const appendFilter = (key: string, value: string | string[] | undefined) => {
+      if (!value) return
+      if (Array.isArray(value)) {
+        value.forEach((item) => queryParams.append(`${key}[]`, item))
+      } else {
+        queryParams.append(key, value)
+      }
+    }
+
     if (params.lang) queryParams.append('lang', params.lang)
     if (params.page) queryParams.append('page', params.page.toString())
     if (params.per_page) queryParams.append('per_page', params.per_page.toString())
     if (params.search) queryParams.append('search', params.search)
-    if (params.color_filter) queryParams.append('color_filter', params.color_filter)
-    if (params.energy_properties) queryParams.append('energy_properties', params.energy_properties)
-    if (params.zodiac_signs) queryParams.append('zodiac_signs', params.zodiac_signs)
-    if (params.element_type) queryParams.append('element_type', params.element_type)
+    appendFilter('color_filter', params.color_filter)
+    appendFilter('energy_properties', params.energy_properties)
+    appendFilter('zodiac_signs', params.zodiac_signs)
+    appendFilter('element_type', params.element_type)
 
     const url = `${API_BASE_URL}/crystals${queryParams.toString() ? `?${queryParams.toString()}` : ''}`
 
@@ -155,7 +167,7 @@ export async function getCrystalsByColor(
   return getCrystals({
     lang,
     page,
-    color_filter: colors.join(','),
+    color_filter: colors,
   })
 }
 
@@ -175,7 +187,7 @@ export async function getCrystalsByEnergy(
   return getCrystals({
     lang,
     page,
-    energy_properties: energyProps.join(','),
+    energy_properties: energyProps,
   })
 }
 
@@ -195,7 +207,7 @@ export async function getCrystalsByZodiac(
   return getCrystals({
     lang,
     page,
-    zodiac_signs: zodiacSigns.join(','),
+    zodiac_signs: zodiacSigns,
   })
 }
 
@@ -215,6 +227,6 @@ export async function getCrystalsByElement(
   return getCrystals({
     lang,
     page,
-    element_type: elements.join(','),
+    element_type: elements,
   })
 }

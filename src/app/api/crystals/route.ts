@@ -39,38 +39,37 @@ function resolveResponseLocale(payload: unknown, fallback: CrystalLocale): Cryst
   return fallback
 }
 
-function collectMultiValueParam(params: URLSearchParams, keys: string[]): string | undefined {
+function collectMultiValueParam(
+  params: URLSearchParams,
+  keys: string[],
+  options?: { splitOnComma?: boolean },
+): string[] | undefined {
+  // Energy purpose values contain commas ("Love, Happiness & Luck"), so
+  // callers pass splitOnComma: false for them and send repeated `key[]`
+  // params instead of a comma-joined string.
+  const splitOnComma = options?.splitOnComma ?? true
   const values = new Set<string>()
 
-  keys.forEach((key) => {
-    const direct = params.get(key)
-    if (direct) {
-      direct
-        .split(',')
-        .map((value) => value.trim())
-        .filter((value) => value.length > 0)
-        .forEach((value) => values.add(value))
-    }
-
-    params
-      .getAll(key)
+  const add = (raw: string) => {
+    const pieces = splitOnComma ? raw.split(',') : [raw]
+    pieces
       .map((value) => value.trim())
       .filter((value) => value.length > 0)
       .forEach((value) => values.add(value))
+  }
+
+  keys.forEach((key) => {
+    params.getAll(key).forEach(add)
 
     const arrayKey = key.endsWith('[]') ? key : `${key}[]`
-    params
-      .getAll(arrayKey)
-      .map((value) => value.trim())
-      .filter((value) => value.length > 0)
-      .forEach((value) => values.add(value))
+    params.getAll(arrayKey).forEach(add)
   })
 
   if (values.size === 0) {
     return undefined
   }
 
-  return Array.from(values).join(',')
+  return Array.from(values)
 }
 
 function buildBackendQuery(
@@ -78,10 +77,10 @@ function buildBackendQuery(
   baseLocale: CrystalLocale,
   perPage: number,
   page: number,
-): Record<string, string> {
+): Record<string, string | string[]> {
   let locale = baseLocale
 
-  const query: Record<string, string> = {
+  const query: Record<string, string | string[]> = {
     locale,
     lang: locale,
     per_page: String(perPage),
@@ -93,6 +92,10 @@ function buildBackendQuery(
     query.search = search
   }
 
+  // Multi-value filters are forwarded to the CMS in `key[]` array form; a
+  // comma-joined single param would split comma-containing values. Sending
+  // the CMS's `colors` param must be avoided: it matches the (always-null)
+  // `color` column and ANDs with tone_colors, emptying every result.
   const toneColors = collectMultiValueParam(searchParams, [
     'tone_colors',
     'toneColors',
@@ -102,14 +105,13 @@ function buildBackendQuery(
   ])
   if (toneColors) {
     query.tone_colors = toneColors
-    query.colors = toneColors
   }
 
-  const energyPurposes = collectMultiValueParam(searchParams, [
-    'energy_purposes',
-    'energyProperties',
-    'energy_properties',
-  ])
+  const energyPurposes = collectMultiValueParam(
+    searchParams,
+    ['energy_purposes', 'energyProperties', 'energy_properties'],
+    { splitOnComma: false },
+  )
   if (energyPurposes) {
     query.energy_purposes = energyPurposes
   }

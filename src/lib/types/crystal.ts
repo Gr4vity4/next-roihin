@@ -45,10 +45,10 @@ export interface CrystalFilterParams {
   page?: number
   per_page?: number
   search?: string
-  color_filter?: string
-  energy_properties?: string
-  zodiac_signs?: string
-  element_type?: string
+  color_filter?: string | string[]
+  energy_properties?: string | string[]
+  zodiac_signs?: string | string[]
+  element_type?: string | string[]
 }
 
 export interface CrystalsAPIResponse {

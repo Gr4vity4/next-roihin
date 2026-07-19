@@ -17,72 +17,60 @@ import type { Crystal } from '@/lib/types/crystal'
 const ITEMS_PER_PAGE = 20
 
 /**
- * Filter value mapping from UI display to ACF field values
- * This maps the translated filter labels to the database field values
+ * Filter value mapping from UI display labels to CMS field values.
+ * The CMS matches these exactly (case-sensitive; unknown values make the
+ * whole request fail with a redirect rather than an empty result).
  */
 const FILTER_VALUE_MAPPINGS = {
   // Energy properties mapping
   energyProperties: {
-    'การเงิน โชคลาภ': 'finance_fortune',
-    'Finance, Fortune': 'finance_fortune',
-    'การงาน ธุรกิจ การลงทุน': 'work_business',
-    'Work, Business, Investment': 'work_business',
-    'ความรัก ความสุข โชคดี': 'love_happiness',
-    'Love, Happiness, Luck': 'love_happiness',
-    'สุขภาพ สมดุลชีวิต': 'health_balance',
-    'Health, Balance': 'health_balance',
-    'จิตวิญญาณ ความมั่นคง': 'spirituality_stability',
-    'Spirituality, Stability': 'spirituality_stability',
+    'การเงิน โชคลาภ': 'Finance & Prosperity',
+    'Finance, Fortune': 'Finance & Prosperity',
+    'การงาน ธุรกิจ การลงทุน': 'Career, Business & Investment',
+    'Work, Business, Investment': 'Career, Business & Investment',
+    'ความรัก ความสุข โชคดี': 'Love, Happiness & Luck',
+    'Love, Happiness, Luck': 'Love, Happiness & Luck',
+    'สุขภาพ สมดุลชีวิต': 'Health & Balance',
+    'Health, Balance': 'Health & Balance',
+    'จิตวิญญาณ ความมั่นคง': 'Spirituality & Stability',
+    'Spirituality, Stability': 'Spirituality & Stability',
   } as Record<string, string>,
 
   // Zodiac signs mapping
   zodiacSigns: {
-    'เมษ - Aries': 'aries',
-    'Aries': 'aries',
-    'พฤษภ - Taurus': 'taurus',
-    'Taurus': 'taurus',
-    'เมถุน - Gemini': 'gemini',
-    'Gemini': 'gemini',
-    'กรกฎ - Cancer': 'cancer',
-    'Cancer': 'cancer',
-    'สิงห์ - Leo': 'leo',
-    'Leo': 'leo',
-    'กันย์ - Virgo': 'virgo',
-    'Virgo': 'virgo',
-    'ตุลย์ - Libra': 'libra',
-    'Libra': 'libra',
-    'พิจิก - Scorpio': 'scorpio',
-    'Scorpio': 'scorpio',
-    'ธนู - Sagittarius': 'sagittarius',
-    'Sagittarius': 'sagittarius',
-    'มังกร - Capricorn': 'capricorn',
-    'Capricorn': 'capricorn',
-    'กุมภ์ - Aquarius': 'aquarius',
-    'Aquarius': 'aquarius',
-    'มีน - Pisces': 'pisces',
-    'Pisces': 'pisces',
+    'เมษ - Aries': 'Aries',
+    'พฤษภ - Taurus': 'Taurus',
+    'เมถุน - Gemini': 'Gemini',
+    'กรกฎ - Cancer': 'Cancer',
+    'สิงห์ - Leo': 'Leo',
+    'กันย์ - Virgo': 'Virgo',
+    'ตุลย์ - Libra': 'Libra',
+    'พิจิก - Scorpio': 'Scorpio',
+    'ธนู - Sagittarius': 'Sagittarius',
+    'มังกร - Capricorn': 'Capricorn',
+    'กุมภ์ - Aquarius': 'Aquarius',
+    'มีน - Pisces': 'Pisces',
   } as Record<string, string>,
 
   // Element types mapping
   elements: {
-    'ราศีดิน': 'earth',
-    'Earth Sign': 'earth',
-    'ราศีน้ำ': 'water',
-    'Water Sign': 'water',
-    'ราศีลม': 'air',
-    'Air Sign': 'air',
-    'ราศีไฟ': 'fire',
-    'Fire Sign': 'fire',
+    'ราศีดิน': 'Earth',
+    'Earth Sign': 'Earth',
+    'ราศีน้ำ': 'Water',
+    'Water Sign': 'Water',
+    'ราศีลม': 'Air',
+    'Air Sign': 'Air',
+    'ราศีไฟ': 'Fire',
+    'Fire Sign': 'Fire',
   } as Record<string, string>,
 }
 
 /**
- * Map UI filter values to ACF field values
+ * Map UI filter labels to CMS field values. Unmapped labels pass through
+ * unchanged (the English zodiac labels already match the CMS values).
  */
-function mapFilterValues(values: string[], mapping: Record<string, string>): string {
-  return values
-    .map((value) => mapping[value] || value.toLowerCase().replace(/\s+/g, '_'))
-    .join(',')
+function mapFilterValues(values: string[], mapping: Record<string, string>): string[] {
+  return values.map((value) => mapping[value] || value)
 }
 
 export default function CrystalPage() {
@@ -111,8 +99,7 @@ export default function CrystalPage() {
       setError(null)
 
       try {
-        // Map filter values to ACF field values
-        const colorFilter = selectedColors.join(',')
+        // Map UI labels to the exact CMS field values
         const energyFilter = mapFilterValues(
           selectedEnergyProperties,
           FILTER_VALUE_MAPPINGS.energyProperties
@@ -131,10 +118,10 @@ export default function CrystalPage() {
           page: currentPage,
           per_page: ITEMS_PER_PAGE,
           search: searchQuery,
-          color_filter: colorFilter || undefined,
-          energy_properties: energyFilter || undefined,
-          zodiac_signs: zodiacFilter || undefined,
-          element_type: elementFilter || undefined,
+          color_filter: selectedColors.length > 0 ? selectedColors : undefined,
+          energy_properties: energyFilter.length > 0 ? energyFilter : undefined,
+          zodiac_signs: zodiacFilter.length > 0 ? zodiacFilter : undefined,
+          element_type: elementFilter.length > 0 ? elementFilter : undefined,
         })
 
         setCrystals(result.crystals)
