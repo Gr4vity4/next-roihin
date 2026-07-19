@@ -498,8 +498,8 @@ export default function BraceletOrderForm() {
               <div className="mb-6">
                 <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
                   {isThai
-                    ? 'เบอร์ติดต่อ - เพื่อตรวจอัพเดทแบบเลขศาสตร์'
-                    : 'Mobile No. - for numerology check and design updates'}{' '}
+                    ? 'เบอร์ติดต่อ - เพื่อตรวจพลังงานด้านเลขศาสตร์'
+                    : 'Contact number – for numerological readings.'}{' '}
                   <span className="text-red-500">*</span>
                 </label>
                 <PhoneInput
@@ -767,8 +767,8 @@ export default function BraceletOrderForm() {
                 />
                 <span className="ml-4 text-sm text-gray-600">
                   {isThai
-                    ? 'รูปถ่ายปัจจุบันของเจ้าของหำไลหิน (ตรวจโหงวเองเมื่องต้น)'
-                    : 'A current photo of the bracelet owner (for an initial face reading)'}
+                    ? 'อัพโหลด : รูปถ่ายปัจจุบันของเจ้าของกำไลหิน (ตรวจโหงวเฮ้งเบื้องต้น)'
+                    : 'Upload: A current photo of the bracelet owner (for a preliminary face-reading/physiognomy check)'}
                 </span>
               </div>
 
@@ -776,9 +776,9 @@ export default function BraceletOrderForm() {
               <div className="mb-8">
                 <p className="text-sm font-medium text-gray-700 mb-3">
                   {isThai ? (
-                    <>โปรดเลือก &ldquo;ยอมรับ&rdquo; เพื่อนใหและข้อกำหนดต่าง ๆ ดังต่อไปนี้</>
+                    <>โปรดเลือก &ldquo;ยอมรับ&rdquo; เงื่อนไขและข้อกำหนดต่าง ๆ ดังต่อไปนี้</>
                   ) : (
-                    <>Please select &ldquo;Accept&rdquo; to agree to the following terms</>
+                    <>Please select &ldquo;Accept&rdquo; for the following terms and conditions</>
                   )}{' '}
                   <span className="text-red-500">*</span>
                 </p>
@@ -796,8 +796,8 @@ export default function BraceletOrderForm() {
                   />
                   <span className="text-sm text-gray-600">
                     {isThai
-                      ? 'ข้าพเจ้ารับรองความถูกต้องในข้อมูลที่ได้ระบุไว้ และยินยอมให้ร้อยหิน สโตนแอนด์ เบรสเลล สามารถนำข้อมูลไปใช้เพื่อการวางแบบกำไลหิน การให้บริการหลังการขายรวมถึงการบริหารความสัมพันธ์เพื่อลิทธิประโยชน์กับลูกค้าของทางแบรนด์เท่านั้น'
-                      : 'I certify that the information provided is accurate and consent to ROIHIN STONE & BRACELET using it for bracelet design, after-sales service, and customer relationship management for customer benefits within the brand only.'}
+                      ? 'ข้าพเจ้ารับรองความถูกต้องในข้อมูลที่ได้ระบุไว้ และยินยอมให้ร้อยหิน สโตนแอนด์ เบรสเลส สามารถนำข้อมูลไปใช้เพื่อการวางแบบกำไลหิน การให้บริการหลังการขายรวมถึงการบริหารความสัมพันธ์เพื่อสิทธิประโยชน์กับลูกค้าของทางแบรนด์เท่านั้น'
+                      : "I certify that the information I have provided is accurate, and I consent to Roihin Stone & Bracelet using this information to design the stone bracelet, provide after-sales service, and manage the customer relationship, solely for the benefit of the brand's customers."}
                   </span>
                 </label>
               </div>
@@ -818,8 +818,8 @@ export default function BraceletOrderForm() {
                   />
                   <span className="text-sm text-gray-600">
                     {isThai
-                      ? 'ร้อยหิน สโตนแอนด์ เบรสเลล ได้รักษาข้อมูลส่วนบุคคลของลูกค้าไว้เป็นความลับอย่างที่สุด'
-                      : 'ROIHIN STONE & BRACELET keeps all customer personal information strictly confidential.'}
+                      ? 'ร้อยหิน สโตนแอนด์ เบรสเลส ได้รักษาข้อมูลส่วนบุคคลของลูกค้าไว้เป็นความลับอย่างที่สุด'
+                      : "Roihin Stone & Bracelet will keep the customer's personal information strictly confidential."}
                   </span>
                 </label>
               </div>
@@ -844,13 +844,13 @@ export default function BraceletOrderForm() {
               {/* Reference */}
               <div className="mt-8 text-center">
                 <p className="text-sm text-gray-500">
-                  {isThai ? 'โปรดเพิ่มเพื่อนใน LINE Official' : 'Please add our LINE Official account'}{' '}
+                  {isThai ? 'โปรดเพิ่มเพื่อนใน LINE Official' : 'Please add us as a friend on LINE Official'}{' '}
                   <a href="#" className="text-[#244323] font-semibold">
                     @roihin4289
                   </a>{' '}
                   {isThai
                     ? 'เพื่อยืนยันข้อมูลและเป็นช่องทางติดตามแบบกำไลหิน'
-                    : 'to confirm your information and follow up on your bracelet design'}
+                    : 'to confirm your information and as a channel to follow up on your bracelet design.'}
                 </p>
               </div>
             </form>
@@ -858,7 +858,7 @@ export default function BraceletOrderForm() {
             {/* Bottom Info */}
             <div className="mt-12 space-y-4 text-sm text-gray-600">
               <h3 className="font-semibold text-base text-gray-800">
-                {isThai ? 'งบประมาณกำไลหิน' : 'Bracelet Budget Guide'}
+                {isThai ? 'งบประมาณกำไลหิน' : 'Budget for Bracelet-Making'}
               </h3>
               {isThai ? (
                 <>
@@ -876,7 +876,7 @@ export default function BraceletOrderForm() {
                     ชนิดในการจัดวาง
                   </p>
                   <p>
-                    งบประมาณระดับกลาง
+                    งบประมาณระดับกลาง-สูง
                     <br />
                     เลือกใช้หินคุณภาพสูง มีเอกลักษณ์โฉพาะ ความหายากอยู่ในระดับสูง
                     หรือมีเพียงชิ้นเดียว มีรูปแบบพลังงานซับซ้อน เข็มขัน ให้ผล
@@ -889,23 +889,17 @@ export default function BraceletOrderForm() {
                   <p>
                     Starting budget
                     <br />
-                    Quality stones that are relatively easy to source, with simple, clear energy
-                    that works directly on the wearer. Uses 2 - 3 stone types in the arrangement.
+                    Uses quality stones with a common/standard level of rarity. The energy is simple and clear, giving results that directly match the user. Uses 2–3 types of stones in the arrangement.
                   </p>
                   <p>
-                    Mid-range budget
+                    Mid-level budget
                     <br />
-                    Quality stones of medium rarity, with more complex energy that works directly
-                    and quickly on the wearer, bringing noticeable change. Uses 2 - 4 stone types
-                    in the arrangement.
+                    Uses quality stones with a mid-level rarity. The energy is more intricate/layered, giving results that are direct and fast-acting for the user, with clear, noticeable changes. Uses 2–4 types of stones in the arrangement.
                   </p>
                   <p>
-                    Premium budget
+                    Mid-high budget
                     <br />
-                    High-quality stones with a unique character, of high rarity or one-of-a-kind.
-                    Complex, intense energy patterns delivering clear, rapid change, with
-                    distinctive designs and specialized usage methods. Uses 2 - 6 stone types in
-                    the arrangement.
+                    Uses high-quality stones with distinctive characteristics and a high level of rarity, or a single rare piece. Features a complex, intense energy pattern that produces clear and fast results, with unique/unusual patterns and specialized usage methods. Uses 2–6 types of stones in the arrangement.
                   </p>
                 </>
               )}
