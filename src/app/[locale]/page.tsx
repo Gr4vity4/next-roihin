@@ -18,7 +18,7 @@ export const revalidate = 0
 
 export default async function Home() {
   // Pick a random hero background per request; desktop/mobile files share the same number.
-  // Desktop lives at hero/NN-desktop.avif; mobile lives at hero/mobile/N.avif (unpadded).
+  // Desktop lives at hero/desktop/NN.avif (padded); mobile lives at hero/mobile/N.avif (unpadded).
   const { basePath, imageCount } = content.hero.background
   const heroNumber = Math.floor(Math.random() * imageCount) + 1
   const heroImageNumber = String(heroNumber).padStart(2, '0')
@@ -38,7 +38,7 @@ export default async function Home() {
       <main className="overflow-x-hidden w-full">
         {/* Hero Section - starts at top of page, content positioned to account for nav */}
         <HeroSection
-          backgroundImage={`${basePath}/${heroImageNumber}-desktop.avif`}
+          backgroundImage={`${basePath}/desktop/${heroImageNumber}.avif`}
           backgroundImageMobile={`${basePath}/mobile/${heroNumber}.avif`}
           backgroundAlt={content.hero.background.alt}
           ctaButton={{ ...content.hero.cta, translationKey: 'orderNow' }}

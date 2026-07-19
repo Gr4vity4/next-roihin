@@ -48,9 +48,9 @@ export default function HeroSection({
       overlayOpacity={overlayOpacity}
       parallaxSpeed={parallaxSpeed}
       objectPositionClassName="object-top md:object-center"
-      className={`${minHeight} flex items-center justify-center ${className}`}
+      className={`${minHeight} flex items-center md:items-end justify-center ${className}`}
     >
-      <Container className="pt-68 text-center text-white">
+      <Container className="pt-68 md:pt-0 text-center text-white">
         <Typography variant="h2" textShadow className="mb-10 font-normal text-3xl">
           {t('homePage.hero.title')}
           <br />
