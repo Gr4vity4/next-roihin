@@ -19,11 +19,11 @@ export default function CrystalGrid({ crystals, currentLocale }: CrystalGridProp
         >
           <div
             className={`relative aspect-square overflow-hidden ${
-              crystal.image ? 'bg-black' : 'bg-gray-800'
+              crystal.previewImage || crystal.image ? 'bg-black' : 'bg-gray-800'
             } rounded-lg mb-3`}
           >
             <Image
-              src={crystal.image || '/images/logo.avif'}
+              src={crystal.previewImage || crystal.image || '/images/logo.avif'}
               alt={crystal.title}
               fill
               className="object-cover group-hover:scale-110 transition-transform duration-300"

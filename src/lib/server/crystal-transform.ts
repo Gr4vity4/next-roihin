@@ -308,7 +308,7 @@ function normalizeCrystalRecord(raw: unknown, locale: CrystalLocale): Normalized
   }
 
   const category = toString(record.category ?? '') || undefined
-  const subtitle = chakraValues[0] || toneColorValues[0] || undefined
+  const subtitle = zodiacValues.join(', ') || undefined
 
   const sizePrices = normalizeSizePrices(record.size_prices ?? record.sizePrices)
 
