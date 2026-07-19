@@ -6,7 +6,7 @@ import Footer from '@/components/sections/Footer'
 import { Container, Typography } from '@/components/ui'
 import { ChevronDown } from 'lucide-react'
 import { useLocale } from 'next-intl'
-import Image from 'next/image'
+import Image, { getImageProps } from 'next/image'
 import { useId, useState } from 'react'
 
 function AccordionItem({ title, body }: { title: string; body: string }) {
@@ -405,6 +405,17 @@ export default function CustomerServicePage() {
         ],
       }
 
+  // Art-direct the banner like BaseHeroSection: desktop source at >=768px, mobile <img> as default
+  const heroShared = { alt: content.heroAlt, fill: true as const, sizes: '100vw', priority: true }
+  const { props: heroDesktop } = getImageProps({
+    ...heroShared,
+    src: '/images/contact/banner-desktop.avif',
+  })
+  const { props: heroMobile } = getImageProps({
+    ...heroShared,
+    src: '/images/contact/banner-mobile.avif',
+  })
+
   return (
     <>
       <NavigationWithSuspense />
@@ -413,15 +424,14 @@ export default function CustomerServicePage() {
       <main className="pt-20 min-[1408px]:pt-[230px]">
         {/* Full Width Image Section */}
         <section className="relative w-full h-[420px] overflow-hidden">
-          <Image
-            src="/images/357c3a_ac4bc1a787364c358512be32cc1ffc30~mv2.avif"
-            alt={content.heroAlt}
-            fill
-            className="object-cover"
-            priority
-          />
-          {/* Dark backdrop matching the home hero overlay */}
-          <div className="absolute inset-0 bg-black/40" />
+          <picture>
+            <source
+              media="(min-width: 768px)"
+              srcSet={heroDesktop.srcSet ?? heroDesktop.src}
+              sizes={heroDesktop.srcSet ? heroDesktop.sizes : undefined}
+            />
+            <img {...heroMobile} alt={content.heroAlt} className="object-cover object-center" />
+          </picture>
         </section>
 
         {/* CTA Section */}
