@@ -96,6 +96,7 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
           category={category}
           language={locale}
           breadcrumb={breadcrumb}
+          showSpecs={false}
         />
 
         {related && related.length > 0 && (

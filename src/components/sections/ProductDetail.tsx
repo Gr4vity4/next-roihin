@@ -21,6 +21,7 @@ interface ProductDetailProps {
   category: Category
   language?: 'en' | 'th'
   breadcrumb?: BreadcrumbItem[]
+  showSpecs?: boolean
 }
 
 function DetailAccordionItem({ title, content }: { title: string; content: string }) {
@@ -64,7 +65,7 @@ function DetailAccordionItem({ title, content }: { title: string; content: strin
   )
 }
 
-export default function ProductDetail({ product, category, language = 'en', breadcrumb }: ProductDetailProps) {
+export default function ProductDetail({ product, category, language = 'en', breadcrumb, showSpecs = true }: ProductDetailProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
   const [selectedColor, setSelectedColor] = useState(0)
   const [selectedColorImageIndex, setSelectedColorImageIndex] = useState(0)
@@ -460,25 +461,27 @@ export default function ProductDetail({ product, category, language = 'en', brea
             )}
 
             {/* Product Details */}
-            <div className="space-y-4 border-t border-gray-800 pt-6">
-              {product.acf.material && (
-                <div>
-                  <h3 className="text-sm text-gray-400 mb-1">
-                    {language === 'th' ? 'วัสดุ:' : 'Material:'}
-                  </h3>
-                  <p className="text-white font-prompt">{product.acf.material}</p>
-                </div>
-              )}
+            {showSpecs && (
+              <div className="space-y-4 border-t border-gray-800 pt-6">
+                {product.acf.material && (
+                  <div>
+                    <h3 className="text-sm text-gray-400 mb-1">
+                      {language === 'th' ? 'วัสดุ:' : 'Material:'}
+                    </h3>
+                    <p className="text-white font-prompt">{product.acf.material}</p>
+                  </div>
+                )}
 
-              {product.acf.dimensions && (
-                <div>
-                  <h3 className="text-sm text-gray-400 mb-1">
-                    {language === 'th' ? 'ขนาด:' : 'Dimensions:'}
-                  </h3>
-                  <p className="text-white font-prompt">{product.acf.dimensions}</p>
-                </div>
-              )}
-            </div>
+                {product.acf.dimensions && (
+                  <div>
+                    <h3 className="text-sm text-gray-400 mb-1">
+                      {language === 'th' ? 'ขนาด:' : 'Dimensions:'}
+                    </h3>
+                    <p className="text-white font-prompt">{product.acf.dimensions}</p>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Description */}
             {description !== '' && (
