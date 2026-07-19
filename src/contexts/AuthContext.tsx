@@ -3,6 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 
 import { useLocalStorage } from '@/hooks/useLocalStorage'
+import { clearLastShipping } from '@/lib/checkout-storage'
 import type { SimpleUser } from '@/lib/types/auth'
 import { getErrorMessage } from '@/lib/utils/error-handler'
 
@@ -203,6 +204,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = useCallback(async () => {
     setIsLoggedIn(false)
     removeUser()
+    // Explicit logout is the shared-browser signal: the remembered checkout
+    // shipping details (full PII) must not outlive it, same as the user record.
+    clearLastShipping()
     setError(null)
 
     try {

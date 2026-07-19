@@ -11,6 +11,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useCart } from '@/contexts/CartContext'
 import { Link, useRouter } from '@/i18n/navigation'
 import { getDefaultAddress } from '@/lib/api/addresses.client'
+import { readLastShipping, saveLastShipping } from '@/lib/checkout-storage'
 import { fetchShippingZoneMatch, type ShippingZone } from '@/lib/api/shipping-zones'
 import { getStripe } from '@/lib/stripe-client'
 import type { CreateOrderPayload } from '@/lib/api/orders'
@@ -35,38 +36,6 @@ const EMPTY_SHIPPING: ShippingFormState = {
   province: '',
 }
 
-// Shipping details from the shopper's most recent successful checkout, saved
-// so repeat customers get a filled form even without a saved default address.
-// Scoped to the user id so another account on a shared browser never sees them.
-const LAST_SHIPPING_STORAGE_KEY = 'checkout_last_shipping'
-
-interface StoredLastShipping {
-  userId: number
-  phoneCountry: string
-  shipping: ShippingFormState
-}
-
-function readLastShipping(userId: number): StoredLastShipping | null {
-  try {
-    const raw = window.localStorage.getItem(LAST_SHIPPING_STORAGE_KEY)
-    if (!raw) return null
-    const parsed = JSON.parse(raw) as StoredLastShipping | null
-    if (!parsed || parsed.userId !== userId || !parsed.shipping) return null
-    return parsed
-  } catch (error) {
-    console.error(`Error reading localStorage key "${LAST_SHIPPING_STORAGE_KEY}":`, error)
-    return null
-  }
-}
-
-function saveLastShipping(entry: StoredLastShipping) {
-  try {
-    window.localStorage.setItem(LAST_SHIPPING_STORAGE_KEY, JSON.stringify(entry))
-  } catch (error) {
-    console.error(`Error setting localStorage key "${LAST_SHIPPING_STORAGE_KEY}":`, error)
-  }
-}
-
 export default function CheckoutConfirmContent() {
   const router = useRouter()
   const t = useTranslations('checkoutConfirm')
@@ -85,6 +54,14 @@ export default function CheckoutConfirmContent() {
     'loading'
   )
   const hasPrefilledRef = useRef(false)
+  // True once the shopper edits any field. The address fetch resolves while
+  // the form is already editable, so every prefill overwrite must yield to
+  // in-progress typing instead of silently clobbering it.
+  const formDirtyRef = useRef(false)
+  // Live auth state for async callbacks: the prefill fetch can settle after a
+  // heartbeat 401 logged the shopper out, and its stale closure must not fill
+  // a logged-out form with stored PII.
+  const isLoggedInRef = useRef(isLoggedIn)
   // Caches a successfully created order's Stripe hand-off so a retry (Stripe
   // script failed to load, user hit Back from Stripe, etc.) reuses the same
   // order/session instead of creating a duplicate one.
@@ -131,6 +108,10 @@ export default function CheckoutConfirmContent() {
   }, [])
 
   useEffect(() => {
+    isLoggedInRef.current = isLoggedIn
+  }, [isLoggedIn])
+
+  useEffect(() => {
     if (!isLoggedIn) {
       hasPrefilledRef.current = false
       return
@@ -149,7 +130,7 @@ export default function CheckoutConfirmContent() {
     // details from the shopper's previous checkout, then to just their
     // account email, so repeat customers never start from a blank form.
     const applyFallbackPrefill = () => {
-      const stored = user ? readLastShipping(user.id) : null
+      const stored = user && !formDirtyRef.current ? readLastShipping(user.id) : null
       if (stored) {
         setPhoneCountry(stored.phoneCountry || 'th')
         setShippingAddress({
@@ -169,7 +150,10 @@ export default function CheckoutConfirmContent() {
       try {
         const { hasDefault, id, item } = await getDefaultAddress()
 
+        if (!isLoggedInRef.current) return
+
         if (hasDefault && item) {
+          if (formDirtyRef.current) return
           setDefaultAddressId(id)
           const parsedPhone = splitPhone(item.phone)
           setPhoneCountry(parsedPhone.country)
@@ -190,7 +174,9 @@ export default function CheckoutConfirmContent() {
         }
       } catch (error) {
         console.error('Failed to fetch default address:', error)
-        applyFallbackPrefill()
+        if (isLoggedInRef.current) {
+          applyFallbackPrefill()
+        }
       } finally {
         setAddressLoading(false)
       }
@@ -235,6 +221,7 @@ export default function CheckoutConfirmContent() {
   // saved-address reference: the backend ships to the shipping_address_id
   // record when one is present, which would silently discard the edits.
   const handleFieldChange = (field: keyof AddressFieldValues, value: string) => {
+    formDirtyRef.current = true
     setDefaultAddressId(null)
     setShippingAddress((prev) => ({
       ...prev,
@@ -243,8 +230,14 @@ export default function CheckoutConfirmContent() {
   }
 
   const handlePhoneCountryChange = (code: string) => {
+    formDirtyRef.current = true
     setDefaultAddressId(null)
     setPhoneCountry(code)
+  }
+
+  const handleEmailChange = (value: string) => {
+    formDirtyRef.current = true
+    setShippingAddress((prev) => ({ ...prev, email: value }))
   }
 
   const handleSubmit = async (e: FormEvent) => {
@@ -462,9 +455,7 @@ export default function CheckoutConfirmContent() {
                         id="email"
                         name="email"
                         value={shippingAddress.email}
-                        onChange={(e) =>
-                          setShippingAddress((prev) => ({ ...prev, email: e.target.value }))
-                        }
+                        onChange={(e) => handleEmailChange(e.target.value)}
                         required
                       />
                     </div>
