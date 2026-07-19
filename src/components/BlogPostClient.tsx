@@ -15,6 +15,7 @@ import { content } from '@/config/content.config'
 import { siteConfig } from '@/config/site.config'
 import { useLocale } from 'next-intl'
 import type { BlogPostDetailsResponse } from '@/lib/types/laravel'
+import { markdownToHtml } from '@/lib/markdown'
 import { formatThaiDate } from '@/lib/utils'
 import Image from 'next/image'
 import { notFound, useRouter } from 'next/navigation'
@@ -172,8 +173,8 @@ export default function BlogPostClient({ slug }: BlogPostClientProps) {
 
               <article className="prose prose-lg max-w-none">
                 <SafeHtml
-                  html={article.content ?? ''}
-                  className=" text-gray-800 leading-8 [&_h3]:text-2xl [&_h3]:font-bold [&_h3]:text-[#244323] [&_h3]:mt-8 [&_h3]:mb-4 [&_h4]:text-xl [&_h4]:font-semibold [&_h4]:text-[#244323] [&_h4]:mt-6 [&_h4]:mb-3 [&_p]:mb-4 [&_p]:leading-8 [&_ul]:list-disc [&_ul]:list-inside [&_ul]:mb-4 [&_ul]:space-y-2 [&_li]:leading-7 [&_strong]:font-semibold [&_strong]:text-[#244323]"
+                  html={markdownToHtml(article.content ?? '')}
+                  className=" text-gray-800 leading-8 [&_h2]:text-2xl lg:[&_h2]:text-3xl [&_h2]:font-bold [&_h2]:text-[#244323] [&_h2]:mt-10 [&_h2]:mb-4 [&_h3]:text-2xl [&_h3]:font-bold [&_h3]:text-[#244323] [&_h3]:mt-8 [&_h3]:mb-4 [&_h4]:text-xl [&_h4]:font-semibold [&_h4]:text-[#244323] [&_h4]:mt-6 [&_h4]:mb-3 [&_p]:mb-4 [&_p]:leading-8 [&_ul]:list-disc [&_ul]:list-inside [&_ul]:mb-4 [&_ul]:space-y-2 [&_ol]:list-decimal [&_ol]:list-inside [&_ol]:mb-4 [&_ol]:space-y-2 [&_li]:leading-7 [&_strong]:font-semibold [&_strong]:text-[#244323] [&_a]:text-[#cb9e51] [&_a]:underline [&_img]:my-8 [&_img]:mx-auto [&_img]:max-w-full [&_img]:h-auto [&_blockquote]:border-l-4 [&_blockquote]:border-[#cb9e51] [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-gray-600 [&_blockquote]:my-6"
                 />
               </article>
 
