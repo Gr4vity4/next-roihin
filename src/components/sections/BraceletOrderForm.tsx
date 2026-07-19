@@ -69,60 +69,60 @@ export default function BraceletOrderForm() {
         {
           number: 1,
           title: 'กรอกข้อมูล',
-          subtitle: 'กรอกข้อมูลส่วนตัวในขั้นตอนแรกเพื่อใช้ในการออกแบบ',
+          subtitle: 'ให้ข้อมูลเบื้องต้นสำหรับออกแบบ',
         },
         {
           number: 2,
           title: 'ยืนยันรับข้อมูล',
-          subtitle: 'เพิ่มเพื่อนใน LINE\n@roihin4289\nแจ้งให้ดูเพื่อยืนยันรับข้อมูล',
+          subtitle: 'แอด LINE @roihin4289 แจ้ง "ยืนยันข้อมูล"',
         },
         {
           number: 3,
           title: 'ส่งแบบ',
-          subtitle: 'ส่งแบบ พร้อมคำอธิบายพลังงาน ผ่านช่องทางโลกไซต์ภายใน 2 - 4 วัน',
+          subtitle: 'รับแบบพร้อมคำอธิบายภายใน 5-7 วัน',
         },
         {
           number: 4,
           title: 'ปรับปรุงแบบ',
-          subtitle: 'ลูกค้าเลือกหรือปรับแบบแบบได้ท่อนดัดสิ่นใจซื้อระงิน',
+          subtitle: 'เลือก/ปรับแบบก่อนชำระเงิน',
         },
         {
           number: 5,
           title: 'เตรียมกำไลหิน',
-          subtitle: 'ชำระสำพลังงานหิน / ผ่านพิธีปลุกพลังหินบางคุณ ก่อนจัดส่ง',
+          subtitle: 'ชำระล้างและปลุกพลังก่อนจัดส่ง',
         },
-        { number: 6, title: 'จัดส่ง', subtitle: 'จัดส่งฟรีทั่วประเทศโดย EMS ไปรษณีย์ไทย' },
+        { number: 6, title: 'จัดส่ง', subtitle: 'ฟรีทั่วประเทศ ต่างประเทศคิดตามจริง' },
       ]
     : [
         {
           number: 1,
           title: 'Fill in Your Details',
-          subtitle: 'Provide your personal information in the first step for the design',
+          subtitle: 'Share your personal information so we can begin your design.',
         },
         {
           number: 2,
-          title: 'Confirm Your Request',
-          subtitle: 'Add us on LINE\n@roihin4289\nand message us to confirm we received your details',
+          title: 'Confirm Your Submission',
+          subtitle: 'Add us on LINE @roihin4289 and message "Confirm website info"',
         },
         {
           number: 3,
-          title: 'Receive the Design',
-          subtitle: 'We send your design with an energy description via chat within 2 - 4 days',
+          title: 'Design Delivery',
+          subtitle: 'ROIHIN sends your design with a full explanation via LINE or email within 5–7 days.',
         },
         {
           number: 4,
-          title: 'Refine the Design',
-          subtitle: 'Choose or adjust the design before deciding to purchase',
+          title: 'Refine Your Design',
+          subtitle: 'Choose or adjust your design as you like before proceeding to payment.',
         },
         {
           number: 5,
           title: 'Bracelet Preparation',
-          subtitle: 'Stone energy cleansing / empowerment ritual before delivery',
+          subtitle: 'Your stones are cleansed and energized, ready before shipping.',
         },
         {
           number: 6,
           title: 'Delivery',
-          subtitle: 'Free nationwide shipping via Thailand Post EMS',
+          subtitle: 'Free shipping nationwide; international shipping charged at actual cost.',
         },
       ]
 
@@ -162,34 +162,34 @@ export default function BraceletOrderForm() {
 
     // Check First Name
     if (!formData.firstName.trim()) {
-      errors.push(isThai ? 'กรุณากรอกชื่อ (First Name)' : 'Please enter your First Name')
+      errors.push(isThai ? 'กรุณากรอกชื่อ' : 'Please enter your First Name')
       fields.firstName = true
     }
 
     // Check Last Name
     if (!formData.lastName.trim()) {
-      errors.push(isThai ? 'กรุณากรอกนามสกุล (Last Name)' : 'Please enter your Last Name')
+      errors.push(isThai ? 'กรุณากรอกนามสกุล' : 'Please enter your Last Name')
       fields.lastName = true
     }
 
     // Check Date of Birth
     if (!formData.birthDate.day || !formData.birthDate.month || !formData.birthDate.year) {
       errors.push(
-        isThai ? 'กรุณาเลือกวัน เดือน ปี เกิด (Date of Birth)' : 'Please select your Date of Birth',
+        isThai ? 'กรุณาเลือกวัน เดือน ปี เกิด' : 'Please select your Date of Birth',
       )
       fields.birthDate = true
     }
 
     // Check Email
     if (!formData.email.trim()) {
-      errors.push(isThai ? 'กรุณากรอกอีเมล (E-mail Address)' : 'Please enter your E-mail Address')
+      errors.push(isThai ? 'กรุณากรอกอีเมล' : 'Please enter your E-mail Address')
       fields.email = true
     } else {
       // Validate email format
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
       if (!emailRegex.test(formData.email)) {
         errors.push(
-          isThai ? 'กรุณากรอกอีเมลให้ถูกต้อง (Invalid E-mail format)' : 'Invalid E-mail format',
+          isThai ? 'กรุณากรอกอีเมลให้ถูกต้อง' : 'Invalid E-mail format',
         )
         fields.email = true
       }
@@ -197,25 +197,25 @@ export default function BraceletOrderForm() {
 
     // Check Phone
     if (!formData.phone.trim()) {
-      errors.push(isThai ? 'กรุณากรอกเบอร์ติดต่อ (Mobile No.)' : 'Please enter your Mobile No.')
+      errors.push(isThai ? 'กรุณากรอกเบอร์ติดต่อ' : 'Please enter your Mobile No.')
       fields.phone = true
     }
 
     // Check Wrist Size
     if (!formData.wristSize) {
-      errors.push(isThai ? 'กรุณาเลือกขนาดรอบข้อมือ (Wrist size)' : 'Please select your Wrist size')
+      errors.push(isThai ? 'กรุณาเลือกขนาดรอบข้อมือ' : 'Please select your Wrist size')
       fields.wristSize = true
     }
 
     // Check Bead Size
     if (!formData.beadSize) {
-      errors.push(isThai ? 'กรุณาเลือกขนาดเม็ดหิน (Bead size)' : 'Please select a Bead size')
+      errors.push(isThai ? 'กรุณาเลือกขนาดเม็ดหิน' : 'Please select a Bead size')
       fields.beadSize = true
     }
 
     // Check Budget
     if (!formData.budget) {
-      errors.push(isThai ? 'กรุณาเลือกงบประมาณ (Budget)' : 'Please select a Budget')
+      errors.push(isThai ? 'กรุณาเลือกงบประมาณ' : 'Please select a Budget')
       fields.budget = true
     }
 
@@ -323,6 +323,15 @@ export default function BraceletOrderForm() {
       <section className="pb-16 sm:py-20 md:py-24 bg-white pt-0 font-prompt">
         <Container padding="lg">
           <div className="max-w-6xl mx-auto">
+            {/* Info Bar */}
+            <div className="text-center mb-8">
+              <p className="text-gray-700 text-lg">
+                {isThai
+                  ? '6 ขั้นตอนเรียบง่าย แต่ปราณีตเพื่อพลังงานที่ดีที่สุด สำหรับคุณคนพิเศษ'
+                  : '6 simple yet meticulous steps for the best energy — made for you, someone special'}
+              </p>
+            </div>
+            
             {/* Steps */}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-12">
               {steps.map((step) => (
@@ -336,15 +345,6 @@ export default function BraceletOrderForm() {
               ))}
             </div>
 
-            {/* Info Bar */}
-            <div className="text-center mb-8">
-              <p className="text-gray-700">
-                {isThai
-                  ? '6 ขั้นตอนเรียบง่าย แต่ปราณีตเพื่อพลังงานที่ดีที่สุด สำหรับคุณคนพิเศษ'
-                  : '6 simple yet meticulous steps for the best energy — made for you, someone special'}
-              </p>
-            </div>
-
             {/* Form */}
             <form
               onSubmit={handleSubmit}
@@ -354,7 +354,7 @@ export default function BraceletOrderForm() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {isThai ? 'ชื่อ (First Name)' : 'First Name'}{' '}
+                    {isThai ? 'ชื่อ' : 'First Name'}{' '}
                     <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -374,7 +374,7 @@ export default function BraceletOrderForm() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {isThai ? 'นามสกุล (Last Name)' : 'Last Name'}{' '}
+                    {isThai ? 'นามสกุล' : 'Last Name'}{' '}
                     <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -475,7 +475,7 @@ export default function BraceletOrderForm() {
               {/* Email */}
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {isThai ? 'อีเมล (E-mail Address)' : 'E-mail Address'}{' '}
+                  {isThai ? 'อีเมล' : 'E-mail Address'}{' '}
                   <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -498,7 +498,7 @@ export default function BraceletOrderForm() {
               <div className="mb-6">
                 <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
                   {isThai
-                    ? 'เบอร์ติดต่อ - เพื่อตรวจอัพเดทแบบเลขศาสตร์ (Mobile No.)'
+                    ? 'เบอร์ติดต่อ - เพื่อตรวจอัพเดทแบบเลขศาสตร์'
                     : 'Mobile No. - for numerology check and design updates'}{' '}
                   <span className="text-red-500">*</span>
                 </label>
@@ -523,7 +523,7 @@ export default function BraceletOrderForm() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {isThai ? 'ขนาดรอบข้อมือ (Wrist size)' : 'Wrist size'}{' '}
+                    {isThai ? 'ขนาดรอบข้อมือ' : 'Wrist size'}{' '}
                     <span className="text-red-500">*</span>
                   </label>
                   <select
@@ -550,7 +550,7 @@ export default function BraceletOrderForm() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {isThai ? 'ขนาดเม็ดหิน (Bead size)' : 'Bead size'}{' '}
+                    {isThai ? 'ขนาดเม็ดหิน' : 'Bead size'}{' '}
                     <span className="text-red-500">*</span>
                   </label>
                   <select
