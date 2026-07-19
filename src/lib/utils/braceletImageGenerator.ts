@@ -33,9 +33,12 @@ function toCanvasSafeUrl(url: string): string {
   return url
 }
 
-function loadImage(url: string): Promise<HTMLImageElement | null> {
+function loadImage(url: string, crossOrigin?: 'anonymous'): Promise<HTMLImageElement | null> {
   return new Promise((resolve) => {
     const img = new Image()
+    if (crossOrigin) {
+      img.crossOrigin = crossOrigin
+    }
     const timer = setTimeout(() => resolve(null), IMAGE_LOAD_TIMEOUT_MS)
     img.onload = () => {
       clearTimeout(timer)
@@ -47,6 +50,24 @@ function loadImage(url: string): Promise<HTMLImageElement | null> {
     }
     img.src = url
   })
+}
+
+// Proxy first; if the proxy rejects the host (outside its allowlist) retry the
+// direct URL with a CORS load, which keeps the canvas clean when the host
+// sends CORS headers. A bead whose image still fails draws as a gray disc.
+async function loadBeadImage(url: string): Promise<HTMLImageElement | null> {
+  if (!/^https?:\/\//i.test(url)) {
+    return loadImage(url)
+  }
+  const proxied = await loadImage(toCanvasSafeUrl(url))
+  if (proxied) {
+    return proxied
+  }
+  const direct = await loadImage(url, 'anonymous')
+  if (!direct) {
+    console.warn('Bracelet thumbnail: failed to load bead image', url)
+  }
+  return direct
 }
 
 export async function renderBraceletThumbnail(
@@ -84,7 +105,7 @@ export async function renderBraceletThumbnail(
     )
 
     const images = await Promise.all(
-      beads.map((bead) => (bead.imageUrl ? loadImage(toCanvasSafeUrl(bead.imageUrl)) : null)),
+      beads.map((bead) => (bead.imageUrl ? loadBeadImage(bead.imageUrl) : null)),
     )
 
     beads.forEach((bead, index) => {
@@ -103,7 +124,13 @@ export async function renderBraceletThumbnail(
       ctx.fill()
 
       if (image) {
-        ctx.drawImage(image, -width / 2, -width / 2, width, width)
+        // Contain-fit like the stage's object-fit: contain and the SVG
+        // preview's default xMidYMid meet, so non-square images keep their
+        // aspect ratio instead of stretching to the square.
+        const scale = width / Math.max(image.naturalWidth, image.naturalHeight)
+        const drawWidth = image.naturalWidth * scale
+        const drawHeight = image.naturalHeight * scale
+        ctx.drawImage(image, -drawWidth / 2, -drawHeight / 2, drawWidth, drawHeight)
       }
       ctx.restore()
     })

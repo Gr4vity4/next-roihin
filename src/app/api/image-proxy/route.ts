@@ -15,6 +15,14 @@ const STATIC_ALLOWED_HOSTNAMES = new Set([
 
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024
 
+const ALLOWED_CONTENT_TYPES = new Set([
+  'image/png',
+  'image/jpeg',
+  'image/gif',
+  'image/webp',
+  'image/avif',
+])
+
 function envOrigins(): Set<string> {
   const origins = new Set<string>()
   const candidates = [
@@ -81,21 +89,43 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Upstream image unavailable' }, { status: 502 })
   }
 
-  const contentType = upstream.headers.get('content-type') ?? ''
-  if (!contentType.toLowerCase().startsWith('image/')) {
-    return NextResponse.json({ error: 'Upstream response is not an image' }, { status: 502 })
+  // Raster formats only. SVG is an active document format — served same-origin
+  // it could execute script when opened as a top-level document.
+  const contentType = (upstream.headers.get('content-type') ?? '')
+    .split(';')[0]
+    .trim()
+    .toLowerCase()
+  if (!ALLOWED_CONTENT_TYPES.has(contentType)) {
+    return NextResponse.json({ error: 'Upstream response is not a supported image' }, { status: 502 })
   }
 
+  // Fast-path reject on the declared size, then enforce the cap on the bytes
+  // actually transferred — Content-Length may be absent or lying.
   const contentLength = Number(upstream.headers.get('content-length') ?? 0)
   if (contentLength > MAX_IMAGE_BYTES) {
     return NextResponse.json({ error: 'Image too large' }, { status: 502 })
   }
 
-  return new NextResponse(upstream.body, {
+  let received = 0
+  const limited = upstream.body.pipeThrough(
+    new TransformStream<Uint8Array, Uint8Array>({
+      transform(chunk, controller) {
+        received += chunk.byteLength
+        if (received > MAX_IMAGE_BYTES) {
+          controller.error(new Error('Image too large'))
+        } else {
+          controller.enqueue(chunk)
+        }
+      },
+    }),
+  )
+
+  return new NextResponse(limited, {
     headers: {
       'Content-Type': contentType,
       'Cache-Control': 'public, max-age=3600',
       'X-Content-Type-Options': 'nosniff',
+      'Content-Security-Policy': "default-src 'none'; sandbox",
     },
   })
 }
