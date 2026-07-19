@@ -1,113 +1,117 @@
-import html2canvas from 'html2canvas'
+import {
+  CIRCLE_SIZE_MAP,
+  DEFAULT_CIRCLE_SIZE,
+  layoutBeads,
+} from '@/lib/utils/braceletGeometry'
 
-// Helper function to wait for all images in an element to load
-async function waitForImagesToLoad(element: HTMLElement): Promise<void> {
-  const images = element.querySelectorAll('img')
-  const backgroundImages = element.querySelectorAll<HTMLElement>('[style*="background-image"]')
+// Renders the bracelet design straight from its data (same geometry as the
+// designer stage and BraceletPreview) instead of screenshotting the DOM.
+// The old html2canvas capture silently dropped the cross-origin stone images,
+// so the uploaded thumbnail — the image Stripe checkout displays — was an
+// empty ring. Stone images load through /api/image-proxy so the canvas stays
+// clean and toDataURL never throws on tainting.
 
-  const imagePromises: Promise<void>[] = []
+export interface ThumbnailBead {
+  imageUrl?: string
+  size: number
+}
 
-  // Wait for img tags
-  images.forEach((img) => {
-    if (!img.complete) {
-      imagePromises.push(
-        new Promise((resolve) => {
-          img.addEventListener('load', () => resolve())
-          img.addEventListener('error', () => resolve()) // Continue even if image fails
-        })
-      )
+const THUMB_WIDTH = 520
+const THUMB_HEIGHT = 360
+const THUMB_SCALE = 2
+const RING_BORDER = 4
+const STONE_FALLBACK_BG = '#d1d5db'
+const IMAGE_LOAD_TIMEOUT_MS = 8000
+const BRACELET_PLACEHOLDER_IMAGE = '/images/bracelet-placeholder.png'
+
+// Route remote stone images through the same-origin proxy; same-origin paths
+// (e.g. /images/...) can be drawn directly.
+function toCanvasSafeUrl(url: string): string {
+  if (/^https?:\/\//i.test(url)) {
+    return `/api/image-proxy?url=${encodeURIComponent(url)}`
+  }
+  return url
+}
+
+function loadImage(url: string): Promise<HTMLImageElement | null> {
+  return new Promise((resolve) => {
+    const img = new Image()
+    const timer = setTimeout(() => resolve(null), IMAGE_LOAD_TIMEOUT_MS)
+    img.onload = () => {
+      clearTimeout(timer)
+      resolve(img.naturalWidth > 0 ? img : null)
     }
+    img.onerror = () => {
+      clearTimeout(timer)
+      resolve(null)
+    }
+    img.src = url
   })
-
-  // For background images, we can't easily detect when they're loaded,
-  // so we'll add a small delay to ensure they're rendered
-  if (backgroundImages.length > 0) {
-    imagePromises.push(new Promise(resolve => setTimeout(resolve, 500)))
-  }
-
-  await Promise.all(imagePromises)
 }
 
-// Helper function to retry with exponential backoff
-async function retryWithBackoff<T>(
-  fn: () => Promise<T>,
-  maxRetries: number = 3,
-  delay: number = 100
-): Promise<T> {
-  let lastError: Error | unknown
-
-  for (let i = 0; i < maxRetries; i++) {
-    try {
-      return await fn()
-    } catch (error) {
-      lastError = error
-      if (i < maxRetries - 1) {
-        await new Promise(resolve => setTimeout(resolve, delay * Math.pow(2, i)))
-      }
-    }
-  }
-
-  throw lastError
-}
-
-export async function generateBraceletThumbnail(element: HTMLElement): Promise<string> {
+export async function renderBraceletThumbnail(
+  beads: ThumbnailBead[],
+  wristLength: string,
+): Promise<string> {
   try {
-    // Wait for all images to load first
-    await waitForImagesToLoad(element)
-
-    // Add a small delay to ensure DOM is fully rendered
-    await new Promise(resolve => setTimeout(resolve, 300))
-
-    // Try to capture with retry logic
-    const captureFunction = async () => {
-      const canvas = await html2canvas(element, {
-        backgroundColor: '#ffffff',
-        scale: 2, // Higher quality
-        logging: false,
-        useCORS: true, // Allow cross-origin images
-        allowTaint: true,
-        width: 520,
-        height: 360,
-        onclone: (clonedDoc) => {
-          // Ensure cloned document has all styles applied
-          const clonedElement = clonedDoc.querySelector('[data-stage]')
-          if (clonedElement) {
-            // Force a reflow to ensure all styles are applied
-            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-            (clonedElement as HTMLElement).offsetHeight
-          }
-        },
-        imageTimeout: 5000, // Wait up to 5 seconds for images
-        removeContainer: false, // Keep the cloned container for debugging
-      })
-
-      // Verify the canvas has content (not just white)
-      const ctx = canvas.getContext('2d')
-      if (ctx) {
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
-        const hasContent = imageData.data.some((value, index) => {
-          // Check if any pixel is not white (considering RGBA channels)
-          if (index % 4 === 3) return false // Skip alpha channel
-          return value !== 255
-        })
-
-        if (!hasContent) {
-          throw new Error('Canvas appears to be empty')
-        }
-      }
-
-      return canvas
+    const canvas = document.createElement('canvas')
+    canvas.width = THUMB_WIDTH * THUMB_SCALE
+    canvas.height = THUMB_HEIGHT * THUMB_SCALE
+    const ctx = canvas.getContext('2d')
+    if (!ctx) {
+      throw new Error('Canvas 2D context unavailable')
     }
+    ctx.scale(THUMB_SCALE, THUMB_SCALE)
 
-    const canvas = await retryWithBackoff(captureFunction)
+    ctx.fillStyle = '#ffffff'
+    ctx.fillRect(0, 0, THUMB_WIDTH, THUMB_HEIGHT)
 
-    // Convert canvas to base64 image
-    const imageData = canvas.toDataURL('image/png', 0.9)
-    return imageData
+    const ringDiameter = CIRCLE_SIZE_MAP[wristLength] ?? DEFAULT_CIRCLE_SIZE
+    const cx = THUMB_WIDTH / 2
+    const cy = THUMB_HEIGHT / 2
+
+    ctx.beginPath()
+    ctx.arc(cx, cy, ringDiameter / 2 - RING_BORDER / 2, 0, Math.PI * 2)
+    ctx.strokeStyle = '#000000'
+    ctx.lineWidth = RING_BORDER
+    ctx.stroke()
+
+    const layout = layoutBeads(
+      beads.map((bead) => bead.size),
+      ringDiameter,
+      cx,
+      cy,
+    )
+
+    const images = await Promise.all(
+      beads.map((bead) => (bead.imageUrl ? loadImage(toCanvasSafeUrl(bead.imageUrl)) : null)),
+    )
+
+    beads.forEach((bead, index) => {
+      const { x, y, width, rotation } = layout[index]
+      const image = images[index]
+
+      ctx.save()
+      ctx.translate(x, y)
+      ctx.rotate((rotation * Math.PI) / 180)
+
+      // Fallback disc underneath, like BraceletPreview, so a failed image
+      // still reads as a bead instead of vanishing.
+      ctx.beginPath()
+      ctx.arc(0, 0, width / 2, 0, Math.PI * 2)
+      ctx.fillStyle = STONE_FALLBACK_BG
+      ctx.fill()
+
+      if (image) {
+        ctx.drawImage(image, -width / 2, -width / 2, width, width)
+      }
+      ctx.restore()
+    })
+
+    return canvas.toDataURL('image/png')
   } catch (error) {
     console.error('Error generating bracelet thumbnail:', error)
-    // Return a fallback placeholder image if generation fails
-    return '/images/bracelet-placeholder.png'
+    return BRACELET_PLACEHOLDER_IMAGE
   }
 }
 

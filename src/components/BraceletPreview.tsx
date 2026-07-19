@@ -23,7 +23,7 @@ const STONE_FALLBACK_BG = '#d1d5db'
 
 // Renders a designed bracelet from the cart's braceletDesign data with the
 // same geometry as the designer stage, so cart/checkout always show the exact
-// design without depending on the uploaded html2canvas snapshot.
+// design without depending on the uploaded thumbnail snapshot.
 export default function BraceletPreview({ beads, wristLength, className }: BraceletPreviewProps) {
   const ringDiameter = CIRCLE_SIZE_MAP[wristLength] ?? DEFAULT_CIRCLE_SIZE
   const maxBeadPx = beads.reduce((max, bead) => Math.max(max, bead.size * BEAD_PX_PER_MM), 0)

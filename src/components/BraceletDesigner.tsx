@@ -21,8 +21,8 @@ import { useCart } from '@/contexts/CartContext'
 import type { Stone } from '@/lib/types/api-types'
 import {
   generateBraceletId,
-  generateBraceletThumbnail,
   generateBraceletTitle,
+  renderBraceletThumbnail,
 } from '@/lib/utils/braceletImageGenerator'
 import { getLaravelApiEndpoint } from '@/config/api.config'
 import { BEAD_PX_PER_MM, CIRCLE_SIZE_MAP, START_ANGLE } from '@/lib/utils/braceletGeometry'
@@ -603,26 +603,23 @@ export default function BraceletDesigner() {
       locale === 'th' ? `จัดการหิน ${stone.title}` : `Edit bead ${stone.title}`,
     )
 
-    // Use image element instead of background for better html2canvas compatibility
     const validImageUrl = getValidStoneImageUrl(stone)
     if (validImageUrl) {
       const img = document.createElement('img')
-      // Try Next.js image proxy first (same-origin for html2canvas), then fall back to direct URL.
-      const encodedUrl = encodeURIComponent(validImageUrl)
-      const proxiedUrl = `/_next/image?url=${encodedUrl}&w=${imageWidth * 2}&q=75`
+      // Load through the same-origin proxy (the /_next/image endpoint is
+      // disabled by images.unoptimized), then fall back to the direct URL.
+      const proxiedUrl = `/api/image-proxy?url=${encodeURIComponent(validImageUrl)}`
       img.style.width = '100%'
       img.style.height = '100%'
       img.style.objectFit = 'contain'
       img.style.pointerEvents = 'none'
       img.draggable = false
-      img.crossOrigin = 'anonymous' // Enable CORS for html2canvas via proxy
 
       // Add error handler for failed image loads
       let triedDirect = false
       img.onerror = () => {
         if (!triedDirect) {
           triedDirect = true
-          img.removeAttribute('crossorigin')
           img.src = validImageUrl
           return
         }
@@ -754,24 +751,21 @@ export default function BraceletDesigner() {
     setIsAddingToCart(true)
 
     try {
-      // Ensure all beads are rendered before capturing
-      await new Promise((resolve) => setTimeout(resolve, 500))
-
-      // Force a reflow to ensure all styles are applied
-      if (stageRef.current) {
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-        stageRef.current.offsetHeight
-      }
-
       // Generate unique ID for this bracelet design
       const designId = generateBraceletId()
 
-      // Generate thumbnail image of the bracelet design
-      const rawThumbnail = stageRef.current
-        ? await generateBraceletThumbnail(stageRef.current)
-        : BRACELET_PLACEHOLDER_IMAGE
+      // Render the design thumbnail from its data (same geometry as the
+      // stage), so the uploaded image always shows the actual beads
+      const rawThumbnail = await renderBraceletThumbnail(
+        beads.map((bead) => ({ imageUrl: bead.imageUrl, size: bead.size })),
+        wristLength,
+      )
 
-      let designImageUrl = BRACELET_PLACEHOLDER_IMAGE
+      // The design image URL travels to the backend and on to Stripe, so any
+      // local fallback path has to be absolute to render off-site
+      const toAbsoluteUrl = (path: string) => new URL(path, window.location.origin).href
+
+      let designImageUrl = toAbsoluteUrl(BRACELET_PLACEHOLDER_IMAGE)
 
       if (typeof rawThumbnail === 'string') {
         if (rawThumbnail.startsWith('data:')) {
@@ -781,8 +775,10 @@ export default function BraceletDesigner() {
           } else {
             console.warn('Falling back to placeholder image for bracelet design thumbnail')
           }
-        } else if (rawThumbnail.startsWith('http') || rawThumbnail.startsWith('/')) {
+        } else if (rawThumbnail.startsWith('http')) {
           designImageUrl = rawThumbnail
+        } else if (rawThumbnail.startsWith('/')) {
+          designImageUrl = toAbsoluteUrl(rawThumbnail)
         }
       }
 
