@@ -655,7 +655,7 @@ export const content = {
         },
         {
           text: 'ขอรับคำปรึกษา',
-          href: 'tel:+66838265195',
+          href: 'tel:+66831591926',
           variant: 'primary' as const,
         },
         {

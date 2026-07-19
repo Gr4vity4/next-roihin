@@ -60,9 +60,10 @@ export default function CustomerServicePage() {
         address: `ร้อยหิน Stone & Bracelet
 101/54 หมู่บ้าน ภัสสร 70 (เกาะแก้ว) หมู่ที่ 4 ตำบลเกาะแก้ว อำเภอเมืองภูเก็ต จังหวัดภูเก็ต 83000`,
         phoneLabel: 'โทรศัพท์:',
-        phone: '+6683 826 5195',
+        phone: '+6683 159 1926',
         emailLabel: 'อีเมล์:',
-        email: 'info.roihin@gmail.com',
+        email: 'info@roihin.com',
+        shopAlt: 'หน้าร้านร้อยหิน Stone & Bracelet',
         mapTitle: 'แผนที่ร้านร้อยหิน Stone & Bracelet',
         ctaTitle: 'ปรึกษาและออกแบบให้ฟรี',
         ctaDescription:
@@ -232,9 +233,10 @@ export default function CustomerServicePage() {
         address: `Roihin Stone & Bracelet
 101/54 Passorn 70 Village (Ko Kaew), Village No. 4, Ko Kaew Subdistrict, Mueang Phuket District, Phuket 83000`,
         phoneLabel: 'Phone:',
-        phone: '+6683 826 5195',
+        phone: '+6683 159 1926',
         emailLabel: 'Email:',
-        email: 'info.roihin@gmail.com',
+        email: 'info@roihin.com',
+        shopAlt: 'Roihin Stone & Bracelet storefront',
         mapTitle: 'Roihin Stone & Bracelet location map',
         ctaTitle: 'Free Consultation & Design',
         ctaDescription:
@@ -416,6 +418,17 @@ export default function CustomerServicePage() {
     src: '/images/contact/banner-mobile.avif',
   })
 
+  // Contact section background, art-directed the same way
+  const shopShared = { alt: content.shopAlt, fill: true as const, sizes: '100vw' }
+  const { props: shopDesktop } = getImageProps({
+    ...shopShared,
+    src: '/images/contact/shop-desktop.avif',
+  })
+  const { props: shopMobile } = getImageProps({
+    ...shopShared,
+    src: '/images/contact/shop-mobile.avif',
+  })
+
   return (
     <>
       <NavigationWithSuspense />
@@ -584,31 +597,29 @@ export default function CustomerServicePage() {
 
 
 
-        {/* Content Section with Video Background */}
-        <section className="relative overflow-hidden">
-          {/* Video Background */}
-          <div className="absolute inset-0 w-full h-full">
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="absolute top-0 left-0 w-full h-full object-cover"
-              ref={(el) => {
-                if (el) el.playbackRate = 0.5
-              }}
-            >
-              <source src="/videos/main.mp4" type="video/mp4" />
-            </video>
-            {/* Dark overlay with blur for better text visibility */}
-            <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
-          </div>
+        {/* Content Section with Shop Photo Background */}
+        <section>
+          <div className="grid grid-cols-1 lg:grid-cols-2 lg:min-h-[560px]">
+            {/* Left Column - Contact Information over shop photo */}
+            <div className="relative overflow-hidden bg-black flex items-center px-4 py-16 sm:px-6 md:px-8 lg:px-12 lg:py-20">
+              {/* Shop Photo Background */}
+              <div className="absolute inset-0">
+                <picture>
+                  <source
+                    media="(min-width: 768px)"
+                    srcSet={shopDesktop.srcSet ?? shopDesktop.src}
+                    sizes={shopDesktop.srcSet ? shopDesktop.sizes : undefined}
+                  />
+                  <img
+                    {...shopMobile}
+                    alt={content.shopAlt}
+                    className="object-cover object-center"
+                  />
+                </picture>
+              </div>
 
-          {/* Content */}
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 lg:min-h-[560px]">
-            {/* Left Column - Contact Information */}
-            <div className="flex items-center px-4 py-16 sm:px-6 md:px-8 lg:px-12 lg:py-20">
-              <div className="w-full max-w-xl mx-auto space-y-8 text-white">
+              {/* Text sits on the right of the photo so the ROIHIN sign stays visible */}
+              <div className="relative z-10 w-full max-w-xl mx-auto md:w-[62%] md:mx-0 md:ml-auto space-y-8 text-white">
                 <Typography
                   variant="h2"
                   className="text-4xl lg:text-5xl font-bold text-white mb-8"

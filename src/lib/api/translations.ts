@@ -19,7 +19,7 @@ export async function getSiteTranslations(language: 'th' | 'en' = 'th'): Promise
       acf: {
         address: '101/54 หมู่บ้าน ภัสสร 70 (เกาะแก้ว) หมู่ที่ 4 ตำบลเกาะแก้ว อำเภอเมืองภูเก็ต จังหวัดภูเก็ต 83000',
         bracelet_design_base_price: '1000',
-        email: 'info.roihin@gmail.com',
+        email: 'info@roihin.com',
         facebook: 'https://www.facebook.com/roihin42896395',
         google_map: 'https://maps.app.goo.gl/pB7jnagNLEbtJsLG8',
         home_p1: ' "กำไลหินเฉพาะบุคคล" \r\n<span style="font-size: 22px">เปลี่ยนแปลงชีวิตในระดับจิตวิญญาณด้วยศาสตร์ร้อยหินเฉพาะตัว<span>',
@@ -43,7 +43,7 @@ export async function getSiteTranslations(language: 'th' | 'en' = 'th'): Promise
         menu_personalized_design: 'งานออกแบบเฉพาะบุคคล',
         menu_shop: 'ร้านค้า',
         menu_testimonial: 'รีวิวจริง',
-        phone: '+6683 826 5195',
+        phone: '+6683 159 1926',
         pinterest: 'https://www.pinterest.com/Roihin_th/',
         tiktok: 'https://www.tiktok.com/@ceo_roihin',
       },

@@ -21,7 +21,7 @@ export async function GET() {
         contact: {
           address: '101/54 หมู่บ้าน ภัสสร 70 (เกาะแก้ว) หมู่ที่ 4 ตำบลเกาะแก้ว อ.เมืองภูเก็ต จ.ภูเก็ต 83000',
           phone: '083 826 5195',
-          email: 'info.roihin@gmail.com',
+          email: 'info@roihin.com',
           hours: 'Monday - Saturday | 09:00 - 19:00',
         },
         socialLinks: {
@@ -47,7 +47,7 @@ export async function GET() {
         contact: {
           address: '101/54 หมู่บ้าน ภัสสร 70 (เกาะแก้ว) หมู่ที่ 4 ตำบลเกาะแก้ว อ.เมืองภูเก็ต จ.ภูเก็ต 83000',
           phone: '083 826 5195',
-          email: 'info.roihin@gmail.com',
+          email: 'info@roihin.com',
           hours: 'Monday - Saturday | 09:00 - 19:00',
         },
         socialLinks: {

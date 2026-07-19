@@ -61,7 +61,7 @@ export default function Footer({
       { platform: 'tiktok' as const, href: 'https://www.tiktok.com/@ceo_roihin' },
       { platform: 'pinterest' as const, href: 'https://www.pinterest.com/Roihin_th/' },
       { platform: 'line' as const, href: 'https://lin.ee/r94Dnio' },
-      { platform: 'whatsapp' as const, href: 'tel:+66838265195' },
+      { platform: 'whatsapp' as const, href: 'tel:+66831591926' },
     ] as SocialLink[],
   }
 
