@@ -51,6 +51,14 @@ export default function CrystalProductCard({ product, locale }: CrystalProductCa
   const canAddToCart =
     price !== null && (priceOption?.available ?? true) && !isNaN(price)
   const cartItemId = `${product.id}-${selectedColor ?? 'default'}`
+  // /products/crystal-detail 404s for non-crystal categories; send those
+  // (bracelets etc.) to the universal shop product page instead.
+  const isCrystalCategory = product.product_category?.slug
+    ?.toLowerCase()
+    .includes('crystal')
+  const detailHref = isCrystalCategory
+    ? `/${locale}/products/crystal-detail/${product.slug}`
+    : `/${locale}/shop/product/${product.slug}`
   const wishlistLabel = isWishlisted
     ? productDetailT('removeFromWishlist')
     : actionsT('addToWishlist')
@@ -175,10 +183,7 @@ export default function CrystalProductCard({ product, locale }: CrystalProductCa
 
   return (
     <article className="group block relative">
-      <Link
-        href={`/${locale}/products/crystal-detail/${product.slug}`}
-        className="block"
-      >
+      <Link href={detailHref} className="block">
         {/* Product Image */}
         <div className="relative aspect-square overflow-hidden bg-gray-50 rounded-lg mb-3">
           <Image
