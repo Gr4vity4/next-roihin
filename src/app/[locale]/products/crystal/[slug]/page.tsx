@@ -5,15 +5,13 @@ import CrystalProductCard from '@/components/crystal/CrystalProductCard'
 import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import { Footer } from '@/components/sections'
 import { getCrystalBySlug } from '@/lib/api/crystals'
-import { getProductsByCrystalId } from '@/lib/api/products'
+import { getRelatedProductsByCrystalSlug } from '@/lib/api/products'
 import type { CrystalProduct } from '@/lib/types/crystal'
 import type { Product } from '@/lib/types/products'
 import { useTranslations } from 'next-intl'
 import Link from 'next/link'
 import { notFound, useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
-
-const PRODUCTS_PER_PAGE = 100
 
 export default function CrystalProductsPage() {
   const params = useParams()
@@ -51,9 +49,10 @@ export default function CrystalProductsPage() {
         }
 
         try {
-          const crystalProducts = await getProductsByCrystalId(
-            crystalData.id,
-            PRODUCTS_PER_PAGE,
+          // No per_page → the CMS returns every product linked to this crystal
+          const crystalProducts = await getRelatedProductsByCrystalSlug(
+            slug,
+            undefined,
             lang
           )
 

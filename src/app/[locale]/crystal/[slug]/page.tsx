@@ -7,7 +7,7 @@ import CrystalRelatedProducts from '@/components/crystal/CrystalRelatedProducts'
 import NavigationWithSuspense from '@/components/NavigationWithSuspense'
 import { Footer } from '@/components/sections'
 import { getCrystalBySlug } from '@/lib/api/crystals'
-import { getProductsByCrystalId } from '@/lib/api/products'
+import { getRelatedProductsByCrystalSlug } from '@/lib/api/products'
 import type { CrystalProduct } from '@/lib/types/crystal'
 import type { Product as StoreProduct } from '@/lib/types/products'
 import { notFound, useParams } from 'next/navigation'
@@ -54,12 +54,12 @@ export default function CrystalProductPage() {
   }, [slug, locale])
 
   useEffect(() => {
-    if (!product?.id) {
+    if (!product?.slug) {
       setRelatedProducts([])
       return
     }
 
-    const crystalId = product.id
+    const crystalSlug = product.slug
     let isCancelled = false
 
     async function fetchRelatedProducts() {
@@ -67,8 +67,8 @@ export default function CrystalProductPage() {
       setRelatedError(null)
 
       try {
-        const related = await getProductsByCrystalId(
-          crystalId,
+        const related = await getRelatedProductsByCrystalSlug(
+          crystalSlug,
           8,
           locale === 'th' ? 'th' : 'en'
         )
@@ -98,7 +98,7 @@ export default function CrystalProductPage() {
     return () => {
       isCancelled = true
     }
-  }, [product?.id, locale])
+  }, [product?.slug, locale])
 
   // Show loading state
   if (isLoading) {

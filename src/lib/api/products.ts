@@ -155,9 +155,15 @@ export async function getProductsByCategory(
   return products
 }
 
-export async function getProductsByCrystalId(
-  crystalId: string | number,
-  perPage: number = 12,
+/**
+ * Products linked to a crystal, from the dedicated CMS endpoint
+ * GET /api/v1/crystals/{slug}/related-products.
+ * Omit perPage to get every related product (CMS caps per_page at 100).
+ * Returns [] when the crystal slug is unknown (endpoint 404s).
+ */
+export async function getRelatedProductsByCrystalSlug(
+  slug: string,
+  perPage?: number,
   language: 'en' | 'th' = 'en'
 ): Promise<Product[]> {
   try {
@@ -166,24 +172,24 @@ export async function getProductsByCrystalId(
 
     if (isBrowser) {
       const apiBase = (process.env.NEXT_PUBLIC_API_URL || '/api').replace(/\/$/, '')
-      const params = new URLSearchParams({
-        locale: language,
-        crystalId: String(crystalId),
-        per_page: String(perPage),
-      })
-      url = `${apiBase}/products?${params.toString()}`
+      const params = new URLSearchParams({ locale: language })
+      if (perPage) params.set('per_page', String(perPage))
+      url = `${apiBase}/crystals/${encodeURIComponent(slug)}/related-products?${params.toString()}`
     } else {
-      url = buildLaravelApiUrl('products', {
+      url = buildLaravelApiUrl(`crystals/${encodeURIComponent(slug)}/related-products`, {
         locale: language,
         per_page: perPage,
-        crystal_id: crystalId,
       })
     }
 
     const response = await fetch(url, getFetchConfig('api'))
 
+    if (response.status === 404) {
+      return []
+    }
+
     if (!response.ok) {
-      throw new Error(`Failed to fetch products for crystal ${crystalId}: ${response.statusText}`)
+      throw new Error(`Failed to fetch related products for crystal ${slug}: ${response.statusText}`)
     }
 
     const payload: unknown = await response.json()
@@ -195,7 +201,7 @@ export async function getProductsByCrystalId(
 
     return sortProductsByDisplayOrder(items.map(transformLaravelProduct))
   } catch (error) {
-    throw new Error(getErrorMessage(error, `Failed to fetch crystal products for ${crystalId}`))
+    throw new Error(getErrorMessage(error, `Failed to fetch related products for ${slug}`))
   }
 }
 
