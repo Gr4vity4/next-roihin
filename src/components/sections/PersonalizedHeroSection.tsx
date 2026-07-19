@@ -28,7 +28,7 @@ export default function PersonalizedHeroSection({
       overlayOpacity={hasText ? 0.1 : 0}
       // Mirror the home hero frame: same nav offset and bottom padding, text anchored at the bottom on md+
       paddingTop={centered ? 'pt-20 lg:pt-[230px]' : undefined}
-      className={centered ? 'pb-16 lg:pb-28' : undefined}
+      className={centered ? 'pb-16 lg:pb-28 h-screen' : undefined}
     >
       {hasText &&
         (centered ? (

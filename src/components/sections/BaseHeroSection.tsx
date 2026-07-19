@@ -19,7 +19,7 @@ export default function BaseHeroSection({
   backgroundImageMobile,
   backgroundAlt,
   overlayOpacity = 0,
-  height = 'h-[40vh] md:h-[80vh]',
+  height = 'h-[40vh] md:h-[100vh]',
   paddingTop = 'pt-24 lg:pt-[280px]',
   className = '',
   children,
