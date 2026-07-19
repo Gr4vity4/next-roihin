@@ -164,7 +164,7 @@ function normalizeList(value: unknown): string[] {
 
 function splitParagraphs(value: string): string[] {
   return value
-    .split(/\r?\n\r?\n+/)
+    .split(/(?:\r?\n)+/)
     .map((paragraph) => paragraph.trim())
     .filter((paragraph) => paragraph.length > 0)
 }
