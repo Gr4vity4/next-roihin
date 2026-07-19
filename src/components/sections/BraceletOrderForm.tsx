@@ -102,6 +102,7 @@ export default function BraceletOrderForm() {
   const [errorSource, setErrorSource] = useState<'client' | 'server'>('client')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showSuccessModal, setShowSuccessModal] = useState(false)
+  const [showConfirmChannelModal, setShowConfirmChannelModal] = useState(false)
 
   const steps = isThai
     ? [
@@ -1203,12 +1204,46 @@ export default function BraceletOrderForm() {
           </p>
           <div className="mt-6 flex justify-center">
             <button
-              onClick={() => setShowSuccessModal(false)}
+              onClick={() => {
+                setShowSuccessModal(false)
+                setShowConfirmChannelModal(true)
+              }}
               className="px-6 py-2 bg-[#244323] text-white font-medium rounded-md hover:bg-[#004d2e] transition-colors"
             >
               {isThai ? 'ตกลง' : 'OK'}
             </button>
           </div>
+        </div>
+      </Modal>
+
+      {/* Confirmation Channel Modal — shown after the success modal is acknowledged */}
+      <Modal
+        isOpen={showConfirmChannelModal}
+        onClose={() => setShowConfirmChannelModal(false)}
+        title={isThai ? 'ยืนยันการสั่งทำ' : 'Confirm your order'}
+        size="md"
+      >
+        <div className="py-4 flex flex-col gap-3">
+          <a
+            href="https://lin.ee/r94Dnio"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block w-full px-6 py-3 bg-[#06C755] text-white font-medium rounded-md text-center hover:bg-[#05b34c] transition-colors"
+          >
+            {isThai
+              ? 'เพิ่มเพื่อนใน LINE เพื่อยืนยันการสั่งทำ'
+              : 'Add LINE for order confirmation'}
+          </a>
+          <a
+            href="https://wa.me/qr/E7BLN2ESWSFGC1"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block w-full px-6 py-3 bg-[#25D366] text-white font-medium rounded-md text-center hover:bg-[#1ebe5b] transition-colors"
+          >
+            {isThai
+              ? 'เพิ่มเพื่อนใน Whatsapp เพื่อยืนยันการสั่งทำ'
+              : 'Add Whatsapp for order confirmation'}
+          </a>
         </div>
       </Modal>
     </>
