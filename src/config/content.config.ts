@@ -667,6 +667,14 @@ export const content = {
     },
   },
 
+  // Crystal Page Content
+  crystalPage: {
+    hero: {
+      backgroundImage: '/images/crystal-mineral/desktop.avif',
+      backgroundImageMobile: '/images/crystal-mineral/mobile.avif',
+    },
+  },
+
   // Charmspacer Page Content
   charmspacerPage: {
     hero: {

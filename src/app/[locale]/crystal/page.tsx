@@ -10,6 +10,7 @@ import PersonalizedHeroSection from '@/components/sections/PersonalizedHeroSecti
 import CrystalFilterSidebar from '@/components/crystal/CrystalFilterSidebar'
 import CrystalGrid from '@/components/crystal/CrystalGrid'
 import Pagination from '@/components/crystal/Pagination'
+import { content } from '@/config/content.config'
 import { getCrystals } from '@/lib/api/crystals'
 import type { Crystal } from '@/lib/types/crystal'
 
@@ -201,9 +202,11 @@ export default function CrystalPage() {
 
       <main className="min-h-screen">
         <PersonalizedHeroSection
-          backgroundImage="/images/banner/crystal-banner.avif"
+          backgroundImage={content.crystalPage.hero.backgroundImage}
+          backgroundImageMobile={content.crystalPage.hero.backgroundImageMobile}
           title={t('hero.title')}
           subtitle={t('hero.subtitle')}
+          centered
         />
 
         <div className="bg-black">
