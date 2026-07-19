@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, ReactNode } from 'react'
+import { createContext, useCallback, useContext, useMemo, ReactNode } from 'react'
 import { useLocalStorage } from '@/hooks/useLocalStorage'
 
 interface BraceletBead {
@@ -37,6 +37,7 @@ interface CartContextType {
   items: CartItem[]
   itemCount: number
   totalAmount: number
+  isHydrated: boolean
   addItem: (item: Omit<CartItem, 'quantity'>) => void
   removeItem: (id: string) => void
   updateQuantity: (id: string, quantity: number) => void
@@ -46,12 +47,12 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined)
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useLocalStorage<CartItem[]>('cart', [])
+  const [items, setItems, , isHydrated] = useLocalStorage<CartItem[]>('cart', [])
 
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0)
   const totalAmount = items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
 
-  const addItem = (newItem: Omit<CartItem, 'quantity'>) => {
+  const addItem = useCallback((newItem: Omit<CartItem, 'quantity'>) => {
     setItems(currentItems => {
       const existingItem = currentItems.find(
         item => item.id === newItem.id && item.color === newItem.color
@@ -67,15 +68,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
       return [...currentItems, { ...newItem, quantity: 1 }]
     })
-  }
+  }, [setItems])
 
-  const removeItem = (id: string) => {
+  const removeItem = useCallback((id: string) => {
     setItems(currentItems => currentItems.filter(item => item.id !== id))
-  }
+  }, [setItems])
 
-  const updateQuantity = (id: string, quantity: number) => {
+  const updateQuantity = useCallback((id: string, quantity: number) => {
     if (quantity <= 0) {
-      removeItem(id)
+      setItems(currentItems => currentItems.filter(item => item.id !== id))
       return
     }
 
@@ -84,25 +85,27 @@ export function CartProvider({ children }: { children: ReactNode }) {
         item.id === id ? { ...item, quantity } : item
       )
     )
-  }
+  }, [setItems])
 
-  const clearCart = () => {
+  const clearCart = useCallback(() => {
     setItems([])
-  }
+  }, [setItems])
 
-  return (
-    <CartContext.Provider value={{
+  const value = useMemo(
+    () => ({
       items,
       itemCount,
       totalAmount,
+      isHydrated,
       addItem,
       removeItem,
       updateQuantity,
-      clearCart
-    }}>
-      {children}
-    </CartContext.Provider>
+      clearCart,
+    }),
+    [items, itemCount, totalAmount, isHydrated, addItem, removeItem, updateQuantity, clearCart]
   )
+
+  return <CartContext.Provider value={value}>{children}</CartContext.Provider>
 }
 
 export function useCart() {

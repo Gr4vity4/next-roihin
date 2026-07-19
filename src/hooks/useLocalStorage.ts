@@ -9,6 +9,11 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
   // markup matches hydration; the effect below loads the stored value after mount.
   const [storedValue, setStoredValue] = useState<T>(initialValue)
 
+  // False until the stored value has been read from localStorage after mount.
+  // Consumers use this to avoid acting on the placeholder initialValue (e.g.
+  // redirecting on an "empty" cart that hasn't loaded yet).
+  const [hydrated, setHydrated] = useState(false)
+
   const setValue = useCallback(
     (value: T | ((val: T) => T)) => {
       setStoredValue(prevValue => {
@@ -55,6 +60,8 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
     } catch (error) {
       console.error(`Error refreshing localStorage key "${key}":`, error)
       setStoredValue(initialRef.current)
+    } finally {
+      setHydrated(true)
     }
   }, [key])
 
@@ -84,5 +91,5 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
     return () => window.removeEventListener('storage', handleStorageChange)
   }, [key])
 
-  return [storedValue, setValue, removeValue] as const
+  return [storedValue, setValue, removeValue, hydrated] as const
 }

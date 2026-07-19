@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getStripeClient } from '@/lib/stripe'
+import { getAuthToken } from '@/lib/auth/get-token'
 import Stripe from 'stripe'
+
+// SECURITY: This route builds Stripe line items from client-supplied prices and
+// does NOT validate them against the catalog, so it must never be the live
+// checkout path. The live flow goes through /api/orders -> Laravel, which is
+// authoritative for pricing. This handler is kept only for legacy/manual use and
+// is gated behind authentication below; if you wire it back into the UI you MUST
+// look up each item's price server-side before creating the session.
 
 interface BraceletBead {
   id: string
@@ -47,6 +55,13 @@ interface CheckoutSessionRequest {
 
 export async function POST(request: NextRequest) {
   try {
+    // Require an authenticated session so this legacy endpoint can't be abused
+    // anonymously to mint arbitrary-priced Stripe sessions.
+    const token = await getAuthToken()
+    if (!token) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const stripe = getStripeClient()
     const body: CheckoutSessionRequest = await request.json()
     const { items, shippingAddress, locale } = body

@@ -39,7 +39,7 @@ export default function CheckoutConfirmContent() {
   const router = useRouter()
   const t = useTranslations('checkoutConfirm')
   const tCheckout = useTranslations('checkout')
-  const { items, itemCount, totalAmount } = useCart()
+  const { items, itemCount, totalAmount, isHydrated } = useCart()
   const { isLoggedIn, user } = useAuth()
   const locale = useLocale() as 'en' | 'th'
   const [isProcessing, setIsProcessing] = useState(false)
@@ -53,6 +53,10 @@ export default function CheckoutConfirmContent() {
     'loading'
   )
   const hasPrefilledRef = useRef(false)
+  // Caches a successfully created order's Stripe hand-off so a retry (Stripe
+  // script failed to load, user hit Back from Stripe, etc.) reuses the same
+  // order/session instead of creating a duplicate one.
+  const createdCheckoutRef = useRef<{ url: string | null; sessionId: string | null } | null>(null)
 
   const addressLabels = useMemo(
     () => ({
@@ -73,11 +77,26 @@ export default function CheckoutConfirmContent() {
   )
 
   useEffect(() => {
-    // Redirect if cart is empty
-    if (itemCount === 0) {
+    // Redirect if cart is empty — but only once the cart has hydrated from
+    // localStorage. Acting on the pre-hydration placeholder (itemCount === 0)
+    // would bounce shoppers off this page on every hard load / return from Stripe.
+    if (isHydrated && itemCount === 0) {
       router.push('/checkout')
     }
-  }, [itemCount, router])
+  }, [isHydrated, itemCount, router])
+
+  useEffect(() => {
+    // When the page is restored from the bfcache (e.g. Back from Stripe), reset
+    // the submit lock so the button isn't stuck on "Processing…" forever.
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) {
+        setIsProcessing(false)
+      }
+    }
+
+    window.addEventListener('pageshow', handlePageShow)
+    return () => window.removeEventListener('pageshow', handlePageShow)
+  }, [])
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -186,11 +205,47 @@ export default function CheckoutConfirmContent() {
     setIsProcessing(true)
     setOrderError('')
 
+    // Reuse an already-created order's checkout hand-off if the shopper is
+    // retrying after a post-order failure, so we never create a second order.
+    // If the reuse itself fails, surface the error and let them retry the reuse
+    // rather than falling through to create a duplicate.
+    const existingCheckout = createdCheckoutRef.current
+    if (existingCheckout) {
+      try {
+        if (existingCheckout.url) {
+          window.location.href = existingCheckout.url
+          return
+        }
+        if (existingCheckout.sessionId) {
+          const stripe = await getStripe()
+          if (!stripe) {
+            throw new Error('Stripe failed to load')
+          }
+          const { error } = await stripe.redirectToCheckout({
+            sessionId: existingCheckout.sessionId,
+          })
+          if (error) {
+            throw error
+          }
+          return
+        }
+      } catch (error) {
+        console.error('Checkout retry failed:', error)
+        setOrderError(t('errors.checkoutFailed'))
+        setIsProcessing(false)
+        return
+      }
+    }
+
     try {
       const payload: CreateOrderPayload = {
         items: items.map((item) => {
-          const numericId = Number(item.id)
-          const productId = Number.isFinite(numericId) ? numericId : undefined
+          // Cart ids are composite (`${productId}-${color}`, `${productId}-default`,
+          // or a bracelet designId), so the numeric product id is the leading
+          // segment. Custom bracelets have no catalog product id.
+          const numericId = Number(String(item.id).split('-')[0])
+          const productId =
+            !item.isCustomBracelet && Number.isFinite(numericId) ? numericId : undefined
 
           return {
             product_id: productId ?? undefined,
@@ -255,6 +310,10 @@ export default function CheckoutConfirmContent() {
       const data = await response.json()
       const checkoutUrl: string | null = data?.stripe?.checkout_url ?? null
       const sessionId: string | null = data?.stripe?.checkout_session_id ?? null
+
+      // The order now exists in the backend. Remember its hand-off so a retry
+      // after a Stripe failure doesn't create a duplicate order.
+      createdCheckoutRef.current = { url: checkoutUrl, sessionId }
 
       if (checkoutUrl) {
         window.location.href = checkoutUrl

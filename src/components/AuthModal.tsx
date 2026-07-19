@@ -65,7 +65,7 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
     try {
       await login(signInData.email, signInData.password)
       onClose()
-      router.push('/member')
+      router.push(itemCount > 0 ? '/checkout' : '/member')
     } catch (err) {
       setError(err instanceof Error ? err.message : t('errors.loginFailed'))
     } finally {
@@ -167,7 +167,7 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
 
               {error && (
                 <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                  <p className="text-sm text-red-600" dangerouslySetInnerHTML={{ __html: error }} />
+                  <p className="text-sm text-red-600">{error}</p>
                 </div>
               )}
 
@@ -310,7 +310,7 @@ export default function AuthModal({ isOpen, onClose, mode, onModeChange }: AuthM
 
               {error && (
                 <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                  <p className="text-sm text-red-600" dangerouslySetInnerHTML={{ __html: error }} />
+                  <p className="text-sm text-red-600">{error}</p>
                 </div>
               )}
 

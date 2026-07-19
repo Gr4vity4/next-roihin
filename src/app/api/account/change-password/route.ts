@@ -37,7 +37,9 @@ export async function POST(req: Request) {
     }
 
     const cookieStore = await cookies()
-    cookieStore.delete('wpToken')
+    // The active session cookie is `authToken` (set at login/register). Deleting
+    // it here enforces the `force_reauth` contract the response advertises.
+    cookieStore.delete('authToken')
 
     return NextResponse.json({
       ok: true,
