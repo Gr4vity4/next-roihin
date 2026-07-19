@@ -490,19 +490,19 @@
     },
     "features": {
       "uniqueDesign": {
-        "title": "Unique Design",
+        "title": "รูปแบบอันเป็นอัตลักษณ์เฉพาะ",
         "subtitle": "รูปแบบอันเป็นอัตลักษณ์เฉพาะ"
       },
       "naturalPurifying": {
-        "title": "Natural Purifying",
+        "title": "ชำระล้างด้วยพลังธรรมชาติ",
         "subtitle": "ชำระล้างด้วยพลังธรรมชาติ"
       },
       "premiumCare": {
-        "title": "Premium Care",
+        "title": "ดูแลด้วยบรรจุภัณฑ์คุณภาพพรีเมียม",
         "subtitle": "ดูแลด้วยบรรจุภัณฑ์คุณภาพพรีเมียม"
       },
       "empoweringRitual": {
-        "title": "Empowering Ritual",
+        "title": "ปลุกพลังด้วยพิธีกรรมขั้นสูง",
         "subtitle": "ปลุกพลังด้วยพิธีกรรมขั้นสูง"
       }
     },

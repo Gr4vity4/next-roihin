@@ -14,25 +14,25 @@ export default async function AboutFeaturesSection({ locale }: AboutFeaturesSect
       id: 'unique-design',
       image: '/images/about/1.avif',
       title: t('uniqueDesign.title'),
-      subtitle: t('uniqueDesign.subtitle'),
+      // subtitle: t('uniqueDesign.subtitle'),
     },
     {
       id: 'natural-purifying',
       image: '/images/about/2.avif',
       title: t('naturalPurifying.title'),
-      subtitle: t('naturalPurifying.subtitle'),
+      // subtitle: t('naturalPurifying.subtitle'),
     },
     {
       id: 'premium-care',
       image: '/images/about/3.avif',
       title: t('premiumCare.title'),
-      subtitle: t('premiumCare.subtitle'),
+      // subtitle: t('premiumCare.subtitle'),
     },
     {
       id: 'empowering-ritual',
       image: '/images/about/4.avif',
       title: t('empoweringRitual.title'),
-      subtitle: t('empoweringRitual.subtitle'),
+      // subtitle: t('empoweringRitual.subtitle'),
     },
   ]
 
@@ -56,22 +56,22 @@ export default async function AboutFeaturesSection({ locale }: AboutFeaturesSect
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
                 {/* Text Overlay at Bottom */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5 md:p-6 text-white">
+                <div className="absolute bottom-10 left-0 right-0 p-4 sm:p-5 md:p-6 text-white">
                   <Typography
                     variant="h4"
                     align="center"
-                    className="text-white font-semibold tracking-wide mb-2 text-lg md:text-xl"
+                    className="text-white tracking-wide mb-2 text-lg md:text-3xl font-normal"
                   >
                     {feature.title}
                   </Typography>
 
-                  <Typography
+                  {/* <Typography
                     variant="body"
                     align="center"
                     className="text-white/90 text-sm md:text-base leading-relaxed"
                   >
                     {feature.subtitle}
-                  </Typography>
+                  </Typography> */}
                 </div>
               </div>
             </div>
