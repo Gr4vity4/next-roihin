@@ -60,7 +60,7 @@ export default async function AboutFeaturesSection({ locale }: AboutFeaturesSect
                   <Typography
                     variant="h4"
                     align="center"
-                    className="text-white tracking-wide mb-2 text-lg md:text-3xl font-normal"
+                    className="text-white tracking-wide mb-2 text-2xl md:text-3xl font-normal"
                   >
                     {feature.title}
                   </Typography>

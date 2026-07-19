@@ -15,7 +15,7 @@ export default async function AboutContentSection({ locale }: AboutContentSectio
   ]
 
   return (
-    <section className="py-16 md:py-24 bg-[#FCFCFC]">
+    <section className="pt-16 md:py-24 bg-[#FCFCFC]">
       <div className="max-w-5xl mx-auto px-6 md:px-8">
         {/* Title Section */}
         <div className="text-center mb-12 md:mb-16">

@@ -43,7 +43,7 @@ export default async function AboutTestimonialSection({ locale }: AboutTestimoni
           {/* Additional Text */}
           {testimonial.additionalText && (
             <div className="max-w-3xl mx-auto mb-8">
-              <p className="text-base md:text-xl italic text-gray-600 leading-relaxed">
+              <p className="text-lg md:text-xl italic text-gray-600 leading-relaxed">
                 {testimonial.additionalText}
               </p>
             </div>
