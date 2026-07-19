@@ -193,7 +193,8 @@ export const content = {
   // Blog Page Content
   blog: {
     hero: {
-      backgroundImage: '/images/357c3a_c78543e690504fdd80ac15754320656b~mv2.avif',
+      backgroundImage: '/images/blog/desktop.avif',
+      backgroundImageMobile: '/images/blog/mobile.avif',
       title: 'BLOG',
       subtitle: 'ความรู้และเรื่องราวแห่งพลังหิน',
     },

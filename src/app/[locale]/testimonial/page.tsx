@@ -5,7 +5,7 @@ import TestimonialsClient from '@/components/TestimonialsClient'
 import { Typography } from '@/components/ui'
 import { Link } from '@/i18n/navigation'
 import { getLocale, getTranslations } from 'next-intl/server'
-import Image from 'next/image'
+import { getImageProps } from 'next/image'
 
 // Configure route segment caching for testimonials (dynamic content)
 // Revalidate every 5 minutes
@@ -16,6 +16,16 @@ export default async function TestimonialPage() {
   const isThai = locale === 'th'
   const tCommon = await getTranslations('common')
 
+  // Art-direct the header with <picture>: desktop source at >=768px, mobile <img>
+  // as the default. Mirrors the approach in BaseHeroSection.
+  const heroAlt = isThai ? 'ภาพส่วนหัวหน้ารีวิว' : 'Testimonial page header image'
+  const shared = { alt: heroAlt, fill: true as const, sizes: '100vw', priority: true }
+  const { props: desktopProps } = getImageProps({ ...shared, src: '/images/testimonial/desktop.avif' })
+  const { props: mobileProps } = getImageProps({ ...shared, src: '/images/testimonial/mobile.avif' })
+  // With images.unoptimized there is no srcSet, only a plain src
+  const desktopSrcSet = desktopProps.srcSet ?? desktopProps.src
+  const desktopSizes = desktopProps.srcSet ? desktopProps.sizes : undefined
+
   return (
     <>
       <NavigationWithSuspense />
@@ -24,13 +34,10 @@ export default async function TestimonialPage() {
         {/* Full-width image section */}
         <section className="w-full pt-20 min-[1408px]:pt-[230px]">
           <div className="relative w-full h-[290px]">
-            <Image
-              src="/images/357c3a_c78543e690504fdd80ac15754320656b~mv2.avif"
-              alt={isThai ? 'ภาพส่วนหัวหน้ารีวิว' : 'Testimonial page header image'}
-              fill
-              className="object-cover"
-              priority
-            />
+            <picture>
+              <source media="(min-width: 768px)" srcSet={desktopSrcSet} sizes={desktopSizes} />
+              <img {...mobileProps} alt={heroAlt} className="object-cover" />
+            </picture>
           </div>
         </section>
 

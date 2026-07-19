@@ -72,6 +72,7 @@ export default function BlogPage() {
         {/* Blog Hero Section */}
         <BlogHeroSection
           backgroundImage={content.blog.hero.backgroundImage}
+          backgroundImageMobile={content.blog.hero.backgroundImageMobile}
           title={content.blog.hero.title}
           subtitle={content.blog.hero.subtitle}
         />
