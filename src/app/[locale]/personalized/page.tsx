@@ -49,6 +49,7 @@ export default async function PersonalizedPage({
 }) {
   const { locale } = await params
   setRequestLocale(locale)
+  const t = await getTranslations({ locale, namespace: 'personalizedPage' })
   const recentDesigns = await getRecentPersonalizedDesigns(8)
   const recentDesignsWithImages = recentDesigns.filter(design => Boolean(design.image_url))
   const { personalizedPage } = content
@@ -63,6 +64,9 @@ export default async function PersonalizedPage({
         <PersonalizedHeroSection
           backgroundImage={personalizedPage.hero.backgroundImage}
           backgroundImageMobile={personalizedPage.hero.backgroundImageMobile}
+          title={t('hero.title')}
+          subtitle={t('hero.subtitle')}
+          centered
         />
 
         {/* About Section */}

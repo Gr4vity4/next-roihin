@@ -8,6 +8,8 @@ interface BaseHeroSectionProps {
   backgroundAlt: string
   overlayOpacity?: number
   height?: string
+  /** Tailwind padding-top classes offsetting the fixed navigation */
+  paddingTop?: string
   className?: string
   children?: React.ReactNode
 }
@@ -17,7 +19,8 @@ export default function BaseHeroSection({
   backgroundImageMobile,
   backgroundAlt,
   overlayOpacity = 0,
-  height = 'h-[40vh] md:h-[90vh]',
+  height = 'h-[40vh] md:h-[80vh]',
+  paddingTop = 'pt-24 lg:pt-[280px]',
   className = '',
   children,
 }: BaseHeroSectionProps) {
@@ -37,7 +40,7 @@ export default function BaseHeroSection({
   }
 
   return (
-    <section className={`relative ${height} w-full overflow-hidden pt-24 lg:pt-[280px] ${className}`}>
+    <section className={`relative ${height} w-full overflow-hidden ${paddingTop} ${className}`}>
       {/* Background Image */}
       <div className="absolute inset-0">
         {mobileProps ? (
