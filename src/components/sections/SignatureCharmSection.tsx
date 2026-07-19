@@ -45,7 +45,7 @@ export default function SignatureCharmSection({
         contentAlign="center"
         contentMaxWidth="lg"
         className={className}
-        minHeight="min-h-[750px]"
+        minHeight="min-h-[720px] md:min-h-[750px]"
       />
     </div>
   )
