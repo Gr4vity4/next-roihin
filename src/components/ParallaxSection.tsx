@@ -13,6 +13,11 @@ interface ParallaxSectionProps {
   parallaxSpeed?: number
   className?: string
   backgroundPosition?: string
+  /**
+   * Tailwind object-position classes for the art-directed <img> (e.g. "object-top md:object-center").
+   * When set, these win over `backgroundPosition` (which is inline and can't be responsive).
+   */
+  objectPositionClassName?: string
 }
 
 export default function ParallaxSection({
@@ -24,6 +29,7 @@ export default function ParallaxSection({
   parallaxSpeed = 0.5,
   className = '',
   backgroundPosition = 'center center',
+  objectPositionClassName,
 }: ParallaxSectionProps) {
   const parallaxRef = useRef<HTMLDivElement>(null)
   const imageRef = useRef<HTMLDivElement>(null)
@@ -128,8 +134,12 @@ export default function ParallaxSection({
               <img
                 {...artDirected.mobileProps}
                 alt={imageAlt}
-                className="object-cover"
-                style={{ ...artDirected.mobileProps.style, objectPosition: backgroundPosition }}
+                className={`object-cover${objectPositionClassName ? ` ${objectPositionClassName}` : ''}`}
+                style={{
+                  ...artDirected.mobileProps.style,
+                  // Responsive position classes take over when provided; inline can't do breakpoints
+                  ...(objectPositionClassName ? {} : { objectPosition: backgroundPosition }),
+                }}
               />
             </picture>
           ) : (

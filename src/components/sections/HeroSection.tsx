@@ -47,10 +47,11 @@ export default function HeroSection({
       imageAlt={backgroundAlt}
       overlayOpacity={overlayOpacity}
       parallaxSpeed={parallaxSpeed}
-      className={`${minHeight} flex items-end justify-center ${className}`}
+      objectPositionClassName="object-top md:object-center"
+      className={`${minHeight} flex items-center justify-center ${className}`}
     >
-      <Container className="text-center text-white">
-        <Typography variant="h2" textShadow className="mb-10 font-normal">
+      <Container className="pt-68 text-center text-white">
+        <Typography variant="h2" textShadow className="mb-10 font-normal text-3xl">
           {t('homePage.hero.title')}
           <br />
           <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl">

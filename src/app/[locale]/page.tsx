@@ -17,9 +17,11 @@ import { getGalleryImagesBySlug } from '@/lib/api/gallery'
 export const revalidate = 0
 
 export default async function Home() {
-  // Pick a random hero background per request; desktop/mobile files share the same number
+  // Pick a random hero background per request; desktop/mobile files share the same number.
+  // Desktop lives at hero/NN-desktop.avif; mobile lives at hero/mobile/N.avif (unpadded).
   const { basePath, imageCount } = content.hero.background
-  const heroImageNumber = String(Math.floor(Math.random() * imageCount) + 1).padStart(2, '0')
+  const heroNumber = Math.floor(Math.random() * imageCount) + 1
+  const heroImageNumber = String(heroNumber).padStart(2, '0')
 
   // Fetch Inspired gallery images from Laravel admin REST endpoint
   const inspiredGalleryImages = await getGalleryImagesBySlug('inspired')
@@ -37,7 +39,7 @@ export default async function Home() {
         {/* Hero Section - starts at top of page, content positioned to account for nav */}
         <HeroSection
           backgroundImage={`${basePath}/${heroImageNumber}-desktop.avif`}
-          backgroundImageMobile={`${basePath}/${heroImageNumber}-mobile.avif`}
+          backgroundImageMobile={`${basePath}/mobile/${heroNumber}.avif`}
           backgroundAlt={content.hero.background.alt}
           ctaButton={{ ...content.hero.cta, translationKey: 'orderNow' }}
           className="pt-20 lg:pt-[230px] pb-16 lg:pb-28"

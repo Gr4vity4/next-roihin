@@ -18,7 +18,8 @@ export const content = {
       href: '/bracelet-order',
     },
     background: {
-      // Images live in public/images/home-page/hero as NN-desktop.avif / NN-mobile.avif pairs
+      // Desktop images: public/images/home-page/hero/NN-desktop.avif
+      // Mobile images: public/images/home-page/hero/mobile/N.avif (unpadded)
       basePath: '/images/home-page/hero',
       imageCount: 6,
       alt: 'Stone bracelets background',
