@@ -1,14 +1,34 @@
 import { Typography } from '@/components/ui'
+import { cn } from '@/lib/utils'
 import type { Testimonial } from '@/lib/types/testimonials'
 import Image from 'next/image'
 
 interface TestimonialReviewCardProps {
   testimonial: Testimonial
+  variant?: 'dark' | 'light'
 }
 
-export default function TestimonialReviewCard({ testimonial }: TestimonialReviewCardProps) {
+const variantStyles = {
+  dark: {
+    card: 'bg-white/5 backdrop-blur-sm',
+    date: 'text-gray-400',
+    message: 'text-gray-300',
+  },
+  light: {
+    card: 'bg-gray-100',
+    date: 'text-gray-500',
+    message: 'text-black',
+  },
+}
+
+export default function TestimonialReviewCard({
+  testimonial,
+  variant = 'dark',
+}: TestimonialReviewCardProps) {
+  const styles = variantStyles[variant]
+
   return (
-    <div className="bg-white/5 backdrop-blur-sm rounded-lg p-4 sm:p-6">
+    <div className={cn('rounded-lg p-4 sm:p-6', styles.card)}>
       <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
         {/* Left side: Avatar and Message */}
         <div className="flex gap-4 lg:gap-6 items-start flex-1">
@@ -28,14 +48,14 @@ export default function TestimonialReviewCard({ testimonial }: TestimonialReview
           <div className="flex-1 min-w-0">
             {/* Date */}
             <div className="mb-2 lg:mb-3">
-              <Typography variant="caption" className="text-gray-400 text-xs">
+              <Typography variant="caption" className={cn('text-xs', styles.date)}>
                 {testimonial.date}
               </Typography>
             </div>
 
             <Typography
               variant="body"
-              className="text-gray-300 leading-relaxed text-sm sm:text-base break-words"
+              className={cn('leading-relaxed text-sm sm:text-base break-words', styles.message)}
             >
               &ldquo;{testimonial.message}&rdquo;
             </Typography>

@@ -87,7 +87,10 @@ export const content = {
       },
       {
         text: 'ออกแบบโดยร้อยหิน',
-        variant: 'primary' as const,
+        variant: 'outline' as const,
+        // Match the hero "Order Now" button: black fill + green (#489B53)
+        className:
+          'bg-black border-[#489B53] text-[#489B53] hover:bg-[#489B53] hover:text-white focus:ring-[#489B53]',
       },
     ],
     background: {

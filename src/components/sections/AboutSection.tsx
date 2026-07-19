@@ -44,11 +44,17 @@ export default function AboutSection({
             textAlign === 'right' && 'text-right',
           )}
         >
-          <Typography variant="h3" className="mb-4">
+          <Typography
+            variant="h3"
+            className="mb-4 text-3xl font-normal sm:text-4xl md:text-5xl"
+          >
             {t('homePage.about.title')}
           </Typography>
 
-          <Typography variant="h4" className="mb-10 text-gray-700">
+          <Typography
+            variant="h4"
+            className="mb-10 hidden text-[26px] text-gray-700 sm:text-[26px] md:block md:text-[26px]"
+          >
             {t('homePage.about.subtitle')}
           </Typography>
 

@@ -15,6 +15,7 @@ interface GallerySectionProps {
     translationKey?: string
     variant: 'primary' | 'gold' | 'green' | 'outline' | 'ghost'
     highlight?: boolean
+    className?: string
     onClick?: () => void
     href?: string
   }>
@@ -47,7 +48,7 @@ export default function GallerySection({
     <section className={`py-16 bg-black ${className}`}>
       <div className="container mx-auto px-4 sm:px-6 md:px-8 lg:px-12 max-w-full">
         <div className="text-center mb-12">
-          <h2 className="font-mixed-lang text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-4">
+          <h2 className="font-mixed-lang text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-white mb-8">
             {t('homePage.gallery.title')}
           </h2>
           {/* <p className="text-base sm:text-lg md:text-xl text-white max-w-3xl mx-auto mb-8 ">
@@ -59,7 +60,12 @@ export default function GallerySection({
               if (button.href) {
                 return (
                   <Link key={index} href={button.href}>
-                    <Button variant={button.variant} size="lg" highlight={button.highlight}>
+                    <Button
+                      variant={button.variant}
+                      size="lg"
+                      highlight={button.highlight}
+                      className={button.className}
+                    >
                       {buttonText}
                     </Button>
                   </Link>
@@ -72,6 +78,7 @@ export default function GallerySection({
                   variant={button.variant}
                   size="lg"
                   highlight={button.highlight}
+                  className={button.className}
                   onClick={button.onClick}
                 >
                   {buttonText}

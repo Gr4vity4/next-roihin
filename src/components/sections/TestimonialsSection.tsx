@@ -44,25 +44,25 @@ function TestimonialsSectionLoading() {
   return (
     <div className="space-y-8 max-w-6xl mx-auto">
       {Array.from({ length: RANDOM_COUNT }).map((_, index) => (
-        <div key={index} className="bg-white/5 backdrop-blur-sm rounded-lg p-4 sm:p-6 animate-pulse">
+        <div key={index} className="bg-gray-100 rounded-lg p-4 sm:p-6 animate-pulse">
           <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
             <div className="flex gap-4 lg:gap-6 items-start flex-1">
               <div className="flex-shrink-0">
-                <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-full bg-gray-700"></div>
+                <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 rounded-full bg-gray-200"></div>
               </div>
               <div className="flex-1 min-w-0">
                 <div className="mb-2 lg:mb-3">
-                  <div className="h-3 bg-gray-700 rounded w-24"></div>
+                  <div className="h-3 bg-gray-200 rounded w-24"></div>
                 </div>
                 <div className="space-y-2">
-                  <div className="h-4 bg-gray-700 rounded w-full"></div>
-                  <div className="h-4 bg-gray-700 rounded w-5/6"></div>
-                  <div className="h-4 bg-gray-700 rounded w-4/6"></div>
+                  <div className="h-4 bg-gray-200 rounded w-full"></div>
+                  <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+                  <div className="h-4 bg-gray-200 rounded w-4/6"></div>
                 </div>
               </div>
             </div>
             <div className="flex-shrink-0 w-full lg:w-auto">
-              <div className="w-full lg:w-48 h-48 sm:h-56 lg:h-32 rounded-lg bg-gray-700"></div>
+              <div className="w-full lg:w-48 h-48 sm:h-56 lg:h-32 rounded-lg bg-gray-200"></div>
             </div>
           </div>
         </div>
@@ -74,8 +74,8 @@ function TestimonialsSectionLoading() {
 export default function TestimonialsSection({
   id,
   ctaButton,
-  backgroundColor = 'bg-black',
-  textColor = 'text-white',
+  backgroundColor = 'bg-white',
+  textColor = 'text-black',
   className = '',
 }: TestimonialsSectionProps) {
   const t = useTranslations()
@@ -130,7 +130,7 @@ export default function TestimonialsSection({
             <div className="max-w-4xl mx-auto">
               <TestimonialCard
                 content={t('homePage.testimonials.content')}
-                variant="dark"
+                variant="light"
                 enableHtml={false}
               />
             </div>
@@ -139,7 +139,11 @@ export default function TestimonialsSection({
           ) : (
             <div className="space-y-8 max-w-6xl mx-auto">
               {testimonials.map((testimonial) => (
-                <TestimonialReviewCard key={testimonial.id} testimonial={testimonial} />
+                <TestimonialReviewCard
+                  key={testimonial.id}
+                  testimonial={testimonial}
+                  variant="light"
+                />
               ))}
             </div>
           )}
