@@ -51,12 +51,12 @@ export default function AboutSection({
             {t('homePage.about.title')}
           </Typography>
 
-          <Typography
+          {/* <Typography
             variant="h4"
             className="mb-10 hidden text-[26px] text-gray-700 sm:text-[26px] md:block md:text-[26px]"
           >
             {t('homePage.about.subtitle')}
-          </Typography>
+          </Typography> */}
 
           <Typography variant="body" className="text-gray-600 whitespace-pre-line pt-4">
             {t('homePage.about.content')}
