@@ -6,20 +6,24 @@ import { useLocale } from 'next-intl'
 import { Container } from '../ui'
 import Modal from '../ui/Modal'
 import PhoneInput from '../ui/PhoneInput'
+import { getCountryByCode } from '@/lib/data/countries'
 
-// Budget tiers per bead size, matching the "หินเฉพาะบุคคล" price guide graphic
+// Budget tiers per bead size, matching the "หินเฉพาะบุคคล" price guide graphic.
+// The API only accepts the four fixed `budget` buckets, so each display tier
+// carries the bucket for its level (Beginning/Mid/High/Custom); bead_size is
+// sent alongside, which lets the back office recover the exact tier.
 const BUDGET_TIERS_6MM = [
-  { value: '900-1500', th: 'เริ่มต้น 900 - 1,500 บาท', en: 'Beginning 900 - 1,500 THB' },
-  { value: '2000-5000', th: 'กลาง 2,000 - 5,000 บาท', en: 'Mid Range 2,000 - 5,000 THB' },
-  { value: '6000-8000', th: 'สูง 6,000 - 8,000 บาท', en: 'High 6,000 - 8,000 THB' },
-  { value: '10000+', th: 'กำหนดเอง 10,000 บาทขึ้นไป', en: 'Custom 10,000+ THB' },
+  { value: '900-1500', apiValue: '1000-3000', th: 'เริ่มต้น 900 - 1,500 บาท', en: 'Beginning 900 - 1,500 THB' },
+  { value: '2000-5000', apiValue: '3000-5000', th: 'กลาง 2,000 - 5,000 บาท', en: 'Mid Range 2,000 - 5,000 THB' },
+  { value: '6000-8000', apiValue: '5000-10000', th: 'สูง 6,000 - 8,000 บาท', en: 'High 6,000 - 8,000 THB' },
+  { value: '10000+', apiValue: '10000+', th: 'กำหนดเอง 10,000 บาทขึ้นไป', en: 'Custom 10,000+ THB' },
 ]
 
 const BUDGET_TIERS_LARGE = [
-  { value: '1500-3000', th: 'เริ่มต้น 1,500 - 3,000 บาท', en: 'Beginning 1,500 - 3,000 THB' },
-  { value: '4000-6000', th: 'กลาง 4,000 - 6,000 บาท', en: 'Mid Range 4,000 - 6,000 THB' },
-  { value: '8000-12000', th: 'สูง 8,000 - 12,000 บาท', en: 'High 8,000 - 12,000 THB' },
-  { value: '15000+', th: 'กำหนดเอง 15,000 บาทขึ้นไป', en: 'Custom 15,000+ THB' },
+  { value: '1500-3000', apiValue: '1000-3000', th: 'เริ่มต้น 1,500 - 3,000 บาท', en: 'Beginning 1,500 - 3,000 THB' },
+  { value: '4000-6000', apiValue: '3000-5000', th: 'กลาง 4,000 - 6,000 บาท', en: 'Mid Range 4,000 - 6,000 THB' },
+  { value: '8000-12000', apiValue: '5000-10000', th: 'สูง 8,000 - 12,000 บาท', en: 'High 8,000 - 12,000 THB' },
+  { value: '15000+', apiValue: '10000+', th: 'กำหนดเอง 15,000 บาทขึ้นไป', en: 'Custom 15,000+ THB' },
 ]
 
 const BUDGET_OPTIONS_BY_BEAD_SIZE: Record<string, typeof BUDGET_TIERS_6MM> = {
@@ -28,6 +32,37 @@ const BUDGET_OPTIONS_BY_BEAD_SIZE: Record<string, typeof BUDGET_TIERS_6MM> = {
   '10': BUDGET_TIERS_LARGE,
   '12': BUDGET_TIERS_LARGE,
 }
+
+// desired_energies values the API accepts, sent as-is in the visitor's locale.
+// Keys match formData.stoneOptions; declaration order = display order.
+const ENERGY_LABELS = {
+  birthStone: { th: 'การเงิน โชคลาภ', en: 'Wealth & Fortune' },
+  careerStone: { th: 'การงาน ความก้าวหน้า', en: 'Career & Progress' },
+  loveStone: { th: 'ความรัก เมตตามหานิยม', en: 'Love & Charm' },
+  healthStone: { th: 'สุขภาพ กายใจ', en: 'Physical & Mental Health' },
+  luckStone: { th: 'สมาธิ จิตวิญญาณ', en: 'Meditation & Spirituality' },
+} as const
+
+// Laravel 422 error keys → local field keys, for the red-border highlights
+const SERVER_FIELD_MAP: Record<string, string> = {
+  first_name: 'firstName',
+  last_name: 'lastName',
+  date_of_birth: 'birthDate',
+  email: 'email',
+  mobile_country_code: 'phone',
+  mobile_number: 'phone',
+  wrist_size: 'wristSize',
+  bead_size: 'beadSize',
+  budget: 'budget',
+  desired_energies: 'stoneOptions',
+  additional_details: 'specialRequests',
+  preferred_stones: 'notes',
+  photo: 'uploadFile',
+  accept_terms: 'consent',
+}
+
+const PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp']
+const MAX_PHOTO_BYTES = 2 * 1024 * 1024
 
 export default function BraceletOrderForm() {
   const locale = useLocale()
@@ -63,6 +98,10 @@ export default function BraceletOrderForm() {
   const [validationErrors, setValidationErrors] = useState<string[]>([])
   const [showValidationModal, setShowValidationModal] = useState(false)
   const [fieldErrors, setFieldErrors] = useState<Record<string, boolean>>({})
+  // 'client' = incomplete form, 'server' = the API rejected the submission
+  const [errorSource, setErrorSource] = useState<'client' | 'server'>('client')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
 
   const steps = isThai
     ? [
@@ -178,6 +217,21 @@ export default function BraceletOrderForm() {
         isThai ? 'กรุณาเลือกวัน เดือน ปี เกิด' : 'Please select your Date of Birth',
       )
       fields.birthDate = true
+    } else {
+      // the Day select always offers 1-31, so 31 February etc. must be caught here
+      const daysInMonth = new Date(
+        Number(formData.birthDate.year),
+        Number(formData.birthDate.month),
+        0,
+      ).getDate()
+      if (Number(formData.birthDate.day) > daysInMonth) {
+        errors.push(
+          isThai
+            ? 'วันเกิดไม่ถูกต้อง กรุณาตรวจสอบวันและเดือน'
+            : 'Invalid Date of Birth — please check the day and month',
+        )
+        fields.birthDate = true
+      }
     }
 
     // Check Email
@@ -230,6 +284,20 @@ export default function BraceletOrderForm() {
       fields.stoneOptions = true
     }
 
+    // Photo is optional, but when present it must satisfy the API's limits
+    if (
+      formData.uploadFile &&
+      (!PHOTO_TYPES.includes(formData.uploadFile.type) ||
+        formData.uploadFile.size > MAX_PHOTO_BYTES)
+    ) {
+      errors.push(
+        isThai
+          ? 'รูปถ่ายต้องเป็นไฟล์ JPG, PNG หรือ WEBP ขนาดไม่เกิน 2 MB'
+          : 'Photo must be a JPG, PNG, or WEBP file no larger than 2 MB',
+      )
+      fields.uploadFile = true
+    }
+
     // Check both consent checkboxes
     if (!formData.consent) {
       errors.push(
@@ -255,20 +323,122 @@ export default function BraceletOrderForm() {
     return errors.length === 0
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const showServerErrors = (messages: string[], fields: Record<string, boolean> = {}) => {
+    setValidationErrors(messages)
+    setFieldErrors(fields)
+    setErrorSource('server')
+    setShowValidationModal(true)
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (validateForm()) {
-      console.log('Form submitted:', formData)
-      // TODO: Submit form to API
-      // For now, just log the data
-      alert(isThai ? 'ส่งข้อมูลเรียบร้อยแล้ว' : 'Your information has been submitted successfully')
-    } else {
+    if (isSubmitting) return
+
+    if (!validateForm()) {
+      setErrorSource('client')
       setShowValidationModal(true)
+      return
+    }
+
+    setIsSubmitting(true)
+
+    const genericError = isThai
+      ? 'ส่งข้อมูลไม่สำเร็จ กรุณาลองใหม่อีกครั้ง'
+      : 'Something went wrong while submitting. Please try again.'
+
+    try {
+      const { day, month, year } = formData.birthDate
+      const budgetTier = (BUDGET_OPTIONS_BY_BEAD_SIZE[formData.beadSize] ?? []).find(
+        (option) => option.value === formData.budget,
+      )
+      const payload = {
+        first_name: formData.firstName.trim(),
+        last_name: formData.lastName.trim(),
+        date_of_birth: `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`,
+        email: formData.email.trim(),
+        mobile_country_code: getCountryByCode(formData.phoneCountry)?.dialCode ?? '',
+        mobile_number: formData.phone.trim(),
+        wrist_size: Number(formData.wristSize),
+        bead_size: Number(formData.beadSize),
+        budget: budgetTier?.apiValue ?? formData.budget,
+        desired_energies: (Object.keys(ENERGY_LABELS) as (keyof typeof ENERGY_LABELS)[])
+          .filter((key) => formData.stoneOptions[key])
+          .map((key) => (isThai ? ENERGY_LABELS[key].th : ENERGY_LABELS[key].en)),
+        additional_details: formData.specialRequests.trim(),
+        preferred_stones: formData.notes.trim(),
+        accept_terms: true,
+      }
+
+      // JSON without a photo; multipart when one is attached, per the API docs
+      let response: Response
+      if (formData.uploadFile) {
+        const fd = new FormData()
+        Object.entries(payload).forEach(([key, value]) => {
+          if (Array.isArray(value)) {
+            value.forEach((item) => fd.append(`${key}[]`, item))
+          } else if (typeof value === 'boolean') {
+            fd.append(key, value ? '1' : '0')
+          } else {
+            fd.append(key, String(value))
+          }
+        })
+        fd.append('photo', formData.uploadFile)
+        // no Content-Type here — the browser must set the multipart boundary
+        response = await fetch('/api/bracelet-orders', {
+          method: 'POST',
+          headers: { 'Accept-Language': locale },
+          body: fd,
+        })
+      } else {
+        response = await fetch('/api/bracelet-orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Accept-Language': locale },
+          body: JSON.stringify(payload),
+        })
+      }
+
+      if (response.ok) {
+        handleReset()
+        setShowSuccessModal(true)
+        return
+      }
+
+      const data = (await response.json().catch(() => null)) as {
+        errors?: Record<string, string[]>
+      } | null
+
+      if (response.status === 422 && data?.errors) {
+        const messages = Object.values(data.errors).flat()
+        const fields: Record<string, boolean> = {}
+        for (const key of Object.keys(data.errors)) {
+          // nested keys like desired_energies.0 highlight the parent field
+          const local = SERVER_FIELD_MAP[key.split('.')[0]]
+          if (local) fields[local] = true
+        }
+        showServerErrors(messages.length > 0 ? messages : [genericError], fields)
+      } else if (response.status === 429) {
+        showServerErrors([
+          isThai
+            ? 'มีการส่งข้อมูลเข้ามาจำนวนมาก กรุณาลองใหม่อีกครั้งในภายหลัง'
+            : 'Too many submissions. Please try again later.',
+        ])
+      } else {
+        // server/proxy messages on 5xx are unlocalized infrastructure text —
+        // the locale-aware generic error is more useful to the visitor
+        showServerErrors([genericError])
+      }
+    } catch {
+      showServerErrors([genericError])
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
   const handleReset = () => {
+    // clear the DOM input so re-selecting the same file fires onChange again
+    const fileInput = document.getElementById('fileInput') as HTMLInputElement | null
+    if (fileInput) fileInput.value = ''
     setFormData({
       firstName: '',
       lastName: '',
@@ -348,6 +518,7 @@ export default function BraceletOrderForm() {
             {/* Form */}
             <form
               onSubmit={handleSubmit}
+              noValidate
               className="bg-white border border-gray-200 rounded-lg p-8 shadow-sm"
             >
               {/* Name Fields */}
@@ -725,8 +896,16 @@ export default function BraceletOrderForm() {
                 </label>
                 <textarea
                   value={formData.specialRequests}
-                  onChange={(e) => setFormData({ ...formData, specialRequests: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#244323] focus:border-transparent"
+                  maxLength={5000}
+                  onChange={(e) => {
+                    setFormData({ ...formData, specialRequests: e.target.value })
+                    if (fieldErrors.specialRequests) {
+                      setFieldErrors({ ...fieldErrors, specialRequests: false })
+                    }
+                  }}
+                  className={`w-full px-4 py-3 border rounded-md focus:ring-2 focus:ring-[#244323] focus:border-transparent ${
+                    fieldErrors.specialRequests ? 'border-red-500' : 'border-gray-300'
+                  }`}
                   rows={4}
                 />
               </div>
@@ -740,8 +919,16 @@ export default function BraceletOrderForm() {
                 </label>
                 <textarea
                   value={formData.notes}
-                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#244323] focus:border-transparent"
+                  maxLength={5000}
+                  onChange={(e) => {
+                    setFormData({ ...formData, notes: e.target.value })
+                    if (fieldErrors.notes) {
+                      setFieldErrors({ ...fieldErrors, notes: false })
+                    }
+                  }}
+                  className={`w-full px-4 py-3 border rounded-md focus:ring-2 focus:ring-[#244323] focus:border-transparent ${
+                    fieldErrors.notes ? 'border-red-500' : 'border-gray-300'
+                  }`}
                   rows={4}
                 />
               </div>
@@ -750,7 +937,9 @@ export default function BraceletOrderForm() {
               <div className="mb-6">
                 <button
                   type="button"
-                  className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                  className={`px-4 py-2 border rounded-md hover:bg-gray-50 transition-colors ${
+                    fieldErrors.uploadFile ? 'border-red-500' : 'border-gray-300'
+                  }`}
                   onClick={() => document.getElementById('fileInput')?.click()}
                 >
                   {isThai ? 'อัปโหลด' : 'UPLOAD'}
@@ -758,18 +947,40 @@ export default function BraceletOrderForm() {
                 <input
                   id="fileInput"
                   type="file"
+                  accept="image/jpeg,image/png,image/webp"
                   className="hidden"
                   onChange={(e) => {
                     if (e.target.files?.[0]) {
                       setFormData({ ...formData, uploadFile: e.target.files[0] })
+                      if (fieldErrors.uploadFile) {
+                        setFieldErrors({ ...fieldErrors, uploadFile: false })
+                      }
                     }
                   }}
                 />
                 <span className="ml-4 text-sm text-gray-600">
-                  {isThai
-                    ? 'อัพโหลด : รูปถ่ายปัจจุบันของเจ้าของกำไลหิน (ตรวจโหงวเฮ้งเบื้องต้น)'
-                    : 'Upload: A current photo of the bracelet owner (for a preliminary face-reading/physiognomy check)'}
+                  {formData.uploadFile
+                    ? formData.uploadFile.name
+                    : isThai
+                      ? 'อัพโหลด : รูปถ่ายปัจจุบันของเจ้าของกำไลหิน (ตรวจโหงวเฮ้งเบื้องต้น)'
+                      : 'Upload: A current photo of the bracelet owner (for a preliminary face-reading/physiognomy check)'}
                 </span>
+                {formData.uploadFile && (
+                  <button
+                    type="button"
+                    className="ml-2 text-sm text-red-600 underline"
+                    onClick={() => {
+                      const fileInput = document.getElementById('fileInput') as HTMLInputElement | null
+                      if (fileInput) fileInput.value = ''
+                      setFormData({ ...formData, uploadFile: null })
+                      if (fieldErrors.uploadFile) {
+                        setFieldErrors({ ...fieldErrors, uploadFile: false })
+                      }
+                    }}
+                  >
+                    {isThai ? 'ลบไฟล์' : 'Remove'}
+                  </button>
+                )}
               </div>
 
               {/* Terms */}
@@ -828,14 +1039,22 @@ export default function BraceletOrderForm() {
               <div className="flex gap-4 justify-center">
                 <button
                   type="submit"
-                  className="px-12 py-3 bg-[#244323] text-white font-medium rounded-md hover:bg-[#004d2e] transition-colors"
+                  disabled={isSubmitting}
+                  className="px-12 py-3 bg-[#244323] text-white font-medium rounded-md hover:bg-[#004d2e] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  {isThai ? 'ส่งข้อมูล' : 'Submit'}
+                  {isSubmitting
+                    ? isThai
+                      ? 'กำลังส่งข้อมูล...'
+                      : 'Submitting...'
+                    : isThai
+                      ? 'ส่งข้อมูล'
+                      : 'Submit'}
                 </button>
                 <button
                   type="button"
                   onClick={handleReset}
-                  className="px-12 py-3 bg-[#cb9e51] text-white font-medium rounded-md hover:bg-[#c1a030] transition-colors"
+                  disabled={isSubmitting}
+                  className="px-12 py-3 bg-[#cb9e51] text-white font-medium rounded-md hover:bg-[#c1a030] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   {isThai ? 'รีเซ็ต' : 'Reset'}
                 </button>
@@ -928,18 +1147,30 @@ export default function BraceletOrderForm() {
         </Container>
       </section>
 
-      {/* Validation Modal */}
+      {/* Validation / Submission Error Modal */}
       <Modal
         isOpen={showValidationModal}
         onClose={() => setShowValidationModal(false)}
-        title={isThai ? 'กรุณากรอกข้อมูลให้ครบถ้วน' : 'Please complete all required fields'}
+        title={
+          errorSource === 'client'
+            ? isThai
+              ? 'กรุณากรอกข้อมูลให้ครบถ้วน'
+              : 'Please complete all required fields'
+            : isThai
+              ? 'ไม่สามารถส่งข้อมูลได้'
+              : 'Unable to submit your information'
+        }
         size="md"
       >
         <div className="py-4">
           <p className="text-sm text-gray-600 mb-4">
-            {isThai
-              ? 'กรุณาตรวจสอบและกรอกข้อมูลต่อไปนี้ให้ครบถ้วน:'
-              : 'Please review and complete the following fields:'}
+            {errorSource === 'client'
+              ? isThai
+                ? 'กรุณาตรวจสอบและกรอกข้อมูลต่อไปนี้ให้ครบถ้วน:'
+                : 'Please review and complete the following fields:'
+              : isThai
+                ? 'กรุณาตรวจสอบข้อผิดพลาดต่อไปนี้:'
+                : 'Please review the following errors:'}
           </p>
           <ul className="space-y-1 text-sm text-red-600 list-disc list-inside">
             {validationErrors.map((error, index) => (
@@ -949,6 +1180,30 @@ export default function BraceletOrderForm() {
           <div className="mt-6 flex justify-center">
             <button
               onClick={() => setShowValidationModal(false)}
+              className="px-6 py-2 bg-[#244323] text-white font-medium rounded-md hover:bg-[#004d2e] transition-colors"
+            >
+              {isThai ? 'ตกลง' : 'OK'}
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Success Modal */}
+      <Modal
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        title={isThai ? 'ส่งข้อมูลเรียบร้อยแล้ว' : 'Submission successful'}
+        size="md"
+      >
+        <div className="py-4">
+          <p className="text-sm text-gray-600">
+            {isThai
+              ? 'เราได้รับข้อมูลของคุณแล้ว กรุณาแอด LINE @roihin4289 และแจ้ง "ยืนยันข้อมูล" เพื่อยืนยันการสั่งออกแบบ'
+              : 'We have received your information. Please add us on LINE @roihin4289 and message "Confirm website info" to confirm your order.'}
+          </p>
+          <div className="mt-6 flex justify-center">
+            <button
+              onClick={() => setShowSuccessModal(false)}
               className="px-6 py-2 bg-[#244323] text-white font-medium rounded-md hover:bg-[#004d2e] transition-colors"
             >
               {isThai ? 'ตกลง' : 'OK'}
