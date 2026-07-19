@@ -1,6 +1,5 @@
 'use client'
 
-import { Calendar } from 'lucide-react'
 import Image from 'next/image'
 import { useState } from 'react'
 import { useLocale } from 'next-intl'
@@ -470,11 +469,6 @@ export default function BraceletOrderForm() {
                       ),
                     )}
                   </select>
-                  <div className="col-span-3 flex items-center justify-end">
-                    <button type="button" className="text-gray-500">
-                      <Calendar className="w-5 h-5" />
-                    </button>
-                  </div>
                 </div>
               </div>
 
