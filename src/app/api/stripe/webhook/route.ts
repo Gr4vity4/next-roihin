@@ -170,12 +170,23 @@ async function createOrderFromSession(session: Stripe.Checkout.Session) {
       note: `Stripe Payment ID: ${session.payment_intent}`,
     }
 
-    // Create order via internal API
+    // Create order via internal API.
+    //
+    // TODO(payments): This server-to-server call has no user session, so it
+    // cannot use the `authToken` cookie that POST /api/orders (and the Laravel
+    // backend) require — the call currently 401s and no order is recorded for a
+    // paid session. A proper fix needs a shared service credential: set
+    // STRIPE_ORDER_SERVICE_TOKEN here AND have the backend accept it as a trusted
+    // service caller. Until that exists on the backend, this webhook is not a
+    // working fulfillment path (the live flow creates the order via /api/orders
+    // before redirecting to Stripe). Do not rely on it.
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api'
+    const serviceToken = process.env.STRIPE_ORDER_SERVICE_TOKEN
     const response = await fetch(`${apiUrl}/orders`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        ...(serviceToken ? { Authorization: `Bearer ${serviceToken}` } : {}),
       },
       body: JSON.stringify(orderData),
     })

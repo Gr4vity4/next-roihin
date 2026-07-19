@@ -69,6 +69,7 @@ export default function ProductDetail({ product, category, language = 'en', brea
   const [selectedColor, setSelectedColor] = useState(0)
   const [selectedColorImageIndex, setSelectedColorImageIndex] = useState(0)
   const [isAdding, setIsAdding] = useState(false)
+  const [isBuyingNow, setIsBuyingNow] = useState(false)
   const router = useRouter()
   const { addItem } = useCart()
 
@@ -548,7 +549,9 @@ export default function ProductDetail({ product, category, language = 'en', brea
 
               <button
                 onClick={() => {
+                  if (isBuyingNow) return
                   if (selectedPrice && selectedColorData) {
+                    setIsBuyingNow(true)
                     addItem({
                       id: `${product.id}-${selectedColorData.color}`,
                       slug: product.slug,
@@ -564,7 +567,7 @@ export default function ProductDetail({ product, category, language = 'en', brea
                     router.push('/checkout')
                   }
                 }}
-                disabled={!selectedPrice || !selectedColorData?.available}
+                disabled={!selectedPrice || !selectedColorData?.available || isBuyingNow}
                 className={`inline-flex items-center justify-center w-full px-6 py-3 font-medium rounded-md transition-colors ${
                   !selectedPrice || !selectedColorData?.available
                     ? 'bg-gray-800 text-gray-500 cursor-not-allowed border border-gray-700'

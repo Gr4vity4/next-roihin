@@ -264,7 +264,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
 
   const checkFavorite = async (productId: number, color?: string): Promise<boolean> => {
     try {
-      const response = await fetch(`/api/wishlist/check-favorite?product=${productId}${color ? `&color=${color}` : ''}`, {
+      const response = await fetch(`/api/wishlist/check-favorite?product=${productId}${color ? `&color=${encodeURIComponent(color)}` : ''}`, {
         credentials: 'include',
       })
 
