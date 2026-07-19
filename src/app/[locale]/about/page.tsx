@@ -40,7 +40,11 @@ export async function generateMetadata({ params }: AboutPageProps): Promise<Meta
 
 export default async function AboutPage({ params }: AboutPageProps) {
   const { locale } = await params
-  const t = await getTranslations({ locale, namespace: 'aboutPage' })
+
+  // Pick a random banner background per request; desktop/mobile files share the same number.
+  // Desktop lives at banner/desktop/NN-1.avif; mobile lives at banner/mobile/NN-2.avif.
+  const bannerCount = 5
+  const bannerNumber = String(Math.floor(Math.random() * bannerCount) + 1).padStart(2, '0')
 
   return (
     <main className="min-h-screen">
@@ -49,12 +53,8 @@ export default async function AboutPage({ params }: AboutPageProps) {
 
       {/* Hero Section */}
       <AboutHeroSection
-        backgroundImage="/images/banner/about-banner.avif"
-        title={{
-          line1: t('hero.line1'),
-          line2: t('hero.line2'),
-          line3: '',
-        }}
+        backgroundImage={`/images/about/banner/desktop/${bannerNumber}-1.avif`}
+        backgroundImageMobile={`/images/about/banner/mobile/${bannerNumber}-2.avif`}
       />
 
       {/* About Content Section */}
