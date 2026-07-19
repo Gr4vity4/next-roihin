@@ -34,7 +34,7 @@ export default function PersonalizedHeroSection({
         (centered ? (
           <div className="container mx-auto flex items-end justify-center">
             <div className="px-4 sm:px-8 md:px-12 lg:px-4 max-w-4xl text-center text-white">
-              <Typography variant="h2" textShadow className=" font-normal text-2xl md:text-3xl">
+              <Typography variant="h2" textShadow className="mb-20 md:mb-0 font-normal text-2xl md:text-3xl">
                 {title}
                 {subtitle && (
                   <>
