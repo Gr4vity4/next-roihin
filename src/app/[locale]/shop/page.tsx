@@ -52,10 +52,10 @@ export default async function ShopPage({ params }: ShopPageProps) {
         <section className="relative isolate overflow-hidden border-b border-white/10 bg-gradient-to-b from-black via-black/70 to-black pt-28 min-[1408px]:pt-[260px]">
           <div className="container mx-auto max-w-5xl px-6 pb-24 text-center">
             <p className="text-sm uppercase tracking-[0.3em] text-white/50">{t('hero.label')}</p>
-            <h1 className="mt-6 text-4xl font-light tracking-[0.08em] text-white md:text-5xl">
+            <h1 className="mt-6 text-xl font-light tracking-[0.08em] text-white md:text-3xl">
               {t('hero.title')}
             </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-base text-white/70">
+            <p className="mx-auto mt-6 max-w-3xl text-lg text-white/70">
               {t('hero.subtitle')}
             </p>
             <div className="mt-12 flex justify-center">
