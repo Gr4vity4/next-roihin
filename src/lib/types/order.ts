@@ -1,5 +1,30 @@
 // generated order types
-export type OrderStatus = 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled'
+export type OrderStatus =
+  | 'pending'
+  | 'waiting_verification'
+  | 'processing'
+  | 'shipped'
+  | 'delivered'
+  | 'cancelled'
+
+export interface PaymentResource {
+  id: number
+  provider: string
+  status: string
+  amount_minor: number
+  currency: string
+  provider_payment_intent_id?: string | null
+  provider_checkout_session_id?: string | null
+  provider_charge_id?: string | null
+  captured_at?: string | null
+  refunded_at?: string | null
+  payment_method_details?: Record<string, unknown> | null
+  metadata?: Record<string, unknown> | null
+  has_payment_slip?: boolean
+  slip_uploaded_at?: string | null
+  created_at?: string | null
+  updated_at?: string | null
+}
 
 export interface OrderItem {
   id: number
@@ -49,6 +74,7 @@ export interface OrderResource {
   tracking_number?: string | null
   notes?: string | null
   metadata?: Record<string, unknown> | null
+  payments?: PaymentResource[]
   placed_at: string | null
   paid_at?: string | null
   shipped_at?: string | null

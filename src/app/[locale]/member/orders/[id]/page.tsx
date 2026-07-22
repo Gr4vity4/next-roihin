@@ -22,6 +22,7 @@ function getStatusPillColor(status: string): string {
     case 'processing':
       return 'bg-yellow-100 text-yellow-800'
     case 'pending':
+    case 'waiting_verification':
       return 'bg-amber-100 text-amber-800'
     case 'shipped':
       return 'bg-blue-100 text-blue-800'

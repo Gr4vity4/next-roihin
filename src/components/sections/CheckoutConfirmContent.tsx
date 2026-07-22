@@ -15,14 +15,20 @@ import { readLastShipping, saveLastShipping } from '@/lib/checkout-storage'
 import { fetchShippingZoneMatch, type ShippingZone } from '@/lib/api/shipping-zones'
 import { getStripe } from '@/lib/stripe-client'
 import type { CreateOrderPayload } from '@/lib/api/orders'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Landmark } from 'lucide-react'
 import { useLocale, useTranslations } from 'next-intl'
 import Image from 'next/image'
-import { FormEvent, useEffect, useMemo, useRef, useState } from 'react'
+import { ChangeEvent, FormEvent, useEffect, useMemo, useRef, useState } from 'react'
 
 interface ShippingFormState extends AddressFieldValues {
   email: string
 }
+
+type PaymentMethod = 'stripe' | 'bank_transfer'
+
+// Mirrors the Laravel rule for the slip upload: jpeg/jpg/png/webp, max 5120 KB
+const SLIP_TYPES = ['image/jpeg', 'image/png', 'image/webp']
+const MAX_SLIP_BYTES = 5 * 1024 * 1024
 
 const EMPTY_SHIPPING: ShippingFormState = {
   first_name: '',
@@ -66,6 +72,14 @@ export default function CheckoutConfirmContent() {
   // script failed to load, user hit Back from Stripe, etc.) reuses the same
   // order/session instead of creating a duplicate one.
   const createdCheckoutRef = useRef<{ url: string | null; sessionId: string | null } | null>(null)
+  // Bank-transfer twin of createdCheckoutRef: once the order exists, a retry
+  // after a failed slip upload re-uses it instead of creating a duplicate.
+  const createdBankOrderIdRef = useRef<number | null>(null)
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('stripe')
+  const [slipFile, setSlipFile] = useState<File | null>(null)
+  const [slipPreviewUrl, setSlipPreviewUrl] = useState<string | null>(null)
+  const [slipError, setSlipError] = useState<string>('')
+  const slipInputRef = useRef<HTMLInputElement | null>(null)
 
   const addressLabels = useMemo(
     () => ({
@@ -110,6 +124,15 @@ export default function CheckoutConfirmContent() {
   useEffect(() => {
     isLoggedInRef.current = isLoggedIn
   }, [isLoggedIn])
+
+  // Revoke the slip preview object URL when it is replaced and on unmount.
+  useEffect(() => {
+    return () => {
+      if (slipPreviewUrl) {
+        URL.revokeObjectURL(slipPreviewUrl)
+      }
+    }
+  }, [slipPreviewUrl])
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -240,6 +263,102 @@ export default function CheckoutConfirmContent() {
     setShippingAddress((prev) => ({ ...prev, email: value }))
   }
 
+  const handleSlipChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] ?? null
+    if (!file) {
+      return
+    }
+
+    if (!SLIP_TYPES.includes(file.type)) {
+      setSlipError(t('payment.bankTransfer.invalidFileType'))
+      e.target.value = ''
+      return
+    }
+
+    if (file.size > MAX_SLIP_BYTES) {
+      setSlipError(t('payment.bankTransfer.fileTooLarge'))
+      e.target.value = ''
+      return
+    }
+
+    setSlipError('')
+    setSlipFile(file)
+    setSlipPreviewUrl(URL.createObjectURL(file))
+  }
+
+  const handleSlipRemove = () => {
+    if (slipInputRef.current) {
+      slipInputRef.current.value = ''
+    }
+    setSlipFile(null)
+    setSlipPreviewUrl(null)
+    setSlipError('')
+  }
+
+  const buildOrderPayload = (method: PaymentMethod): CreateOrderPayload => {
+    if (!shippingZone) {
+      throw new Error('Shipping zone not resolved')
+    }
+
+    const payload: CreateOrderPayload = {
+      items: items.map((item) => {
+        // Cart ids are composite (`${productId}-${color}`, `${productId}-default`,
+        // or a bracelet designId), so the numeric product id is the leading
+        // segment. Custom bracelets have no catalog product id.
+        const numericId = Number(String(item.id).split('-')[0])
+        const productId =
+          !item.isCustomBracelet && Number.isFinite(numericId) ? numericId : undefined
+
+        return {
+          product_id: productId ?? undefined,
+          product_name: item.title,
+          sku: item.slug,
+          unit_price_minor: Math.round(item.price * 100),
+          quantity: item.quantity,
+          options: {
+            image: item.image,
+            color: item.color,
+            category: item.category,
+            slug: item.slug,
+            isCustomBracelet: item.isCustomBracelet,
+            braceletDesign: item.braceletDesign ?? null,
+          },
+        }
+      }),
+      shipping_address: {
+        first_name: shippingAddress.first_name,
+        last_name: shippingAddress.last_name,
+        phone: combinePhone(phoneCountry, shippingAddress.phone),
+        address: shippingAddress.address,
+        apartment: shippingAddress.apartment.trim() ? shippingAddress.apartment : null,
+        city: shippingAddress.city,
+        province: shippingAddress.province,
+        postal_code: shippingAddress.postal_code,
+        email: shippingAddress.email,
+      },
+      currency: 'THB',
+      shipping_amount_minor: shippingZone.fee_minor,
+      discount_amount_minor: 0,
+      metadata: {
+        cart_source: 'web',
+        cart_total_items: itemCount,
+        shipping_zone: shippingZone.code,
+        shipping_country: phoneCountry.toUpperCase(),
+      },
+      locale,
+      payment_method: method,
+    }
+
+    if (defaultAddressId) {
+      const parsed = Number(defaultAddressId)
+      if (Number.isFinite(parsed)) {
+        payload.shipping_address_id = parsed
+      }
+    }
+
+    return payload
+  }
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
 
@@ -252,6 +371,87 @@ export default function CheckoutConfirmContent() {
 
     setIsProcessing(true)
     setOrderError('')
+
+    // Once a bank order exists, stay on the bank path even if the (locked)
+    // radio group were somehow toggled — a retry must finish that order's
+    // slip upload, never start a Stripe checkout for a second order.
+    const isBankTransfer =
+      createdBankOrderIdRef.current !== null ||
+      (paymentMethod === 'bank_transfer' && createdCheckoutRef.current === null)
+
+    if (isBankTransfer) {
+      if (!slipFile) {
+        setSlipError(t('payment.bankTransfer.slipRequired'))
+        setIsProcessing(false)
+        return
+      }
+
+      try {
+        let orderId = createdBankOrderIdRef.current
+
+        if (orderId === null) {
+          const response = await fetch('/api/orders', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(buildOrderPayload('bank_transfer')),
+            credentials: 'include',
+          })
+
+          if (!response.ok) {
+            const errorBody = await response.json().catch(() => ({}))
+            throw new Error(errorBody?.error || 'Failed to create order')
+          }
+
+          const data = await response.json()
+          const createdId = Number(data?.data?.id)
+
+          if (!Number.isFinite(createdId)) {
+            throw new Error('Missing order id in response')
+          }
+
+          // The order now exists in the backend. Remember it so a retry after
+          // a failed slip upload re-uses it instead of creating a duplicate.
+          orderId = createdId
+          createdBankOrderIdRef.current = createdId
+        }
+
+        const formData = new FormData()
+        formData.append('slip', slipFile)
+
+        const uploadResponse = await fetch(`/api/orders/${orderId}/payment-slip`, {
+          method: 'POST',
+          body: formData,
+          credentials: 'include',
+        })
+
+        if (!uploadResponse.ok) {
+          const errorBody = await uploadResponse.json().catch(() => ({}))
+          throw new Error(errorBody?.message || 'Failed to upload payment slip')
+        }
+
+        // Remember what the shopper used so their next checkout is prefilled
+        // even without a saved default address.
+        if (user) {
+          saveLastShipping({ userId: user.id, phoneCountry, shipping: shippingAddress })
+        }
+
+        router.push(`/checkout/thank-you?order_id=${orderId}`)
+        return
+      } catch (error) {
+        console.error('Bank transfer checkout failed:', error)
+        // Creation failed → generic checkout error; creation succeeded but the
+        // upload failed → tell the shopper a retry finishes the same order.
+        setOrderError(
+          createdBankOrderIdRef.current !== null
+            ? t('errors.slipUploadFailed')
+            : t('errors.checkoutFailed')
+        )
+        setIsProcessing(false)
+        return
+      }
+    }
 
     // Reuse an already-created order's checkout hand-off if the shopper is
     // retrying after a post-order failure, so we never create a second order.
@@ -286,67 +486,12 @@ export default function CheckoutConfirmContent() {
     }
 
     try {
-      const payload: CreateOrderPayload = {
-        items: items.map((item) => {
-          // Cart ids are composite (`${productId}-${color}`, `${productId}-default`,
-          // or a bracelet designId), so the numeric product id is the leading
-          // segment. Custom bracelets have no catalog product id.
-          const numericId = Number(String(item.id).split('-')[0])
-          const productId =
-            !item.isCustomBracelet && Number.isFinite(numericId) ? numericId : undefined
-
-          return {
-            product_id: productId ?? undefined,
-            product_name: item.title,
-            sku: item.slug,
-            unit_price_minor: Math.round(item.price * 100),
-            quantity: item.quantity,
-            options: {
-              image: item.image,
-              color: item.color,
-              category: item.category,
-              slug: item.slug,
-              isCustomBracelet: item.isCustomBracelet,
-              braceletDesign: item.braceletDesign ?? null,
-            },
-          }
-        }),
-        shipping_address: {
-          first_name: shippingAddress.first_name,
-          last_name: shippingAddress.last_name,
-          phone: combinePhone(phoneCountry, shippingAddress.phone),
-          address: shippingAddress.address,
-          apartment: shippingAddress.apartment.trim() ? shippingAddress.apartment : null,
-          city: shippingAddress.city,
-          province: shippingAddress.province,
-          postal_code: shippingAddress.postal_code,
-          email: shippingAddress.email,
-        },
-        currency: 'THB',
-        shipping_amount_minor: shippingZone.fee_minor,
-        discount_amount_minor: 0,
-        metadata: {
-          cart_source: 'web',
-          cart_total_items: itemCount,
-          shipping_zone: shippingZone.code,
-          shipping_country: phoneCountry.toUpperCase(),
-        },
-        locale,
-      }
-
-      if (defaultAddressId) {
-        const parsed = Number(defaultAddressId)
-        if (Number.isFinite(parsed)) {
-          payload.shipping_address_id = parsed
-        }
-      }
-
       const response = await fetch('/api/orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(buildOrderPayload('stripe')),
         credentials: 'include',
       })
 
@@ -398,17 +543,39 @@ export default function CheckoutConfirmContent() {
   }
 
   const isFormValid = () => {
-    return (
+    const addressComplete = Boolean(
       shippingAddress.first_name &&
-      shippingAddress.last_name &&
-      shippingAddress.email &&
-      shippingAddress.phone &&
-      shippingAddress.address &&
-      shippingAddress.city &&
-      shippingAddress.province &&
-      shippingAddress.postal_code
+        shippingAddress.last_name &&
+        shippingAddress.email &&
+        shippingAddress.phone &&
+        shippingAddress.address &&
+        shippingAddress.city &&
+        shippingAddress.province &&
+        shippingAddress.postal_code
     )
+
+    if (!addressComplete) {
+      return false
+    }
+
+    // Bank transfer needs the slip attached — unless a previous attempt
+    // already created the order, in which case the button stays enabled so
+    // the shopper can retry the upload.
+    if (
+      paymentMethod === 'bank_transfer' &&
+      !slipFile &&
+      createdBankOrderIdRef.current === null
+    ) {
+      return false
+    }
+
+    return true
   }
+
+  // After a post-order failure the shopper is committed to the created order
+  // (either path); switching the payment method would strand it.
+  const paymentLocked =
+    createdCheckoutRef.current !== null || createdBankOrderIdRef.current !== null
 
   if (itemCount === 0) {
     return null
@@ -477,8 +644,25 @@ export default function CheckoutConfirmContent() {
                 <div className="bg-white rounded-xl shadow-md p-6">
                   <h3 className="text-xl font-semibold text-gray-900 mb-6">{t('payment.title')}</h3>
 
-                  <div className="space-y-4">
-                    <div className="p-4 bg-blue-50 border-2 border-blue-500 rounded-lg">
+                  <fieldset className="space-y-4">
+                    <legend className="sr-only">{t('payment.title')}</legend>
+
+                    <label
+                      className={`block cursor-pointer p-4 rounded-lg border-2 transition-colors ${
+                        paymentMethod === 'stripe'
+                          ? 'bg-blue-50 border-blue-500'
+                          : 'bg-gray-50 border-gray-200 hover:border-gray-300'
+                      } ${paymentLocked ? 'cursor-not-allowed opacity-90' : ''}`}
+                    >
+                      <input
+                        type="radio"
+                        name="payment_method"
+                        value="stripe"
+                        checked={paymentMethod === 'stripe'}
+                        onChange={() => setPaymentMethod('stripe')}
+                        disabled={paymentLocked}
+                        className="sr-only"
+                      />
                       <div className="flex items-center gap-3 mb-2">
                         <svg
                           className="w-8 h-8"
@@ -493,12 +677,122 @@ export default function CheckoutConfirmContent() {
                         <p className="font-medium text-gray-900">{t('payment.stripe')}</p>
                       </div>
                       <p className="text-sm text-gray-600">{t('payment.stripeDescription')}</p>
-                    </div>
+                    </label>
+
+                    <label
+                      className={`block cursor-pointer p-4 rounded-lg border-2 transition-colors ${
+                        paymentMethod === 'bank_transfer'
+                          ? 'bg-blue-50 border-blue-500'
+                          : 'bg-gray-50 border-gray-200 hover:border-gray-300'
+                      } ${paymentLocked ? 'cursor-not-allowed opacity-90' : ''}`}
+                    >
+                      <input
+                        type="radio"
+                        name="payment_method"
+                        value="bank_transfer"
+                        checked={paymentMethod === 'bank_transfer'}
+                        onChange={() => setPaymentMethod('bank_transfer')}
+                        disabled={paymentLocked}
+                        className="sr-only"
+                      />
+                      <div className="flex items-center gap-3 mb-2">
+                        <Landmark className="w-8 h-8 text-[#244323]" aria-hidden />
+                        <p className="font-medium text-gray-900">{t('payment.bankTransfer.label')}</p>
+                      </div>
+                      <p className="text-sm text-gray-600">{t('payment.bankTransfer.description')}</p>
+
+                      {paymentMethod === 'bank_transfer' && (
+                        <div className="mt-4 space-y-4">
+                          <div className="bg-white border border-gray-200 rounded-lg p-4">
+                            <dl className="space-y-2 text-sm">
+                              <div className="flex justify-between gap-4">
+                                <dt className="text-gray-500">{t('payment.bankTransfer.bankName')}</dt>
+                                <dd className="font-medium text-gray-900 text-right">
+                                  {t('payment.bankTransfer.bankNameValue')}
+                                </dd>
+                              </div>
+                              <div className="flex justify-between gap-4">
+                                <dt className="text-gray-500">{t('payment.bankTransfer.branch')}</dt>
+                                <dd className="font-medium text-gray-900 text-right">
+                                  {t('payment.bankTransfer.branchValue')}
+                                </dd>
+                              </div>
+                              <div className="flex justify-between gap-4">
+                                <dt className="text-gray-500">
+                                  {t('payment.bankTransfer.accountNumber')}
+                                </dt>
+                                <dd className="font-semibold text-gray-900 text-right">
+                                  {t('payment.bankTransfer.accountNumberValue')}
+                                </dd>
+                              </div>
+                              <div className="flex justify-between gap-4">
+                                <dt className="text-gray-500">
+                                  {t('payment.bankTransfer.accountName')}
+                                </dt>
+                                <dd className="font-medium text-gray-900 text-right">
+                                  {t('payment.bankTransfer.accountNameValue')}
+                                </dd>
+                              </div>
+                            </dl>
+                          </div>
+
+                          <p className="text-sm text-gray-600">{t('payment.bankTransfer.note')}</p>
+
+                          <div>
+                            <p className="text-sm font-medium text-gray-700 mb-2">
+                              {t('payment.bankTransfer.slipLabel')} {t('payment.required')}
+                            </p>
+                            <input
+                              ref={slipInputRef}
+                              id="paymentSlipInput"
+                              type="file"
+                              accept="image/jpeg,image/png,image/webp"
+                              className="hidden"
+                              onChange={handleSlipChange}
+                            />
+                            <div className="flex flex-wrap items-center gap-3">
+                              <button
+                                type="button"
+                                onClick={() => slipInputRef.current?.click()}
+                                className="px-4 py-2 bg-white border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                              >
+                                {slipFile
+                                  ? t('payment.bankTransfer.changeFile')
+                                  : t('payment.bankTransfer.selectFile')}
+                              </button>
+                              {slipFile && (
+                                <>
+                                  <span className="text-sm text-gray-600 break-all">
+                                    {slipFile.name}
+                                  </span>
+                                  <button
+                                    type="button"
+                                    onClick={handleSlipRemove}
+                                    className="text-sm text-red-600 underline"
+                                  >
+                                    {t('payment.bankTransfer.removeFile')}
+                                  </button>
+                                </>
+                              )}
+                            </div>
+                            {slipPreviewUrl && (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img
+                                src={slipPreviewUrl}
+                                alt={t('payment.bankTransfer.slipLabel')}
+                                className="mt-3 max-h-40 w-auto rounded-md border border-gray-200 object-contain"
+                              />
+                            )}
+                            {slipError && <p className="text-sm text-red-500 mt-2">{slipError}</p>}
+                          </div>
+                        </div>
+                      )}
+                    </label>
 
                     <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
                       <p className="text-sm text-gray-700">{t('payment.securePayment')}</p>
                     </div>
-                  </div>
+                  </fieldset>
                 </div>
               </div>
 
