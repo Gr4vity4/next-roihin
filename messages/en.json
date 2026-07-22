@@ -400,6 +400,26 @@
       "title": "Payment Method",
       "stripe": "Credit/Debit Card (Stripe)",
       "stripeDescription": "Pay securely with your credit or debit card via Stripe",
+      "bankTransfer": {
+        "label": "Bank Transfer",
+        "description": "Transfer to our bank account and attach your payment slip",
+        "bankName": "Bank",
+        "branch": "Branch",
+        "accountNumber": "Account Number",
+        "accountName": "Account Name",
+        "bankNameValue": "KASIKORNBANK",
+        "branchValue": "Phuket Branch",
+        "accountNumberValue": "128-8-50995-2",
+        "accountNameValue": "S195 CO.,LTD.",
+        "note": "Please transfer the exact total amount, then attach your payment slip below. We will verify your payment and start processing your order.",
+        "slipLabel": "Payment Slip",
+        "selectFile": "Attach payment slip",
+        "changeFile": "Change file",
+        "removeFile": "Remove",
+        "slipRequired": "Please attach your payment slip before placing the order.",
+        "invalidFileType": "Only JPEG, PNG or WebP images are allowed.",
+        "fileTooLarge": "File must be smaller than 5 MB."
+      },
       "securePayment": "🔒 Your payment information is secure and encrypted",
       "required": "*"
     },
@@ -416,7 +436,8 @@
       "formIncomplete": "Please complete all required fields"
     },
     "errors": {
-      "checkoutFailed": "Failed to initiate checkout. Please try again."
+      "checkoutFailed": "Failed to initiate checkout. Please try again.",
+      "slipUploadFailed": "Your order was created but the slip upload failed. Please press the button again to retry."
     }
   },
   "thankYou": {
@@ -551,6 +572,7 @@
         },
         "statuses": {
           "delivered": "Delivered",
+          "waiting_verification": "Waiting for Verification",
           "processing": "Processing",
           "shipped": "Shipped",
           "cancelled": "Cancelled"
@@ -594,6 +616,7 @@
       "tabs": {
         "all": "All",
         "pending": "Pending",
+        "waiting_verification": "Waiting for Verification",
         "processing": "Processing",
         "shipped": "Shipped",
         "delivered": "Delivered",

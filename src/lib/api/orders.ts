@@ -114,6 +114,7 @@ export interface CreateOrderPayload {
   notes?: string | null
   metadata?: Record<string, unknown>
   locale?: string
+  payment_method?: 'stripe' | 'bank_transfer'
 }
 
 export async function createOrder(
@@ -165,6 +166,6 @@ export async function cancelOrder(
 export function mapStatusToFilter(status?: string | null): OrderStatus | 'all' {
   if (!status) return 'all'
   const normalized = status.toLowerCase() as OrderStatus
-  const allowed: Array<OrderStatus | 'all'> = ['pending', 'processing', 'shipped', 'delivered', 'cancelled']
+  const allowed: Array<OrderStatus | 'all'> = ['pending', 'waiting_verification', 'processing', 'shipped', 'delivered', 'cancelled']
   return allowed.includes(normalized) ? normalized : 'all'
 }
